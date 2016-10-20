@@ -46,23 +46,23 @@ int main()
   State states[NUM_STATES];
   states[STATE_INIT]  =   (State)
   {
-    EVENT_PASSWORD_ENTERED,                     TRANSITION(STATE_INIT)
+    EVENT_PASSWORD_ENTERED,                    TRANSITION(STATE_INIT)
   };
   states[STATE_MAIN]  =   (State)
   {
-    EVENT_ALL_BUTTON | EVENT_USB_DISCONNECTED,  TRANSITION(STATE_MAIN)
+    EVENT_ALL_BUTTON | EVENT_USB_DISCONNECTED, TRANSITION(STATE_MAIN)
   };
   states[STATE_BROWSE] = (State)
   {
-      EVENT_BUTTON_1 | EVENT_BUTTON_2 | EVENT_BUTTON_3 | EVENT_USB_DISCONNECTED, TRANSITION(STATE_BROWSE)
+    EVENT_ALL_BUTTON | EVENT_USB_DISCONNECTED, TRANSITION(STATE_BROWSE)
   };
   states[STATE_OPTION]=   (State)
   {
-    EVENT_ALL_BUTTON | EVENT_USB_DISCONNECTED,  TRANSITION(STATE_OPTION)
+    EVENT_ALL_BUTTON | EVENT_USB_DISCONNECTED, TRANSITION(STATE_OPTION)
   };
   states[STATE_SAVE]  =   (State)
   {
-    EVENT_USB_CONNECTED,                        TRANSITION(STATE_SAVE)
+    EVENT_USB_CONNECTED,                       TRANSITION(STATE_SAVE)
   };
 
   State* currentState = &states[0];
@@ -76,12 +76,12 @@ int main()
 
   while(RUNNING)
   {
-        uint8_t event = getEvents(); // Mask of events
+    uint8_t event = getEvents(); // Mask of events
 
-        if(currentState->event_mask & event)
-        {
-          uint8_t newState = currentState->transition(event);
-          currentState = &states[newState];
-        }
+    if(currentState->event_mask & event)
+    {
+       uint8_t newState = currentState->transition(event);
+       currentState = &states[newState];
+    }
   }
 }

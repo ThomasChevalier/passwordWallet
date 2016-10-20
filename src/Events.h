@@ -16,7 +16,7 @@
 
 #define EVENT_PASSWORD_ENTERED  (1<<6)
 
-#define EVENt_WHENEVER (0xFF)
+#define EVENT_WHENEVER (0xFF)
 
 void eventHappen(uint8_t event);
 uint8_t getEvents();
