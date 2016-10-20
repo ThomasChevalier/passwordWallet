@@ -1,0 +1,1 @@
+avrdude -v {program.verify} -patmega32u4 -cstk500v1 -PCOM3 -b19200 -Uflash:w:"build/main.hex":i
