@@ -3,22 +3,6 @@
 
 #include <avr/io.h>
 
-#define BUTTON_1_PIN_NUM 4
-#define BUTTON_2_PIN_NUM 4
-#define BUTTON_3_PIN_NUM 7
-
-#define BUTTON_1_DDR DDRD
-#define BUTTON_2_DDR DDRB
-#define BUTTON_3_DDR DDRC
-
-#define BUTTON_1_PIN PIND
-#define BUTTON_2_PIN PINB
-#define BUTTON_3_PIN PINC
-
-#define BUTTON_1_PORT PORTD
-#define BUTTON_2_PORT PORTB
-#define BUTTON_3_PORT PORTC
-
 void buttons_setup_hardware();
 
 void buttons_update_event(); // Update event flag for buttons, should be call regularly

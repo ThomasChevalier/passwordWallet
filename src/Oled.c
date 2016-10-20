@@ -5,6 +5,8 @@
 #include "Spi.h"
 #include "font.h"
 
+#include "PinDefinition.h"
+
 /*
 	MOSI : 	11 	PB3
 	MISO :	There is no need of Miso for the oled

@@ -2,6 +2,7 @@
 
 #include <avr/interrupt.h>
 #include "Events.h"
+#include "PinDefinition.h"
 
 void buttons_update_event()
 {

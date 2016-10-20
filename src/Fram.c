@@ -7,6 +7,7 @@ All rights reserved
 
 #include "Fram.h"
 #include "Spi.h"
+#include "PinDefinition.h"
 
 void fram_setup_hardware()
 {

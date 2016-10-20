@@ -35,9 +35,6 @@ HIGH=WP  -|      |- SCK
 
 // WARNING : it is to the user to disable interrupt before any spi operation
 
-#define FRAM_CS_DDR DDRF
-#define FRAM_CS_PORT PORTF
-#define FRAM_CS_PIN_NUM 7
 
 typedef enum
 {

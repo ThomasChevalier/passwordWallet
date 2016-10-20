@@ -79,8 +79,6 @@ int main()
 
   goto_first_pwd();
 
-  
-
   oled_display();
   wait_for_valid_card();
 

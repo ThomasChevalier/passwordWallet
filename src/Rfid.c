@@ -1,6 +1,7 @@
 #include "Rfid.h"
 
 #include "Spi.h"
+#include "PinDefinition.h"
 
 // Hardware
 

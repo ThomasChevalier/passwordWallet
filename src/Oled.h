@@ -57,21 +57,6 @@
 #define SSD1306_VERTICAL_AND_RIGHT_HORIZONTAL_SCROLL 0x29
 #define SSD1306_VERTICAL_AND_LEFT_HORIZONTAL_SCROLL 0x2A
 
-// Pin declaration
-
-
-#define OLED_CS_DDR DDRD
-#define OLED_CS_PORT PORTD
-#define OLED_CS_PIN_NUM 0
-
-#define OLED_DC_DDR DDRD
-#define OLED_DC_PORT PORTD
-#define OLED_DC_PIN_NUM 1
-
-#define OLED_RES_DDR DDRD
-#define OLED_RES_PORT PORTD
-#define OLED_RES_PIN_NUM 2
-
 extern uint8_t _oled_rotation;
 
 // Hardware

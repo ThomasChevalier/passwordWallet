@@ -205,14 +205,6 @@ typedef struct
 } MIFARE_Key;
 
 
-#define RFID_CS_DDR DDRD
-#define RFID_CS_PORT PORTD
-#define RFID_CS_PIN_NUM 6
-
-#define RFID_RES_DDR DDRC
-#define RFID_RES_PORT PORTC
-#define RFID_RES_PIN_NUM 6
-
 // Hardware
 void rfid_setup_hardware();
 void rfid_select();

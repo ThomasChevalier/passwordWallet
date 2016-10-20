@@ -13,6 +13,9 @@
 #include "String.h"
 #include "Oled.h"
 
+void draw_main_menu();
+void draw_browse_dock(char letter);
+void draw_option_menu(uint8_t currentChoice);
 
 
 DECLARE_TRANSITION(STATE_INIT)
@@ -23,6 +26,11 @@ DECLARE_TRANSITION(STATE_INIT)
 		return STATE_INIT;
 	}
 	return STATE_MAIN;
+}
+
+void draw_main_menu()
+{
+	draw_browse_dock(0);
 }
 
 DECLARE_TRANSITION(STATE_MAIN)
@@ -58,6 +66,12 @@ DECLARE_TRANSITION(STATE_MAIN)
 
 void draw_browse_dock(char letter)
 {
+	static char lastLetter = 0;
+	if(letter == 0)
+		letter = lastLetter;
+	else
+		lastLetter = letter;
+
 	uint8_t x = 0;
 	uint8_t y = 0;
 	for(; y < 64; ++y)
@@ -118,6 +132,7 @@ DECLARE_TRANSITION(STATE_BROWSE)
 
 void draw_option_menu(uint8_t currentChoice)
 {
+	oled_clear_display();
 	const char* strTable[6] = {
 	str_option_genNew,
 	str_option_changePwd,
@@ -149,6 +164,7 @@ void draw_option_menu(uint8_t currentChoice)
 	{
 		oled_h_line(0, pos * 8 + i, 128, INVERSE);
 	}
+	oled_display();
 }
 
 DECLARE_TRANSITION(STATE_OPTION)
@@ -159,17 +175,13 @@ DECLARE_TRANSITION(STATE_OPTION)
 	if(event & EVENT_USB_DISCONNECTED)
 		return STATE_SAVE;
 
-	oled_clear_display();
 	draw_option_menu(currentChoice);
-	oled_display();
 
 	if(event & EVENT_BUTTON_1)
 	{
 		// Looping
 		currentChoice = (currentChoice == 0) ? numberOfChoice-1 : currentChoice - 1;
-		oled_clear_display();
 		draw_option_menu(currentChoice);
-		oled_display();
 		return STATE_OPTION;
 	}
 	else if(event & EVENT_BUTTON_2)
@@ -203,9 +215,7 @@ DECLARE_TRANSITION(STATE_OPTION)
 	{
 		// Looping
 		currentChoice = (currentChoice == numberOfChoice-1) ? 0 : currentChoice + 1;
-		oled_clear_display();
 		draw_option_menu(currentChoice);
-		oled_display();
 		return STATE_OPTION;
 	}
 
