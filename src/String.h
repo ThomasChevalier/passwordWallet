@@ -21,9 +21,12 @@ REGISTER_STRING(str_error_auth, "Erreur d'authentification", 25);
 REGISTER_STRING(str_error_read, "Erreur de lecture", 17);
 REGISTER_STRING(str_error_pwd, "Mauvais mot de passe", 20);
 
-REGISTER_STRING(str_option_genNew, "Nouveau mot de passe", 20);
+REGISTER_STRING(str_option_genNew, "Regenerer", 9);
+REGISTER_STRING(str_option_changePwd, "Changer le mot de passe", 23);
+REGISTER_STRING(str_option_changeUsr, "Changer l'identifiant", 21);
+REGISTER_STRING(str_option_delPwd, "Supprimer", 9);
+REGISTER_STRING(str_option_addPwd, "Nouveau mot de passe", 20);
 REGISTER_STRING(str_option_changeMasterKey, "Changer la clef maitre", 22);
-REGISTER_STRING(str_option_back, "Retour", 6);
 
 REGISTER_STRING(str_misc_changePwd, "Approchez votre carte", 21);
 
