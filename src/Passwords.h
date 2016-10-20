@@ -6,10 +6,12 @@
 
 
 void read_password();
-void goto_first_password();
-void goto_prev_pwd();
-void goto_next_pwd();
+void goto_first_pwd();
+uint16_t prev_pwd(uint16_t pwd_index);
+uint16_t next_pwd(uint16_t pwd_index);
 void increment_pwd_counter();
+void set_pwd_name(char* pwd_name);
+void read_pwd_name(char* pwd_name, uint16_t pwd_index);
 
 void generate_password(char* output);
 void change_password();

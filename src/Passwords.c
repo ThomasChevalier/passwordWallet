@@ -13,42 +13,68 @@ void read_password()
 
 	AES128_CBC_decrypt_buffer(CURRENT_PASSWORD_DATA+0, aes+0, 16, KEY, iv);
 	AES128_CBC_decrypt_buffer(CURRENT_PASSWORD_DATA+16, aes+16, 16, 0, 0);
-}
 
-void goto_first_password()
-{
-
-}
-
-void goto_prev_pwd()
-{
-	uint8_t sortingMethod = (OPTIONS_FLAG >> 1) & 0x03;
-	if(sortingMethod == 0)
-		CURRENT_PASSWORD_ID = (CURRENT_PASSWORD_ID == 0) ? NUM_PWD : CURRENT_PASSWORD_ID-1;
-	else if(sortingMethod == 1)
+	// Remove padding
+	uint8_t i = 0;
+	uint8_t j = 0;
+	for(; i < 32; ++i)
 	{
-		fram_read_bytes(FIRST_PWD_OFFSET + SIZE_OF_PWD_BLOCK * CURRENT_PASSWORD_ID + 0, (uint8_t*)(&CURRENT_PASSWORD_ID), 2);
-	}
-	else if(sortingMethod == 2)
-	{
-		fram_read_bytes(FIRST_PWD_OFFSET + SIZE_OF_PWD_BLOCK * CURRENT_PASSWORD_ID + 4, (uint8_t*)(&CURRENT_PASSWORD_ID), 2);
+		if(CURRENT_PASSWORD_DATA[i] < 32)
+			j=1;
+		if(j)
+			CURRENT_PASSWORD_DATA[i] = 0;
 	}
 }
 
-void goto_next_pwd()
+void goto_first_pwd()
 {
 	uint8_t sortingMethod = (OPTIONS_FLAG >> 1) & 0x03;
 	if(sortingMethod == 0)
-		CURRENT_PASSWORD_ID ++;
+		CURRENT_PASSWORD_ID = 0;
 	else if(sortingMethod == 1)
 	{
-		fram_read_bytes(FIRST_PWD_OFFSET + SIZE_OF_PWD_BLOCK * CURRENT_PASSWORD_ID + 2, (uint8_t*)(&CURRENT_PASSWORD_ID), 2);
+		CURRENT_PASSWORD_ID = FIRST_PWD_UTIL;
 	}
 	else if(sortingMethod == 2)
 	{
-		fram_read_bytes(FIRST_PWD_OFFSET + SIZE_OF_PWD_BLOCK * CURRENT_PASSWORD_ID + 6, (uint8_t*)(&CURRENT_PASSWORD_ID), 2);
+		CURRENT_PASSWORD_ID = FIRST_PWD_ALPHA;
 	}
 }
+
+uint16_t prev_pwd(uint16_t pwd_index)
+{
+	uint16_t pwdAddr = 0;
+	uint8_t sortingMethod = (OPTIONS_FLAG >> 1) & 0x03;
+	if(sortingMethod == 0)
+		pwd_index = (pwd_index == 0) ? NUM_PWD : pwd_index-1;
+	else if(sortingMethod == 1)
+	{
+		fram_read_bytes(FIRST_PWD_OFFSET + SIZE_OF_PWD_BLOCK * pwd_index + 0, (uint8_t*)(&pwdAddr), 2);
+	}
+	else if(sortingMethod == 2)
+	{
+		fram_read_bytes(FIRST_PWD_OFFSET + SIZE_OF_PWD_BLOCK * pwd_index + 4, (uint8_t*)(&pwdAddr), 2);
+	}
+	return pwdAddr;
+}
+
+uint16_t next_pwd(uint16_t pwd_index)
+{
+	uint16_t pwdAddr = 0;
+	uint8_t sortingMethod = (OPTIONS_FLAG >> 1) & 0x03;
+	if(sortingMethod == 0)
+		pwd_index = (pwd_index == NUM_PWD) ? 0 : pwd_index + 1;
+	else if(sortingMethod == 1)
+	{
+		fram_read_bytes(FIRST_PWD_OFFSET + SIZE_OF_PWD_BLOCK * pwd_index + 2, (uint8_t*)(&pwdAddr), 2);
+	}
+	else if(sortingMethod == 2)
+	{
+		fram_read_bytes(FIRST_PWD_OFFSET + SIZE_OF_PWD_BLOCK * pwd_index + 6, (uint8_t*)(&pwdAddr), 2);
+	}
+	return pwdAddr;
+}
+
 
 void increment_pwd_counter()
 {
@@ -58,9 +84,21 @@ void increment_pwd_counter()
 	fram_write_bytes(FIRST_PWD_OFFSET + SIZE_OF_PWD_BLOCK * CURRENT_PASSWORD_ID + 8, (uint8_t*)(&count), 2);
 }
 
+void set_pwd_name(char* pwd_name)
+{
+	fram_write_bytes(FIRST_PWD_OFFSET + SIZE_OF_PWD_BLOCK * CURRENT_PASSWORD_ID + 10, (uint8_t*)pwd_name, 32);
+}
+
+void read_pwd_name(char* pwd_name, uint16_t pwd_index)
+{
+	fram_read_bytes(FIRST_PWD_OFFSET + SIZE_OF_PWD_BLOCK * pwd_index + 10, (uint8_t*)pwd_name, 32);
+}
+
 void generate_password(char* output)
 {
-
+	uint8_t i = 0;
+	for(; i < 32; ++i)
+		output[i] = 'A';
 }
 
 void change_password()

@@ -24,6 +24,7 @@
 
 #include "Globals.h"
 #include "Authentification.h"
+#include "Passwords.h"
 
 void init_hardware()
 {
@@ -75,6 +76,10 @@ int main()
   fram_read_bytes(1, (uint8_t*)(&FIRST_PWD_UTIL), 2);
   fram_read_bytes(3, (uint8_t*)(&FIRST_PWD_ALPHA), 2);
   fram_read_bytes(5, (uint8_t*)(&NUM_PWD), 2);
+
+  goto_first_pwd();
+
+  
 
   oled_display();
   wait_for_valid_card();

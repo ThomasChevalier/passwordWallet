@@ -3,11 +3,16 @@
 #include <string.h>
 
 #include "Authentification.h"
+#include "Passwords.h"
+#include "Keyboard.h"
+#include "Globals.h"
+
 #include "Events.h"
 #include "States.h"
 
-#include "Oled.h"
 #include "String.h"
+#include "Oled.h"
+
 
 
 DECLARE_TRANSITION(STATE_INIT)
@@ -27,30 +32,91 @@ DECLARE_TRANSITION(STATE_MAIN)
 
 	if(event & EVENT_BUTTON_1)
 	{
-
+		CURRENT_PASSWORD_ID = prev_pwd(CURRENT_PASSWORD_ID);
+		read_pwd_name(PWD_NAME_1, prev_pwd(CURRENT_PASSWORD_ID));
+		read_pwd_name(PWD_NAME_2, CURRENT_PASSWORD_ID);
+		read_pwd_name(PWD_NAME_3, next_pwd(CURRENT_PASSWORD_ID));
 	}
 	else if(event & EVENT_BUTTON_2)
 	{
+		keyboard_send((char*)CURRENT_PASSWORD_DATA, strlen((char*)CURRENT_PASSWORD_DATA));
 	}
 	else if(event & EVENT_BUTTON_3)
 	{
-
+		CURRENT_PASSWORD_ID = next_pwd(CURRENT_PASSWORD_ID);
+		read_pwd_name(PWD_NAME_1, prev_pwd(CURRENT_PASSWORD_ID));
+		read_pwd_name(PWD_NAME_2, CURRENT_PASSWORD_ID);
+		read_pwd_name(PWD_NAME_3, next_pwd(CURRENT_PASSWORD_ID));
 	}
 	else if(event & EVENT_BUTTON_4)
 	{
-
+		return STATE_BROWSE;
 	}
 
 	return STATE_MAIN;
 }
 
+void draw_browse_dock(char letter)
+{
+	uint8_t x = 0;
+	uint8_t y = 0;
+	for(; y < 64; ++y)
+	{
+		for(x = 0; x < 7; ++x)
+		{
+			oled_draw_pixel(x,y,BLACK);
+		}
+	}
+	oled_v_line(7, 0, 64, WHITE);
+	x = letter - 3;
+	y = 0;
+	for(; x <= letter + 3; ++x )
+	{
+		char c = x;
+		if(x < '@')
+			c += '@';
+		if(x > 'Z')
+			c-='@';
+		oled_draw_char(1, y*9, c);
+		++y;
+	}
+	for(y = 0; y < 9; ++y)
+		oled_h_line(0, 27+y, 7, INVERSE);
+	oled_display();
+}
+
+
 DECLARE_TRANSITION(STATE_BROWSE)
 {
+	static char letter = '@';
 
+	draw_browse_dock(letter);
+
+	if(event & EVENT_USB_DISCONNECTED)
+		return STATE_SAVE;
+
+	if(event & EVENT_BUTTON_1)
+	{
+		letter = (letter == '@') ? 'Z' : letter - 1;
+		draw_browse_dock(letter);
+	}
+	else if(event & EVENT_BUTTON_2)
+	{
+		return STATE_MAIN;
+	}
+	else if(event & EVENT_BUTTON_3)
+	{
+		letter = (letter == 'Z') ? '@' : letter + 1;
+		draw_browse_dock(letter);
+	}
+	else if(event & EVENT_BUTTON_4)
+	{
+		return STATE_OPTION;
+	}
 	return STATE_BROWSE;
 }
 
-void drawOptionMenu(uint8_t currentChoice)
+void draw_option_menu(uint8_t currentChoice)
 {
 	const char* strTable[6] = {
 	str_option_genNew,
@@ -94,7 +160,7 @@ DECLARE_TRANSITION(STATE_OPTION)
 		return STATE_SAVE;
 
 	oled_clear_display();
-	drawOptionMenu(currentChoice);
+	draw_option_menu(currentChoice);
 	oled_display();
 
 	if(event & EVENT_BUTTON_1)
@@ -102,7 +168,7 @@ DECLARE_TRANSITION(STATE_OPTION)
 		// Looping
 		currentChoice = (currentChoice == 0) ? numberOfChoice-1 : currentChoice - 1;
 		oled_clear_display();
-		drawOptionMenu(currentChoice);
+		draw_option_menu(currentChoice);
 		oled_display();
 		return STATE_OPTION;
 	}
@@ -138,7 +204,7 @@ DECLARE_TRANSITION(STATE_OPTION)
 		// Looping
 		currentChoice = (currentChoice == numberOfChoice-1) ? 0 : currentChoice + 1;
 		oled_clear_display();
-		drawOptionMenu(currentChoice);
+		draw_option_menu(currentChoice);
 		oled_display();
 		return STATE_OPTION;
 	}
