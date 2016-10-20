@@ -11,6 +11,7 @@ typedef enum {
 	STATE_BROWSE,
 	STATE_OPTION,
 	STATE_SAVE,
+	STATE_TYPING,
 	// ...
 	NUM_STATES
 } State_type;
