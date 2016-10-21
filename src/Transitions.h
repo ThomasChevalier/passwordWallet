@@ -12,4 +12,8 @@ DECLARE_TRANSITION(STATE_BROWSE);
 DECLARE_TRANSITION(STATE_OPTION);
 DECLARE_TRANSITION(STATE_SAVE);
 
+// Drawing functions
+void draw_main_menu();
+void draw_browse_dock(char letter, uint8_t highlight);
+void draw_option_menu(uint8_t currentChoice);
 #endif // TRANSITIONS_HEADER_THOMAS_CHEVALIER

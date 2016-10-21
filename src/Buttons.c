@@ -7,9 +7,7 @@
 void buttons_update_event()
 {
     uint8_t butts = buttons_pressed();
-    cli();
     GLOBALS_EVENTS |= butts;
-    sei();
 }
 
 void buttons_setup_hardware()
@@ -30,7 +28,7 @@ void buttons_setup_hardware()
 unsigned char buttons_pressed()
 {
     uint8_t rep = 0;
-    // Check the 3 buttons and write corresponding byte
+    // Check the 4 buttons and write corresponding byte
     if (BUTTON_1_PIN & (1<<BUTTON_1_PIN_NUM))
     {
     	rep |= EVENT_BUTTON_1;

@@ -21,7 +21,7 @@
 
 uint8_t _oled_rotation = 0;
 
-static uint8_t buffer[SSD1306_LCDHEIGHT * SSD1306_LCDWIDTH / 8] =
+static uint8_t buffer[1024] =
 {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x80, 0xC0, 0xC0, 0xE0, 0x70, 0x70, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -339,9 +339,9 @@ void oled_display(void)
     oled_deselect();
     oled_dc_high();
     oled_select();
-
+    
     uint16_t i=0;
-    for (; i<1024; i++)
+    for (; i<1024; ++i)
     {
         spi_send_8(buffer[i]);
     }
@@ -352,7 +352,6 @@ void oled_display(void)
 // clear everything
 void oled_clear_display(void)
 {
-
     uint16_t i=0;
     for (; i<1024; ++i)
     {
@@ -375,7 +374,7 @@ void oled_h_line(uint8_t x, uint8_t y, uint8_t w, uint8_t color)
     uint8_t i = 0;
     for(; i < w; ++i)
     {
-        oled_draw_pixel(x+w, y, color);
+        oled_draw_pixel(x+i, y, color);
     }
 }
 

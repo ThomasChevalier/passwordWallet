@@ -4,20 +4,13 @@
 #include <util/delay.h>  // for _delay_ms()
 #include <string.h>
 
-#define sbi(x,y) x |= _BV(y) //set bit
-#define cbi(x,y) x &= ~(_BV(y)) //clear bit
-#define tbi(x,y) x ^= _BV(y) //toggle bit
-#define is_high(x,y) ((x & _BV(y)) == _BV(y)) //check if the input pin is high
-#define is_low(x,y) ((x & _BV(y)) == 0) //check if the input pin is low
-
-
 #include "Spi.h"
 #include "Oled.h"
 #include "Rfid.h"
 #include "Fram.h"
 #include "Keyboard.h"
 #include "Buttons.h"
-
+// 
 #include "States.h"
 #include "Transitions.h"
 #include "Events.h"
@@ -28,9 +21,11 @@
 
 void init_hardware()
 {
+  // Because spi is master mode, PB0 (aka Slave Select pin) should be an output, or, if it is an output, should be in high state
+  DDRB |= 0x01;
   fram_setup_hardware();
   oled_setup_hardware();
-    //rfid_setup_hardware();
+  //rfid_setup_hardware();
   spi_setup_hardware();
   buttons_setup_hardware();
 }
@@ -41,6 +36,7 @@ void init_software()
   //rfid_init();
   //keyboard_init();
 }
+
 
 int main()
 {
@@ -66,15 +62,18 @@ int main()
     EVENT_USB_CONNECTED,                       TRANSITION(STATE_SAVE)
   };
 
-  State* currentState = &states[0];
+  State* currentState = &states[STATE_INIT];
 
   init_hardware();
   init_software();
 
+  // For test
+  oled_clear_display();
   oled_display();
-  wait_for_valid_card();
 
-
+  // For test
+  //wait_for_valid_card();
+  eventHappen(EVENT_PASSWORD_ENTERED);
   while(RUNNING)
   {
     buttons_update_event();
@@ -85,5 +84,6 @@ int main()
        uint8_t newState = currentState->transition(event);
        currentState = &states[newState];
     }
+    _delay_ms(100);
   }
 }
