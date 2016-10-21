@@ -25,12 +25,27 @@ DECLARE_TRANSITION(STATE_INIT)
 		wait_for_valid_card();
 		return STATE_INIT;
 	}
+	
+	// Read the flags and data from fram
+  	OPTIONS_FLAG = fram_read_byte(0);
+  	fram_read_bytes(1, (uint8_t*)(&FIRST_PWD_UTIL), 2);
+ 	fram_read_bytes(3, (uint8_t*)(&FIRST_PWD_ALPHA), 2);
+ 	fram_read_bytes(5, (uint8_t*)(&NUM_PWD), 2);
+
+  	goto_first_pwd();
+	read_all_names();
+
 	return STATE_MAIN;
 }
 
 void draw_main_menu()
 {
 	draw_browse_dock(0);
+	oled_h_line(8, 20, 120, WHITE);
+	oled_h_line(8, 43, 120, WHITE);
+	oled_draw_text(10, 2 , PWD_NAME_1, 0);
+	oled_draw_text(10, 23, PWD_NAME_2, 0);
+	oled_draw_text(10, 46, PWD_NAME_3, 0);
 }
 
 DECLARE_TRANSITION(STATE_MAIN)
@@ -38,12 +53,13 @@ DECLARE_TRANSITION(STATE_MAIN)
 	if(event & EVENT_USB_DISCONNECTED)
 		return STATE_SAVE;
 
+	draw_main_menu();
+
 	if(event & EVENT_BUTTON_1)
 	{
 		CURRENT_PASSWORD_ID = prev_pwd(CURRENT_PASSWORD_ID);
-		read_pwd_name(PWD_NAME_1, prev_pwd(CURRENT_PASSWORD_ID));
-		read_pwd_name(PWD_NAME_2, CURRENT_PASSWORD_ID);
-		read_pwd_name(PWD_NAME_3, next_pwd(CURRENT_PASSWORD_ID));
+		read_all_names();
+		draw_main_menu();
 	}
 	else if(event & EVENT_BUTTON_2)
 	{
@@ -52,9 +68,8 @@ DECLARE_TRANSITION(STATE_MAIN)
 	else if(event & EVENT_BUTTON_3)
 	{
 		CURRENT_PASSWORD_ID = next_pwd(CURRENT_PASSWORD_ID);
-		read_pwd_name(PWD_NAME_1, prev_pwd(CURRENT_PASSWORD_ID));
-		read_pwd_name(PWD_NAME_2, CURRENT_PASSWORD_ID);
-		read_pwd_name(PWD_NAME_3, next_pwd(CURRENT_PASSWORD_ID));
+		read_all_names();
+		draw_main_menu();
 	}
 	else if(event & EVENT_BUTTON_4)
 	{

@@ -17,12 +17,14 @@ void buttons_setup_hardware()
 	// Buttons' pins defined as input
 	BUTTON_1_DDR &= ~(1 << BUTTON_1_PIN_NUM);
 	BUTTON_2_DDR &= ~(1 << BUTTON_2_PIN_NUM);
-	BUTTON_3_DDR &= ~(1 << BUTTON_3_PIN_NUM);
+    BUTTON_3_DDR &= ~(1 << BUTTON_3_PIN_NUM);
+	BUTTON_4_DDR &= ~(1 << BUTTON_4_PIN_NUM);
 
     // Active pull-up resistors
 	BUTTON_1_PORT |= (1 << BUTTON_1_PIN_NUM);
 	BUTTON_2_PORT |= (1 << BUTTON_2_PIN_NUM);
-	BUTTON_3_PORT |= (1 << BUTTON_3_PIN_NUM);
+    BUTTON_3_PORT |= (1 << BUTTON_3_PIN_NUM);
+	BUTTON_4_PORT |= (1 << BUTTON_4_PIN_NUM);
 }
 
 unsigned char buttons_pressed()
@@ -39,10 +41,14 @@ unsigned char buttons_pressed()
     }
     if (BUTTON_3_PIN & (1<<BUTTON_3_PIN_NUM))
     {
-    	rep |= EVENT_BUTTON_3;
+        rep |= EVENT_BUTTON_3;
+    }
+    if (BUTTON_4_PIN & (1<<BUTTON_4_PIN_NUM))
+    {
+    	rep |= EVENT_BUTTON_4;
     }
 
-    rep ^= 0x07; // Inverse result because here 1 <=> released (input pullup) and we want 1 <=> pressed
+    rep ^= 0x0F; // Inverse result because here 1 <=> released (input pullup) and we want 1 <=> pressed
 
     return rep;
 }

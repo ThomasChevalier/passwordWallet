@@ -71,20 +71,13 @@ int main()
   init_hardware();
   init_software();
 
-  // Read the flags and data from fram
-  OPTIONS_FLAG = fram_read_byte(0);
-  fram_read_bytes(1, (uint8_t*)(&FIRST_PWD_UTIL), 2);
-  fram_read_bytes(3, (uint8_t*)(&FIRST_PWD_ALPHA), 2);
-  fram_read_bytes(5, (uint8_t*)(&NUM_PWD), 2);
-
-  goto_first_pwd();
-
   oled_display();
   wait_for_valid_card();
 
 
   while(RUNNING)
   {
+    buttons_update_event();
     uint8_t event = getEvents(); // Mask of events
 
     if(currentState->event_mask & event)

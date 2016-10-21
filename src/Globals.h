@@ -30,6 +30,10 @@ extern char PWD_NAME_1[32];
 extern char PWD_NAME_2[32];
 extern char PWD_NAME_3[32];
 
+extern char USR_NAME_1[32];
+extern char USR_NAME_2[32];
+extern char USR_NAME_3[32];
+
 // Fram data
 // The options flag stored in fram
 extern uint8_t OPTIONS_FLAG;

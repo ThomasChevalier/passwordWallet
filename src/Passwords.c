@@ -26,6 +26,13 @@ void read_password()
 	}
 }
 
+void set_password(uint8_t* password, uint8_t pwd_len)
+{
+	//uint8_t iv[16];
+	//uint8_t aes[32];
+	
+}
+
 void goto_first_pwd()
 {
 	uint8_t sortingMethod = (OPTIONS_FLAG >> 1) & 0x03;
@@ -92,6 +99,13 @@ void set_pwd_name(char* pwd_name)
 void read_pwd_name(char* pwd_name, uint16_t pwd_index)
 {
 	fram_read_bytes(FIRST_PWD_OFFSET + SIZE_OF_PWD_BLOCK * pwd_index + 10, (uint8_t*)pwd_name, 32);
+}
+
+void read_all_names()
+{
+	read_pwd_name(PWD_NAME_1, prev_pwd(CURRENT_PASSWORD_ID));
+	read_pwd_name(PWD_NAME_2, CURRENT_PASSWORD_ID);
+	read_pwd_name(PWD_NAME_3, next_pwd(CURRENT_PASSWORD_ID));
 }
 
 void generate_password(char* output)
