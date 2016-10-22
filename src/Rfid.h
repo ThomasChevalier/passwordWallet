@@ -250,9 +250,9 @@ StatusCode rfid_pcd_transceive_data(uint8_t *sendData, uint8_t sendLen, uint8_t 
 StatusCode rfid_pcd_communicate_with_PICC(uint8_t command, uint8_t waitIRq, uint8_t *sendData, uint8_t sendLen, uint8_t *backData/* = NULL*/, uint8_t *backLen/* = NULL*/, uint8_t *validBits/* = NULL*/, uint8_t rxAlign/* = 0*/, uint8_t /*bool*/ checkCRC/* = false*/);
 
 StatusCode rfid_PICC_requestA(uint8_t *bufferATQA, uint8_t *bufferSize);
-StatusCode rfid_PICC_wakeupA(uint8_t *bufferATQA, uint8_t *bufferSize);
-StatusCode rfid_PICC_REQA_or_WUPA(uint8_t command, uint8_t *bufferATQA, uint8_t *bufferSize);
-StatusCode rfid_PICC_select(Uid *uid, uint8_t validBits/* = 0 */);
+// StatusCode rfid_PICC_wakeupA(uint8_t *bufferATQA, uint8_t *bufferSize);
+// StatusCode rfid_PICC_REQA_or_WUPA(uint8_t command, uint8_t *bufferATQA, uint8_t *bufferSize);
+StatusCode rfid_PICC_select(Uid *uid);
 StatusCode rfid_PICC_haltA();
 
 // Functions for communicating with MIFARE PICCs
@@ -260,12 +260,12 @@ StatusCode rfid_pcd_authenticate(uint8_t command, uint8_t blockAddr, MIFARE_Key 
 void rfid_pcd_stopCrypto1();
 StatusCode rfid_MIFARE_read(uint8_t blockAddr, uint8_t *buffer, uint8_t *bufferSize);
 StatusCode rfid_MIFARE_write(uint8_t blockAddr, uint8_t *buffer, uint8_t bufferSize);
-StatusCode rfid_MIFARE_decrement(uint8_t blockAddr, long delta);
-StatusCode rfid_MIFARE_increment(uint8_t blockAddr, long delta);
-StatusCode rfid_MIFARE_restore(uint8_t blockAddr);
-StatusCode rfid_MIFARE_transfer(uint8_t blockAddr);
-StatusCode rfid_MIFARE_getValue(uint8_t blockAddr, long *value);
-StatusCode rfid_MIFARE_setValue(uint8_t blockAddr, long value);
+// StatusCode rfid_MIFARE_decrement(uint8_t blockAddr, long delta);
+// StatusCode rfid_MIFARE_increment(uint8_t blockAddr, long delta);
+// StatusCode rfid_MIFARE_restore(uint8_t blockAddr);
+// StatusCode rfid_MIFARE_transfer(uint8_t blockAddr);
+// StatusCode rfid_MIFARE_getValue(uint8_t blockAddr, long *value);
+// StatusCode rfid_MIFARE_setValue(uint8_t blockAddr, long value);
 //StatusCode rfid_PCD_NTAG216_AUTH(uint8_t *passWord, uint8_t pACK[]);
 
 
@@ -276,15 +276,15 @@ StatusCode rfid_pcd_MIFARE_transceive(uint8_t *sendData, uint8_t sendLen, uint8_
 //static PICC_Type rfid_PICC_getType(uint8_t sak);
 
 // Advanced functions for MIFARE
-void rfid_MIFARE_setAccessBits(uint8_t *accessBitBuffer, uint8_t g0, uint8_t g1, uint8_t g2, uint8_t g3);
-uint8_t /* bool */ rfid_MIFARE_openUidBackdoor();
-uint8_t /* bool */ rfid_MIFARE_setUid(uint8_t *newUid, uint8_t uidSize);
-uint8_t /* bool */ rfid_MIFARE_unbrickUidSector();
+//void rfid_MIFARE_setAccessBits(uint8_t *accessBitBuffer, uint8_t g0, uint8_t g1, uint8_t g2, uint8_t g3);
+//uint8_t /* bool */ rfid_MIFARE_openUidBackdoor();
+//uint8_t /* bool */ rfid_MIFARE_setUid(uint8_t *newUid, uint8_t uidSize);
+//uint8_t /* bool */ rfid_MIFARE_unbrickUidSector();
 
 // Convenience functions - does not add extra functionality
 uint8_t /* bool */ rfid_PICC_IsNewCardPresent();
 uint8_t /* bool */ rfid_PICC_ReadCardSerial();
 
-StatusCode rfid_MIFARE_twoStepHelper(uint8_t command, uint8_t blockAddr, long data);
+//StatusCode rfid_MIFARE_twoStepHelper(uint8_t command, uint8_t blockAddr, long data);
 
 #endif // RFID_HEADER_THOMAS_CHEVALIER

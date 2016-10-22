@@ -394,48 +394,22 @@ StatusCode rfid_PICC_requestA(	uint8_t *bufferATQA,	///< The buffer to store the
                                 uint8_t *bufferSize	///< Buffer size, at least two uint8_ts. Also number of uint8_ts returned if STATUS_OK.
                              )
 {
-    return rfid_PICC_REQA_or_WUPA(PICC_CMD_REQA, bufferATQA, bufferSize);
-}
-
-/**
- * Transmits a Wake-UP command, Type A. Invites PICCs in state IDLE and HALT to go to READY(*) and prepare for anticollision or selection. 7 bit frame.
- * Beware: When two PICCs are in the field at the same time I often get STATUS_TIMEOUT - probably due do bad antenna design.
- *
- * @return STATUS_OK on success, STATUS_??? otherwise.
- */
-StatusCode rfid_PICC_wakeupA(	uint8_t *bufferATQA,	///< The buffer to store the ATQA (Answer to request) in
-                                uint8_t *bufferSize	///< Buffer size, at least two uint8_ts. Also number of uint8_ts returned if STATUS_OK.
-                            )
-{
-    return rfid_PICC_REQA_or_WUPA(PICC_CMD_WUPA, bufferATQA, bufferSize);
-} // End PICC_WakeupA()
-
-/**
- * Transmits REQA or WUPA commands.
- * Beware: When two PICCs are in the field at the same time I often get STATUS_TIMEOUT - probably due do bad antenna design.
- *
- * @return STATUS_OK on success, STATUS_??? otherwise.
- */
-StatusCode rfid_PICC_REQA_or_WUPA(	uint8_t command, 		///< The command to send - PICC_CMD_REQA or PICC_CMD_WUPA
-                                    uint8_t *bufferATQA,	///< The buffer to store the ATQA (Answer to request) in
-                                    uint8_t *bufferSize	///< Buffer size, at least two uint8_ts. Also number of uint8_ts returned if STATUS_OK.
-                                 )
-{
+    uint8_t command = PICC_CMD_REQA;
     uint8_t validBits;
     StatusCode status;
 
-    if (bufferATQA == NULL || *bufferSize < 2)  	// The ATQA response is 2 uint8_ts long.
+    if (bufferATQA == NULL || *bufferSize < 2)      // The ATQA response is 2 uint8_ts long.
     {
         return STATUS_NO_ROOM;
     }
-    rfid_pcd_clear_register_bit_mask(CollReg, 0x80);		// ValuesAfterColl=1 => Bits received after collision are cleared.
-    validBits = 7;									// For REQA and WUPA we need the short frame format - transmit only 7 bits of the last (and only) uint8_t. TxLastBits = BitFramingReg[2..0]
+    rfid_pcd_clear_register_bit_mask(CollReg, 0x80);        // ValuesAfterColl=1 => Bits received after collision are cleared.
+    validBits = 7;                                  // For REQA and WUPA we need the short frame format - transmit only 7 bits of the last (and only) uint8_t. TxLastBits = BitFramingReg[2..0]
     status = rfid_pcd_transceive_data(&command, 1, bufferATQA, bufferSize, &validBits, 0, false);
     if (status != STATUS_OK)
     {
         return status;
     }
-    if (*bufferSize != 2 || validBits != 0)  		// ATQA must be exactly 16 bits.
+    if (*bufferSize != 2 || validBits != 0)         // ATQA must be exactly 16 bits.
     {
         return STATUS_ERROR;
     }
@@ -459,13 +433,12 @@ StatusCode rfid_PICC_REQA_or_WUPA(	uint8_t command, 		///< The command to send -
  *
  * @return STATUS_OK on success, STATUS_??? otherwise.
  */
-StatusCode rfid_PICC_select(	Uid *uid,			///< Pointer to Uid struct. Normally output, but can also be used to supply a known UID.
-                                uint8_t validBits		///< The number of known UID bits supplied in *uid. Normally 0. If set you must also supply uid->size.
+StatusCode rfid_PICC_select(	Uid *uid			///< Pointer to Uid struct. Normally output, but can also be used to supply a known UID.
                            )
 {
     uint8_t /*bool*/ uidComplete;
     uint8_t /*bool*/ selectDone;
-    uint8_t /*bool*/ useCascadeTag;
+  //  uint8_t /*bool*/ useCascadeTag;
     uint8_t cascadeLevel = 1;
     StatusCode result;
     uint8_t count;
@@ -501,12 +474,6 @@ StatusCode rfid_PICC_select(	Uid *uid,			///< Pointer to Uid struct. Normally ou
     //						2			CT		uid3	uid4	uid5
     //						3			uid6	uid7	uid8	uid9
 
-    // Sanity checks
-    if (validBits > 80)
-    {
-        return STATUS_INVALID;
-    }
-
     // Prepare MFRC522
     rfid_pcd_clear_register_bit_mask(CollReg, 0x80);		// ValuesAfterColl=1 => Bits received after collision are cleared.
 
@@ -520,19 +487,16 @@ StatusCode rfid_PICC_select(	Uid *uid,			///< Pointer to Uid struct. Normally ou
         case 1:
             buffer[0] = PICC_CMD_SEL_CL1;
             uidIndex = 0;
-            useCascadeTag = validBits && uid->size > 4;	// When we know that the UID has more than 4 uint8_ts
             break;
 
         case 2:
             buffer[0] = PICC_CMD_SEL_CL2;
             uidIndex = 3;
-            useCascadeTag = validBits && uid->size > 7;	// When we know that the UID has more than 7 uint8_ts
             break;
 
         case 3:
             buffer[0] = PICC_CMD_SEL_CL3;
             uidIndex = 6;
-            useCascadeTag = false;						// Never used in CL3.
             break;
 
         default:
@@ -540,36 +504,10 @@ StatusCode rfid_PICC_select(	Uid *uid,			///< Pointer to Uid struct. Normally ou
             break;
         }
 
-        // How many UID bits are known in this Cascade Level?
-        currentLevelKnownBits = validBits - (8 * uidIndex);
-        if (currentLevelKnownBits < 0)
-        {
-            currentLevelKnownBits = 0;
-        }
+        currentLevelKnownBits = 0;
         // Copy the known bits from uid->uiduint8_t[] to buffer[]
         index = 2; // destination index in buffer[]
-        if (useCascadeTag)
-        {
-            buffer[index++] = PICC_CMD_CT;
-        }
-        uint8_t uint8_tsToCopy = currentLevelKnownBits / 8 + (currentLevelKnownBits % 8 ? 1 : 0); // The number of uint8_ts needed to represent the known bits for this level.
-        if (uint8_tsToCopy)
-        {
-            uint8_t maxuint8_ts = useCascadeTag ? 3 : 4; // Max 4 uint8_ts in each Cascade Level. Only 3 left if we use the Cascade Tag
-            if (uint8_tsToCopy > maxuint8_ts)
-            {
-                uint8_tsToCopy = maxuint8_ts;
-            }
-            for (count = 0; count < uint8_tsToCopy; count++)
-            {
-                buffer[index++] = uid->uidByte[uidIndex + count];
-            }
-        }
-        // Now that the data has been copied we need to include the 8 bits in CT in currentLevelKnownBits
-        if (useCascadeTag)
-        {
-            currentLevelKnownBits += 8;
-        }
+        uint8_t uint8_tsToCopy = 0;
 
         // Repeat anti collision loop until we can transmit all UID bits + BCC and receive a SAK - max 32 iterations.
         selectDone = false;
@@ -578,7 +516,6 @@ StatusCode rfid_PICC_select(	Uid *uid,			///< Pointer to Uid struct. Normally ou
             // Find out how many bits and uint8_ts to send and receive.
             if (currentLevelKnownBits >= 32)   // All UID bits in this Cascade Level are known. This is a SELECT.
             {
-                //Serial.print(F("SELECT: currentLevelKnownBits=")); Serial.println(currentLevelKnownBits, DEC);
                 buffer[1] = 0x70; // NVB - Number of Valid Bits: Seven whole uint8_ts
                 // Calculate BCC - Block Check Character
                 buffer[6] = buffer[2] ^ buffer[3] ^ buffer[4] ^ buffer[5];
@@ -876,214 +813,6 @@ StatusCode rfid_MIFARE_write(	uint8_t blockAddr, ///< MIFARE Classic: The block 
     return STATUS_OK;
 }
 
-/**
- * MIFARE Decrement subtracts the delta from the value of the addressed block, and stores the result in a volatile memory.
- * For MIFARE Classic only. The sector containing the block must be authenticated before calling this function.
- * Only for blocks in "value block" mode, ie with access bits [C1 C2 C3] = [110] or [001].
- * Use MIFARE_Transfer() to store the result in a block.
- *
- * @return STATUS_OK on success, STATUS_??? otherwise.
- */
-StatusCode rfid_MIFARE_decrement(	uint8_t blockAddr, ///< The block (0-0xff) number.
-                                    long delta		///< This number is subtracted from the value of block blockAddr.
-                                )
-{
-    return rfid_MIFARE_twoStepHelper(PICC_CMD_MF_DECREMENT, blockAddr, delta);
-}
-
-/**
- * MIFARE Increment adds the delta to the value of the addressed block, and stores the result in a volatile memory.
- * For MIFARE Classic only. The sector containing the block must be authenticated before calling this function.
- * Only for blocks in "value block" mode, ie with access bits [C1 C2 C3] = [110] or [001].
- * Use MIFARE_Transfer() to store the result in a block.
- *
- * @return STATUS_OK on success, STATUS_??? otherwise.
- */
-StatusCode rfid_MIFARE_increment(	uint8_t blockAddr, ///< The block (0-0xff) number.
-                                    long delta		///< This number is added to the value of block blockAddr.
-                                )
-{
-    return rfid_MIFARE_twoStepHelper(PICC_CMD_MF_INCREMENT, blockAddr, delta);
-} // End MIFARE_Increment()
-
-/**
- * MIFARE Restore copies the value of the addressed block into a volatile memory.
- * For MIFARE Classic only. The sector containing the block must be authenticated before calling this function.
- * Only for blocks in "value block" mode, ie with access bits [C1 C2 C3] = [110] or [001].
- * Use MIFARE_Transfer() to store the result in a block.
- *
- * @return STATUS_OK on success, STATUS_??? otherwise.
- */
-StatusCode rfid_MIFARE_restore(	uint8_t blockAddr ///< The block (0-0xff) number.
-                              )
-{
-    // The datasheet describes Restore as a two step operation, but does not explain what data to transfer in step 2.
-    // Doing only a single step does not work, so I chose to transfer 0L in step two.
-    return rfid_MIFARE_twoStepHelper(PICC_CMD_MF_RESTORE, blockAddr, 0L);
-}
-
-/**
- * Helper function for the two-step MIFARE Classic protocol operations Decrement, Increment and Restore.
- *
- * @return STATUS_OK on success, STATUS_??? otherwise.
- */
-StatusCode rfid_MIFARE_twoStepHelper(	uint8_t command,	///< The command to use
-                                        uint8_t blockAddr,	///< The block (0-0xff) number.
-                                        long data		///< The data to transfer in step 2
-                                    )
-{
-    StatusCode result;
-    uint8_t cmdBuffer[2]; // We only need room for 2 uint8_ts.
-
-    // Step 1: Tell the PICC the command and block address
-    cmdBuffer[0] = command;
-    cmdBuffer[1] = blockAddr;
-    result = rfid_pcd_MIFARE_transceive(cmdBuffer, 2, false); // Adds CRC_A and checks that the response is MF_ACK.
-    if (result != STATUS_OK)
-    {
-        return result;
-    }
-
-    // Step 2: Transfer the data
-    result = rfid_pcd_MIFARE_transceive(	(uint8_t *)&data, 4, true); // Adds CRC_A and accept timeout as success.
-    if (result != STATUS_OK)
-    {
-        return result;
-    }
-
-    return STATUS_OK;
-}
-
-/**
- * MIFARE Transfer writes the value stored in the volatile memory into one MIFARE Classic block.
- * For MIFARE Classic only. The sector containing the block must be authenticated before calling this function.
- * Only for blocks in "value block" mode, ie with access bits [C1 C2 C3] = [110] or [001].
- *
- * @return STATUS_OK on success, STATUS_??? otherwise.
- */
-StatusCode rfid_MIFARE_transfer(	uint8_t blockAddr ///< The block (0-0xff) number.
-                               )
-{
-    StatusCode result;
-    uint8_t cmdBuffer[2]; // We only need room for 2 uint8_ts.
-
-    // Tell the PICC we want to transfer the result into block blockAddr.
-    cmdBuffer[0] = PICC_CMD_MF_TRANSFER;
-    cmdBuffer[1] = blockAddr;
-    result = rfid_pcd_MIFARE_transceive(cmdBuffer, 2, false); // Adds CRC_A and checks that the response is MF_ACK.
-    if (result != STATUS_OK)
-    {
-        return result;
-    }
-    return STATUS_OK;
-}
-
-/**
- * Helper routine to read the current value from a Value Block.
- *
- * Only for MIFARE Classic and only for blocks in "value block" mode, that
- * is: with access bits [C1 C2 C3] = [110] or [001]. The sector containing
- * the block must be authenticated before calling this function.
- *
- * @param[in]   blockAddr   The block (0x00-0xff) number.
- * @param[out]  value       Current value of the Value Block.
- * @return STATUS_OK on success, STATUS_??? otherwise.
-  */
-StatusCode rfid_MIFARE_getValue(uint8_t blockAddr, long *value)
-{
-    StatusCode status;
-    uint8_t buffer[18];
-    uint8_t size = sizeof(buffer);
-
-    // Read the block
-    status = rfid_MIFARE_read(blockAddr, buffer, &size);
-    if (status == STATUS_OK)
-    {
-        // Extract the value
-        *value = ((long)(buffer[3])<<24) | ((long)(buffer[2])<<16) | ((long)(buffer[1])<<8) | (long)(buffer[0]);
-    }
-    return status;
-}
-
-/**
- * Helper routine to write a specific value into a Value Block.
- *
- * Only for MIFARE Classic and only for blocks in "value block" mode, that
- * is: with access bits [C1 C2 C3] = [110] or [001]. The sector containing
- * the block must be authenticated before calling this function.
- *
- * @param[in]   blockAddr   The block (0x00-0xff) number.
- * @param[in]   value       New value of the Value Block.
- * @return STATUS_OK on success, STATUS_??? otherwise.
- */
-StatusCode rfid_MIFARE_setValue(uint8_t blockAddr, long value)
-{
-    uint8_t buffer[18];
-
-    // Translate the long into 4 uint8_ts; repeated 2x in value block
-    buffer[0] = buffer[ 8] = (value & 0xFF);
-    buffer[1] = buffer[ 9] = (value & 0xFF00) >> 8;
-    buffer[2] = buffer[10] = (value & 0xFF0000) >> 16;
-    buffer[3] = buffer[11] = (value & 0xFF000000) >> 24;
-    // Inverse 4 uint8_ts also found in value block
-    buffer[4] = ~buffer[0];
-    buffer[5] = ~buffer[1];
-    buffer[6] = ~buffer[2];
-    buffer[7] = ~buffer[3];
-    // Address 2x with inverse address 2x
-    buffer[12] = buffer[14] = blockAddr;
-    buffer[13] = buffer[15] = ~blockAddr;
-
-    // Write the whole data block
-    return rfid_MIFARE_write(blockAddr, buffer, 16);
-}
-
-/**
- * Authenticate with a NTAG216.
- *
- * Only for NTAG216. First implemented by Gargantuanman.
- *
- * @param[in]   passWord   password.
- * @param[in]   pACK       result success???.
- * @return STATUS_OK on success, STATUS_??? otherwise.
- */
-
-/*
-StatusCode rfid_PCD_NTAG216_AUTH(uint8_t* passWord, uint8_t pACK[]) //Authenticate with 32bit password
-{
-StatusCode result;
-uint8_t				cmdBuffer[18]; // We need room for 16 uint8_ts data and 2 uint8_ts CRC_A.
-
-cmdBuffer[0] = 0x1B; //Comando de autentificacion
-
-uint8_t i;
-for (i = 0; i<4; i++)
-	cmdBuffer[i+1] = passWord[i];
-
-result = rfid_pcd_calculate_crc(cmdBuffer, 5, &cmdBuffer[5]);
-
-if (result!=STATUS_OK) {
-	return result;
-}
-
-// Transceive the data, store the reply in cmdBuffer[]
-uint8_t waitIRq		= 0x30;	// RxIRq and IdleIRq
-uint8_t cmdBufferSize	= sizeof(cmdBuffer);
-uint8_t validBits		= 0;
-uint8_t rxlength		= 5;
-result = rfid_pcd_communicate_with_PICC(PCD_Transceive, waitIRq, cmdBuffer, 7, cmdBuffer, &rxlength, &validBits, 0, false);
-
-pACK[0] = cmdBuffer[0];
-pACK[1] = cmdBuffer[1];
-
-if (result!=STATUS_OK) {
-	return result;
-}
-
-return STATUS_OK;
-}
-*/
-
 /////////////////////////////////////////////////////////////////////////////////////
 // Support functions
 /////////////////////////////////////////////////////////////////////////////////////
@@ -1146,233 +875,6 @@ StatusCode rfid_pcd_MIFARE_transceive(	uint8_t *sendData,		///< Pointer to the d
     return STATUS_OK;
 }
 
-/**
- * Translates the SAK (Select Acknowledge) to a PICC type.
- *
- * @return PICC_Type
- */
-/*PICC_Type rfid_PICC_getType(uint8_t sak		///< The SAK uint8_t returned from PICC_Select().
-										) {
-	// http://www.nxp.com/documents/application_note/AN10833.pdf
-	// 3.2 Coding of Select Acknowledge (SAK)
-	// ignore 8-bit (iso14443 starts with LSBit = bit 1)
-	// fixes wrong type for manufacturer Infineon (http://nfc-tools.org/index.php?title=ISO14443A)
-	sak &= 0x7F;
-	switch (sak) {
-		case 0x04:	return PICC_TYPE_NOT_COMPLETE;	// UID not complete
-		case 0x09:	return PICC_TYPE_MIFARE_MINI;
-		case 0x08:	return PICC_TYPE_MIFARE_1K;
-		case 0x18:	return PICC_TYPE_MIFARE_4K;
-		case 0x00:	return PICC_TYPE_MIFARE_UL;
-		case 0x10:
-		case 0x11:	return PICC_TYPE_MIFARE_PLUS;
-		case 0x01:	return PICC_TYPE_TNP3XXX;
-		case 0x20:	return PICC_TYPE_ISO_14443_4;
-		case 0x40:	return PICC_TYPE_ISO_18092;
-		default:	return PICC_TYPE_UNKNOWN;
-	}
-} */
-
-/**
- * Calculates the bit pattern needed for the specified access bits. In the [C1 C2 C3] tuples C1 is MSB (=4) and C3 is LSB (=1).
- */
-void rfid_MIFARE_setAccessBits(	uint8_t *accessBitBuffer,	///< Pointer to uint8_t 6, 7 and 8 in the sector trailer. uint8_ts [0..2] will be set.
-                                uint8_t g0,				///< Access bits [C1 C2 C3] for block 0 (for sectors 0-31) or blocks 0-4 (for sectors 32-39)
-                                uint8_t g1,				///< Access bits C1 C2 C3] for block 1 (for sectors 0-31) or blocks 5-9 (for sectors 32-39)
-                                uint8_t g2,				///< Access bits C1 C2 C3] for block 2 (for sectors 0-31) or blocks 10-14 (for sectors 32-39)
-                                uint8_t g3					///< Access bits C1 C2 C3] for the sector trailer, block 3 (for sectors 0-31) or block 15 (for sectors 32-39)
-                              )
-{
-    uint8_t c1 = ((g3 & 4) << 1) | ((g2 & 4) << 0) | ((g1 & 4) >> 1) | ((g0 & 4) >> 2);
-    uint8_t c2 = ((g3 & 2) << 2) | ((g2 & 2) << 1) | ((g1 & 2) << 0) | ((g0 & 2) >> 1);
-    uint8_t c3 = ((g3 & 1) << 3) | ((g2 & 1) << 2) | ((g1 & 1) << 1) | ((g0 & 1) << 0);
-
-    accessBitBuffer[0] = (~c2 & 0xF) << 4 | (~c1 & 0xF);
-    accessBitBuffer[1] =          c1 << 4 | (~c3 & 0xF);
-    accessBitBuffer[2] =          c3 << 4 | c2;
-}
-
-
-/**
- * Performs the "magic sequence" needed to get Chinese UID changeable
- * Mifare cards to allow writing to sector 0, where the card UID is stored.
- *
- * Note that you do not need to have selected the card through REQA or WUPA,
- * this sequence works immediately when the card is in the reader vicinity.
- * This means you can use this method even on "bricked" cards that your reader does
- * not recognise anymore (see MFRC522::MIFARE_UnbrickUidSector).
- *
- * Of course with non-bricked devices, you're free to select them before calling this function.
- */
-uint8_t /*bool*/ rfid_MIFARE_openUidBackdoor()
-{
-    // Magic sequence:
-    // > 50 00 57 CD (HALT + CRC)
-    // > 40 (7 bits only)
-    // < A (4 bits only)
-    // > 43
-    // < A (4 bits only)
-    // Then you can write to sector 0 without authenticating
-
-    rfid_PICC_haltA(); // 50 00 57 CD
-
-    uint8_t cmd = 0x40;
-    uint8_t validBits = 7; /* Our command is only 7 bits. After receiving card response,
-						  this will contain amount of valid response bits. */
-    uint8_t response[32]; // Card's response is written here
-    uint8_t received;
-    StatusCode status = rfid_pcd_transceive_data(&cmd, (uint8_t)1, response, &received, &validBits, (uint8_t)0, false); // 40
-    if(status != STATUS_OK)
-    {
-        // Card did not respond to 0x40 after HALT command. Are you sure it is a UID changeable one?
-        return false;
-    }
-    if (received != 1 || response[0] != 0x0A)
-    {
-        // Got bad response on backdoor 0x40 command
-        return false;
-    }
-
-    cmd = 0x43;
-    validBits = 8;
-    status = rfid_pcd_transceive_data(&cmd, (uint8_t)1, response, &received, &validBits, (uint8_t)0, false); // 43
-    if(status != STATUS_OK)
-    {
-        // Error in communication at command 0x43, after successfully executing 0x40
-        return false;
-    }
-    if (received != 1 || response[0] != 0x0A)
-    {
-        // Got bad response on backdoor 0x43 command
-        return false;
-    }
-
-    // You can now write to sector 0 without authenticating!
-    return true;
-}
-
-/**
- * Reads entire block 0, including all manufacturer data, and overwrites
- * that block with the new UID, a freshly calculated BCC, and the original
- * manufacturer data.
- *
- * It assumes a default KEY A of 0xFFFFFFFFFFFF.
- * Make sure to have selected the card before this function is called.
- */
-uint8_t rfid_MIFARE_setUid(uint8_t *newUid, uint8_t uidSize)
-{
-
-    // UID + BCC uint8_t can not be larger than 16 together
-    if (!newUid || !uidSize || uidSize > 15)
-    {
-        // New UID buffer empty, size 0, or size > 15 given
-        return false;
-    }
-
-    // Authenticate for reading
-    MIFARE_Key key = {{0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF}};
-    StatusCode status = rfid_pcd_authenticate(PICC_CMD_MF_AUTH_KEY_A, (uint8_t)1, &key, &rfid_uid);
-    if (status != STATUS_OK)
-    {
-
-        if (status == STATUS_TIMEOUT)
-        {
-            // We get a read timeout if no card is selected yet, so let's select one
-
-            // Wake the card up again if sleeping
-//			  uint8_t atqa_answer[2];
-//			  uint8_t atqa_size = 2;
-//			  PICC_WakeupA(atqa_answer, &atqa_size);
-
-            if (!rfid_PICC_IsNewCardPresent() || !rfid_PICC_ReadCardSerial())
-            {
-                // "No card was previously selected, and none are available. Failed to set UID."
-                return false;
-            }
-
-            status = rfid_pcd_authenticate(PICC_CMD_MF_AUTH_KEY_A, (uint8_t)1, &key, &rfid_uid);
-            if (status != STATUS_OK)
-            {
-                // We tried, time to give up
-                // Failed to authenticate to card for reading, could not set UID
-                return false;
-            }
-        }
-        else
-        {
-            // rfid_pcd_authenticate() failed
-            return false;
-        }
-    }
-
-    // Read block 0
-    uint8_t block0_buffer[18];
-    uint8_t uint8_tCount = sizeof(block0_buffer);
-    status = rfid_MIFARE_read((uint8_t)0, block0_buffer, &uint8_tCount);
-    if (status != STATUS_OK)
-    {
-        // MIFARE_Read() failed
-        // Are you sure your KEY A for sector 0 is 0xFFFFFFFFFFFF?
-        return false;
-    }
-
-    // Write new UID to the data we just read, and calculate BCC uint8_t
-    uint8_t bcc = 0;
-    uint8_t i = 0;
-    for (i = 0 ; i < uidSize; i++)
-    {
-        block0_buffer[i] = newUid[i];
-        bcc ^= newUid[i];
-    }
-
-    // Write BCC uint8_t to buffer
-    block0_buffer[uidSize] = bcc;
-
-    // Stop encrypted traffic so we can send raw uint8_ts
-    rfid_pcd_stopCrypto1();
-
-    // Activate UID backdoor
-    if (!rfid_MIFARE_openUidBackdoor())
-    {
-        //Activating the UID backdoor failed.
-        return false;
-    }
-
-    // Write modified block 0 back to card
-    status = rfid_MIFARE_write((uint8_t)0, block0_buffer, (uint8_t)16);
-    if (status != STATUS_OK)
-    {
-        //MIFARE_Write() failed
-        return false;
-    }
-
-    // Wake the card up again
-    uint8_t atqa_answer[2];
-    uint8_t atqa_size = 2;
-    rfid_PICC_wakeupA(atqa_answer, &atqa_size);
-
-    return true;
-}
-
-/**
- * Resets entire sector 0 to zeroes, so the card can be read again by readers.
- */
-uint8_t /*bool*/rfid_MIFARE_unbrickUidSector()
-{
-    rfid_MIFARE_openUidBackdoor();
-
-    uint8_t block0_buffer[] = {0x01, 0x02, 0x03, 0x04, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-
-    // Write modified block 0 back to card
-    StatusCode status = rfid_MIFARE_write((uint8_t)0, block0_buffer, (uint8_t)16);
-    if (status != STATUS_OK)
-    {
-        //"MIFARE_Write() failed
-        return false;
-    }
-    return true;
-}
-
 /////////////////////////////////////////////////////////////////////////////////////
 // Convenience functions - does not add extra functionality
 /////////////////////////////////////////////////////////////////////////////////////
@@ -1401,6 +903,6 @@ uint8_t /*bool*/ rfid_PICC_IsNewCardPresent()
  */
 uint8_t /*bool*/ rfid_PICC_ReadCardSerial()
 {
-    StatusCode result = rfid_PICC_select(&rfid_uid,0);
+    StatusCode result = rfid_PICC_select(&rfid_uid);
     return (result == STATUS_OK);
 } // End

@@ -1,6 +1,7 @@
 #include "Authentification.h"
 
 #include <avr/eeprom.h>
+#include <util/delay.h>
 
 #include "Oled.h"
 #include "Rfid.h"
@@ -70,8 +71,13 @@ void wait_for_valid_card()
             while(1);
         }
 
+        // Necessary to procede to other communications
+        rfid_PICC_haltA();
+        rfid_pcd_stopCrypto1();
+
         oled_draw_hex(0, 0, buffer, 16);
         oled_display();
+        _delay_ms(5000);
 
         uint8_t i = 0;
         for(i = 0; i < 16; ++i)
