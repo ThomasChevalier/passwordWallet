@@ -48,6 +48,7 @@
 
 #define RFID_RES_DDR DDRC
 #define RFID_RES_PORT PORTC
+#define RFID_RES_PIN PINC
 #define RFID_RES_PIN_NUM 6
 
 

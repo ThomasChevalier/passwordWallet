@@ -239,6 +239,7 @@ StatusCode rfid_pcd_calculate_crc(uint8_t *data, uint8_t length, uint8_t *result
 
 // Functions for manipulating the MFRC522
 void rfid_init();
+void rfid_power_down();
 void rfid_pcd_reset();
 void rfid_pcd_antenna_on();
 void rfid_pcd_antenna_off();

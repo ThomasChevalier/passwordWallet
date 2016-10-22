@@ -3,27 +3,39 @@
 
 #include <avr/pgmspace.h>
 
-#define DECLARE_STRING(strName, strValue, strLenght) extern const char strName [strLenght] PROGMEM
-#define DEFINE_STRING(strName, strValue, strLenght) const char strName [strLenght] PROGMEM = strValue
+#define DECLARE_STRING(strName, strValue, strLenght) extern const char strName [] PROGMEM
+#define DEFINE_STRING(strName, strValue, strLenght) const char strName [] PROGMEM = strValue
 
-
+#define STRING_ERROR_CARD 0
 DECLARE_STRING(str_error_card, "Erreur : carte inconnue", 23);
+#define STRING_ERROR_AUTH 1
 DECLARE_STRING(str_error_auth, "Erreur d'authentification", 25);
+#define STRING_ERROR_READ 2
 DECLARE_STRING(str_error_read, "Erreur de lecture", 17);
+#define STRING_ERROR_PWD 3
 DECLARE_STRING(str_error_pwd, "Mauvais mot de passe", 20);
 
-DECLARE_STRING(str_option_genNew, "Regenerer", 9);
+#define STRING_OPTION_REGEN 4
+DECLARE_STRING(str_option_regen, "Regenerer", 9);
+#define STRING_OPTION_CHANGE_PWD 5
 DECLARE_STRING(str_option_changePwd, "Changer le mot de passe", 23);
+#define STRING_OPTION_CHANGE_USR 6
 DECLARE_STRING(str_option_changeUsr, "Changer l'identifiant", 21);
+#define STRING_OPTION_DEL 7
 DECLARE_STRING(str_option_delPwd, "Supprimer", 9);
+#define STRING_OPTION_ADD 8
 DECLARE_STRING(str_option_addPwd, "Nouveau mot de passe", 20);
+#define STRING_OPTION_CHANGE_MASTER_KEY 9
 DECLARE_STRING(str_option_changeMasterKey, "Changer la clef maitre", 22);
 
-DECLARE_STRING(str_misc_changePwd, "Approchez votre carte", 21);
+#define STRING_MISC_APPROACH_CARD 10
+DECLARE_STRING(str_misc_approachCard, "Approchez votre carte", 21);
+
+extern PGM_P const string_table[] PROGMEM;
 
 extern char str_buffer[26];
 
-void str_to_buffer(const char* str_id);
+void str_to_buffer(uint8_t index);
 
 
 #endif // STRING_HEADER_THOMAS_CHEVALIER

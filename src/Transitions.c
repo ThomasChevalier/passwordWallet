@@ -8,6 +8,8 @@
 #include "Keyboard.h"
 #include "Globals.h"
 
+#include "Rfid.h"
+
 #include "Events.h"
 #include "States.h"
 
@@ -23,6 +25,8 @@ DECLARE_TRANSITION(STATE_INIT)
 		return STATE_INIT;
 	}*/
 	
+	rfid_power_down();
+
 	// Read the flags and data from fram
   	OPTIONS_FLAG = fram_read_byte(0);
   	fram_read_bytes(1, (uint8_t*)(&FIRST_PWD_UTIL), 2);
@@ -38,10 +42,7 @@ DECLARE_TRANSITION(STATE_INIT)
 
 void draw_main_menu()
 {
-	//static uint8_t x = 0;
-	//++x;
 	oled_clear_display();
-	//oled_draw_pixel(x,0, WHITE);
 	draw_browse_dock(0,0);
 	oled_h_line(8, 20, 120, WHITE);
 	oled_h_line(8, 43, 120, WHITE);
@@ -153,7 +154,8 @@ DECLARE_TRANSITION(STATE_BROWSE)
 	}
 	else if(event & EVENT_BUTTON_4)
 	{
-		//return STATE_OPTION;
+		draw_option_menu(0);
+		return STATE_OPTION;
 	}
 	return STATE_BROWSE;
 }
@@ -161,56 +163,54 @@ DECLARE_TRANSITION(STATE_BROWSE)
 void draw_option_menu(uint8_t currentChoice)
 {
 	oled_clear_display();
-	const char* strTable[6] = {
-	str_option_genNew,
-	str_option_changePwd,
-	str_option_changeUsr,
-	str_option_delPwd,
-	str_option_addPwd,
-	str_option_changeMasterKey
-	};
 
 	uint8_t pos;
 	if(currentChoice == 0)
 		pos = 0;
 	else if(currentChoice == 5)
-		pos = 3;
-	else
 		pos = 2;
+	else
+		pos = 1;
 
+	if(currentChoice == 5)
+		--currentChoice;
 	if(currentChoice > 0)
 		--currentChoice;
+
+	currentChoice += 4;
 
 	uint8_t i = 0;
 	for(; i < 3; ++i)
 	{
-		str_to_buffer(strTable[currentChoice]);
+		str_to_buffer(currentChoice);
 		++currentChoice;
-		//oled_draw_text(0, i*8, str_buffer, 0);
+		oled_draw_text(0, i*23+2, str_buffer, 0);
 	}
-	for(i = 0; i < 8; ++i)
+	uint8_t l_table[3] = {0, 20, 43};
+	for(i = 0; i < 21; ++i)
 	{
-		oled_h_line(0, pos * 8 + i, 128, INVERSE);
+		oled_h_line(0, l_table[pos] + i, 128, INVERSE);
+	}
+	if(pos == 1)
+	{
+		oled_h_line(0, 41, 128, INVERSE);
+		oled_h_line(0, 42, 128, INVERSE);
 	}
 	oled_display();
 }
 
 DECLARE_TRANSITION(STATE_OPTION)
 {
-	const uint8_t numberOfChoice = 6;
 	static uint8_t currentChoice = 0;
 
 	if(event & EVENT_USB_DISCONNECTED)
 		return STATE_SAVE;
 
-	draw_option_menu(currentChoice);
-
 	if(event & EVENT_BUTTON_1)
 	{
 		// Looping
-		currentChoice = (currentChoice == 0) ? numberOfChoice-1 : currentChoice - 1;
+		currentChoice = (currentChoice == 0) ? 5 : currentChoice - 1;
 		draw_option_menu(currentChoice);
-		return STATE_OPTION;
 	}
 	else if(event & EVENT_BUTTON_2)
 	{
@@ -242,12 +242,12 @@ DECLARE_TRANSITION(STATE_OPTION)
 	else if(event & EVENT_BUTTON_3)
 	{
 		// Looping
-		currentChoice = (currentChoice == numberOfChoice-1) ? 0 : currentChoice + 1;
+		currentChoice = (currentChoice == 5) ? 0 : currentChoice + 1;
 		draw_option_menu(currentChoice);
-		return STATE_OPTION;
 	}
 	else if(event & EVENT_BUTTON_4)
 	{
+		draw_main_menu();
 		return STATE_MAIN;
 	}
 

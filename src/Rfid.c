@@ -181,7 +181,7 @@ void rfid_init()
     rfid_deselect(); // No select the slave yet
 
     // Check if the MFRC522 is in power down mode
-    if((PIND & _BV(PD6)) == 0) // yes
+    if((RFID_RES_PIN & (1<<RFID_RES_PIN_NUM)) == 0) // yes
     {
         rfid_reset_high();
         _delay_ms(50);
@@ -205,6 +205,10 @@ void rfid_init()
     rfid_pcd_antenna_on();						// Enable the antenna driver pins TX1 and TX2 (they were disabled by the reset)
 }
 
+void rfid_power_down()
+{
+    rfid_reset_low();
+}
 
 void rfid_pcd_reset()
 {

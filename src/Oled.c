@@ -606,8 +606,8 @@ uint8_t oled_draw_char(uint8_t x, uint8_t y, uint8_t c)
 
 void oled_draw_text(uint8_t x, uint8_t y, char *str, uint8_t str_len)
 {
-    if( y % 8 != 0)
-        return;
+    //if( y % 8 != 0)
+    //    return;
     if(str_len == 0)
         str_len = strlen(str);
 

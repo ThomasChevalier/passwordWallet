@@ -37,7 +37,7 @@ void wait_for_valid_card()
         // sak == 0x08 <=> MIFARE 1K
         if(rfid_uid.sak != 0x08)
         {
-            str_to_buffer(str_error_card);
+            str_to_buffer(STRING_ERROR_CARD);
             oled_draw_text(0, 0, str_buffer, 0);
             oled_display();
             while(1);
@@ -53,7 +53,7 @@ void wait_for_valid_card()
         status = rfid_pcd_authenticate(PICC_CMD_MF_AUTH_KEY_A, 7, &key, &rfid_uid);
         if(status != STATUS_OK)
         {
-            str_to_buffer(str_error_auth);
+            str_to_buffer(STRING_ERROR_AUTH);
             oled_draw_text(0, 0, str_buffer, 0);
             oled_display();
             while(1);
@@ -65,7 +65,7 @@ void wait_for_valid_card()
         status = rfid_MIFARE_read(4, buffer, &size);
         if(status != STATUS_OK)
         {
-            str_to_buffer(str_error_read);
+            str_to_buffer(STRING_ERROR_READ);
             oled_draw_text(0, 0, str_buffer, 0);
             oled_display();
             while(1);
@@ -74,10 +74,6 @@ void wait_for_valid_card()
         // Necessary to procede to other communications
         rfid_PICC_haltA();
         rfid_pcd_stopCrypto1();
-
-        oled_draw_hex(0, 0, buffer, 16);
-        oled_display();
-        _delay_ms(5000);
 
         uint8_t i = 0;
         for(i = 0; i < 16; ++i)
@@ -117,7 +113,7 @@ uint8_t check_key()
         if(output[verifCounter] != eeprom_read_byte(eeprom_addr))
         {
             oled_clear_display();
-            str_to_buffer(str_error_pwd);
+            str_to_buffer(STRING_ERROR_PWD);
             oled_draw_text(0, 0, str_buffer, 0);
             oled_display();
             return 0;
@@ -129,8 +125,11 @@ uint8_t check_key()
 
 void changeMainPassword()
 {
+    // rfid may be power down
+    rfid_init();
+
     oled_clear_display();
-    str_to_buffer(str_misc_changePwd);
+    str_to_buffer(STRING_MISC_APPROACH_CARD);
     oled_draw_text(0, 0, str_buffer, 0);
     oled_display();
 
