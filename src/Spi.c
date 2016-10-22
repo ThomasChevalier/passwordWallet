@@ -4,8 +4,9 @@
 
 void spi_setup_hardware (void)
 {
-    DDRB |= (1<<PB1) | (1<<PB2); // Init spi pin as output
-    DDRB &= ~(1<<PB3); // Init spi pin as output
+    // Because spi is master mode, PB0 (aka Slave Select pin) should be an output, or, if it is an output, should be in high state
+    DDRB |= (1<<PB0) | (1<<PB1) | (1<<PB2); // Init spi pin as output
+    DDRB &= ~(1<<PB3); // Init spi pin as input
 }
 
 // Shift full array through target device

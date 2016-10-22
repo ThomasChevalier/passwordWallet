@@ -33,8 +33,6 @@ void wait_for_valid_card()
     do
     {
         waitRfidTag();
-        oled_clear_display();
-
         // sak == 0x08 <=> MIFARE 1K
         if(rfid_uid.sak != 0x08)
         {

@@ -10,7 +10,7 @@
 #include "Fram.h"
 #include "Keyboard.h"
 #include "Buttons.h"
-// 
+
 #include "States.h"
 #include "Transitions.h"
 #include "Events.h"
@@ -21,11 +21,9 @@
 
 void init_hardware()
 {
-  // Because spi is master mode, PB0 (aka Slave Select pin) should be an output, or, if it is an output, should be in high state
-  DDRB |= 0x01;
   fram_setup_hardware();
   oled_setup_hardware();
-  //rfid_setup_hardware();
+  rfid_setup_hardware();
   spi_setup_hardware();
   buttons_setup_hardware();
 }
@@ -33,10 +31,20 @@ void init_hardware()
 void init_software()
 {
   oled_init();
-  //rfid_init();
+  rfid_init();
   //keyboard_init();
 }
 
+void blink(uint8_t n)
+{
+  DDRD |= (1<<5);
+  uint8_t i = 0;
+  for(;i < n*2; ++i)
+  {
+    PORTD ^= (1<<5);
+    _delay_ms(10);
+  }
+}
 
 int main()
 {
@@ -68,14 +76,14 @@ int main()
   init_software();
 
   // For test
-  oled_clear_display();
   oled_display();
 
   // For test
-  //wait_for_valid_card();
-  eventHappen(EVENT_PASSWORD_ENTERED);
+  wait_for_valid_card();
+ // eventHappen(EVENT_PASSWORD_ENTERED);
   while(RUNNING)
   {
+    blink(1);
     buttons_update_event();
     uint8_t event = getEvents(); // Mask of events
 
