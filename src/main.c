@@ -35,16 +35,16 @@ void init_software()
   //keyboard_init();
 }
 
-void blink(uint8_t n)
-{
-  DDRD |= (1<<5);
-  uint8_t i = 0;
-  for(;i < n*2; ++i)
-  {
-    PORTD ^= (1<<5);
-    _delay_ms(10);
-  }
-}
+// void blink(uint8_t n)
+// {
+//   DDRD |= (1<<5);
+//   uint8_t i = 0;
+//   for(;i < n*2; ++i)
+//   {
+//     PORTD ^= (1<<5);
+//     _delay_ms(10);
+//   }
+// }
 
 int main()
 {
@@ -83,7 +83,6 @@ int main()
  // eventHappen(EVENT_PASSWORD_ENTERED);
   while(RUNNING)
   {
-    blink(1);
     buttons_update_event();
     uint8_t event = getEvents(); // Mask of events
 
@@ -92,6 +91,6 @@ int main()
        uint8_t newState = currentState->transition(event);
        currentState = &states[newState];
     }
-    _delay_ms(100);
+    _delay_ms(150);
   }
 }

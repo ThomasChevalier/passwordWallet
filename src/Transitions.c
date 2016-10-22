@@ -162,6 +162,8 @@ DECLARE_TRANSITION(STATE_BROWSE)
 
 void draw_option_menu(uint8_t currentChoice)
 {
+
+
 	oled_clear_display();
 
 	uint8_t pos;
@@ -184,7 +186,7 @@ void draw_option_menu(uint8_t currentChoice)
 	{
 		str_to_buffer(currentChoice);
 		++currentChoice;
-		oled_draw_text(0, i*23+2, str_buffer, 0);
+		oled_draw_text(2, i*23+2, str_buffer, 0);
 	}
 	uint8_t l_table[3] = {0, 20, 43};
 	for(i = 0; i < 21; ++i)
@@ -199,22 +201,31 @@ void draw_option_menu(uint8_t currentChoice)
 	oled_display();
 }
 
-DECLARE_TRANSITION(STATE_OPTION)
+// yesNo = 0 = no
+// yesNo = 1 = yes
+void draw_confirmation_screen(uint8_t choice, uint8_t yesNo)
 {
-	static uint8_t currentChoice = 0;
+	oled_clear_display();
 
-	if(event & EVENT_USB_DISCONNECTED)
-		return STATE_SAVE;
+	str_to_buffer(choice + 4);
+	oled_draw_text(2, 2, str_buffer, 0);
 
-	if(event & EVENT_BUTTON_1)
-	{
-		// Looping
-		currentChoice = (currentChoice == 0) ? 5 : currentChoice - 1;
-		draw_option_menu(currentChoice);
-	}
-	else if(event & EVENT_BUTTON_2)
-	{
-		switch(currentChoice)
+	str_to_buffer(STRING_MISC_NO);
+	oled_draw_text(56, 19, str_buffer, 0);
+
+	str_to_buffer(STRING_MISC_YES);
+	oled_draw_text(56, 29, str_buffer, 0);
+
+	uint8_t y = yesNo ? 28 : 18;
+	for(uint8_t i = 0; i < 7; ++i)
+		oled_h_line(55, y+i, 16, INVERSE);
+
+	oled_display();
+}
+
+void do_action(uint8_t action)
+{
+	switch(action)
 		{
 		case 0:
 			//pwd_generateNew();
@@ -236,19 +247,85 @@ DECLARE_TRANSITION(STATE_OPTION)
 			break;
 		default:
 			break;
+	}
+}
+
+DECLARE_TRANSITION(STATE_OPTION)
+{
+	static uint8_t currentChoice = 0;
+	static uint8_t confirming = 0;
+	static uint8_t confirmYesNo = 0;
+
+	if(event & EVENT_USB_DISCONNECTED)
+		return STATE_SAVE;
+
+	if(event & EVENT_BUTTON_1)
+	{
+		if(!confirming)
+		{
+			// Looping
+			currentChoice = (currentChoice == 0) ? 5 : currentChoice - 1;
+			draw_option_menu(currentChoice);
 		}
-		return STATE_MAIN;
+		else
+		{
+			confirmYesNo ^= 1;
+			draw_confirmation_screen(currentChoice, confirmYesNo);
+		}
+		
+	}
+	else if(event & EVENT_BUTTON_2)
+	{
+		if(confirming && confirmYesNo)
+		{
+			confirming = 0;
+			do_action(currentChoice);
+			currentChoice = 0;
+			draw_main_menu();
+			return STATE_MAIN;
+		}
+		else if (confirming)
+		{
+			confirming = 0;
+			draw_option_menu(currentChoice);
+		}
+		else
+		{
+			confirming = 1;
+			confirmYesNo = 0;
+			draw_confirmation_screen(currentChoice, confirmYesNo);
+		}
+		
 	}
 	else if(event & EVENT_BUTTON_3)
 	{
-		// Looping
-		currentChoice = (currentChoice == 5) ? 0 : currentChoice + 1;
-		draw_option_menu(currentChoice);
+		if(!confirming)
+		{
+			// Looping
+			currentChoice = (currentChoice == 5) ? 0 : currentChoice + 1;
+			draw_option_menu(currentChoice);
+		}
+		else
+		{
+			confirmYesNo ^= 1;
+			draw_confirmation_screen(currentChoice, confirmYesNo);
+		}
+		
 	}
 	else if(event & EVENT_BUTTON_4)
 	{
-		draw_main_menu();
-		return STATE_MAIN;
+		if(!confirming)
+		{
+			currentChoice = 0;
+			draw_main_menu();
+			return STATE_MAIN;
+		}
+		else
+		{
+			confirming = 0;
+			draw_option_menu(currentChoice);
+		}
+		
 	}
 
 	return STATE_OPTION;
