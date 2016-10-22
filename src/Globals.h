@@ -5,6 +5,14 @@
 
 // This file should contain the global variables used in this project
 
+// /////////// //
+// Orientation //
+// /////////// //
+
+// 0 = normal orientation
+// 1 = rotate 180
+extern uint8_t ORIENTATION;
+
 // /////////////////////////////////////// //
 //  Finite state machine related variables //
 // /////////////////////////////////////// //
@@ -17,6 +25,7 @@ extern uint8_t GLOBALS_EVENTS;   // Current events, not to be accessed by interr
 // Password Section //
 // //////////////// //
 
+#define START_OF_OLED_BUFFER (7)
 #define SIZE_OF_PWD_BLOCK (170)
 #define FIRST_PWD_OFFSET (1031)
 
@@ -39,7 +48,6 @@ extern char USR_NAME_3[32];
 // ////////////////////// //
 // Options stored in FRAM //
 // ////////////////////// //
-
 
 extern uint8_t OPTIONS_FLAG;     // The options flag stored in fram
 extern uint16_t FIRST_PWD_UTIL;  // bytes 2 and 3 of fram

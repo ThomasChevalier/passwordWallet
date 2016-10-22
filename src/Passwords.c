@@ -28,9 +28,31 @@ void read_password()
 
 void set_password(uint8_t* password, uint8_t pwd_len)
 {
-	//uint8_t iv[16];
-	//uint8_t aes[32];
-	
+	const uint16_t pwd_iv_begin  = FIRST_PWD_OFFSET + SIZE_OF_PWD_BLOCK * CURRENT_PASSWORD_ID + 42;
+	const uint16_t pwd_aes_begin = pwd_iv_begin + 16;
+	uint8_t i = 0;
+	uint8_t iv[16];
+	uint8_t aes[32];
+
+	for(i = 0; i < pwd_len; ++i)
+	{
+		CURRENT_PASSWORD_DATA[i] = password[i];
+	}
+
+	// padding
+	if(pwd_len < 32)
+	{
+		CURRENT_PASSWORD_DATA[pwd_len] = 31-pwd_len;
+		for(i = pwd_len + 1; i < 32; ++i)
+		{
+			//CURRENT_PASSWORD_DATA[i] = random_byte();
+		}
+	}
+
+	//random_bytes(iv, 16);
+	AES128_CBC_encrypt_buffer(aes, CURRENT_PASSWORD_DATA, 32, KEY, iv);
+	fram_write_bytes(pwd_iv_begin, iv, 16);
+	fram_write_bytes(pwd_aes_begin, aes, 32);
 }
 
 void goto_first_pwd()

@@ -1,5 +1,7 @@
 #include "Globals.h"
 
+uint8_t ORIENTATION = 0;
+
 volatile uint8_t RUNNING = 1;
 uint8_t GLOBALS_EVENTS = 0;
 

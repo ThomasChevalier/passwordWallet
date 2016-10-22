@@ -57,8 +57,6 @@
 #define SSD1306_VERTICAL_AND_RIGHT_HORIZONTAL_SCROLL 0x29
 #define SSD1306_VERTICAL_AND_LEFT_HORIZONTAL_SCROLL 0x2A
 
-extern uint8_t _oled_rotation;
-
 // Hardware
 void oled_setup_hardware();
 
@@ -78,8 +76,7 @@ void oled_setup_spi();
 void oled_init();
 void oled_draw_pixel(uint8_t x, uint8_t y, uint8_t color);
 void oled_command(uint8_t c);
-void oled_invert_display(uint8_t i);
-void oled_rotate_180();
+void oled_invert_display(uint8_t i); // Invert all the colors
 void oled_start_scroll_right(uint8_t start, uint8_t stop);
 void oled_start_scroll_left(uint8_t start, uint8_t stop);
 void oled_start_scroll_diagright(uint8_t start, uint8_t stop);

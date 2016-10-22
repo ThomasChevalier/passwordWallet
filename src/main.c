@@ -91,6 +91,6 @@ int main()
        uint8_t newState = currentState->transition(event);
        currentState = &states[newState];
     }
-    _delay_ms(150);
+    _delay_ms(150); // For buttons
   }
 }

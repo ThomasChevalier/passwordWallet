@@ -39,7 +39,7 @@ void rfid_setup_spi()
 {
     // SPIE=0 SPE=1 DORD=0 MSTR=1 CPOL=0 CPHA=0 SPR1=0 SPR0=0
     SPCR = 0x50;
-    SPSR = 0;
+    SPSR &= ~(1<<SPI2X);
 }
 
 // *****************************************************************

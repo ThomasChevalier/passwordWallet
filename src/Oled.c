@@ -1,10 +1,12 @@
 #include "Oled.h"
 
+#include <util/delay.h>
 #include <string.h>
 
 #include "Spi.h"
 #include "font.h"
 
+#include "Globals.h"
 #include "PinDefinition.h"
 
 /*
@@ -18,8 +20,6 @@
 
 #define WIDTH 128
 #define HEIGHT 64
-
-uint8_t _oled_rotation = 0;
 
 static uint8_t buffer[SSD1306_LCDHEIGHT * SSD1306_LCDWIDTH / 8] =
 {
@@ -133,7 +133,8 @@ void oled_setup_spi()
 {
     // SPIE=0 SPE=1 DORD=0 MSTR=1 CPOL=1 CPHA=0 SPR1=0 SPR0=0
     SPCR = 0x58;
-    SPSR = 0; // Active 2x speed mode
+    //SPSR &= ~(1<<SPI2X); // DeActive 2x speed mode
+    SPSR |= (1<<SPI2X); // DeActive 2x speed mode
 }
 
 // Software
@@ -195,10 +196,10 @@ void oled_draw_pixel(uint8_t x, uint8_t y, uint8_t color)
     if( x & 0x80 || y & 0x40)
         return;
     // check rotation, move pixel around if necessary
-    if(_oled_rotation)
+    if(ORIENTATION)
     {
-        x = ~(x|128); // x = 127 - x
-        y = ~(y|64); // y = 64 - y
+        x = 127 - x;
+        y = 63 - y;
     }
 
     // x is which column
@@ -233,11 +234,6 @@ void oled_command(uint8_t c)
 void oled_invert_display(uint8_t i)
 {
     oled_command( i ? SSD1306_INVERTDISPLAY : SSD1306_NORMALDISPLAY );
-}
-
-void oled_rotate_180()
-{
-    _oled_rotation ^= 1;
 }
 
 // startscrollright
@@ -326,6 +322,9 @@ void oled_dim(uint8_t dim)
 
 void oled_display(void)
 {
+    // For fram integration
+    //uint8_t pixBuff[64];
+
     oled_command(SSD1306_COLUMNADDR);
     oled_command(0);   // Column start address (0 = reset)
     oled_command(SSD1306_LCDWIDTH-1); // Column end address (127 = reset)
@@ -335,11 +334,28 @@ void oled_display(void)
 
     oled_command(7); // Page end address
 
-    // SPI
     oled_deselect();
     oled_dc_high();
     oled_select();
     
+    // For fram integration
+   /*
+    uint8_t i = 0;
+    uint8_t j = 0;
+    for(; i < 16; ++i)
+    {
+        oled_deselect();
+        fram_read_bytes(START_OF_OLED_BUFFER + i, pixBuff, 64);
+        oled_setup_spi();
+        oled_select();
+        for(j = 0; j < 64; ++j)
+        {
+            spi_send_8(pixBuff[j]);
+        }
+
+    }
+    */
+
     uint16_t i=0;
     for (; i<1024; ++i)
     {
@@ -363,14 +379,13 @@ void oled_clear_display(void)
 
 void oled_h_line(uint8_t x, uint8_t y, uint8_t w, uint8_t color)
 {
-    if(_oled_rotation) // 180 rotation
+   /* if(ORIENTATION) // 180 rotation
     {
-        x = ~(x|128); // x = WIDTH - x - 1;
-        y = ~(y|64); // y =HEIGHT - y - 1;
+        x = 127 - x;
+        y = 63 - y;
         x -= (w-1);
-    }
+    }*/
 
-    //oled_internal_h_line(x, y, w, color);
     uint8_t i = 0;
     for(; i < w; ++i)
     {
@@ -428,12 +443,12 @@ void oled_h_line(uint8_t x, uint8_t y, uint8_t w, uint8_t color)
 void oled_v_line(uint8_t x, uint8_t y, uint8_t h, uint8_t color)
 {
 
-    if(_oled_rotation) // 180 rotation
+   /* if(ORIENTATION) // 180 rotation
     {
-        x = ~(x|128); // x = WIDTH - x - 1;
-        y = ~(y|64); // y =HEIGHT - y - 1;
+        x = 127 - x;
+        y = 63 - y;
         y -= (h-1);
-    }
+    }*/
 
     //oled_internal_v_line(x, y, h, color);
     uint8_t i = 0;
@@ -581,24 +596,26 @@ uint8_t oled_draw_char(uint8_t x, uint8_t y, uint8_t c)
     //const uint8_t *font_ptr = &font[(c-' ') * 4];
 
     uint8_t i;
-    uint8_t* buf = &buffer[x+ (y/8)*128];
+    //uint8_t* buf = &buffer[x+ (y/8)*128];
     for(i = 0; i < 4; ++i)
     {
         uint8_t font_byte = pgm_read_byte_near(font + ((c-' ') * 4) + i);
-        //const uint8_t b = *font_ptr;
-        if(/*b*/font_byte == 0)
+        if(font_byte == 0)
         {
             return 4 - i;
         }
-        //++font_ptr;
-
-
-        (*buf) |= (font_byte << (y&7) );
-        if( (y&7) > 4)
+        uint8_t j = 0;
+        for(j=0; j < 8; ++j)
         {
-            buffer[x+ (y/8)*128+128+i] |= (font_byte >> (8 - (y&7)) );
+            oled_draw_pixel(x+i, y+(7-j), (font_byte >> (7-j)) & 0x01);
         }
-        ++buf;
+
+        // (*buf) |= (font_byte << (y&7) );
+        // if( (y&7) > 4)
+        // {
+        //     buffer[x+ (y/8)*128+128+i] |= (font_byte >> (8 - (y&7)) );
+        // }
+        // ++buf;
 
     }
     return 0;
