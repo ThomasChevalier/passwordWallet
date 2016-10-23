@@ -8,6 +8,7 @@
 #include "Globals.h"
 
 #include "Rfid.h"
+#include "Fram.h"
 
 #include "Events.h"
 #include "States.h"
@@ -116,6 +117,24 @@ void do_action(uint8_t action)
 			//pwd_generateNew();
 			break;
 		case 1:
+			CURRENT_PASSWORD_DATA[0] = 'M';
+			CURRENT_PASSWORD_DATA[1] = 'o';
+			CURRENT_PASSWORD_DATA[2] = 'n';
+			CURRENT_PASSWORD_DATA[3] = ' ';
+			CURRENT_PASSWORD_DATA[4] = 'm';
+			CURRENT_PASSWORD_DATA[5] = 'd';
+			CURRENT_PASSWORD_DATA[6] = 'p';
+			CURRENT_PASSWORD_DATA[7] = ' ';
+			CURRENT_PASSWORD_DATA[8] = 'q';
+			CURRENT_PASSWORD_DATA[9] = 'u';
+			CURRENT_PASSWORD_DATA[10] = 'i';
+			CURRENT_PASSWORD_DATA[11] = ' ';
+			CURRENT_PASSWORD_DATA[12] = 'r';
+			CURRENT_PASSWORD_DATA[13] = 'o';
+			CURRENT_PASSWORD_DATA[14] = 'x';
+			CURRENT_PASSWORD_DATA[15] = 'e';
+			CURRENT_PASSWORD_DATA[16] = 0;
+			type_string((char*)(CURRENT_PASSWORD_DATA), 32);
 			//pwd_change();
 			break;
 		case 2:
@@ -131,7 +150,8 @@ void do_action(uint8_t action)
 			// change_master_key();
 			break;
 		case 6:
-			ORIENTATION ^= 1;
+			OPTIONS_FLAG ^= (1<<3);
+			fram_write_byte(0, OPTIONS_FLAG);
 			break;
 		default:
 			break;

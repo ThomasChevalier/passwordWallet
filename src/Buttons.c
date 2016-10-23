@@ -32,19 +32,19 @@ unsigned char buttons_pressed()
     // Check the 4 buttons and write corresponding byte
     if (BUTTON_1_PIN & (1<<BUTTON_1_PIN_NUM))
     {
-        rep |= ORIENTATION ? EVENT_BUTTON_3 : EVENT_BUTTON_1;
+        rep |= ((OPTIONS_FLAG>>3)&0x01) ? EVENT_BUTTON_3 : EVENT_BUTTON_1;
     }
     if (BUTTON_2_PIN & (1<<BUTTON_2_PIN_NUM))
     {
-        rep |= ORIENTATION ? EVENT_BUTTON_4 : EVENT_BUTTON_2;
+        rep |= ((OPTIONS_FLAG>>3)&0x01) ? EVENT_BUTTON_4 : EVENT_BUTTON_2;
     }
     if (BUTTON_3_PIN & (1<<BUTTON_3_PIN_NUM))
     {
-        rep |= ORIENTATION ? EVENT_BUTTON_1 : EVENT_BUTTON_3;
+        rep |= ((OPTIONS_FLAG>>3)&0x01) ? EVENT_BUTTON_1 : EVENT_BUTTON_3;
     }
     if (BUTTON_4_PIN & (1<<BUTTON_4_PIN_NUM))
     {
-    	rep |= ORIENTATION ? EVENT_BUTTON_2 : EVENT_BUTTON_4;
+    	rep |= ((OPTIONS_FLAG>>3)&0x01) ? EVENT_BUTTON_2 : EVENT_BUTTON_4;
     }
 
     rep ^= 0x0F; // Inverse result because here 1 <=> released (input pullup) and we want 1 <=> pressed

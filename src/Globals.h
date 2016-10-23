@@ -5,13 +5,6 @@
 
 // This file should contain the global variables used in this project
 
-// /////////// //
-// Orientation //
-// /////////// //
-
-// 0 = normal orientation
-// 1 = rotate 180
-extern uint8_t ORIENTATION;
 
 // /////////////////////////////////////// //
 //  Finite state machine related variables //
@@ -50,6 +43,7 @@ extern char USR_NAME_3[32];
 // ////////////////////// //
 
 extern uint8_t OPTIONS_FLAG;     // The options flag stored in fram
+
 extern uint16_t FIRST_PWD_UTIL;  // bytes 2 and 3 of fram
 extern uint16_t FIRST_PWD_ALPHA; // bytes 4 and 5 of fram
 extern uint16_t NUM_PWD;         // bytes 6 and 7 of fram

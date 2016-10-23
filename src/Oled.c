@@ -196,7 +196,7 @@ void oled_draw_pixel(uint8_t x, uint8_t y, uint8_t color)
     if( x & 0x80 || y & 0x40)
         return;
     // check rotation, move pixel around if necessary
-    if(ORIENTATION)
+    if((OPTIONS_FLAG >> 3) & 0x01)
     {
         x = 127 - x;
         y = 63 - y;
@@ -379,13 +379,6 @@ void oled_clear_display(void)
 
 void oled_h_line(uint8_t x, uint8_t y, uint8_t w, uint8_t color)
 {
-   /* if(ORIENTATION) // 180 rotation
-    {
-        x = 127 - x;
-        y = 63 - y;
-        x -= (w-1);
-    }*/
-
     uint8_t i = 0;
     for(; i < w; ++i)
     {
@@ -393,62 +386,9 @@ void oled_h_line(uint8_t x, uint8_t y, uint8_t w, uint8_t color)
     }
 }
 
-/*void oled_internal_h_line(uint8_t x, uint8_t y, uint8_t w, uint8_t color)
-{
-    // Do bounds/limit checks
-    if(x & 0x80 || y & 0x40)
-    {
-        return;
-    }
-
-    // make sure we don't go off the edge of the display
-    if( (x + w) > WIDTH)
-    {
-        w = (WIDTH - x);
-    }
-
-    // set up the pointer for  movement through the buffer
-    register uint8_t *pBuf = buffer;
-    // adjust the buffer pointer for the current row
-    pBuf += (y/8) * 128;
-    // and offset x columns in
-    pBuf += x;
-
-    register uint8_t mask = 1 << (y&7);
-
-    switch (color)
-    {
-    case WHITE:
-        while(w--)
-        {
-            *pBuf++ |= mask;
-        };
-        break;
-    case BLACK:
-        mask = ~mask;
-        while(w--)
-        {
-            *pBuf++ &= mask;
-        };
-        break;
-    case INVERSE:
-        while(w--)
-        {
-            *pBuf++ ^= mask;
-        };
-        break;
-    }
-}*/
-
 void oled_v_line(uint8_t x, uint8_t y, uint8_t h, uint8_t color)
 {
 
-   /* if(ORIENTATION) // 180 rotation
-    {
-        x = 127 - x;
-        y = 63 - y;
-        y -= (h-1);
-    }*/
 
     //oled_internal_v_line(x, y, h, color);
     uint8_t i = 0;
@@ -458,145 +398,13 @@ void oled_v_line(uint8_t x, uint8_t y, uint8_t h, uint8_t color)
     }
 }
 
-/*
-void oled_internal_v_line(uint8_t x, uint8_t y, uint8_t h, uint8_t color)
-{
-
-    // do nothing if we're off the left or right side of the screen
-    if( x & 0x80 || y & 0x40)
-    {
-        return;
-    }
-
-
-    // make sure we don't go past the height of the display
-    if( (y + h) > HEIGHT)
-    {
-        h = (HEIGHT - y);
-    }
-
-    // set up the pointer for fast movement through the buffer
-    register uint8_t *pBuf = buffer;
-    // adjust the buffer pointer for the current row
-    pBuf += (y/8)*128;
-    // and offset x columns in
-    pBuf += x;
-
-    // do the first partial byte, if necessary - this requires some masking
-    register uint8_t mod = (y&7);
-    if(mod)
-    {
-        // mask off the high n bits we want to set
-        mod = 8-mod;
-
-        // note - lookup table results in a nearly 10% performance improvement in fill* functions
-        // register uint8_t mask = ~(0xFF >> (mod));
-        static uint8_t premask[8] = {0x00, 0x80, 0xC0, 0xE0, 0xF0, 0xF8, 0xFC, 0xFE };
-        register uint8_t mask = premask[mod];
-
-        // adjust the mask if we're not going to reach the end of this byte
-        if( h < mod)
-        {
-            mask &= (0XFF >> (mod-h));
-        }
-
-        switch (color)
-        {
-        case WHITE:
-            *pBuf |=  mask;
-            break;
-        case BLACK:
-            *pBuf &= ~mask;
-            break;
-        case INVERSE:
-            *pBuf ^=  mask;
-            break;
-        }
-
-        // fast exit if we're done here!
-        if(h<mod)
-        {
-            return;
-        }
-
-        h -= mod;
-
-        pBuf += SSD1306_LCDWIDTH;
-    }
-
-
-    // write solid bytes while we can - effectively doing 8 rows at a time
-    if(h >= 8)
-    {
-        if (color == INVERSE)             // separate copy of the code so we don't impact performance of the black/white write version with an extra comparison per loop
-        {
-            do
-            {
-                *pBuf=~(*pBuf);
-
-                // adjust the buffer forward 8 rows worth of data
-                pBuf += SSD1306_LCDWIDTH;
-
-                // adjust h & y (there's got to be a faster way for me to do this, but this should still help a fair bit for now)
-                h -= 8;
-            }
-            while(h >= 8);
-        }
-        else
-        {
-            // store a local value to work with
-            register uint8_t val = (color == WHITE) ? 255 : 0;
-
-            do
-            {
-                // write our value in
-                *pBuf = val;
-
-                // adjust the buffer forward 8 rows worth of data
-                pBuf += SSD1306_LCDWIDTH;
-
-                // adjust h & y (there's got to be a faster way for me to do this, but this should still help a fair bit for now)
-                h -= 8;
-            }
-            while(h >= 8);
-        }
-    }
-
-    // now do the final partial byte, if necessary
-    if(h)
-    {
-        mod = h & 7;
-        // this time we want to mask the low bits of the byte, vs the high bits we did above
-        // register uint8_t mask = (1 << mod) - 1;
-        // note - lookup table results in a nearly 10% performance improvement in fill* functions
-        static uint8_t postmask[8] = {0x00, 0x01, 0x03, 0x07, 0x0F, 0x1F, 0x3F, 0x7F };
-        register uint8_t mask = postmask[mod];
-        switch (color)
-        {
-        case WHITE:
-            *pBuf |=  mask;
-            break;
-        case BLACK:
-            *pBuf &= ~mask;
-            break;
-        case INVERSE:
-            *pBuf ^=  mask;
-            break;
-        }
-    }
-}
-*/
-
 // Retourne la longueur non écrite
 uint8_t oled_draw_char(uint8_t x, uint8_t y, uint8_t c)
 {
     if(c < ' ' || c > '~' || x + 4 >= 128 || y + 5 >= 64)
         return 4;
 
-    //const uint8_t *font_ptr = &font[(c-' ') * 4];
-
     uint8_t i;
-    //uint8_t* buf = &buffer[x+ (y/8)*128];
     for(i = 0; i < 4; ++i)
     {
         uint8_t font_byte = pgm_read_byte_near(font + ((c-' ') * 4) + i);
@@ -610,12 +418,6 @@ uint8_t oled_draw_char(uint8_t x, uint8_t y, uint8_t c)
             oled_draw_pixel(x+i, y+(7-j), (font_byte >> (7-j)) & 0x01);
         }
 
-        // (*buf) |= (font_byte << (y&7) );
-        // if( (y&7) > 4)
-        // {
-        //     buffer[x+ (y/8)*128+128+i] |= (font_byte >> (8 - (y&7)) );
-        // }
-        // ++buf;
 
     }
     return 0;
