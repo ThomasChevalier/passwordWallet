@@ -107,7 +107,10 @@ void draw_confirmation_screen(uint8_t choice, uint8_t yesNo)
 void type_string(char* string_typed, uint8_t maxLen)
 {
 	uint8_t pos = 0;
-	while(1)
+	uint8_t have_erased = 0;
+	uint8_t running = 1;
+	string_typed[strlen(string_typed)] = 127;
+	while(running)
 	{
 		 _delay_ms(100);
 		buttons_update_event();
@@ -117,44 +120,88 @@ void type_string(char* string_typed, uint8_t maxLen)
 		{
 			char c = string_typed[pos];
 			if(c == ' ')
-				string_typed[pos] = '~';
+				string_typed[pos] = 127;
 			else
 				string_typed[pos] = c - 1;
 		}
 		else if(event & EVENT_BUTTON_2)
 		{
-			if(pos < maxLen-1)
-				pos ++;
-			if(pos > 1 && string_typed[pos - 1] == 0)
+			// Maximum size has been reached
+			if(pos == maxLen-1)
 			{
-				return;
+				running = 0;
+			}
+			else
+			{
+				// Erase functionnality
+				if(string_typed[pos] == 127)
+				{
+					if(have_erased)
+					{
+						running = 0;
+					}
+					else
+					{
+						for(uint8_t i = pos+1; i < maxLen; ++i)
+						{
+							string_typed[i] = 0;
+						}
+						have_erased = 1;
+					}
+				}
+				else
+				{
+					have_erased = 0;
+					++pos;
+					if(string_typed[pos] == 0)
+						string_typed[pos] = 127;
+				}
 			}
 		}
 		else if(event & EVENT_BUTTON_3)
 		{
 			char c = string_typed[pos];
-			if(c == '~')
+			if(c == 127)
 				string_typed[pos] = ' ';
 			else
 				string_typed[pos] = c + 1;
 		}
 		else if(event & EVENT_BUTTON_4)
 		{
+			if(string_typed[pos] == 127)
+			{
+				for(uint8_t i = pos+1; i < maxLen; ++i)
+				{
+					string_typed[i] = 0;
+				}
+			}
+
 			if(pos >= 1)
+			{
 				pos --;
+			}
 			else
-				return;
+			{
+				running = 0;
+			}
 		}
 		if(event)
 		{
 			draw_typing_screen(string_typed, pos);
 		}
 	}
+	for(uint8_t i = 0; i < maxLen; ++i)
+	{
+		if(string_typed[i] == 127)
+			string_typed[i] = 0;
+	}
+
 }
 
 void draw_typing_screen(char* str, uint8_t column)
 {
 	uint8_t len = strlen(str);
+
 	if(len > 17 && column > 16)
 	{
 		// column -= 9;
@@ -211,11 +258,11 @@ void draw_char_column(uint8_t column_and_flags, char letter)
 		{
 			if(x < ' ')
 			{
-				c += 95;
+				c += 96;
 			}
-			if(x > '~')
+			if(x > '~'+1)
 			{
-				c-= 95;
+				c-= 96;
 			}
 		}
 		

@@ -202,21 +202,28 @@ void oled_draw_pixel(uint8_t x, uint8_t y, uint8_t color)
         y = 63 - y;
     }
 
+    // For fram integration
+    //  uint8_t buf = fram_read_byte(START_OF_OLED_BUFFER + (x + 16 * y) );
     // x is which column
     uint8_t* buf = &buffer[x+ (y/8)*128];
     uint8_t val = (1 << (y&7));
     switch (color)
     {
     case WHITE:
+        // buf |= val;
         (*buf) |=  val;
         break;
     case BLACK:
+        // buf &= ~val;
         (*buf) &= ~val;
         break;
     case INVERSE:
+        // buf ^= val;
         (*buf) ^=  val;
         break;
     }
+    // For fram integration
+    // fram_write_byte(START_OF_OLED_BUFFER + (x + 16 * y), buf);
 
 }
 
@@ -234,79 +241,6 @@ void oled_command(uint8_t c)
 void oled_invert_display(uint8_t i)
 {
     oled_command( i ? SSD1306_INVERTDISPLAY : SSD1306_NORMALDISPLAY );
-}
-
-// startscrollright
-// Activate a right handed scroll for rows start through stop
-// Hint, the display is 16 rows tall. To scroll the whole display, run:
-// display.scrollright(0x00, 0x0F)
-void oled_start_scroll_right(uint8_t start, uint8_t stop)
-{
-    oled_command(SSD1306_RIGHT_HORIZONTAL_SCROLL);
-    oled_command(0X00);
-    oled_command(start);
-    oled_command(0X00);
-    oled_command(stop);
-    oled_command(0X00);
-    oled_command(0XFF);
-    oled_command(SSD1306_ACTIVATE_SCROLL);
-}
-
-// startscrollleft
-// Activate a right handed scroll for rows start through stop
-// Hint, the display is 16 rows tall. To scroll the whole display, run:
-// display.scrollright(0x00, 0x0F)
-void oled_start_scroll_left(uint8_t start, uint8_t stop)
-{
-    oled_command(SSD1306_LEFT_HORIZONTAL_SCROLL);
-    oled_command(0X00);
-    oled_command(start);
-    oled_command(0X00);
-    oled_command(stop);
-    oled_command(0X00);
-    oled_command(0XFF);
-    oled_command(SSD1306_ACTIVATE_SCROLL);
-}
-
-// startscrolldiagright
-// Activate a diagonal scroll for rows start through stop
-// Hint, the display is 16 rows tall. To scroll the whole display, run:
-// display.scrollright(0x00, 0x0F)
-void oled_start_scroll_diagright(uint8_t start, uint8_t stop)
-{
-    oled_command(SSD1306_SET_VERTICAL_SCROLL_AREA);
-    oled_command(0X00);
-    oled_command(SSD1306_LCDHEIGHT);
-    oled_command(SSD1306_VERTICAL_AND_RIGHT_HORIZONTAL_SCROLL);
-    oled_command(0X00);
-    oled_command(start);
-    oled_command(0X00);
-    oled_command(stop);
-    oled_command(0X01);
-    oled_command(SSD1306_ACTIVATE_SCROLL);
-}
-
-// startscrolldiagleft
-// Activate a diagonal scroll for rows start through stop
-// Hint, the display is 16 rows tall. To scroll the whole display, run:
-// display.scrollright(0x00, 0x0F)
-void oled_start_scroll_diagleft(uint8_t start, uint8_t stop)
-{
-    oled_command(SSD1306_SET_VERTICAL_SCROLL_AREA);
-    oled_command(0X00);
-    oled_command(SSD1306_LCDHEIGHT);
-    oled_command(SSD1306_VERTICAL_AND_LEFT_HORIZONTAL_SCROLL);
-    oled_command(0X00);
-    oled_command(start);
-    oled_command(0X00);
-    oled_command(stop);
-    oled_command(0X01);
-    oled_command(SSD1306_ACTIVATE_SCROLL);
-}
-
-void oled_stop_scroll(void)
-{
-    oled_command(SSD1306_DEACTIVATE_SCROLL);
 }
 
 // Dim the display
@@ -371,6 +305,8 @@ void oled_clear_display(void)
     uint16_t i=0;
     for (; i<1024; ++i)
     {
+        // For fram integration
+        //fram_write_byte(START_OF_OLED_BUFFER + i, 0);
         buffer[i] = 0;
     }
 }
@@ -398,11 +334,14 @@ void oled_v_line(uint8_t x, uint8_t y, uint8_t h, uint8_t color)
     }
 }
 
+// Le caractère nulle doit être transformé en 127
 // Retourne la longueur non écrite
 uint8_t oled_draw_char(uint8_t x, uint8_t y, uint8_t c)
 {
-    if(c < ' ' || c > '~' || x + 4 >= 128 || y + 5 >= 64)
+    if(x + 4 >= 128 || y + 5 >= 64)
+    {
         return 4;
+    }
 
     uint8_t i;
     for(i = 0; i < 4; ++i)
@@ -444,18 +383,18 @@ void oled_draw_text(uint8_t x, uint8_t y, char *str, uint8_t str_len)
 }
 
 
-void oled_draw_hex(uint8_t x, uint8_t y, uint8_t* buffer, uint8_t bufferSize)
+void oled_draw_hex(uint8_t x, uint8_t y, uint8_t* hexBuffer, uint8_t hexBufferSize)
 {
     uint8_t index = 0;
-    char str[bufferSize * 2];
-    for(index = 0; index < bufferSize; ++index)
+    char str[hexBufferSize * 2];
+    for(index = 0; index < hexBufferSize; ++index)
     {
-        uint8_t nibble = buffer[index] >> 4;// High
+        uint8_t nibble = hexBuffer[index] >> 4;// High
         str[index * 2] = (nibble < 10) ? nibble + '0' : (nibble-10) + 'A';
-        nibble = buffer[index] & 0x0F; // Low
+        nibble = hexBuffer[index] & 0x0F; // Low
         str[index * 2 + 1] = (nibble < 10) ? nibble + '0' : (nibble-10) + 'A';
     }
-    oled_draw_text(x, y, str, bufferSize * 2);
+    oled_draw_text(x, y, str, hexBufferSize * 2);
 }
 
 

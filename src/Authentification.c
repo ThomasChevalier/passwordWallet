@@ -6,6 +6,7 @@
 #include "Oled.h"
 #include "Rfid.h"
 #include "String.h"
+#include "Random.h"
 
 #include "Globals.h"
 
@@ -28,21 +29,18 @@ static void waitRfidTag()
         }
 }
 
-void wait_for_valid_card()
+// Return 1 if success, 0 otherwise
+static uint8_t authenticate_on_card()
 {
-    uint8_t noCard = 1;
-    do
+    // sak == 0x08 <=> MIFARE 1K
+    if(rfid_uid.sak != 0x08)
     {
-        waitRfidTag();
-        // sak == 0x08 <=> MIFARE 1K
-        if(rfid_uid.sak != 0x08)
-        {
-            str_to_buffer(STRING_ERROR_CARD);
-            oled_draw_text(0, 0, str_buffer, 0);
-            oled_display();
-            while(1);
-        }
-
+        str_to_buffer(STRING_ERROR_CARD);
+        oled_draw_text(0, 0, str_buffer, 0);
+        oled_display();
+    }
+    else
+    {
         MIFARE_Key key;
         StatusCode status;
         for(uint8_t i = 0; i < 6; ++i)
@@ -56,36 +54,68 @@ void wait_for_valid_card()
             str_to_buffer(STRING_ERROR_AUTH);
             oled_draw_text(0, 0, str_buffer, 0);
             oled_display();
-            while(1);
         }
-
-        uint8_t buffer[18];
-        uint8_t size = 18;
-
-        status = rfid_MIFARE_read(4, buffer, &size);
-        if(status != STATUS_OK)
+        else
         {
-            str_to_buffer(STRING_ERROR_READ);
-            oled_draw_text(0, 0, str_buffer, 0);
-            oled_display();
-            while(1);
+            return 1; // SUCCESS !
         }
+    }
+    return 0;
+}
 
+void wait_for_valid_card()
+{
+    uint8_t noCard = 1;
+    oled_dim(1); // Save 4 mA
+    do
+    {   
+        // Waiting for the user to present his card
+        waitRfidTag();
+        oled_clear_display();
+
+        // Trying to authenticate
+        if(authenticate_on_card())
+        {
+            // Authenticate ... success
+
+            uint8_t buffer[18];
+            uint8_t size = 18;
+
+            // Trying to read master key ...
+            if(rfid_MIFARE_read(4, buffer, &size) != STATUS_OK && size != 16)
+            {
+                // .. Failure
+                str_to_buffer(STRING_ERROR_READ);
+                oled_draw_text(0, 0, str_buffer, 0);
+                oled_display();
+            }
+            else
+            {
+                // .. Success
+                uint8_t i = 0;
+                for(i = 0; i < 16; ++i)
+                {
+                    KEY[i] = buffer[i];
+                }
+
+                noCard = 0;
+            }
+        }
+        else
+        {
+            // If the authentication fail, wait for an other card
+        }
+       
         // Necessary to procede to other communications
         rfid_PICC_haltA();
         rfid_pcd_stopCrypto1();
 
-        uint8_t i = 0;
-        for(i = 0; i < 16; ++i)
-        {
-            KEY[i] = buffer[i];
-        }
-
-        noCard = 0;
-        // Lit la clé
-        // Une vérification de plus sera obligatoire pour savoir si la clé est bonne (par rapport a un hash interne) : check_key
     }
     while(noCard);
+
+    // Normal contrast
+    oled_dim(0);
+
     eventHappen(EVENT_PASSWORD_ENTERED);
 }
 
@@ -133,20 +163,36 @@ void changeMainPassword()
     oled_draw_text(0, 0, str_buffer, 0);
     oled_display();
 
+    // Waiting for the user to present his card
     waitRfidTag();
 
     // Generate new key
-    /*
-    uint8_t fillCounter = 0;
-    for(; fillCounter < 16; ++fillCounter)
+    random_fill(KEY, 16);
+
+    // Write it to the rfid tag ...
+    if(authenticate_on_card())
     {
-        KEY[i] = random_byte();
+        // Trying to write on tag
+        if(rfid_MIFARE_write(4, KEY, 16) != STATUS_OK)
+        {
+            // .. Failure
+            str_to_buffer(STRING_ERROR_READ);
+            oled_draw_text(0, 0, str_buffer, 0);
+            oled_display();
+        }
+        else
+        {
+            // .. Success
+        //     str_to_buffer(STRING_MISC_SUCCESS);
+        //     oled_draw_text(0, 0, str_buffer, 0);
+        //     oled_display();
+         }
     }
-    */
-
-    // Write it to the rfid tag
-
-
+    else
+    {
+        // If we cannot authenticate, abort operation
+        return;
+    }
 
     // Update encryption validation
     uint8_t output[16];
@@ -166,4 +212,6 @@ void changeMainPassword()
     encode_16B(KEY, outputText);
     oled_clear_display();
     oled_draw_text(0, 0, outputText, 20);
+
+    rfid_power_down();
 }

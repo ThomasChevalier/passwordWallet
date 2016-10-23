@@ -45,11 +45,11 @@ void set_password(uint8_t* password, uint8_t pwd_len)
 		CURRENT_PASSWORD_DATA[pwd_len] = 31-pwd_len;
 		for(i = pwd_len + 1; i < 32; ++i)
 		{
-			//CURRENT_PASSWORD_DATA[i] = random_byte();
+			CURRENT_PASSWORD_DATA[i] = random_request_byte();
 		}
 	}
 
-	//random_bytes(iv, 16);
+	random_fill(iv, 16);
 	AES128_CBC_encrypt_buffer(aes, CURRENT_PASSWORD_DATA, 32, KEY, iv);
 	fram_write_bytes(pwd_iv_begin, iv, 16);
 	fram_write_bytes(pwd_aes_begin, aes, 32);

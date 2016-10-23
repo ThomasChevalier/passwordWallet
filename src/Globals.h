@@ -20,7 +20,11 @@ extern uint8_t GLOBALS_EVENTS;   // Current events, not to be accessed by interr
 
 #define START_OF_OLED_BUFFER (7)
 #define SIZE_OF_PWD_BLOCK (170)
-#define FIRST_PWD_OFFSET (1031)
+#define FIRST_PWD_OFFSET (2073)
+
+#define OFFSET_ENTROPY_SIZE (1031)
+#define OFFSET_ENTROPY_IV (1033)
+#define OFFSET_ENTROPY_POOL (1049)
 
 // For test purpose key is 000102030405060708090A0B0C0D0E0F
 extern uint8_t KEY[16]; // The main 128 AES key

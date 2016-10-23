@@ -114,7 +114,6 @@ void do_action(uint8_t action)
 	switch(action)
 		{
 		case 0:
-			//pwd_generateNew();
 			break;
 		case 1:
 			CURRENT_PASSWORD_DATA[0] = 'M';
@@ -129,10 +128,10 @@ void do_action(uint8_t action)
 			CURRENT_PASSWORD_DATA[9] = 'u';
 			CURRENT_PASSWORD_DATA[10] = 'i';
 			CURRENT_PASSWORD_DATA[11] = ' ';
-			CURRENT_PASSWORD_DATA[12] = 'r';
-			CURRENT_PASSWORD_DATA[13] = 'o';
-			CURRENT_PASSWORD_DATA[14] = 'x';
-			CURRENT_PASSWORD_DATA[15] = 'e';
+			CURRENT_PASSWORD_DATA[12] = 'e';
+			CURRENT_PASSWORD_DATA[13] = 'n';
+			CURRENT_PASSWORD_DATA[14] = 0;
+			CURRENT_PASSWORD_DATA[15] = 0;
 			CURRENT_PASSWORD_DATA[16] = 0;
 			type_string((char*)(CURRENT_PASSWORD_DATA), 32);
 			//pwd_change();

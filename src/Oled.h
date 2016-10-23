@@ -77,11 +77,8 @@ void oled_init();
 void oled_draw_pixel(uint8_t x, uint8_t y, uint8_t color);
 void oled_command(uint8_t c);
 void oled_invert_display(uint8_t i); // Invert all the colors
-void oled_start_scroll_right(uint8_t start, uint8_t stop);
-void oled_start_scroll_left(uint8_t start, uint8_t stop);
-void oled_start_scroll_diagright(uint8_t start, uint8_t stop);
-void oled_start_scroll_diagleft(uint8_t start, uint8_t stop);
-void oled_stop_scroll();
+
+// dim(1) = moins de contraste, moins d'énergie consommée
 void oled_dim(uint8_t dim);
 void oled_display();
 void oled_clear_display();
@@ -91,7 +88,7 @@ void oled_v_line(uint8_t x, uint8_t y, uint8_t h, uint8_t color);
 //void oled_internal_v_line(uint8_t x, uint8_t y, uint8_t h, uint8_t color);
 uint8_t oled_draw_char(uint8_t x, uint8_t y, uint8_t c);
 void oled_draw_text(uint8_t x, uint8_t y, char *str, uint8_t str_len);
-void oled_draw_hex(uint8_t x, uint8_t y, uint8_t* buffer, uint8_t bufferSize);
+void oled_draw_hex(uint8_t x, uint8_t y, uint8_t* hexBuffer, uint8_t hexBufferSize);
 
 
 #endif // OLED_HEADER_THOMAS_CHEVALIER
