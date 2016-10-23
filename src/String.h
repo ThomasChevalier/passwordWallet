@@ -27,12 +27,14 @@ DECLARE_STRING(str_option_delPwd, "Supprimer");
 DECLARE_STRING(str_option_addPwd, "Nouveau mot de passe");
 #define STRING_OPTION_CHANGE_MASTER_KEY 9
 DECLARE_STRING(str_option_changeMasterKey, "Changer la clef maitre");
+#define STRING_OPTION_ROTATION 10
+DECLARE_STRING(str_option_changeOrientation, "Retourner l'affichage");
 
-#define STRING_MISC_APPROACH_CARD 10
+#define STRING_MISC_APPROACH_CARD 11
 DECLARE_STRING(str_misc_approachCard, "Approchez votre carte");
-#define STRING_MISC_YES 11
+#define STRING_MISC_YES 12
 DECLARE_STRING(str_misc_yes, "OUI");
-#define STRING_MISC_NO 12
+#define STRING_MISC_NO 13
 DECLARE_STRING(str_misc_no, "NON");
 
 extern PGM_P const string_table[] PROGMEM;

@@ -16,6 +16,7 @@ DEFINE_STRING(str_option_changeUsr, "CHANGER L'IDENTIFIANT");
 DEFINE_STRING(str_option_delPwd, "SUPPRIMER");
 DEFINE_STRING(str_option_addPwd, "NOUVEAU MOT DE PASSE");
 DEFINE_STRING(str_option_changeMasterKey, "CHANGER LA CLEF MAITRE");
+DEFINE_STRING(str_option_changeOrientation, "RETOURNER L'AFFICHAGE");
 
 DEFINE_STRING(str_misc_approachCard, "Approchez votre carte");
 DEFINE_STRING(str_misc_yes, "OUI");
@@ -34,6 +35,7 @@ PGM_P const string_table[] PROGMEM =
 	str_option_delPwd,
 	str_option_addPwd,
 	str_option_changeMasterKey,
+	str_option_changeOrientation,
 
 	str_misc_approachCard,
 	str_misc_yes,

@@ -45,11 +45,7 @@ DECLARE_TRANSITION(STATE_MAIN)
 	if(event & EVENT_USB_DISCONNECTED)
 		return STATE_SAVE;
 
-	if((event & EVENT_BUTTON_1) && (event & EVENT_BUTTON_2))
-	{
-		ORIENTATION ^= 1;
-	}
-	else if(event & EVENT_BUTTON_1)
+	if(event & EVENT_BUTTON_1)
 	{
 		CURRENT_PASSWORD_ID = prev_pwd(CURRENT_PASSWORD_ID);
 		read_all_names();
@@ -134,6 +130,9 @@ void do_action(uint8_t action)
 		case 5:
 			// change_master_key();
 			break;
+		case 6:
+			ORIENTATION ^= 1;
+			break;
 		default:
 			break;
 	}
@@ -153,7 +152,7 @@ DECLARE_TRANSITION(STATE_OPTION)
 		if(!confirming)
 		{
 			// Looping
-			currentChoice = (currentChoice == 0) ? 5 : currentChoice - 1;
+			currentChoice = (currentChoice == 0) ? 6 : currentChoice - 1;
 			draw_option_menu(currentChoice);
 		}
 		else
@@ -191,7 +190,7 @@ DECLARE_TRANSITION(STATE_OPTION)
 		if(!confirming)
 		{
 			// Looping
-			currentChoice = (currentChoice == 5) ? 0 : currentChoice + 1;
+			currentChoice = (currentChoice == 6) ? 0 : currentChoice + 1;
 			draw_option_menu(currentChoice);
 		}
 		else
