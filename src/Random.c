@@ -209,11 +209,20 @@ void random_save_entropy()
   {
     uint16_t entropyPoolSize = 0;
     fram_read_bytes(OFFSET_ENTROPY_SIZE, (uint8_t*)(&entropyPoolSize), 2);
-    for(uint8_t i = 0; i < 8; ++i)
+    uint8_t max = 0;
+    if(entropyPoolSize > 1024-8)
+    {
+        max = 1024 - entropyPoolSize;
+    }
+    else
+    {
+      max = 8;
+    }
+   for(uint8_t i = 0; i < max; ++i)
     {
       fram_write_byte(OFFSET_ENTROPY_POOL + entropyPoolSize + i, random_8());
     }
-    entropyPoolSize += 8;
+    entropyPoolSize += max;
     fram_write_bytes(OFFSET_ENTROPY_SIZE, (uint8_t*)(&entropyPoolSize), 2);
   }
 }
