@@ -21,34 +21,6 @@
 
 #include "Random.h"
 
-void init_hardware()
-{
-  spi_setup_hardware();
-  fram_setup_hardware();
-  oled_setup_hardware();
-  rfid_setup_hardware();
-  buttons_setup_hardware();
-}
-
-void init_software()
-{
-  oled_init();
-  rfid_init();
-  random_init();
-  //keyboard_init();
-}
-
-// void blink(uint8_t n)
-// {
-//   DDRD |= (1<<5);
-//   uint8_t i = 0;
-//   for(;i < n*2; ++i)
-//   {
-//     PORTD ^= (1<<5);
-//     _delay_ms(10);
-//   }
-// }
-
 #ifndef cbi
 #define cbi(sfr, bit) (_SFR_BYTE(sfr) &= ~_BV(bit))
 #endif
@@ -126,6 +98,34 @@ void init_system()
 }
 
 
+void init_hardware()
+{
+  spi_setup_hardware();
+  fram_setup_hardware();
+  oled_setup_hardware();
+  rfid_setup_hardware();
+  buttons_setup_hardware();
+}
+
+void init_software()
+{
+  oled_init();
+  rfid_init();
+  random_init();
+  //keyboard_init();
+}
+
+// void blink(uint8_t n)
+// {
+//   DDRD |= (1<<5);
+//   uint8_t i = 0;
+//   for(;i < n*2; ++i)
+//   {
+//     PORTD ^= (1<<5);
+//     _delay_ms(10);
+//   }
+// }
+
 int main()
 {
   State states[NUM_STATES];
@@ -155,7 +155,15 @@ int main()
   init_system();
   init_hardware();
   init_software();
-  
+
+  oled_clear_display();
+  oled_display();
+  char buff[8];
+  for(uint8_t i = 0; i < 8; ++i)
+  {
+    buff[i] = random_request_printable();
+  }
+  oled_draw_text(0,0,buff, 8);
   // For test
   oled_display();
 

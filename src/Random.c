@@ -3,11 +3,13 @@
 #include "Globals.h"
 #include "Fram.h"
 
-const uint32_t WDT_RETURN_BYTE=256;
-const uint32_t WDT_RETURN_WORD=65536;
-const uint8_t WDT_MAX_8INT=0xFF;
-const uint16_t WDT_MAX_16INT=0xFFFF;
-const uint32_t WDT_MAX_32INT=0xFFFFFFFF;
+// Define save ram and prog mem
+// Save 16 byte of progmem and 16 byte of ram
+#define WDT_RETURN_BYTE (256)
+#define WDT_RETURN_WORD (65536)
+#define WDT_MAX_8INT (0xFF)
+#define WDT_MAX_16INT (0xFFFF)
+#define WDT_MAX_32INT (0xFFFFFFFF)
 
 #define gWDT_buffer_SIZE 32
 #define WDT_POOL_SIZE 8
@@ -79,6 +81,7 @@ uint8_t random_8(void)
   return(retVal8);
 }
 
+/*
 // This function returns one word of a single 32-bit entropy value, while preserving the remaining word to
 // be returned upon successive calls to the method.  This makes best use of the available entropy pool when
 // only word sized chunks of entropy are needed.  Not available to public use since there is a method of using
@@ -155,7 +158,7 @@ uint32_t random_min_max(uint32_t min, uint32_t max)
     }
   return(retVal);
 }
-
+*/
 
 // This function returns a unsigned char (8-bit) with the number of unsigned long values
 // in the entropy pool
@@ -205,18 +208,19 @@ ISR(WDT_vect)
 
 void random_save_entropy()
 {
+  // If there is 8 or more uint32_t available, there is at least 8*4=32 uint8_t availables
   if(random_available() >= 8)
   {
     uint16_t entropyPoolSize = 0;
     fram_read_bytes(OFFSET_ENTROPY_SIZE, (uint8_t*)(&entropyPoolSize), 2);
     uint8_t max = 0;
-    if(entropyPoolSize > 1024-8)
+    if(entropyPoolSize > 1024-32)
     {
         max = 1024 - entropyPoolSize;
     }
     else
     {
-      max = 8;
+      max = 32;
     }
    for(uint8_t i = 0; i < max; ++i)
     {
@@ -250,10 +254,27 @@ uint8_t random_request_byte()
     }
     else
     {
-        // Else, wait for entropy
+        // Else, wait for entropy (random_8 is blockant)
         return random_8(); 
     }
   }
+}
+
+// This fonction use the request_byte implementation. random_min_max should not be used
+// because it introduce bias by calling random_8 and random_16. More over random_max
+// does not use the entrop pool.
+uint8_t random_request_printable()
+{
+  uint8_t max = '~' - ' ';
+  uint32_t slice;
+  retVal = WDT_MAX_32INT;
+
+  slice = WDT_MAX_8INT / max;
+  while (retVal >= max)
+    retVal = random_request_byte() / slice;
+
+  retVal += ' ';
+  return retVal;
 }
 
 void random_fill(uint8_t* buff, uint8_t len)

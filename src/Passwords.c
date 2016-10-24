@@ -1,6 +1,7 @@
 #include "Passwords.h"
 
 #include "Aes.h"
+#include "Random.h"
 
 void read_password()
 {
@@ -134,7 +135,7 @@ void generate_password(char* output)
 {
 	uint8_t i = 0;
 	for(; i < 32; ++i)
-		output[i] = 'A';
+		output[i] = random_request_printable();
 }
 
 void change_password()
