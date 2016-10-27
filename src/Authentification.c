@@ -153,7 +153,7 @@ uint8_t check_key()
     return 1;
 }
 
-void changeMainPassword()
+void change_master_key()
 {
     // rfid may be power down
     rfid_init();
@@ -170,7 +170,7 @@ void changeMainPassword()
     random_fill(KEY, 16);
 
     // Write it to the rfid tag ...
-    if(authenticate_on_card())
+    /*if(authenticate_on_card())
     {
         // Trying to write on tag
         if(rfid_MIFARE_write(4, KEY, 16) != STATUS_OK)
@@ -205,13 +205,19 @@ void changeMainPassword()
         eeprom_busy_wait();
         ++eeprom_addr;
         eeprom_update_byte(eeprom_addr, output[writeCounter]);
-    }
+    }*/
 
     // Display new key
     char outputText[20];
     encode_16B(KEY, outputText);
     oled_clear_display();
     oled_draw_text(0, 0, outputText, 20);
+    oled_display();
+
+    // Wait for the user to remove his card
+    _delay_ms(5000);
+    // Wait for the user to save the new key.
+    waitRfidTag();
 
     rfid_power_down();
 }

@@ -151,7 +151,7 @@ void do_action(uint8_t action)
 			// pwd_add_new();
 			break;
 		case 5:
-			// change_master_key();
+			change_master_key();
 			break;
 		case 6:
 			OPTIONS_FLAG ^= (1<<3);
