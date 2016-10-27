@@ -5,7 +5,7 @@
 CC=avr-gcc
 DEVICE=atmega32u4
 CFLAGS= -Os -Wall -DF_CPU=12000000UL -mmcu=$(DEVICE) -std=gnu99 -fshort-enums -ffunction-sections -fdata-sections -MMD -flto
-LDFLAGS= -mmcu=$(DEVICE) -flto -Os
+LDFLAGS= -mmcu=$(DEVICE) -flto -Os -Wl,--gc-sections
 BDIR=build
 SDIR=src
 DDIR=.

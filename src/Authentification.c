@@ -122,7 +122,7 @@ void wait_for_valid_card()
 
 void encrypt_plain_buffer(uint8_t *output)
 {
-     uint8_t plainBuffer[16] =
+    uint8_t plainBuffer[16] =
     {0x86, 0xd8 , 0x13 , 0xd3 , 0x2a , 0x25 , 0xc8 , 0x38 , 0x83 , 0xcd , 0xf9 , 0x02 , 0x5e , 0xd8 , 0x0e , 0x43 };
      const uint8_t zeroIv[16]  =
     {0x00, 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 };
@@ -221,8 +221,6 @@ void change_master_key()
     {
         buttons_update_event();
         uint8_t event = getEvents();
-        if(event & EVENT_USB_DISCONNECTED)
-            eventHappen(EVENT_USB_DISCONNECTED);
         if((event & EVENT_BUTTON_1) || (event & EVENT_BUTTON_2) || (event & EVENT_BUTTON_3) || (event & EVENT_BUTTON_4))
             return;
     }

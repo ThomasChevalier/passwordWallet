@@ -8,7 +8,9 @@
 
 #include "Globals.h"
 #include "PinDefinition.h"
+#include "Fram.h"
 
+#undef FRAM_BUFFER
 /*
 	MOSI : 	11 	PB3
 	MISO :	There is no need of Miso for the oled
@@ -21,6 +23,7 @@
 #define WIDTH 128
 #define HEIGHT 64
 
+#ifndef FRAM_BUFFER
 static uint8_t buffer[SSD1306_LCDHEIGHT * SSD1306_LCDWIDTH / 8] =
 {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -88,6 +91,7 @@ static uint8_t buffer[SSD1306_LCDHEIGHT * SSD1306_LCDWIDTH / 8] =
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0x03, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
+#endif
 
 // Hardware
 void oled_setup_hardware()
@@ -202,9 +206,27 @@ void oled_draw_pixel(uint8_t x, uint8_t y, uint8_t color)
         y = 63 - y;
     }
 
-    // For fram integration
-    //  uint8_t buf = fram_read_byte(START_OF_OLED_BUFFER + (x + 16 * y) );
     // x is which column
+    #ifdef FRAM_BUFFER
+
+    uint8_t buf = fram_read_byte(START_OF_OLED_BUFFER + (x + 16 * y) );
+    uint8_t val = (1 << (y&7));
+    switch (color)
+    {
+    case WHITE:
+        buf |= val;
+        break;
+    case BLACK:
+        buf &= ~val;
+        break;
+    case INVERSE:
+        buf ^= val;
+        break;
+    }
+    fram_write_byte(START_OF_OLED_BUFFER + (x + 16 * y), buf);
+
+    #else
+
     uint8_t* buf = &buffer[x+ (y/8)*128];
     uint8_t val = (1 << (y&7));
     switch (color)
@@ -222,9 +244,8 @@ void oled_draw_pixel(uint8_t x, uint8_t y, uint8_t color)
         (*buf) ^=  val;
         break;
     }
-    // For fram integration
-    // fram_write_byte(START_OF_OLED_BUFFER + (x + 16 * y), buf);
 
+    #endif
 }
 
 void oled_command(uint8_t c)
@@ -256,9 +277,6 @@ void oled_dim(uint8_t dim)
 
 void oled_display(void)
 {
-    // For fram integration
-    //uint8_t pixBuff[64];
-
     oled_command(SSD1306_COLUMNADDR);
     oled_command(0);   // Column start address (0 = reset)
     oled_command(SSD1306_LCDWIDTH-1); // Column end address (127 = reset)
@@ -271,9 +289,10 @@ void oled_display(void)
     oled_deselect();
     oled_dc_high();
     oled_select();
+
+    #ifdef FRAM_BUFFER
+    uint8_t pixBuff[64];
     
-    // For fram integration
-   /*
     uint8_t i = 0;
     uint8_t j = 0;
     for(; i < 16; ++i)
@@ -288,13 +307,14 @@ void oled_display(void)
         }
 
     }
-    */
+    #else
 
     uint16_t i=0;
     for (; i<1024; ++i)
     {
         spi_send_8(buffer[i]);
     }
+    #endif
 
     oled_deselect();
 }
@@ -305,9 +325,11 @@ void oled_clear_display(void)
     uint16_t i=0;
     for (; i<1024; ++i)
     {
-        // For fram integration
-        //fram_write_byte(START_OF_OLED_BUFFER + i, 0);
+        #ifdef FRAM_BUFFER
+        fram_write_byte(START_OF_OLED_BUFFER + i, 0);
+        #else
         buffer[i] = 0;
+        #endif
     }
 }
 
@@ -324,9 +346,6 @@ void oled_h_line(uint8_t x, uint8_t y, uint8_t w, uint8_t color)
 
 void oled_v_line(uint8_t x, uint8_t y, uint8_t h, uint8_t color)
 {
-
-
-    //oled_internal_v_line(x, y, h, color);
     uint8_t i = 0;
     for(; i < h; ++i)
     {
@@ -364,8 +383,6 @@ uint8_t oled_draw_char(uint8_t x, uint8_t y, uint8_t c)
 
 void oled_draw_text(uint8_t x, uint8_t y, char *str, uint8_t str_len)
 {
-    //if( y % 8 != 0)
-    //    return;
     if(str_len == 0)
         str_len = strlen(str);
 
