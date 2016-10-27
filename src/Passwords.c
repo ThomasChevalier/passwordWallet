@@ -31,11 +31,10 @@ void set_password(uint8_t* password, uint8_t pwd_len)
 {
 	const uint16_t pwd_iv_begin  = FIRST_PWD_OFFSET + SIZE_OF_PWD_BLOCK * CURRENT_PASSWORD_ID + 42;
 	const uint16_t pwd_aes_begin = pwd_iv_begin + 16;
-	uint8_t i = 0;
 	uint8_t iv[16];
 	uint8_t aes[32];
 
-	for(i = 0; i < pwd_len; ++i)
+	for(uint8_t i = 0; i < pwd_len; ++i)
 	{
 		CURRENT_PASSWORD_DATA[i] = password[i];
 	}
@@ -156,4 +155,45 @@ void delete_password()
 void add_password()
 {
 
+}
+
+void decrypt_entropy_pool()
+{
+	uint8_t iv[16];
+	uint8_t block_encrypted[16];
+	uint8_t block_decrypted[16];
+
+	fram_read_bytes(OFFSET_ENTROPY_IV, iv, 16);
+	fram_read_bytes(OFFSET_ENTROPY_POOL, block_encrypted, 16);
+
+	AES128_CBC_decrypt_buffer(block_decrypted, block_encrypted, 16, KEY, iv);
+	fram_write_bytes(OFFSET_ENTROPY_POOL, block_decrypted, 16);
+
+	for(uint8_t i = 1; i < 64; ++i)
+	{	
+		fram_read_bytes(OFFSET_ENTROPY_POOL + i * 16, block_encrypted, 16);
+		AES128_CBC_decrypt_buffer(block_decrypted, block_encrypted, 16, 0, 0);
+		fram_write_bytes(OFFSET_ENTROPY_POOL + i * 16, block_decrypted, 16);
+	}
+}
+
+void encrypt_entropy_pool()
+{
+	uint8_t iv[16];
+	uint8_t block_encrypted[16];
+	uint8_t block_decrypted[16];
+
+	random_fill(iv, 16);
+	fram_write_bytes(OFFSET_ENTROPY_IV, iv, 16);
+	fram_read_bytes(OFFSET_ENTROPY_POOL, block_decrypted, 16);
+
+	AES128_CBC_encrypt_buffer(block_encrypted, block_decrypted, 16, KEY, iv);
+	fram_write_bytes(OFFSET_ENTROPY_POOL, block_encrypted, 16);
+
+	for(uint8_t i = 1; i < 64; ++i)
+	{	
+		fram_read_bytes(OFFSET_ENTROPY_POOL + i * 16, block_decrypted, 16);
+		AES128_CBC_encrypt_buffer(block_encrypted, block_decrypted, 16, 0, 0);
+		fram_write_bytes(OFFSET_ENTROPY_POOL + i * 16, block_encrypted, 16);
+	}
 }
