@@ -13,6 +13,7 @@
 #include "Aes.h"
 #include "Ascii85.h"
 
+#include "Buttons.h"
 #include "Events.h"
 
 static void waitRfidTag()
@@ -35,7 +36,7 @@ static uint8_t authenticate_on_card()
     // sak == 0x08 <=> MIFARE 1K
     if(rfid_uid.sak != 0x08)
     {
-        str_to_buffer(STRING_ERROR_CARD);
+        str_to_buffer(str_error_card_index);
         oled_draw_text(0, 0, str_buffer, 0);
         oled_display();
     }
@@ -51,7 +52,7 @@ static uint8_t authenticate_on_card()
         status = rfid_pcd_authenticate(PICC_CMD_MF_AUTH_KEY_A, 7, &key, &rfid_uid);
         if(status != STATUS_OK)
         {
-            str_to_buffer(STRING_ERROR_AUTH);
+            str_to_buffer(str_error_auth_index);
             oled_draw_text(0, 0, str_buffer, 0);
             oled_display();
         }
@@ -85,7 +86,7 @@ void wait_for_valid_card()
             if(rfid_MIFARE_read(4, buffer, &size) != STATUS_OK && size != 16)
             {
                 // .. Failure
-                str_to_buffer(STRING_ERROR_READ);
+                str_to_buffer(str_error_read_index);
                 oled_draw_text(0, 0, str_buffer, 0);
                 oled_display();
             }
@@ -143,7 +144,7 @@ uint8_t check_key()
         if(output[verifCounter] != eeprom_read_byte(eeprom_addr))
         {
             oled_clear_display();
-            str_to_buffer(STRING_ERROR_PWD);
+            str_to_buffer(str_error_pwd_index);
             oled_draw_text(0, 0, str_buffer, 0);
             oled_display();
             return 0;
@@ -159,7 +160,7 @@ void change_master_key()
     rfid_init();
 
     oled_clear_display();
-    str_to_buffer(STRING_MISC_APPROACH_CARD);
+    str_to_buffer(str_misc_approachCard_index);
     oled_draw_text(0, 0, str_buffer, 0);
     oled_display();
 
@@ -193,6 +194,7 @@ void change_master_key()
         // If we cannot authenticate, abort operation
         return;
     }
+    rfid_power_down();
 
     // Update encryption validation
     uint8_t output[16];
@@ -214,10 +216,14 @@ void change_master_key()
     oled_draw_text(0, 0, outputText, 20);
     oled_display();
 
-    // Wait for the user to remove his card
-    _delay_ms(5000);
-    // Wait for the user to save the new key.
-    waitRfidTag();
-
-    rfid_power_down();
+    // Wait for the user to press a button
+    while(1)
+    {
+        buttons_update_event();
+        uint8_t event = getEvents();
+        if(event & EVENT_USB_DISCONNECTED)
+            eventHappen(EVENT_USB_DISCONNECTED);
+        if((event & EVENT_BUTTON_1) || (event & EVENT_BUTTON_2) || (event & EVENT_BUTTON_3) || (event & EVENT_BUTTON_4))
+            return;
+    }
 }

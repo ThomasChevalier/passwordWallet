@@ -5,22 +5,22 @@
 
 char str_buffer[26];
 
-DEFINE_STRING(str_error_card, "Erreur : carte inconnue");
-DEFINE_STRING(str_error_auth, "Erreur d'authentification");
-DEFINE_STRING(str_error_read, "Erreur de lecture");
-DEFINE_STRING(str_error_pwd, "Mauvais mot de passe");
+DEFINE_STRING(str_error_card, "Erreur : carte inconnue", 0);
+DEFINE_STRING(str_error_auth, "Erreur d'authentification", 1);
+DEFINE_STRING(str_error_read, "Erreur de lecture", 2);
+DEFINE_STRING(str_error_pwd, "Mauvais mot de passe", 3);
 
-DEFINE_STRING(str_option_regen, "REGENERER");
-DEFINE_STRING(str_option_changePwd, "CHANGER LE MOT DE PASSE");
-DEFINE_STRING(str_option_changeUsr, "CHANGER L'IDENTIFIANT");
-DEFINE_STRING(str_option_delPwd, "SUPPRIMER");
-DEFINE_STRING(str_option_addPwd, "NOUVEAU MOT DE PASSE");
-DEFINE_STRING(str_option_changeMasterKey, "CHANGER LA CLEF MAITRE");
-DEFINE_STRING(str_option_changeOrientation, "RETOURNER L'AFFICHAGE");
+DEFINE_STRING(str_option_regen, "REGENERER", 4);
+DEFINE_STRING(str_option_changePwd, "CHANGER LE MOT DE PASSE", 5);
+DEFINE_STRING(str_option_changeUsr, "CHANGER L'IDENTIFIANT", 6);
+DEFINE_STRING(str_option_delPwd, "SUPPRIMER", 7);
+DEFINE_STRING(str_option_addPwd, "NOUVEAU MOT DE PASSE", 8);
+DEFINE_STRING(str_option_changeMasterKey, "CHANGER LA CLEF MAITRE", 9);
+DEFINE_STRING(str_option_changeOrientation, "RETOURNER L'AFFICHAGE", 10);
 
-DEFINE_STRING(str_misc_approachCard, "Approchez votre carte");
-DEFINE_STRING(str_misc_yes, "OUI");
-DEFINE_STRING(str_misc_no, "NON");
+DEFINE_STRING(str_misc_approachCard, "Approchez votre carte", 11);
+DEFINE_STRING(str_misc_yes, "OUI", 12);
+DEFINE_STRING(str_misc_no, "NON", 13);
 
 PGM_P const string_table[] PROGMEM = 
 {

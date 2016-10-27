@@ -91,10 +91,10 @@ void draw_confirmation_screen(uint8_t choice, uint8_t yesNo)
 	str_to_buffer(choice + 4);
 	oled_draw_text(2, 2, str_buffer, 0);
 
-	str_to_buffer(STRING_MISC_NO);
+	str_to_buffer(str_misc_no_index);
 	oled_draw_text(56, 19, str_buffer, 0);
 
-	str_to_buffer(STRING_MISC_YES);
+	str_to_buffer(str_misc_yes_index);
 	oled_draw_text(56, 29, str_buffer, 0);
 
 	uint8_t y = yesNo ? 28 : 18;
