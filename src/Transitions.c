@@ -25,6 +25,7 @@ DECLARE_TRANSITION(STATE_INIT)
 		return STATE_INIT;
 	}*/
 	
+	// Save some mA
 	rfid_power_down();
 
 	// Read the flags and data from fram
@@ -32,6 +33,9 @@ DECLARE_TRANSITION(STATE_INIT)
   	fram_read_bytes(1, (uint8_t*)(&FIRST_PWD_UTIL), 2);
  	fram_read_bytes(3, (uint8_t*)(&FIRST_PWD_ALPHA), 2);
  	fram_read_bytes(5, (uint8_t*)(&NUM_PWD), 2);
+
+ 	// Restore Entropy pool
+ 	decrypt_entropy_pool();
 
   	goto_first_pwd();
 	read_all_names();
@@ -240,5 +244,8 @@ DECLARE_TRANSITION(STATE_OPTION)
 
 DECLARE_TRANSITION(STATE_SAVE) 
 {
+	// For safety
+	encrypt_entropy_pool();
+	
 	return STATE_SAVE;
 }

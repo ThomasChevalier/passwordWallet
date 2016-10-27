@@ -33,8 +33,9 @@ void set_password(uint8_t* password, uint8_t pwd_len)
 	const uint16_t pwd_aes_begin = pwd_iv_begin + 16;
 	uint8_t iv[16];
 	uint8_t aes[32];
+	uint8_t i = 0;
 
-	for(uint8_t i = 0; i < pwd_len; ++i)
+	for(i = 0; i < pwd_len; ++i)
 	{
 		CURRENT_PASSWORD_DATA[i] = password[i];
 	}
@@ -175,6 +176,21 @@ void decrypt_entropy_pool()
 		AES128_CBC_decrypt_buffer(block_decrypted, block_encrypted, 16, 0, 0);
 		fram_write_bytes(OFFSET_ENTROPY_POOL + i * 16, block_decrypted, 16);
 	}
+
+	// Check for encryption validity and for 
+	uint16_t entropyPoolSize = 0;
+    fram_read_bytes(OFFSET_ENTROPY_SIZE, (uint8_t*)(&entropyPoolSize), 2);
+
+    // If the entropy pool has not been encrypted at last shutdown,
+    // the pool is not valid anymore (someone may have read the fram memory and may know the random data).
+    if(!(entropyPoolSize & (1<<15)))
+    {
+    	entropyPoolSize = 0;
+    }
+
+	 // Clear encryption flag
+    entropyPoolSize &= ~(1<<15);
+    fram_write_bytes(OFFSET_ENTROPY_SIZE, (uint8_t*)(&entropyPoolSize), 2);
 }
 
 void encrypt_entropy_pool()
@@ -182,6 +198,15 @@ void encrypt_entropy_pool()
 	uint8_t iv[16];
 	uint8_t block_encrypted[16];
 	uint8_t block_decrypted[16];
+
+	// Check if the pool is already encrypted
+	uint16_t entropyPoolSize = 0;
+    fram_read_bytes(OFFSET_ENTROPY_SIZE, (uint8_t*)(&entropyPoolSize), 2);
+    if(entropyPoolSize & (1<<15))
+    {
+    	// Yes it is
+    	return;
+    }
 
 	random_fill(iv, 16);
 	fram_write_bytes(OFFSET_ENTROPY_IV, iv, 16);
@@ -196,4 +221,8 @@ void encrypt_entropy_pool()
 		AES128_CBC_encrypt_buffer(block_encrypted, block_decrypted, 16, 0, 0);
 		fram_write_bytes(OFFSET_ENTROPY_POOL + i * 16, block_encrypted, 16);
 	}
+
+	 // Set encryption flag
+    entropyPoolSize |= (1<<15);
+    fram_write_bytes(OFFSET_ENTROPY_SIZE, (uint8_t*)(&entropyPoolSize), 2);
 }
