@@ -156,20 +156,9 @@ int main()
   init_hardware();
   init_software();
 
-  oled_clear_display();
-  oled_display();
-  char buff[8];
-  for(uint8_t i = 0; i < 8; ++i)
-  {
-    buff[i] = random_request_printable();
-  }
-  oled_draw_text(0,0,buff, 8);
-  // For test
   oled_display();
 
-  // For test
   wait_for_valid_card();
- // eventHappen(EVENT_PASSWORD_ENTERED);
   while(RUNNING)
   {
     random_save_entropy();
