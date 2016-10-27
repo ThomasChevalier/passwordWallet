@@ -34,8 +34,9 @@ DECLARE_TRANSITION(STATE_INIT)
  	fram_read_bytes(3, (uint8_t*)(&FIRST_PWD_ALPHA), 2);
  	fram_read_bytes(5, (uint8_t*)(&NUM_PWD), 2);
 
- 	// Restore Entropy pool
- 	decrypt_entropy_pool();
+ 	// Delete all entropy pool, because it cannot be trusted (someone may have corrupt the data)
+ 	uint16_t entropyPoolSize = 0;
+    fram_write_bytes(OFFSET_ENTROPY_SIZE, (uint8_t*)(&entropyPoolSize), 2);
 
   	goto_first_pwd();
 	read_all_names();
@@ -244,8 +245,5 @@ DECLARE_TRANSITION(STATE_OPTION)
 
 DECLARE_TRANSITION(STATE_SAVE) 
 {
-	// For safety
-	encrypt_entropy_pool();
-	
 	return STATE_SAVE;
 }

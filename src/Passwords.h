@@ -26,8 +26,6 @@ void change_username();
 void delete_password();
 void add_password();
 
-void decrypt_entropy_pool();
-void encrypt_entropy_pool();
 
 
 #endif // PASSWORDS_HEADER_THOMAS_CHEVALIER
