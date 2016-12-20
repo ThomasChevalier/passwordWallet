@@ -36,10 +36,8 @@ extern char PWD_NAME_1[32];
 extern char PWD_NAME_2[32];
 extern char PWD_NAME_3[32];
 
-// The decrypted user name of the three passwords displayed
-extern char USR_NAME_1[32];
-extern char USR_NAME_2[32];
-extern char USR_NAME_3[32];
+// The decrypted user name of password displayed. Only the current username is necessary, since the others name are not displayed.
+extern uint8_t CURRENT_USR_NAME[64];
 
 // ////////////////////// //
 // Options stored in FRAM //

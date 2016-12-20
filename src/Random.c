@@ -13,13 +13,13 @@
 
 #define gWDT_buffer_SIZE 32
 #define WDT_POOL_SIZE 8
- uint8_t gWDT_buffer[gWDT_buffer_SIZE];
- uint8_t gWDT_buffer_position;
- uint8_t gWDT_loop_counter;
- volatile uint8_t gWDT_pool_start;
- volatile uint8_t gWDT_pool_end;
- volatile uint8_t gWDT_pool_count;
- volatile uint32_t gWDT_entropy_pool[WDT_POOL_SIZE];
+static uint8_t gWDT_buffer[gWDT_buffer_SIZE];
+static uint8_t gWDT_buffer_position;
+static uint8_t gWDT_loop_counter;
+static volatile uint8_t gWDT_pool_start;
+static volatile uint8_t gWDT_pool_end;
+static volatile uint8_t gWDT_pool_count;
+static volatile uint32_t gWDT_entropy_pool[WDT_POOL_SIZE];
  
 
 ENTROPY_LONG_WORD share_entropy;
@@ -243,11 +243,14 @@ uint8_t random_request_byte()
     // Else if entropy available in fram, retrieve it
     uint16_t entropyPoolSize = 0;
     uint8_t random = 0;
+    // Read how many bytes are in fram
     fram_read_bytes(OFFSET_ENTROPY_SIZE, (uint8_t*)(&entropyPoolSize), 2);
-    if(entropyPoolSize > 0)
+    if(entropyPoolSize > 0) // There is enough byte
     {
+        // Read the random byte and don't forget to clear it
         random = fram_read_byte(OFFSET_ENTROPY_POOL + entropyPoolSize - 1);
         fram_write_byte(OFFSET_ENTROPY_POOL + entropyPoolSize - 1, 0);
+        // Decrease pool size
         entropyPoolSize -= 1;
         fram_write_bytes(OFFSET_ENTROPY_SIZE, (uint8_t*)(&entropyPoolSize), 2);
         return random;

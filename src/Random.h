@@ -14,7 +14,8 @@ typedef union
 
 extern ENTROPY_LONG_WORD share_entropy;
 extern uint32_t retVal;
-  
+
+// Should be called once before any use of random_ functions
 void random_init();
 
 uint32_t random_32();

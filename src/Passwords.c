@@ -124,6 +124,32 @@ void read_pwd_name(char* pwd_name, uint16_t pwd_index)
 	fram_read_bytes(FIRST_PWD_OFFSET + SIZE_OF_PWD_BLOCK * pwd_index + 10, (uint8_t*)pwd_name, 32);
 }
 
+void read_usr_name()
+{
+	const uint16_t usr_iv_begin  = FIRST_PWD_OFFSET + SIZE_OF_PWD_BLOCK * CURRENT_PASSWORD_ID + 90;
+	const uint16_t usr_aes_begin = usr_iv_begin + 16;
+	uint8_t iv[16];
+	uint8_t aes[64];
+	fram_read_bytes(usr_iv_begin, iv, 16);
+	fram_read_bytes(usr_aes_begin, aes, 64);
+
+	AES128_CBC_decrypt_buffer(CURRENT_USR_NAME+0, aes+0, 16, KEY, iv);
+	AES128_CBC_decrypt_buffer(CURRENT_USR_NAME+16, aes+16, 16, 0, 0);
+	AES128_CBC_decrypt_buffer(CURRENT_USR_NAME+32, aes+32, 32, 0, 0);
+	AES128_CBC_decrypt_buffer(CURRENT_USR_NAME+48, aes+48, 48, 0, 0);
+
+	// Remove padding
+	uint8_t i = 0;
+	uint8_t j = 0;
+	for(; i < 64; ++i)
+	{
+		if(CURRENT_USR_NAME[i] < 32)
+			j=1;
+		if(j)
+			CURRENT_USR_NAME[i] = 0;
+	}
+}
+
 void read_all_names()
 {
 	read_pwd_name(PWD_NAME_1, prev_pwd(CURRENT_PASSWORD_ID));

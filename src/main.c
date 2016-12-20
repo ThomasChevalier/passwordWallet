@@ -152,12 +152,13 @@ int main()
 
   State* currentState = &states[STATE_INIT];
 
+  // Init of the µC
   init_system();
   init_hardware();
   init_software();
 
   oled_display();
-
+  // Wait until there is a rfid card, with or without the good password
   wait_for_valid_card();
   while(RUNNING)
   {
