@@ -19,6 +19,9 @@
 
 DECLARE_TRANSITION(STATE_INIT)
 {
+	if(event & EVENT_USB_DISCONNECTED)
+		return STATE_SAVE;
+	
 	/*if(!check_key())
 	{
 		wait_for_valid_card();
@@ -30,13 +33,16 @@ DECLARE_TRANSITION(STATE_INIT)
 
 	// Read the flags and data from fram
   	OPTIONS_FLAG = fram_read_byte(0);
-  	fram_read_bytes(1, (uint8_t*)(&FIRST_PWD_UTIL), 2);
- 	fram_read_bytes(3, (uint8_t*)(&FIRST_PWD_ALPHA), 2);
- 	fram_read_bytes(5, (uint8_t*)(&NUM_PWD), 2);
+  	FIRST_PWD_UTIL = fram_read_byte(1);;
+ 	FIRST_PWD_ALPHA = fram_read_byte(2);
+ 	NUM_PWD = fram_read_byte(3);
 
  	// Delete all entropy pool, because it cannot be trusted (someone may have corrupt the data)
  	uint16_t entropyPoolSize = 0;
     fram_write_bytes(OFFSET_ENTROPY_SIZE, (uint8_t*)(&entropyPoolSize), 2);
+
+    // Read the memory map
+    fram_read_bytes(OFFSET_MEMORY_MAP, MEMORY_MAP, MEMORY_MAP_SIZE);
 
   	goto_first_pwd();
 	read_all_names();
