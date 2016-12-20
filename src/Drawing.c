@@ -202,8 +202,11 @@ void draw_typing_screen(char* str, uint8_t column)
 {
 	uint8_t len = strlen(str);
 
-	if(len > 17 && column > 16)
+	if(column > 15)
 	{
+		str += column - 15;
+		len -= column - 15;
+		column = 15;
 		// column -= 9;
 		// for(uint8_t i = 9; i < 18; ++i)
 		// {
@@ -211,12 +214,15 @@ void draw_typing_screen(char* str, uint8_t column)
 		// }
 		// draw_char_column(len-1 | (1<<4), str[len-1]);
 	}
-	else
+	//else
 	{
 		oled_clear_display();
 		for(uint8_t i = 0; i < len; ++i)
 		{
-			oled_draw_char(i * 7 + 1, 3*9, str[i]);
+			if(i * 7 + 1 < 128)
+			{
+				oled_draw_char(i * 7 + 1, 3*9, str[i]);
+			}
 		}
 		draw_char_column(column | (1<<4), str[column]);
 	}

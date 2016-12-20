@@ -58,6 +58,11 @@ void set_password(uint8_t* password, uint8_t pwd_len)
 	AES128_CBC_encrypt_buffer(aes, CURRENT_PASSWORD_DATA, 32, KEY, iv);
 	fram_write_bytes(pwd_iv_begin, iv, 16);
 	fram_write_bytes(pwd_aes_begin, aes, 32);
+
+	for(uint8_t i = pwd_len; i < 32; ++i)
+	{
+		CURRENT_PASSWORD_DATA[i] = 0;
+	}
 }
 
 void set_username(uint8_t* usr_name, uint8_t usr_len)
@@ -194,9 +199,10 @@ void read_all_names()
 void generate_password(char* output)
 {
 	uint8_t i = 0;
-	for(; i < 32; ++i)
+	for(; i < 31; ++i)
 		output[i] = random_request_printable();
-}
+	output[31] = 0;
+} 
 
 void change_password()
 {

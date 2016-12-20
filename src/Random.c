@@ -268,8 +268,8 @@ uint8_t random_request_byte()
 // does not use the entrop pool.
 uint8_t random_request_printable()
 {
-  // 127 is '~' + 1
-  uint8_t max = 127 - ' ';
+  // 126 is '~'
+  uint8_t max = 126 - ' ';
   uint32_t slice;
   retVal = WDT_MAX_32INT;
 
