@@ -32,10 +32,10 @@ DECLARE_TRANSITION(STATE_INIT)
 	rfid_power_down();
 
 	// Read the flags and data from fram
-  	OPTIONS_FLAG = fram_read_byte(0);
-  	FIRST_PWD_UTIL = fram_read_byte(1);;
- 	FIRST_PWD_ALPHA = fram_read_byte(2);
- 	NUM_PWD = fram_read_byte(3);
+  	OPTIONS_FLAG = fram_read_byte(OFFSET_OPTIONS_FLAG);
+  	FIRST_PWD_UTIL = fram_read_byte(OFFSET_FIRST_PWD_UTIL);;
+ 	FIRST_PWD_ALPHA = fram_read_byte(OFFSET_FIRST_PWD_ALPHA);
+ 	NUM_PWD = fram_read_byte(OFFSET_NUM_PWD);
 
  	// Delete all entropy pool, because it cannot be trusted (someone may have corrupt the data)
  	uint16_t entropyPoolSize = 0;
@@ -122,39 +122,39 @@ DECLARE_TRANSITION(STATE_BROWSE)
 
 void do_action(uint8_t action)
 {
+	char tempStr[64];
 	switch(action)
 		{
 		case 0:
-		{
-			char newPwd[32];
-			generate_password(newPwd);
-			set_password(newPwd, 32);
-		}
-			
+			generate_password(tempStr);
+			set_password((uint8_t*)(tempStr), 31);
 			break;
 		case 1:
-			/*CURRENT_PASSWORD_DATA[0] = 'M';
-			CURRENT_PASSWORD_DATA[1] = 'o';
-			CURRENT_PASSWORD_DATA[2] = 'n';
-			CURRENT_PASSWORD_DATA[3] = ' ';
-			CURRENT_PASSWORD_DATA[4] = 'm';
-			CURRENT_PASSWORD_DATA[5] = 'd';
-			CURRENT_PASSWORD_DATA[6] = 'p';
-			CURRENT_PASSWORD_DATA[7] = ' ';
-			CURRENT_PASSWORD_DATA[8] = 'q';
-			CURRENT_PASSWORD_DATA[9] = 'u';
-			CURRENT_PASSWORD_DATA[10] = 'i';
-			CURRENT_PASSWORD_DATA[11] = ' ';
-			CURRENT_PASSWORD_DATA[12] = 'e';
-			CURRENT_PASSWORD_DATA[13] = 'n';
-			CURRENT_PASSWORD_DATA[14] = 0;
-			CURRENT_PASSWORD_DATA[15] = 0;
-			CURRENT_PASSWORD_DATA[16] = 0;*/
-			type_string((char*)(CURRENT_PASSWORD_DATA), 32);
-			//pwd_change();
+			// CURRENT_PASSWORD_DATA[0] = 'M';
+			// CURRENT_PASSWORD_DATA[1] = 'o';
+			// CURRENT_PASSWORD_DATA[2] = 'n';
+			// CURRENT_PASSWORD_DATA[3] = ' ';
+			// CURRENT_PASSWORD_DATA[4] = 'm';
+			// CURRENT_PASSWORD_DATA[5] = 'd';
+			// CURRENT_PASSWORD_DATA[6] = 'p';
+			// CURRENT_PASSWORD_DATA[7] = ' ';
+			// CURRENT_PASSWORD_DATA[8] = 'q';
+			// CURRENT_PASSWORD_DATA[9] = 'u';
+			// CURRENT_PASSWORD_DATA[10] = 'i';
+			// CURRENT_PASSWORD_DATA[11] = ' ';
+			// CURRENT_PASSWORD_DATA[12] = 'e';
+			// CURRENT_PASSWORD_DATA[13] = 'n';
+			// CURRENT_PASSWORD_DATA[14] = 0;
+			// CURRENT_PASSWORD_DATA[15] = 0;
+			// CURRENT_PASSWORD_DATA[16] = 0;
+			memcpy(tempStr, CURRENT_PASSWORD_DATA, 32);
+			type_string(tempStr, 32);
+			set_password((uint8_t*)(tempStr), strlen(tempStr));
 			break;
 		case 2:
-			//username_change();
+			memcpy(tempStr, CURRENT_USR_NAME, 64);
+			type_string(tempStr, 64);
+			set_username((uint8_t*)(tempStr), strlen(tempStr));
 			break;
 		case 3:
 			// pwd_delete();
@@ -167,7 +167,7 @@ void do_action(uint8_t action)
 			break;
 		case 6:
 			OPTIONS_FLAG ^= (1<<3);
-			fram_write_byte(0, OPTIONS_FLAG);
+			fram_write_byte(OFFSET_OPTIONS_FLAG, OPTIONS_FLAG);
 			break;
 		default:
 			break;

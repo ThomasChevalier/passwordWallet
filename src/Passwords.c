@@ -95,11 +95,36 @@ void set_username(uint8_t* usr_name, uint8_t usr_len)
 	fram_write_bytes(usr_aes_begin, aes, 64);
 }
 
+// Return the address of the first chunk used (from memory map info), beginning to index (included)
+// Return MAXIMUM_NUMBER_OF_PWD if there is no entry
+static uint8_t getFirstEntryFrom(const uint8_t index)
+{
+	for(uint8_t i = index / 8; i < MEMORY_MAP_SIZE; ++i)
+	{
+		// Begin at index
+		uint8_t j = (i==index/8) ? index % 8 : 0;
+
+		for(; j < 8; ++j)
+		{
+			if(i*8+j > MAXIMUM_NUMBER_OF_PWD)
+				return MAXIMUM_NUMBER_OF_PWD;
+			if(MEMORY_MAP[i] & (1<<j)) // The bit is set, we have found a chunk
+			{
+				return i*8+j;
+			}
+
+		}
+	}
+	return MAXIMUM_NUMBER_OF_PWD;
+}
+
 void goto_first_pwd()
 {
 	uint8_t sortingMethod = (OPTIONS_FLAG >> 1) & 0x03;
 	if(sortingMethod == 0)
-		CURRENT_PASSWORD_ID = 0;
+	{
+		CURRENT_PASSWORD_ID = getFirstEntryFrom(0);
+	}
 	else if(sortingMethod == 1)
 	{
 		CURRENT_PASSWORD_ID = FIRST_PWD_UTIL;
@@ -110,12 +135,54 @@ void goto_first_pwd()
 	}
 }
 
+// Count from up to 0, [up;0]
+#define COUNT_DOWN_LOOP_BEG(variable, up) for(uint8_t variable = 0; variable <= up; ++variable){variable = up - variable;
+#define COUNT_DOWN_LOOP_END(variable, up) variable = up - variable;}
+
 uint16_t prev_pwd(uint16_t pwd_index)
 {
 	uint16_t pwdAddr = 0;
 	uint8_t sortingMethod = (OPTIONS_FLAG >> 1) & 0x03;
 	if(sortingMethod == 0)
-		pwd_index = (pwd_index == 0) ? NUM_PWD : pwd_index-1;
+	{
+		// The following code try to find a chunk used, before the pwd_index.
+		// If there is no such chunk, it loop and search from the end of the memory.
+
+		const uint8_t byteAddr = pwd_index / 8;
+
+		// I had a very strange bug that freeze the µC if i wrote a for like this : for(uint8_t i = byteAddr; i >= 0; --i)
+		COUNT_DOWN_LOOP_BEG(i, byteAddr)
+			COUNT_DOWN_LOOP_BEG(j, ((i==byteAddr) ? pwd_index % 8 : 7))
+
+				if(MEMORY_MAP[i] && (1<<j)) // The bit is set, we have found a chunk
+				{
+					pwdAddr = i*8+j;
+					goto loopExit_1;
+				}
+
+			COUNT_DOWN_LOOP_END(j, ((i==byteAddr) ? pwd_index % 8 : 7))
+		COUNT_DOWN_LOOP_END(i, byteAddr)
+
+		loopExit_1:; // This ';' is not a mistake
+
+		if(pwdAddr == pwd_index) // No previous password
+		{
+			COUNT_DOWN_LOOP_BEG(i, (MEMORY_MAP_SIZE-1))
+				COUNT_DOWN_LOOP_BEG(j, 7)
+					if(i*8+j < MAXIMUM_NUMBER_OF_PWD)
+					{
+						if(MEMORY_MAP[i] && (1<<j)) // The bit is set, we have found a chunk
+						{
+							pwdAddr = i*8+j;
+							goto loopExit_2;
+						}
+					}
+				COUNT_DOWN_LOOP_END(j, 7)
+			COUNT_DOWN_LOOP_END(i, (MEMORY_MAP_SIZE-1))
+			loopExit_2:;
+		}
+		
+	}
 	else if(sortingMethod == 1)
 	{
 		fram_read_bytes( PWD_ADDR(pwd_index, PWD_OFFSET_PREV_PWD_UTIL), (uint8_t*)(&pwdAddr), 2);
@@ -132,7 +199,13 @@ uint16_t next_pwd(uint16_t pwd_index)
 	uint16_t pwdAddr = 0;
 	uint8_t sortingMethod = (OPTIONS_FLAG >> 1) & 0x03;
 	if(sortingMethod == 0)
-		pwd_index = (pwd_index == NUM_PWD) ? 0 : pwd_index + 1;
+	{
+		// Search for a new entry
+		pwd_index = getFirstEntryFrom(pwd_index+1);
+		// Loop if not found
+		if(pwd_index == MAXIMUM_NUMBER_OF_PWD) // There is always at least one password
+			pwd_index = getFirstEntryFrom(0);
+	}
 	else if(sortingMethod == 1)
 	{
 		fram_read_bytes(PWD_ADDR(pwd_index, PWD_OFFSET_NEXT_PWD_UTIL), (uint8_t*)(&pwdAddr), 2);
@@ -238,6 +311,7 @@ uint8_t add_password(char* passwordName, char* passwordData, char* userName)
     		{
 				chunkFree = 1;
 				chunk_id = i * 8 + j;
+				MEMORY_MAP[i] &= (1<<j); // Set the bit, this chunk is now used
     		}
     	}
     }
@@ -246,6 +320,7 @@ uint8_t add_password(char* passwordName, char* passwordData, char* userName)
     {
         return 1;
     }
+    
 
     uint8_t save_options_flag = OPTIONS_FLAG;
 
@@ -295,7 +370,7 @@ uint8_t add_password(char* passwordName, char* passwordData, char* userName)
 
    	// Incremenet the number of password stored.
     ++ NUM_PWD;
-    fram_write_byte(3, NUM_PWD);
+    fram_write_byte(OFFSET_NUM_PWD, NUM_PWD);
     return 0;
 
 }

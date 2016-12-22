@@ -61,6 +61,11 @@ extern uint8_t CURRENT_USR_NAME[64];
 // Options stored in FRAM //
 // ////////////////////// //
 
+#define OFFSET_OPTIONS_FLAG (0)
+#define OFFSET_FIRST_PWD_UTIL (1)
+#define OFFSET_FIRST_PWD_ALPHA (2)
+#define OFFSET_NUM_PWD (3)
+
 extern uint8_t OPTIONS_FLAG;     // The options flag stored in fram
 
 extern uint8_t FIRST_PWD_UTIL;  // bytes 2 and 3 of fram
