@@ -127,7 +127,7 @@ void do_action(uint8_t action)
 		{
 		case 0:
 			generate_password(tempStr);
-			set_password((uint8_t*)(tempStr), 31);
+			set_password((uint8_t*)(tempStr), 31, KEY);
 			break;
 		case 1:
 			// CURRENT_PASSWORD_DATA[0] = 'M';
@@ -149,12 +149,12 @@ void do_action(uint8_t action)
 			// CURRENT_PASSWORD_DATA[16] = 0;
 			memcpy(tempStr, CURRENT_PASSWORD_DATA, 32);
 			type_string(tempStr, 32);
-			set_password((uint8_t*)(tempStr), strlen(tempStr));
+			set_password((uint8_t*)(tempStr), strlen(tempStr), KEY);
 			break;
 		case 2:
 			memcpy(tempStr, CURRENT_USR_NAME, 64);
 			type_string(tempStr, 64);
-			set_username((uint8_t*)(tempStr), strlen(tempStr));
+			set_username((uint8_t*)(tempStr), strlen(tempStr), KEY);
 			break;
 		case 3:
 			// pwd_delete();

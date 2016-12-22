@@ -6,7 +6,39 @@
 #include "Aes.h"
 #include "Random.h"
 
-void read_password()
+void update_encryption_with(uint8_t *new_key)
+{
+
+	// For all the chunk used ...
+	for(uint8_t i = 0; i < MEMORY_MAP_SIZE; ++i)
+	{
+		for(uint8_t j = 0; j < 8; ++j)
+		{
+			if(i*8+j<MAXIMUM_NUMBER_OF_PWD)
+			{
+				if(MEMORY_MAP[i] && (1<<j))
+				{
+					// ... Change the key
+					CURRENT_PASSWORD_ID = i*8+j;
+					uint8_t temp[64];
+
+					read_password(KEY);
+					memcpy(temp, CURRENT_PASSWORD_DATA, 32);
+					set_password(temp, strlen((char*)(temp)), new_key);
+
+					read_usr_name(KEY);
+					memcpy(temp, CURRENT_USR_NAME, 64);
+					set_username(temp, strlen((char*)(temp)), new_key);
+				}
+			}
+		}
+	}
+	
+
+
+}
+
+void read_password(uint8_t* key)
 {
 	const uint16_t pwd_iv_begin  = PWD_ADDR(CURRENT_PASSWORD_ID, PWD_OFFSET_PWD_IV);
 	const uint16_t pwd_aes_begin = PWD_ADDR(CURRENT_PASSWORD_ID, PWD_OFFSET_PWD_DATA);
@@ -15,7 +47,7 @@ void read_password()
 	fram_read_bytes(pwd_iv_begin, iv, 16);
 	fram_read_bytes(pwd_aes_begin, aes, 32);
 
-	AES128_CBC_decrypt_buffer(CURRENT_PASSWORD_DATA+0, aes+0, 16, KEY, iv);
+	AES128_CBC_decrypt_buffer(CURRENT_PASSWORD_DATA+0, aes+0, 16, key, iv);
 	AES128_CBC_decrypt_buffer(CURRENT_PASSWORD_DATA+16, aes+16, 16, 0, 0);
 
 	// Remove padding
@@ -30,7 +62,7 @@ void read_password()
 	}
 }
 
-void set_password(uint8_t* password, uint8_t pwd_len)
+void set_password(uint8_t* password, uint8_t pwd_len, uint8_t* key)
 {
 	const uint16_t pwd_iv_begin  = PWD_ADDR(CURRENT_PASSWORD_ID, PWD_OFFSET_PWD_IV);
 	const uint16_t pwd_aes_begin = PWD_ADDR(CURRENT_PASSWORD_ID, PWD_OFFSET_PWD_DATA);
@@ -52,7 +84,7 @@ void set_password(uint8_t* password, uint8_t pwd_len)
 	}
 
 	random_fill(iv, 16);
-	AES128_CBC_encrypt_buffer(aes, CURRENT_PASSWORD_DATA, 32, KEY, iv);
+	AES128_CBC_encrypt_buffer(aes, CURRENT_PASSWORD_DATA, 32, key, iv);
 	fram_write_bytes(pwd_iv_begin, iv, 16);
 	fram_write_bytes(pwd_aes_begin, aes, 32);
 
@@ -63,7 +95,35 @@ void set_password(uint8_t* password, uint8_t pwd_len)
 	}
 }
 
-void set_username(uint8_t* usr_name, uint8_t usr_len)
+
+void read_usr_name(uint8_t* key)
+{
+	const uint16_t usr_iv_begin  = PWD_ADDR(CURRENT_PASSWORD_ID, PWD_OFFSET_USR_IV);
+	const uint16_t usr_aes_begin = PWD_ADDR(CURRENT_PASSWORD_ID, PWD_OFFSET_USR_NAME);
+	uint8_t iv[16];
+	uint8_t aes[64];
+	fram_read_bytes(usr_iv_begin, iv, 16);
+	fram_read_bytes(usr_aes_begin, aes, 64);
+
+	AES128_CBC_decrypt_buffer(CURRENT_USR_NAME+0, aes+0, 16, key, iv);
+	AES128_CBC_decrypt_buffer(CURRENT_USR_NAME+16, aes+16, 16, 0, 0);
+	AES128_CBC_decrypt_buffer(CURRENT_USR_NAME+32, aes+32, 32, 0, 0);
+	AES128_CBC_decrypt_buffer(CURRENT_USR_NAME+48, aes+48, 48, 0, 0);
+
+	// Remove padding
+	uint8_t i = 0;
+	uint8_t j = 0;
+	for(; i < 64; ++i)
+	{
+		if(CURRENT_USR_NAME[i] < 32)
+			j=1;
+		if(j)
+			CURRENT_USR_NAME[i] = 0;
+	}
+}
+
+
+void set_username(uint8_t* usr_name, uint8_t usr_len, uint8_t* key)
 {
 	const uint16_t usr_iv_begin  = PWD_ADDR(CURRENT_PASSWORD_ID, PWD_OFFSET_USR_IV);
 	const uint16_t usr_aes_begin = PWD_ADDR(CURRENT_PASSWORD_ID, PWD_OFFSET_USR_NAME);
@@ -85,7 +145,7 @@ void set_username(uint8_t* usr_name, uint8_t usr_len)
 	}
 
 	random_fill(iv, 16);
-	AES128_CBC_encrypt_buffer(aes, CURRENT_USR_NAME, 64, KEY, iv);
+	AES128_CBC_encrypt_buffer(aes, CURRENT_USR_NAME, 64, key, iv);
 	fram_write_bytes(usr_iv_begin, iv, 16);
 	fram_write_bytes(usr_aes_begin, aes, 64);
 
@@ -237,32 +297,6 @@ void read_pwd_name(char* pwd_name, uint16_t pwd_index)
 	fram_read_bytes(PWD_ADDR(CURRENT_PASSWORD_ID, PWD_OFFSET_PWD_NAME), (uint8_t*)pwd_name, 32);
 }
 
-void read_usr_name()
-{
-	const uint16_t usr_iv_begin  = PWD_ADDR(CURRENT_PASSWORD_ID, PWD_OFFSET_USR_IV);
-	const uint16_t usr_aes_begin = PWD_ADDR(CURRENT_PASSWORD_ID, PWD_OFFSET_USR_NAME);
-	uint8_t iv[16];
-	uint8_t aes[64];
-	fram_read_bytes(usr_iv_begin, iv, 16);
-	fram_read_bytes(usr_aes_begin, aes, 64);
-
-	AES128_CBC_decrypt_buffer(CURRENT_USR_NAME+0, aes+0, 16, KEY, iv);
-	AES128_CBC_decrypt_buffer(CURRENT_USR_NAME+16, aes+16, 16, 0, 0);
-	AES128_CBC_decrypt_buffer(CURRENT_USR_NAME+32, aes+32, 32, 0, 0);
-	AES128_CBC_decrypt_buffer(CURRENT_USR_NAME+48, aes+48, 48, 0, 0);
-
-	// Remove padding
-	uint8_t i = 0;
-	uint8_t j = 0;
-	for(; i < 64; ++i)
-	{
-		if(CURRENT_USR_NAME[i] < 32)
-			j=1;
-		if(j)
-			CURRENT_USR_NAME[i] = 0;
-	}
-}
-
 void read_all_names()
 {
 	read_pwd_name(PWD_NAME_1, prev_pwd(CURRENT_PASSWORD_ID));
@@ -361,10 +395,10 @@ uint8_t add_password(char* passwordName, char* passwordData, char* userName)
 
     // Pwd iv and data
    	uint8_t save_current_pwd = CURRENT_PASSWORD_ID;
-   	set_password((uint8_t *)(passwordData), strlen(passwordData)); 
+   	set_password((uint8_t *)(passwordData), strlen(passwordData), KEY); 
 
    	// Usr iv and name
-   	set_username((uint8_t*)(userName), strlen(userName));
+   	set_username((uint8_t*)(userName), strlen(userName), KEY);
 
    	//Restore current pwd id
    	CURRENT_PASSWORD_ID = save_current_pwd;

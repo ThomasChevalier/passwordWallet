@@ -52,6 +52,8 @@ unsigned char buttons_pressed()
     return rep;
 }
 
+
+
 /*
 void debounce(unsigned char* butt)
 {
