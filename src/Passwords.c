@@ -38,10 +38,7 @@ void set_password(uint8_t* password, uint8_t pwd_len)
 	uint8_t aes[32];
 	uint8_t i = 0;
 
-	for(i = 0; i < pwd_len; ++i)
-	{
-		CURRENT_PASSWORD_DATA[i] = password[i];
-	}
+	memcpy(CURRENT_PASSWORD_DATA, password, pwd_len);
 
 	// padding
 	if(pwd_len < 32)
@@ -59,6 +56,7 @@ void set_password(uint8_t* password, uint8_t pwd_len)
 	fram_write_bytes(pwd_iv_begin, iv, 16);
 	fram_write_bytes(pwd_aes_begin, aes, 32);
 
+	memcpy(CURRENT_PASSWORD_DATA, password, pwd_len);
 	for(uint8_t i = pwd_len; i < 32; ++i)
 	{
 		CURRENT_PASSWORD_DATA[i] = 0;
@@ -73,10 +71,7 @@ void set_username(uint8_t* usr_name, uint8_t usr_len)
 	uint8_t aes[64];
 	uint8_t i = 0;
 
-	for(i = 0; i < usr_len; ++i)
-	{
-		CURRENT_USR_NAME[i] = usr_name[i];
-	}
+	memcpy(CURRENT_USR_NAME, usr_name, usr_len);
 
 	// padding
 	if(usr_len < 64)
@@ -93,6 +88,12 @@ void set_username(uint8_t* usr_name, uint8_t usr_len)
 	AES128_CBC_encrypt_buffer(aes, CURRENT_USR_NAME, 64, KEY, iv);
 	fram_write_bytes(usr_iv_begin, iv, 16);
 	fram_write_bytes(usr_aes_begin, aes, 64);
+
+	memcpy(CURRENT_USR_NAME, usr_name, usr_len);
+	for(uint8_t i = usr_len; i < 64; ++i)
+	{
+		CURRENT_USR_NAME[i] = 0;
+	}
 }
 
 // Return the address of the first chunk used (from memory map info), beginning to index (included)
