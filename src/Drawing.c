@@ -110,6 +110,7 @@ void type_string(char* string_typed, uint8_t maxLen)
 	uint8_t have_erased = 0;
 	uint8_t running = 1;
 	string_typed[strlen(string_typed)] = 127;
+	draw_typing_screen(string_typed, pos);
 	while(running)
 	{
 		 _delay_ms(100);
@@ -201,31 +202,20 @@ void type_string(char* string_typed, uint8_t maxLen)
 void draw_typing_screen(char* str, uint8_t column)
 {
 	uint8_t len = strlen(str);
-
+	// Scrolling
 	if(column > 15)
 	{
 		str += column - 15;
 		len -= column - 15;
 		column = 15;
-		// column -= 9;
-		// for(uint8_t i = 9; i < 18; ++i)
-		// {
-		// 	oled_draw_char(i * 7 + 1, 0, str[i])
-		// }
-		// draw_char_column(len-1 | (1<<4), str[len-1]);
 	}
-	//else
+
+	oled_clear_display();
+	for(uint8_t i = 0; i < len && (i * 7 + 1) < 128; ++i)
 	{
-		oled_clear_display();
-		for(uint8_t i = 0; i < len; ++i)
-		{
-			if(i * 7 + 1 < 128)
-			{
-				oled_draw_char(i * 7 + 1, 3*9, str[i]);
-			}
-		}
-		draw_char_column(column | (1<<4), str[column]);
+		oled_draw_char(i * 7 + 1, 3*9, str[i]);
 	}
+	draw_char_column(column | (1<<4), str[column]);
 	oled_display();
 }
 
@@ -254,7 +244,7 @@ void draw_char_column(uint8_t column_and_flags, char letter)
 				c += 27;
 			}
 				
-			if(x > 'Z')
+			else if(x > 'Z')
 			{
 				c-= 27;
 			}
@@ -266,7 +256,7 @@ void draw_char_column(uint8_t column_and_flags, char letter)
 			{
 				c += 96;
 			}
-			if(x > '~'+1)
+			else if(x > '~'+1)
 			{
 				c-= 96;
 			}

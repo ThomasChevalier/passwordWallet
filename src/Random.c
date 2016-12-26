@@ -184,20 +184,24 @@ static void isr_hardware_neutral(uint8_t val)
     // produces reasonably uniform random results when using WDT jitter
     // on a variety of Arduino platforms
     for(gWDT_loop_counter = 0; gWDT_loop_counter < gWDT_buffer_SIZE; ++gWDT_loop_counter)
-      {
-	gWDT_entropy_pool[gWDT_pool_end] += gWDT_buffer[gWDT_loop_counter];
-	gWDT_entropy_pool[gWDT_pool_end] += (gWDT_entropy_pool[gWDT_pool_end] << 10);
-	gWDT_entropy_pool[gWDT_pool_end] ^= (gWDT_entropy_pool[gWDT_pool_end] >> 6);
-      }
+    {
+	    gWDT_entropy_pool[gWDT_pool_end] += gWDT_buffer[gWDT_loop_counter];
+    	gWDT_entropy_pool[gWDT_pool_end] += (gWDT_entropy_pool[gWDT_pool_end] << 10);
+      gWDT_entropy_pool[gWDT_pool_end] ^= (gWDT_entropy_pool[gWDT_pool_end] >> 6);
+    }
     gWDT_entropy_pool[gWDT_pool_end] += (gWDT_entropy_pool[gWDT_pool_end] << 3);
     gWDT_entropy_pool[gWDT_pool_end] ^= (gWDT_entropy_pool[gWDT_pool_end] >> 11);
     gWDT_entropy_pool[gWDT_pool_end] += (gWDT_entropy_pool[gWDT_pool_end] << 15);
     gWDT_entropy_pool[gWDT_pool_end] = gWDT_entropy_pool[gWDT_pool_end];
     gWDT_buffer_position = 0; // Start collecting the next 32 bytes of Timer 1 counts
     if (gWDT_pool_count == WDT_POOL_SIZE) // The entropy pool is full
+    {
       gWDT_pool_start = (gWDT_pool_start + 1) % WDT_POOL_SIZE;  
+    }
     else // Add another unsigned long (32 bits) to the entropy pool
+    {
       ++gWDT_pool_count;
+    }
   }
 }
 
@@ -222,7 +226,7 @@ void random_save_entropy()
     {
       max = 32;
     }
-   for(uint8_t i = 0; i < max; ++i)
+    for(uint8_t i = 0; i < max; ++i)
     {
       fram_write_byte(OFFSET_ENTROPY_POOL + entropyPoolSize + i, random_8());
     }

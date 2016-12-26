@@ -159,79 +159,79 @@ void wait_for_valid_card()
 
 void change_master_key()
 {
-    // rfid may be power down
-    rfid_init();
+    // // rfid may be power down
+    // rfid_init();
 
-    oled_clear_display();
-    str_to_buffer(str_misc_approachCard_index);
-    oled_draw_text(0, 0, str_buffer, 0);
-    oled_display();
+    // oled_clear_display();
+    // str_to_buffer(str_misc_approachCard_index);
+    // oled_draw_text(0, 0, str_buffer, 0);
+    // oled_display();
 
-    // Waiting for the user to present his card
-    waitRfidTag();
+    // // Waiting for the user to present his card
+    // waitRfidTag();
 
-    uint8_t newKey[16];
-    // Generate new key
-    random_fill(newKey, 16);
-
-
-    // Write it to the rfid tag ...
-    if(authenticate_on_card())
-    {
-        // Trying to write on tag
-        if(rfid_MIFARE_write(4, newKey, 16) != STATUS_OK)
-        {
-            // .. Failure
-            str_to_buffer(str_error_read_index);
-            oled_draw_text(0, 0, str_buffer, 0);
-            oled_display();
-            goto EXIT;
-        }
-        else
-        {
-            // .. Success
-        //     str_to_buffer(STRING_MISC_SUCCESS);
-        //     oled_draw_text(0, 0, str_buffer, 0);
-        //     oled_display();
-         }
-    }
-    else
-    {
-        // If we cannot authenticate, abort operation
-        str_to_buffer(str_error_auth_index);
-        oled_draw_text(0, 0, str_buffer, 0);
-        oled_display();
-        goto EXIT;
-    }
-
-    // Update encryption key
-    update_encryption_with(newKey);
-    memcpy(KEY, newKey, 16);
-
-    // Update encryption validation
-    /*
-    uint8_t output[16];
-    encrypt_plain_buffer(output);
-
-    uint8_t writeCounter = 0;
-    uint8_t* eeprom_addr = 0;
-    for(; writeCounter < 16; ++writeCounter)
-    {
-        eeprom_busy_wait();
-        ++eeprom_addr;
-        eeprom_update_byte(eeprom_addr, output[writeCounter]);
-    }*/
-
-    // Display new key
-    char outputText[20];
-    encode_16B(KEY, outputText);
-    oled_clear_display();
-    oled_draw_text(0, 0, outputText, 20);
-    oled_display();
+    // uint8_t newKey[16];
+    // // Generate new key
+    // random_fill(newKey, 16);
 
 
-    // Wait for the user to press a button
-    EXIT:
-    rfid_power_down();
-    while(!buttons_pressed());
+    // // Write it to the rfid tag ...
+    // if(authenticate_on_card())
+    // {
+    //     // Trying to write on tag
+    //     if(rfid_MIFARE_write(4, newKey, 16) != STATUS_OK)
+    //     {
+    //         // .. Failure
+    //         str_to_buffer(str_error_read_index);
+    //         oled_draw_text(0, 0, str_buffer, 0);
+    //         oled_display();
+    //         goto EXIT;
+    //     }
+    //     else
+    //     {
+    //         // .. Success
+    //     //     str_to_buffer(STRING_MISC_SUCCESS);
+    //     //     oled_draw_text(0, 0, str_buffer, 0);
+    //     //     oled_display();
+    //      }
+    // }
+    // else
+    // {
+    //     // If we cannot authenticate, abort operation
+    //     str_to_buffer(str_error_auth_index);
+    //     oled_draw_text(0, 0, str_buffer, 0);
+    //     oled_display();
+    //     goto EXIT;
+    // }
+
+    // // Update encryption key
+    // update_encryption_with(newKey);
+    // memcpy(KEY, newKey, 16);
+
+    // // Update encryption validation
+    // /*
+    // uint8_t output[16];
+    // encrypt_plain_buffer(output);
+
+    // uint8_t writeCounter = 0;
+    // uint8_t* eeprom_addr = 0;
+    // for(; writeCounter < 16; ++writeCounter)
+    // {
+    //     eeprom_busy_wait();
+    //     ++eeprom_addr;
+    //     eeprom_update_byte(eeprom_addr, output[writeCounter]);
+    // }*/
+
+    // // Display new key
+    // char outputText[20];
+    // encode_16B(KEY, outputText);
+    // oled_clear_display();
+    // oled_draw_text(0, 0, outputText, 20);
+    // oled_display();
+
+
+    // // Wait for the user to press a button
+    // EXIT:
+    // rfid_power_down();
+    // while(!buttons_pressed());
 }

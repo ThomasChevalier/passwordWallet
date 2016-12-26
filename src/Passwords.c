@@ -33,60 +33,62 @@ void update_encryption_with(uint8_t *new_key)
 			}
 		}
 	}
+
+}
+
+static void read_and_decrypt(uint8_t *output, uint16_t addr_iv, uint16_t addr_aes, uint8_t lenght_aes, uint8_t* key)
+{
+	uint8_t iv[16];
+	uint8_t aes[64]; // Maximum size
+	fram_read_bytes(addr_iv, iv, 16);
+	fram_read_bytes(addr_aes, aes, lenght_aes);
+	AES128_CBC_decrypt_buffer(output, aes, lenght_aes, key, iv);
+	// Remove padding
+	uint8_t i = 0;
+	uint8_t j = 0;
+	for(; i < lenght_aes; ++i)
+	{
+		if(output[i] < 32)
+			j=1;
+		if(j)
+			output[i] = 0;
+	}
+}
+
+static void encrypt_and_write(uint8_t *input, uint8_t len, uint16_t addr_iv, uint16_t addr_aes, uint8_t lenght_aes, uint8_t *key)
+{
+	uint8_t iv[16];
+	uint8_t aes[64];
+
+	// padding
+	if(len < lenght_aes)
+	{
+		const uint8_t randByteLessThan32 = random_request_byte() >> 3;
+		input[len] = randByteLessThan32;
+		for(uint8_t i = len + 1; i < lenght_aes; ++i)
+		{
+			input[i] = random_request_byte();
+		}
+	}
+
+	random_fill(iv, 16);
+	AES128_CBC_encrypt_buffer(aes, input, lenght_aes, key, iv);
+	fram_write_bytes(addr_iv, iv, 16);
+	fram_write_bytes(addr_aes, aes, lenght_aes);
 	
-
-
 }
 
 void read_password(uint8_t* key)
 {
 	const uint16_t pwd_iv_begin  = PWD_ADDR(CURRENT_PASSWORD_ID, PWD_OFFSET_PWD_IV);
 	const uint16_t pwd_aes_begin = PWD_ADDR(CURRENT_PASSWORD_ID, PWD_OFFSET_PWD_DATA);
-	uint8_t iv[16];
-	uint8_t aes[32];
-	fram_read_bytes(pwd_iv_begin, iv, 16);
-	fram_read_bytes(pwd_aes_begin, aes, 32);
-
-	AES128_CBC_decrypt_buffer(CURRENT_PASSWORD_DATA+0, aes+0, 16, key, iv);
-	AES128_CBC_decrypt_buffer(CURRENT_PASSWORD_DATA+16, aes+16, 16, 0, 0);
-
-	// Remove padding
-	uint8_t i = 0;
-	uint8_t j = 0;
-	for(; i < 32; ++i)
-	{
-		if(CURRENT_PASSWORD_DATA[i] < 32)
-			j=1;
-		if(j)
-			CURRENT_PASSWORD_DATA[i] = 0;
-	}
+	read_and_decrypt(CURRENT_PASSWORD_DATA, pwd_iv_begin, pwd_aes_begin, 32, key);
 }
 
 void set_password(uint8_t* password, uint8_t pwd_len, uint8_t* key)
 {
-	const uint16_t pwd_iv_begin  = PWD_ADDR(CURRENT_PASSWORD_ID, PWD_OFFSET_PWD_IV);
-	const uint16_t pwd_aes_begin = PWD_ADDR(CURRENT_PASSWORD_ID, PWD_OFFSET_PWD_DATA);
-	uint8_t iv[16];
-	uint8_t aes[32];
-	uint8_t i = 0;
-
 	memcpy(CURRENT_PASSWORD_DATA, password, pwd_len);
-
-	// padding
-	if(pwd_len < 32)
-	{
-		const uint8_t randByteLessThan32 = random_request_byte() >> 3;
-		CURRENT_PASSWORD_DATA[pwd_len] = randByteLessThan32;
-		for(i = pwd_len + 1; i < 32; ++i)
-		{
-			CURRENT_PASSWORD_DATA[i] = random_request_byte();
-		}
-	}
-
-	random_fill(iv, 16);
-	AES128_CBC_encrypt_buffer(aes, CURRENT_PASSWORD_DATA, 32, key, iv);
-	fram_write_bytes(pwd_iv_begin, iv, 16);
-	fram_write_bytes(pwd_aes_begin, aes, 32);
+	encrypt_and_write(CURRENT_PASSWORD_DATA, pwd_len, PWD_ADDR(CURRENT_PASSWORD_ID, PWD_OFFSET_PWD_IV), PWD_ADDR(CURRENT_PASSWORD_ID, PWD_OFFSET_PWD_DATA), 32, key);
 
 	memcpy(CURRENT_PASSWORD_DATA, password, pwd_len);
 	for(uint8_t i = pwd_len; i < 32; ++i)
@@ -98,56 +100,14 @@ void set_password(uint8_t* password, uint8_t pwd_len, uint8_t* key)
 
 void read_usr_name(uint8_t* key)
 {
-	const uint16_t usr_iv_begin  = PWD_ADDR(CURRENT_PASSWORD_ID, PWD_OFFSET_USR_IV);
-	const uint16_t usr_aes_begin = PWD_ADDR(CURRENT_PASSWORD_ID, PWD_OFFSET_USR_NAME);
-	uint8_t iv[16];
-	uint8_t aes[64];
-	fram_read_bytes(usr_iv_begin, iv, 16);
-	fram_read_bytes(usr_aes_begin, aes, 64);
-
-	AES128_CBC_decrypt_buffer(CURRENT_USR_NAME+0, aes+0, 16, key, iv);
-	AES128_CBC_decrypt_buffer(CURRENT_USR_NAME+16, aes+16, 16, 0, 0);
-	AES128_CBC_decrypt_buffer(CURRENT_USR_NAME+32, aes+32, 32, 0, 0);
-	AES128_CBC_decrypt_buffer(CURRENT_USR_NAME+48, aes+48, 48, 0, 0);
-
-	// Remove padding
-	uint8_t i = 0;
-	uint8_t j = 0;
-	for(; i < 64; ++i)
-	{
-		if(CURRENT_USR_NAME[i] < 32)
-			j=1;
-		if(j)
-			CURRENT_USR_NAME[i] = 0;
-	}
+	read_and_decrypt(CURRENT_USR_NAME, PWD_ADDR(CURRENT_PASSWORD_ID, PWD_OFFSET_USR_IV), PWD_ADDR(CURRENT_PASSWORD_ID, PWD_OFFSET_USR_NAME), 64, key);
 }
 
 
 void set_username(uint8_t* usr_name, uint8_t usr_len, uint8_t* key)
 {
-	const uint16_t usr_iv_begin  = PWD_ADDR(CURRENT_PASSWORD_ID, PWD_OFFSET_USR_IV);
-	const uint16_t usr_aes_begin = PWD_ADDR(CURRENT_PASSWORD_ID, PWD_OFFSET_USR_NAME);
-	uint8_t iv[16];
-	uint8_t aes[64];
-	uint8_t i = 0;
-
 	memcpy(CURRENT_USR_NAME, usr_name, usr_len);
-
-	// padding
-	if(usr_len < 64)
-	{
-		const uint8_t randByteLessThan32 = random_request_byte() >> 3;
-		CURRENT_USR_NAME[usr_len] = randByteLessThan32;
-		for(i = usr_len + 1; i < 64; ++i)
-		{
-			CURRENT_USR_NAME[i] = random_request_byte();
-		}
-	}
-
-	random_fill(iv, 16);
-	AES128_CBC_encrypt_buffer(aes, CURRENT_USR_NAME, 64, key, iv);
-	fram_write_bytes(usr_iv_begin, iv, 16);
-	fram_write_bytes(usr_aes_begin, aes, 64);
+	encrypt_and_write(CURRENT_USR_NAME, usr_len, PWD_ADDR(CURRENT_PASSWORD_ID, PWD_OFFSET_USR_IV), PWD_ADDR(CURRENT_PASSWORD_ID, PWD_OFFSET_USR_NAME), 64, key);
 
 	memcpy(CURRENT_USR_NAME, usr_name, usr_len);
 	for(uint8_t i = usr_len; i < 64; ++i)
@@ -312,15 +272,6 @@ void generate_password(char* output)
 	output[31] = 0;
 } 
 
-void change_password()
-{
-
-}
-
-void change_username()
-{
-
-}
 
 void delete_password()
 {

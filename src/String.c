@@ -22,6 +22,9 @@ DEFINE_STRING(str_misc_approachCard, "Approchez votre carte", 11);
 DEFINE_STRING(str_misc_yes, "OUI", 12);
 DEFINE_STRING(str_misc_no, "NON", 13);
 
+DEFINE_STRING(str_action_executing, "Action en cours ...", 14);
+DEFINE_STRING(str_action_finished, "Fait !", 15);
+
 PGM_P const string_table[] PROGMEM = 
 {
 	str_error_card,
@@ -39,7 +42,10 @@ PGM_P const string_table[] PROGMEM =
 
 	str_misc_approachCard,
 	str_misc_yes,
-	str_misc_no
+	str_misc_no,
+
+	str_action_executing,
+	str_action_finished
 };
 
 void str_to_buffer(uint8_t index)

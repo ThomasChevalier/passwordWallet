@@ -13,6 +13,7 @@
 #include "Events.h"
 #include "States.h"
 
+#include "String.h"
 #include "Oled.h"
 #include "Drawing.h"
 
@@ -120,43 +121,39 @@ DECLARE_TRANSITION(STATE_BROWSE)
 	return STATE_BROWSE;
 }
 
+static void show_executing()
+{
+	oled_clear_display();
+	str_to_buffer(str_action_executing_index);
+	oled_draw_text(33, 28, str_buffer, 0);
+	oled_display();
+}
+
 void do_action(uint8_t action)
 {
 	char tempStr[64];
+
 	switch(action)
 		{
 		case 0:
+			show_executing();
 			generate_password(tempStr);
 			set_password((uint8_t*)(tempStr), 31, KEY);
 			break;
 		case 1:
-			// CURRENT_PASSWORD_DATA[0] = 'M';
-			// CURRENT_PASSWORD_DATA[1] = 'o';
-			// CURRENT_PASSWORD_DATA[2] = 'n';
-			// CURRENT_PASSWORD_DATA[3] = ' ';
-			// CURRENT_PASSWORD_DATA[4] = 'm';
-			// CURRENT_PASSWORD_DATA[5] = 'd';
-			// CURRENT_PASSWORD_DATA[6] = 'p';
-			// CURRENT_PASSWORD_DATA[7] = ' ';
-			// CURRENT_PASSWORD_DATA[8] = 'q';
-			// CURRENT_PASSWORD_DATA[9] = 'u';
-			// CURRENT_PASSWORD_DATA[10] = 'i';
-			// CURRENT_PASSWORD_DATA[11] = ' ';
-			// CURRENT_PASSWORD_DATA[12] = 'e';
-			// CURRENT_PASSWORD_DATA[13] = 'n';
-			// CURRENT_PASSWORD_DATA[14] = 0;
-			// CURRENT_PASSWORD_DATA[15] = 0;
-			// CURRENT_PASSWORD_DATA[16] = 0;
 			memcpy(tempStr, CURRENT_PASSWORD_DATA, 32);
 			type_string(tempStr, 32);
+			show_executing();
 			set_password((uint8_t*)(tempStr), strlen(tempStr), KEY);
 			break;
 		case 2:
 			memcpy(tempStr, CURRENT_USR_NAME, 64);
 			type_string(tempStr, 64);
+			show_executing();
 			set_username((uint8_t*)(tempStr), strlen(tempStr), KEY);
 			break;
 		case 3:
+			show_executing();
 			// pwd_delete();
 			break;
 		case 4:

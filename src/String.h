@@ -27,6 +27,9 @@ DECLARE_STRING(str_misc_approachCard);
 DECLARE_STRING(str_misc_yes);
 DECLARE_STRING(str_misc_no);
 
+DECLARE_STRING(str_action_executing);
+DECLARE_STRING(str_action_finished);
+
 extern PGM_P const string_table[] PROGMEM;
 
 extern char str_buffer[26];
