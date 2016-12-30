@@ -1,12 +1,21 @@
 #include "Spi.h"
+#include "PinDefinition.h"
 
 //Initialize SPI hardware
 
 void spi_setup_hardware (void)
 {
+    // Set up SCK as output
+    SPI_SCK_DDR |= (1<<SPI_SCK_PIN_NUM);
+    // Set up MOSI as output
+    SPI_MOSI_DDR |= (1<<SPI_MOSI_PIN_NUM);
+
+    // Set up SS as output
     // Because spi is master mode, PB0 (aka Slave Select pin) should be an output, or, if it is an output, should be in high state
-    DDRB |= (1<<PB0) | (1<<PB1) | (1<<PB2); // Init spi pin as output
-    DDRB &= ~(1<<PB3); // Init spi pin as input
+    SPI_SS_DDR |= (1<<SPI_SS_PIN_NUM);
+
+    // Set up MISO as input
+    SPI_MISO_DDR &= ~(1<<SPI_MISO_PIN_NUM);
 }
 
 // Shift full array through target device
@@ -36,13 +45,6 @@ void spi_send (uint8_t * dataout, uint8_t len)
 uint8_t spi_transfer_8(uint8_t data)
 {
     SPDR = data;
-    /*
-     * The following NOP introduces a small delay that can prevent the wait
-     * loop form iterating when running at the maximum speed. This gives
-     * about 10% more speed, even if it seems counter-intuitive. At lower
-     * speeds it is unnoticed.
-     */
-    asm volatile("nop");
     while (!(SPSR & _BV(SPIF))) ; // wait
     return SPDR;
 }
@@ -71,37 +73,3 @@ void spi_send_8(uint8_t data)
     SPDR = data;
     while (!(SPSR & _BV(SPIF)));
 }
-
-/*
-inline uint16_t spi_transfer_16(uint16_t data)
-{
-union { uint16_t val; struct { uint8_t lsb; uint8_t msb; }; } in, out;
-in.val = data;
-if (!(SPCR & _BV(DORD))) {
-	SPDR = in.msb;
-	asm volatile("nop"); // See spi_transfer_8(uint8_t) function
-	while (!(SPSR & _BV(SPIF))) ;
-	out.msb = SPDR;
-	SPDR = in.lsb;
-	asm volatile("nop");
-	while (!(SPSR & _BV(SPIF))) ;
-	out.lsb = SPDR;
-} else {
-	SPDR = in.lsb;
-	asm volatile("nop");
-	while (!(SPSR & _BV(SPIF))) ;
-	out.lsb = SPDR;
-	SPDR = in.msb;
-	asm volatile("nop");
-	while (!(SPSR & _BV(SPIF))) ;
-	out.msb = SPDR;
-}
-return out.val;
-}*/
-
-/*
-inline void spi_setup_rfid()
-{
-	SPCR = _BV(SPE) | _BV(MSTR) | 3;
-	SPSR = 0;
-}*/
