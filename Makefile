@@ -4,7 +4,7 @@
 
 CC=avr-gcc -Os -flto -s
 DEVICE=atmega32u4
-CFLAGS= -Wall -DF_CPU=12000000UL -mmcu=$(DEVICE) -std=gnu99 -fshort-enums -ffunction-sections -fdata-sections
+CFLAGS= -Wall -DF_CPU=16000000UL -mmcu=$(DEVICE) -std=gnu99 -fshort-enums -ffunction-sections -fdata-sections
 LDFLAGS= -mmcu=$(DEVICE) -Wl,--gc-sections
 BDIR=build
 SDIR=src
@@ -16,7 +16,7 @@ OBJS=$(_OBJS:.c=.o)
 _DEPEND=$(OBJS:.o=.d)
 DEPEND=$(subst $(ODIR), $(DDIR), $(_DEPEND))
 
-all : main
+all: main
 
 main: $(OBJS)
 	@$(CC) -o $(BDIR)/$@ $^ $(LDFLAGS)
@@ -27,7 +27,8 @@ main: $(OBJS)
 -include $(DEPEND)
 
 $(ODIR)/%.o: $(SDIR)/%.c
-	$(CC) $(CFLAGS) -o $(ODIR)/$*.o -c $(SDIR)/$*.c
+	@printf "Compiling %-23s to %s\n" "$(SDIR)/$*.c" "$(ODIR)/$*.o"
+	@$(CC) $(CFLAGS) -o $(ODIR)/$*.o -c $(SDIR)/$*.c
 	@$(CC) -MM $(CFLAGS) $(SDIR)/$*.c > $*.d
 	@mv $*.d $(DDIR)/$*.d
 	@(echo -n "../$(ODIR)/"&cat $(DDIR)/$*.d)> $(DDIR)/$*.d.tmp

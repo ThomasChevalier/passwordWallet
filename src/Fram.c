@@ -87,7 +87,6 @@ Fram_id fram_read_id()
     id.continuation_code = spi_read_8();
     id.product_idL = spi_read_8();
     id.product_idH = spi_read_8();
-    spi_read( (uint8_t*) &id, 4); // May fail
     fram_deselect();
     return id;
 }
