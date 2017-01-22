@@ -17,9 +17,10 @@
 
 #include "Globals.h"
 #include "Authentification.h"
-#include "Passwords.h"
 
 #include "Random.h"
+
+#include "UserSetup.h"
 
 #ifndef cbi
 #define cbi(sfr, bit) (_SFR_BYTE(sfr) &= ~_BV(bit))
@@ -32,13 +33,13 @@ void init_system()
 {
   // this needs to be called before setup() or some functions won't
   // work there
-  sei();
-  
+	sei();
+
   // on the ATmega168, timer 0 is also used for fast hardware pwm
   // (using phase-correct PWM would mean that timer 0 overflowed half as often
   // resulting in different millis() behavior on the ATmega8 and ATmega168)
-  sbi(TCCR0A, WGM01);
-  sbi(TCCR0A, WGM00);
+	sbi(TCCR0A, WGM01);
+	sbi(TCCR0A, WGM00);
 
   // set timer 0 prescale factor to 64
 
@@ -49,11 +50,11 @@ void init_system()
   // sbi(TCCR0B, CS00);
 
   // this combination is for the __AVR_ATmega645__ series
-  sbi(TCCR0A, CS01);
-  sbi(TCCR0A, CS00);
+	sbi(TCCR0A, CS01);
+	sbi(TCCR0A, CS00);
 
   // enable timer 0 overflow interrupt
-  sbi(TIMSK0, TOIE0);
+	sbi(TIMSK0, TOIE0);
 
 
   // timers 1 and 2 are used for phase-correct hardware pwm
@@ -61,15 +62,15 @@ void init_system()
   // note, however, that fast pwm mode can achieve a frequency of up
   // 8 MHz (with a 16 MHz clock) at 50% duty cycle
 
-  TCCR1B = 0;
+	TCCR1B = 0;
 
   // set timer 1 prescale factor to 64
-  sbi(TCCR1B, CS11);
+	sbi(TCCR1B, CS11);
 
-  sbi(TCCR1B, CS10);
+	sbi(TCCR1B, CS10);
 
   // put timer 1 in 8-bit phase correct pwm mode
-  sbi(TCCR1A, WGM10);
+	sbi(TCCR1A, WGM10);
 
 
   sbi(TCCR3B, CS31);    // set timer 3 prescale factor to 64
@@ -100,18 +101,18 @@ void init_system()
 
 void init_hardware()
 {
-  spi_setup_hardware();
-  fram_setup_hardware();
-  oled_setup_hardware();
-  rfid_setup_hardware();
-  buttons_setup_hardware();
+	spi_setup_hardware();
+	fram_setup_hardware();
+	oled_setup_hardware();
+	rfid_setup_hardware();
+	buttons_setup_hardware();
 }
 
 void init_software()
 {
-  oled_init();
-  rfid_init();
-  random_init();
+	oled_init();
+	rfid_init();
+	random_init();
   //keyboard_init();
 }
 
@@ -128,49 +129,88 @@ void init_software()
 
 int main()
 {
-  State states[NUM_STATES];
-  states[STATE_INIT]  =   (State)
-  {
-    EVENT_PASSWORD_ENTERED,                    TRANSITION(STATE_INIT)
-  };
-  states[STATE_MAIN]  =   (State)
-  {
-    EVENT_ALL_BUTTON | EVENT_USB_DISCONNECTED, TRANSITION(STATE_MAIN)
-  };
-  states[STATE_BROWSE] = (State)
-  {
-    EVENT_ALL_BUTTON | EVENT_USB_DISCONNECTED, TRANSITION(STATE_BROWSE)
-  };
-  states[STATE_OPTION]=   (State)
-  {
-    EVENT_ALL_BUTTON | EVENT_USB_DISCONNECTED, TRANSITION(STATE_OPTION)
-  };
-  states[STATE_SAVE]  =   (State)
-  {
-    EVENT_USB_CONNECTED,                       TRANSITION(STATE_SAVE)
-  };
+	State states[NUM_STATES];
+	states[STATE_INIT]  =   (State)
+	{
+		EVENT_PASSWORD_ENTERED,                    TRANSITION(STATE_INIT)
+	};
+	states[STATE_MAIN]  =   (State)
+	{
+		EVENT_ALL_BUTTON | EVENT_USB_DISCONNECTED, TRANSITION(STATE_MAIN)
+	};
+	states[STATE_BROWSE] = (State)
+	{
+		EVENT_ALL_BUTTON | EVENT_USB_DISCONNECTED, TRANSITION(STATE_BROWSE)
+	};
+	states[STATE_OPTION]=   (State)
+	{
+		EVENT_ALL_BUTTON | EVENT_USB_DISCONNECTED, TRANSITION(STATE_OPTION)
+	};
+	states[STATE_SAVE]  =   (State)
+	{
+		EVENT_USB_CONNECTED,                       TRANSITION(STATE_SAVE)
+	};
 
-  State* currentState = &states[STATE_INIT];
+	State* currentState = &states[STATE_INIT];
 
-  // Init of the µC
-  init_system();
-  init_hardware();
-  init_software();
+  	// Init of the µC
+	init_system();
+	init_hardware();
+	init_software();
 
-  oled_display();
-  // Wait until there is a rfid card, with or without the good password
-  wait_for_valid_card();
-  while(RUNNING)
-  {
-    random_save_entropy();
-    buttons_update_event();
-    uint8_t event = getEvents(); // Mask of events
+	if(!usr_setup_is_initialized())
+	{
+    	// Device is not initialized ...
+		if(!usr_setup_do_initialization())
+		{
+      		// Device has not been initialized
+			oled_clear_display();
+			oled_display();
+			wait_for_valid_card();
+		}
+	}
+	else if(usr_setup_check_card_lost())
+	{
+		// User has lost his card
+		if(!usr_setup_recover_key())
+		{
+			// And typed a wrong key
+			oled_clear_display();
+			oled_display();
+			wait_for_valid_card();
+		}
+	}
+	else
+	{
+    #ifdef FRAM_BUFFER
+		oled_clear_display();
+    #endif
 
-    if(currentState->event_mask & event)
-    {
-       uint8_t newState = currentState->transition(event);
-       currentState = &states[newState];
-    }
-    _delay_ms(150); // For buttons
-  }
+		oled_display();
+    	// Wait until there is a rfid card, with or without the good password
+		wait_for_valid_card();
+	}
+
+	while(RUNNING)
+	{
+		random_save_entropy();
+
+		buttons_update_event();
+	   uint8_t event = getEvents(); // Mask of events
+
+	   if(currentState->event_mask & event)
+	   {
+	   	uint8_t newState = currentState->transition(event);
+	   	currentState = &states[newState];
+	   }
+
+	   if(FIRST_PRESS)
+	   {
+	   	_delay_ms(150);
+	   }
+	   else
+	   {
+	   	_delay_ms(50);
+	   }
+	}
 }

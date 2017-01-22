@@ -5,6 +5,8 @@
 
 // This file should contain the global variables used in this project
 
+// Define if this is the first pression on a button
+extern uint8_t FIRST_PRESS;
 
 // /////////////////////////////////////// //
 //  Finite state machine related variables //
@@ -13,6 +15,13 @@
 
 extern volatile uint8_t RUNNING; // Is the program running ?
 extern uint8_t GLOBALS_EVENTS;   // Current events, not to be accessed by interrupt
+
+// //////////////// //
+// Progress Section //
+// //////////////// //
+
+extern uint8_t PROGRESS_COMPLEXITY;
+extern uint8_t PROGRESS_ADVANCE;
 
 // //////////////// //
 // Password Section //
@@ -61,7 +70,12 @@ extern uint8_t CURRENT_USR_NAME[64];
 // Options stored in FRAM //
 // ////////////////////// //
 
+#undef FRAM_BUFFER
+
+// Size of the fram in byte
+#define FRAM_BYTE_SIZE (8192)
 #define OFFSET_OPTIONS_FLAG (0)
+#define OFFSET_OPTION_INITIALIZED (4)
 #define OFFSET_FIRST_PWD_UTIL (1)
 #define OFFSET_FIRST_PWD_ALPHA (2)
 #define OFFSET_NUM_PWD (3)

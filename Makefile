@@ -4,7 +4,7 @@
 
 CC=avr-gcc -Os -flto -s
 DEVICE=atmega32u4
-CFLAGS= -Wall -DF_CPU=8000000UL -mmcu=$(DEVICE) -std=gnu99 -fshort-enums -ffunction-sections -fdata-sections
+CFLAGS= -Wall -DF_CPU=16000000UL -mmcu=$(DEVICE) -std=gnu99 -fshort-enums -ffunction-sections -fdata-sections
 LDFLAGS= -mmcu=$(DEVICE) -Wl,--gc-sections
 BDIR=build
 SDIR=src
@@ -30,9 +30,10 @@ $(ODIR)/%.o: $(SDIR)/%.c
 	@printf "Compiling %-23s to %s\n" "$(SDIR)/$*.c" "$(ODIR)/$*.o"
 	@$(CC) $(CFLAGS) -o $(ODIR)/$*.o -c $(SDIR)/$*.c
 	@$(CC) -MM $(CFLAGS) $(SDIR)/$*.c > $*.d
+	@./absolute_path_depend $*.d
 	@mv $*.d $(DDIR)/$*.d
-	@(echo -n "../$(ODIR)/"&cat $(DDIR)/$*.d)> $(DDIR)/$*.d.tmp
-	@mv $(DDIR)/$*.d.tmp $(DDIR)/$*.d
+#@(echo -n "../$(ODIR)/"&cat $(DDIR)/$*.d)> $(DDIR)/$*.d.tmp
+#@mv $(DDIR)/$*.d.tmp $(DDIR)/$*.d
 	
 .PHONY: clean clean-all rebuild
 

@@ -213,22 +213,24 @@ ISR(WDT_vect)
 void random_save_entropy()
 {
   // If there is 8 or more uint32_t available, there is at least 8*4=32 uint8_t availables
-  if(random_available() >= 8)
+  if(random_available())
   {
     uint16_t entropyPoolSize = 0;
     fram_read_bytes(OFFSET_ENTROPY_SIZE, (uint8_t*)(&entropyPoolSize), 2);
     uint8_t max = 0;
-    if(entropyPoolSize > 1024-32)
+    if(entropyPoolSize > 1024-(random_available() * 4))
     {
         max = 1024 - entropyPoolSize;
     }
     else
     {
-      max = 32;
+      max = random_available();
     }
     for(uint8_t i = 0; i < max; ++i)
     {
-      fram_write_byte(OFFSET_ENTROPY_POOL + entropyPoolSize + i, random_8());
+      uint32_t rand = random_32();
+      fram_write_bytes(OFFSET_ENTROPY_POOL + entropyPoolSize + i, (uint8_t*)(&rand), 4);
+      //fram_write_byte(OFFSET_ENTROPY_POOL + entropyPoolSize + i, random_8());
     }
     entropyPoolSize += max;
     fram_write_bytes(OFFSET_ENTROPY_SIZE, (uint8_t*)(&entropyPoolSize), 2);
@@ -261,7 +263,8 @@ uint8_t random_request_byte()
     }
     else
     {
-        // Else, wait for entropy (random_8 is blockant)
+        // Else, wait for entropy
+        while(!random_available());
         return random_8(); 
     }
   }

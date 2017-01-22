@@ -7,7 +7,18 @@
 
 void buttons_update_event()
 {
+    static uint8_t last_butts = 0;
+
     uint8_t butts = buttons_pressed();
+    if(butts != last_butts)
+    {
+        FIRST_PRESS = 1;
+        last_butts = butts;
+    }
+    else
+    {
+        FIRST_PRESS = 0;
+    }
     GLOBALS_EVENTS |= butts;
 }
 

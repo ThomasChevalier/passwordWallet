@@ -1,9 +1,13 @@
 #include "Globals.h"
 
-uint8_t ORIENTATION = 0;
+uint8_t FIRST_PRESS = 1;
 
 volatile uint8_t RUNNING = 1;
 uint8_t GLOBALS_EVENTS = 0;
+
+
+uint8_t PROGRESS_COMPLEXITY = 0;
+uint8_t PROGRESS_ADVANCE = 0;
 
 uint8_t KEY[16];
 uint8_t CURRENT_PASSWORD_ID = 0;

@@ -3,3 +3,4 @@ build/
 oldSources/
 *.[do]
 *.hex
+depend/

@@ -16,6 +16,7 @@
 #include "String.h"
 #include "Oled.h"
 #include "Drawing.h"
+#include "ProgressBar.h"
 
 
 DECLARE_TRANSITION(STATE_INIT)
@@ -136,21 +137,49 @@ void do_action(uint8_t action)
 	switch(action)
 		{
 		case 0:
-			show_executing();
-			generate_password(tempStr);
-			set_password((uint8_t*)(tempStr), 31, KEY);
+			{
+				oled_clear_display();
+				str_to_buffer(str_option_regen_index);
+				oled_draw_text(40, 40, str_buffer, 0);
+				progress_begin(52);		
+
+				generate_password(tempStr);
+				set_password((uint8_t*)(tempStr), 31, KEY);
+
+				progress_end();
+			}
 			break;
 		case 1:
-			memcpy(tempStr, CURRENT_PASSWORD_DATA, 32);
-			type_string(tempStr, 32);
-			show_executing();
-			set_password((uint8_t*)(tempStr), strlen(tempStr), KEY);
+			{
+				memcpy(tempStr, CURRENT_PASSWORD_DATA, 32);
+				type_string(tempStr, 32);
+
+				oled_clear_display();
+				str_to_buffer(str_option_changePwd_index);
+				oled_draw_text(14, 40, str_buffer, 0);
+				const uint8_t strLen = strlen(tempStr);
+				progress_begin(21 + 32 - strLen);	
+
+				set_password((uint8_t*)(tempStr), strLen, KEY);
+
+			progress_end();
+			}
 			break;
 		case 2:
-			memcpy(tempStr, CURRENT_USR_NAME, 64);
-			type_string(tempStr, 64);
-			show_executing();
-			set_username((uint8_t*)(tempStr), strlen(tempStr), KEY);
+			{
+				memcpy(tempStr, CURRENT_USR_NAME, 64);
+				type_string(tempStr, 64);
+	
+				oled_clear_display();
+				str_to_buffer(str_option_changeUsr_index);
+				oled_draw_text(17, 40, str_buffer, 0);
+				const uint8_t strLen = strlen(tempStr);
+				progress_begin(21 + 64 - strLen);	
+	
+				set_username((uint8_t*)(tempStr), strLen, KEY);
+
+				progress_end();
+			}
 			break;
 		case 3:
 			show_executing();

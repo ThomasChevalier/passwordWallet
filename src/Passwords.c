@@ -6,6 +6,10 @@
 #include "Aes.h"
 #include "Random.h"
 
+#include "Oled.h"
+
+#include "ProgressBar.h"
+
 void update_encryption_with(uint8_t *new_key)
 {
 
@@ -55,6 +59,7 @@ static void read_and_decrypt(uint8_t *output, uint16_t addr_iv, uint16_t addr_ae
 	}
 }
 
+// Progress complexity = 21 + (lenghtAes-len);
 static void encrypt_and_write(uint8_t *input, uint8_t len, uint16_t addr_iv, uint16_t addr_aes, uint8_t lenght_aes, uint8_t *key)
 {
 	uint8_t iv[16];
@@ -68,11 +73,23 @@ static void encrypt_and_write(uint8_t *input, uint8_t len, uint16_t addr_iv, uin
 		for(uint8_t i = len + 1; i < lenght_aes; ++i)
 		{
 			input[i] = random_request_byte();
+			progress_add(1);
 		}
 	}
 
-	random_fill(iv, 16);
+	for(uint8_t i = 0; i < 16; ++i)
+ 	{
+   		iv[i] = random_request_byte();
+   		progress_add(1);
+  	}
+	//random_fill(iv, 16);
+
+	
+
 	AES128_CBC_encrypt_buffer(aes, input, lenght_aes, key, iv);
+
+	progress_add(5);
+
 	fram_write_bytes(addr_iv, iv, 16);
 	fram_write_bytes(addr_aes, aes, lenght_aes);
 	
@@ -85,6 +102,7 @@ void read_password(uint8_t* key)
 	read_and_decrypt(CURRENT_PASSWORD_DATA, pwd_iv_begin, pwd_aes_begin, 32, key);
 }
 
+// Progress complexity = 21 + (32-pwd_len);
 void set_password(uint8_t* password, uint8_t pwd_len, uint8_t* key)
 {
 	memcpy(CURRENT_PASSWORD_DATA, password, pwd_len);
@@ -103,7 +121,7 @@ void read_usr_name(uint8_t* key)
 	read_and_decrypt(CURRENT_USR_NAME, PWD_ADDR(CURRENT_PASSWORD_ID, PWD_OFFSET_USR_IV), PWD_ADDR(CURRENT_PASSWORD_ID, PWD_OFFSET_USR_NAME), 64, key);
 }
 
-
+// Progress complexity = 21 + (64-usr_len);
 void set_username(uint8_t* usr_name, uint8_t usr_len, uint8_t* key)
 {
 	memcpy(CURRENT_USR_NAME, usr_name, usr_len);
@@ -264,11 +282,15 @@ void read_all_names()
 	read_pwd_name(PWD_NAME_3, next_pwd(CURRENT_PASSWORD_ID));
 }
 
+// Progress complexity = 31
 void generate_password(char* output)
 {
 	uint8_t i = 0;
 	for(; i < 31; ++i)
+	{
 		output[i] = random_request_printable();
+		progress_add(1);
+	}
 	output[31] = 0;
 } 
 

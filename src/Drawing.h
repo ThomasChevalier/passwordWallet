@@ -20,4 +20,5 @@ void draw_typing_screen(char* str, uint8_t column);
 // bit 5 = 1 ? dock_mode : no_dock_mode
 void draw_char_column(uint8_t column_and_flags, char letter);
 
+
 #endif // DRAWING_HEADER_THOMAS_CHEVALIER

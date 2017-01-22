@@ -111,9 +111,18 @@ void type_string(char* string_typed, uint8_t maxLen)
 	uint8_t running = 1;
 	string_typed[strlen(string_typed)] = 127;
 	draw_typing_screen(string_typed, pos);
+
 	while(running)
 	{
-		 _delay_ms(100);
+		if(FIRST_PRESS)
+		{
+			_delay_ms(150);
+		}
+		else
+		{
+			_delay_ms(50);
+		}
+
 		buttons_update_event();
 	    uint8_t event = getEvents(); // Mask of events
 

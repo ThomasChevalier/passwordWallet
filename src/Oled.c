@@ -10,7 +10,6 @@
 #include "PinDefinition.h"
 #include "Fram.h"
 
-#undef FRAM_BUFFER
 /*
 	MOSI : 	11 	PB3
 	MISO :	There is no need of Miso for the oled
@@ -209,7 +208,7 @@ void oled_draw_pixel(uint8_t x, uint8_t y, uint8_t color)
     // x is which column
     #ifdef FRAM_BUFFER
 
-    uint8_t buf = fram_read_byte(START_OF_OLED_BUFFER + (x + 16 * y) );
+    uint8_t buf = fram_read_byte(START_OF_OLED_BUFFER + (x+ (y/8)*WIDTH));
     uint8_t val = (1 << (y&7));
     switch (color)
     {
@@ -223,24 +222,21 @@ void oled_draw_pixel(uint8_t x, uint8_t y, uint8_t color)
         buf ^= val;
         break;
     }
-    fram_write_byte(START_OF_OLED_BUFFER + (x + 16 * y), buf);
+    fram_write_byte(START_OF_OLED_BUFFER + (x+ (y/8)*WIDTH), buf);
 
     #else
 
-    uint8_t* buf = &buffer[x+ (y/8)*128];
+    uint8_t* buf = &buffer[x+ (y/8)*WIDTH];
     uint8_t val = (1 << (y&7));
     switch (color)
     {
     case WHITE:
-        // buf |= val;
         (*buf) |=  val;
         break;
     case BLACK:
-        // buf &= ~val;
         (*buf) &= ~val;
         break;
     case INVERSE:
-        // buf ^= val;
         (*buf) ^=  val;
         break;
     }
@@ -295,10 +291,10 @@ void oled_display(void)
     
     uint8_t i = 0;
     uint8_t j = 0;
-    for(; i < 16; ++i)
+    for(; i < ((HEIGHT * WIDTH / 8) / 64); ++i)
     {
         oled_deselect();
-        fram_read_bytes(START_OF_OLED_BUFFER + i, pixBuff, 64);
+        fram_read_bytes(START_OF_OLED_BUFFER + i*64, pixBuff, 64);
         oled_setup_spi();
         oled_select();
         for(j = 0; j < 64; ++j)
@@ -310,7 +306,7 @@ void oled_display(void)
     #else
 
     uint16_t i=0;
-    for (; i<1024; ++i)
+    for (; i<(HEIGHT * WIDTH / 8); ++i)
     {
         spi_send_8(buffer[i]);
     }
@@ -323,14 +319,18 @@ void oled_display(void)
 void oled_clear_display(void)
 {
     uint16_t i=0;
-    for (; i<1024; ++i)
+    #ifdef FRAM_BUFFER
+    uint8_t zeroArray[64] = {0};
+    for(; i < ((HEIGHT * WIDTH / 8) / 64); ++i)
     {
-        #ifdef FRAM_BUFFER
-        fram_write_byte(START_OF_OLED_BUFFER + i, 0);
-        #else
-        buffer[i] = 0;
-        #endif
+        fram_write_bytes(i * 64, zeroArray, 64);
     }
+    #else
+    for (; i<(HEIGHT * WIDTH / 8); ++i)
+    {
+        buffer[i] = 0;
+    }
+    #endif
 }
 
 
