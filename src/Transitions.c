@@ -162,7 +162,7 @@ void do_action(uint8_t action)
 
 				set_password((uint8_t*)(tempStr), strLen, KEY);
 
-			progress_end();
+				progress_end();
 			}
 			break;
 		case 2:

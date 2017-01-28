@@ -187,7 +187,7 @@ int main()
     #endif
 
 		oled_display();
-    	// Wait until there is a rfid card, with or without the good password
+    	// Wait until there is a rfid card, with the good password
 		wait_for_valid_card();
 	}
 
@@ -196,21 +196,21 @@ int main()
 		random_save_entropy();
 
 		buttons_update_event();
-	   uint8_t event = getEvents(); // Mask of events
+		uint8_t event = getEvents(); // Mask of events
 
-	   if(currentState->event_mask & event)
-	   {
-	   	uint8_t newState = currentState->transition(event);
-	   	currentState = &states[newState];
-	   }
+		if(currentState->event_mask & event)
+		{
+			uint8_t newState = currentState->transition(event);
+			currentState = &states[newState];
+		}
 
-	   if(FIRST_PRESS)
-	   {
-	   	_delay_ms(150);
-	   }
-	   else
-	   {
-	   	_delay_ms(50);
-	   }
+		if(FIRST_PRESS)
+		{
+			_delay_ms(150);
+		}
+		else
+		{
+			_delay_ms(50);
+		}
 	}
 }

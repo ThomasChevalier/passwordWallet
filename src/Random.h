@@ -5,25 +5,11 @@
 #include <avr/wdt.h>
 #include <util/atomic.h>
 
-typedef union 
-{
-  uint32_t int32;
-  uint16_t int16[2];
-  uint8_t int8[4];
-}ENTROPY_LONG_WORD;
-
-extern ENTROPY_LONG_WORD share_entropy;
-extern uint32_t retVal;
+extern volatile uint32_t random_dword; // The variable that contain the 32 bit of random
+extern volatile uint8_t random_transfer; // 0 => random_dword has already been written to fram | 1 => random_dword should be written to fram
 
 // Should be called once before any use of random_ functions
 void random_init();
-
-uint32_t random_32();
-uint8_t random_8();
-// uint16_t random_16();
-// uint32_t random_max(uint32_t max);
-// uint32_t random_min_max(uint32_t min, uint32_t max);
-uint8_t random_available();
 
 // Save entropy to the fram
 void random_save_entropy();

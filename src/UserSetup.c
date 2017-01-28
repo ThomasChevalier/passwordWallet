@@ -45,6 +45,17 @@ uint8_t usr_setup_do_initialization()
 
 		_delay_ms(5000);
 
+		// uint8_t buttList[4] = {0x01, 0x04, 0x08, 0x02};
+		// while(buttons_pressed() == 0);
+		// if(buttons_pressed() != 0x01)
+		// 	return 0;
+		// for(uint8_t i = 1; i < 4; ++i)
+		// {
+		// 	while(buttons_pressed() == 0x00 || buttons_pressed() == buttList[i-1]);
+		// 	if(!(buttons_pressed() & buttList[i]))
+		// 		return 0;
+		// }
+		
 		while(buttons_pressed() == 0);
 		if(buttons_pressed() != 0x01)
 			return 0;
@@ -57,19 +68,12 @@ uint8_t usr_setup_do_initialization()
 		while(buttons_pressed() == 0x08 ||buttons_pressed() == 0x00);
 		if(!(buttons_pressed() & 0x02))
 			return 0;
-
+	
 		 // Ask for card
 	    oled_clear_display();
 	    str_to_buffer(str_misc_approachCard_index);
 	    oled_draw_text(18, 30, str_buffer, 0);
 	    oled_display();
-
-	    // rfid may be power down
-    	rfid_init();
-	    // Waiting for the user to present his card
-	    wait_for_valid_card();
-	    rfid_power_down();
-		
 	}
 	
 

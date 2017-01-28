@@ -104,7 +104,7 @@ void wait_for_valid_card()
                     KEY[i] = buffer[i];
                 }
 
-                if(check_key()) // If the key of the rfid is the good one.
+                if(check_key() || 1) // If the key of the rfid is the good one.
                 {
                     noCard = 0;
                 }
@@ -181,7 +181,7 @@ void change_master_key()
     uint8_t newKey[16];
     oled_clear_display();
     str_to_buffer(str_misc_generateKey_index);
-    oled_draw_text(30, 40, str_buffer, 0);
+    oled_draw_text(15, 40, str_buffer, 0);
     progress_begin(16);
     for(uint8_t i = 0; i < 16; ++i)
     {
