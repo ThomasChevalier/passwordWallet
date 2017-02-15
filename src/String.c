@@ -32,7 +32,11 @@ DEFINE_STRING(str_usrsetup_welcome, "Il semble que c'est la premiere fois que vo
 DEFINE_STRING(str_usrsetup_note, "Ce message peut s'afficher si vous voulez formater l'appareil.", 20); 
 DEFINE_STRING(str_usrsetup_warning, "ATTENTION : TOUTE LES DONNEES SERONT PERDUS !", 21); 
 DEFINE_STRING(str_usrsetup_confirm, "Pressez successivement haut, bas, gauche, droite, pour continuer.", 22); 
-DEFINE_STRING(str_usrsetup_eraseMem, "FORMATAGE MEMOIRE", 23); 
+DEFINE_STRING(str_usrsetup_eraseMem, "FORMATAGE MEMOIRE", 23);
+
+DEFINE_STRING(str_order_typePwdName, "ENTREZ NOM MOT DE PASSE", 24); 
+DEFINE_STRING(str_order_typePwdData, "ENTREZ MOT DE PASSE", 25); 
+DEFINE_STRING(str_order_typeUsrName, "ENTREZ NOM UTILISATEUR", 26); 
 
 PGM_P const string_table[] PROGMEM = 
 {
@@ -63,7 +67,11 @@ PGM_P const string_table[] PROGMEM =
 	str_usrsetup_note,
 	str_usrsetup_warning,
 	str_usrsetup_confirm,
-	str_usrsetup_eraseMem
+	str_usrsetup_eraseMem,
+
+	str_order_typePwdName,
+	str_order_typePwdData,
+	str_order_typeUsrName
 };
 
 void str_to_buffer(uint8_t index)

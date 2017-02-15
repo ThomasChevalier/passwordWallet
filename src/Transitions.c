@@ -1,6 +1,7 @@
 #include "Transitions.h"
 
 #include <string.h>
+#include <util/delay.h>
 
 #include "Authentification.h"
 #include "Passwords.h"
@@ -132,7 +133,7 @@ static void show_executing()
 
 void do_action(uint8_t action)
 {
-	char tempStr[64];
+	char tempStr[64] = {0};
 
 	switch(action)
 		{
@@ -186,7 +187,44 @@ void do_action(uint8_t action)
 			// pwd_delete();
 			break;
 		case 4:
-			// pwd_add_new();
+			{
+				char pwdName[32] = {0};
+				char pwdData[32] = {0};
+				
+				str_to_buffer(str_order_typePwdName_index);
+				oled_clear_display();
+				oled_draw_text(20, 10, str_buffer, 0);
+				oled_display();
+				_delay_ms(2000);
+				type_string(pwdName,31);
+
+				str_to_buffer(str_order_typePwdData_index);
+				oled_clear_display();
+				oled_draw_text(20, 10, str_buffer, 0);
+				oled_display();
+				_delay_ms(2000);
+				type_string(pwdData,31);
+
+				str_to_buffer(str_order_typeUsrName_index);
+				oled_clear_display();
+				oled_draw_text(20, 10, str_buffer, 0);
+				oled_display();
+				_delay_ms(2000);
+				type_string(tempStr,63); // usr name
+
+				oled_clear_display();
+				str_to_buffer(str_option_addPwd_index);
+				oled_draw_text(17, 40, str_buffer, 0);
+				uint8_t strLen = strlen(pwdData);
+				uint8_t cpx = 21 + (32-strLen);
+				cpx += 21 +(64-strlen(tempStr));
+				progress_begin(cpx);
+
+				add_password(pwdName, pwdData, tempStr);
+
+				progress_end();
+			}
+			
 			break;
 		case 5:
 			change_master_key();
@@ -231,6 +269,7 @@ DECLARE_TRANSITION(STATE_OPTION)
 			confirming = 0;
 			do_action(currentChoice);
 			currentChoice = 0;
+			read_all_names();
 			draw_main_menu();
 			return STATE_MAIN;
 		}

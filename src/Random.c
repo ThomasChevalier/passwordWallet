@@ -48,7 +48,6 @@ static void isr_hardware_neutral(uint8_t val)
   if (gWDT_buffer_position >= gWDT_buffer_SIZE)
   {
     random_dword = 0;
-    //gWDT_pool_end = (gWDT_pool_start + gWDT_pool_count) % WDT_POOL_SIZE;
 
     // The following code is an implementation of Jenkin's one at a time hash
     // This hash function has had preliminary testing to verify that it
@@ -84,7 +83,9 @@ void random_save_entropy()
       // Read how many size left and write the dword at the good position
       uint16_t entropyPoolSize = 0;
       fram_read_bytes(OFFSET_ENTROPY_SIZE, (uint8_t*)(&entropyPoolSize), 2);
-      uint16_t pos = (entropyPoolSize > ENTROPY_POOL_SIZE-4) ? ENTROPY_POOL_SIZE-4 : entropyPoolSize;
+      if(entropyPoolSize > ENTROPY_POOL_SIZE-4)
+        return;
+      uint16_t pos = entropyPoolSize;//(entropyPoolSize > ENTROPY_POOL_SIZE-4) ? ENTROPY_POOL_SIZE-4 : entropyPoolSize;
       fram_write_bytes(OFFSET_ENTROPY_POOL + pos, (uint8_t*)(&random_dword), 4); // Write the random value in the pool
       entropyPoolSize += 4; // Increase of 4 bytes the size of the entropy pool
       fram_write_bytes(OFFSET_ENTROPY_SIZE, (uint8_t*)(&entropyPoolSize), 2); // Write it to the fram

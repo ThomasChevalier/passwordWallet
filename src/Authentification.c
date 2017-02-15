@@ -21,6 +21,8 @@
 
 #include "ProgressBar.h"
 
+#include "Ascii85.h"
+
 static void waitRfidTag()
 {
     while(1)
@@ -98,13 +100,9 @@ void wait_for_valid_card()
             else
             {
                 // .. Success
-                uint8_t i = 0;
-                for(i = 0; i < 16; ++i)
-                {
-                    KEY[i] = buffer[i];
-                }
+                memcpy(KEY, buffer, 16);
 
-                if(check_key() || 1) // If the key of the rfid is the good one.
+                if(check_key()) // If the key of the rfid is the good one.
                 {
                     noCard = 0;
                 }
@@ -185,7 +183,12 @@ void change_master_key()
     progress_begin(16);
     for(uint8_t i = 0; i < 16; ++i)
     {
-        newKey[i] = random_request_byte();
+        // No whitespace because it can't be read reliably on the screen
+        do
+        {
+            newKey[i] = random_request_byte();
+        }while(newKey[i] == ' ');
+        
         progress_add(1);
     }
     progress_end();
@@ -202,13 +205,6 @@ void change_master_key()
             oled_draw_text(0, 0, str_buffer, 0);
             oled_display();
             goto EXIT;
-        }
-        else
-        {
-            // .. Success
-        //     str_to_buffer(STRING_MISC_SUCCESS);
-        //     oled_draw_text(0, 0, str_buffer, 0);
-        //     oled_display();
         }
     }
     else
@@ -245,8 +241,7 @@ void change_master_key()
 
     // Encrypt that sequence
     uint8_t encryptionValidation[16];
-    const uint8_t zeroIv[16]  =
-    {0x00, 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 };
+    const uint8_t zeroIv[16]  = {0x00, 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 };
     AES128_CBC_encrypt_buffer(encryptionValidation, randomSequence, 16, KEY, zeroIv);
     progress_add(2);
 

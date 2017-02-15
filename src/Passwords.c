@@ -1,3 +1,4 @@
+
 #include "Passwords.h"
 
 #include <string.h>
@@ -320,6 +321,7 @@ uint8_t add_password(char* passwordName, char* passwordData, char* userName)
 				chunkFree = 1;
 				chunk_id = i * 8 + j;
 				MEMORY_MAP[i] &= (1<<j); // Set the bit, this chunk is now used
+				goto CHUNK_FOUND;
     		}
     	}
     }
@@ -329,6 +331,7 @@ uint8_t add_password(char* passwordName, char* passwordData, char* userName)
         return 1;
     }
     
+    CHUNK_FOUND:;
 
     uint8_t save_options_flag = OPTIONS_FLAG;
 
@@ -380,5 +383,4 @@ uint8_t add_password(char* passwordName, char* passwordData, char* userName)
     ++ NUM_PWD;
     fram_write_byte(OFFSET_NUM_PWD, NUM_PWD);
     return 0;
-
 }

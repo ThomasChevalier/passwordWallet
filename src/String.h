@@ -37,7 +37,11 @@ DECLARE_STRING(str_usrsetup_welcome);
 DECLARE_STRING(str_usrsetup_note); 
 DECLARE_STRING(str_usrsetup_warning); 
 DECLARE_STRING(str_usrsetup_confirm); 
-DECLARE_STRING(str_usrsetup_eraseMem); 
+DECLARE_STRING(str_usrsetup_eraseMem);
+
+DECLARE_STRING(str_order_typePwdName);
+DECLARE_STRING(str_order_typePwdData);
+DECLARE_STRING(str_order_typeUsrName);
 
 extern PGM_P const string_table[] PROGMEM;
 

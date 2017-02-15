@@ -22,9 +22,9 @@ void draw_main_menu()
 	oled_h_line(8, 20, 120, WHITE);
 
 	oled_h_line(8, 43, 120, WHITE);
-	//oled_draw_text(10, 2 , PWD_NAME_1, 0);
-	//oled_draw_text(10, 23, PWD_NAME_2, 0);
-	//oled_draw_text(10, 46, PWD_NAME_3, 0);
+	oled_draw_text(10, 2 , PWD_NAME_1, 0);
+	oled_draw_text(10, 23, PWD_NAME_2, 0);
+	oled_draw_text(10, 46, PWD_NAME_3, 0);
 	oled_display();
 }
 

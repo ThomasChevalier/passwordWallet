@@ -11,7 +11,7 @@ void spi_setup_hardware (void)
     SPI_MOSI_DDR |= (1<<SPI_MOSI_PIN_NUM);
 
     // Set up SS as output
-    // Because spi is master mode, PB0 (aka Slave Select pin) should be an output, or, if it is an output, should be in high state
+    // Because spi is master mode, PB0 (aka Slave Select pin) should be an output, or, if it is an input, should be in high state
     SPI_SS_DDR |= (1<<SPI_SS_PIN_NUM);
 
     // Set up MISO as input

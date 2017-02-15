@@ -116,16 +116,16 @@ void init_software()
   //keyboard_init();
 }
 
-// void blink(uint8_t n)
-// {
-//   DDRD |= (1<<5);
-//   uint8_t i = 0;
-//   for(;i < n*2; ++i)
-//   {
-//     PORTD ^= (1<<5);
-//     _delay_ms(10);
-//   }
-// }
+void blink(uint8_t n)
+{
+  DDRD |= (1<<5);
+  uint8_t i = 0;
+  for(;i < n*2; ++i)
+  {
+    PORTD ^= (1<<5);
+    _delay_ms(1000);
+  }
+}
 
 int main()
 {
@@ -157,8 +157,8 @@ int main()
 	init_system();
 	init_hardware();
 	init_software();
-
-	if(!usr_setup_is_initialized())
+	
+	if(!usr_setup_is_initialized() || 1)
 	{
     	// Device is not initialized ...
 		if(!usr_setup_do_initialization())
