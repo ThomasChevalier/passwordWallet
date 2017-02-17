@@ -23,27 +23,53 @@ extern uint8_t GLOBALS_EVENTS;   // Current events, not to be accessed by interr
 extern uint8_t PROGRESS_COMPLEXITY;
 extern uint8_t PROGRESS_ADVANCE;
 
+// ///////////// //
+// Fram Section  //
+// ///////////// //
+
+// Size of the fram in byte
+#define FRAM_BYTE_SIZE (8192)
+
+#define OFFSET_OPTIONS_FLAG (0)
+#define SIZE_OPTION_FLAG (1)
+#define OPTIONS_FLAG_OFFSET_NO_ENCRYPTION (0)
+#define OPTIONS_FLAG_OFFSET_SORTING_METHOD_L (1)
+#define OPTIONS_FLAG_OFFSET_SORTING_METHOD_H (2)
+#define OPTIONS_FLAG_OFFSET_ORIENTATION (3)
+#define OPTIONS_FLAG_OFFSET_INITIALIZED (4)
+
+#define OFFSET_FIRST_PWD_UTIL (OFFSET_OPTIONS_FLAG + SIZE_OPTION_FLAG) /* 1 */
+#define SIZE_FIRST_PWD_UTIL (1)
+
+#define OFFSET_FIRST_PWD_ALPHA (OFFSET_FIRST_PWD_UTIL + SIZE_FIRST_PWD_UTIL) /* 2 */
+#define SIZE_FIRST_PWD_ALPHA (1)
+
+#define OFFSET_NUM_PWD (OFFSET_FIRST_PWD_ALPHA + SIZE_FIRST_PWD_ALPHA) /* 3 */
+#define SIZE_NUM_PWD (1)
+
+#define OFFSET_ENTROPY_SIZE (OFFSET_NUM_PWD + SIZE_NUM_PWD) /* 4 */
+#define SIZE_ENTROPY_SIZE (2)
+
+#define OFFSET_ENTROPY_POOL (OFFSET_ENTROPY_SIZE + SIZE_ENTROPY_SIZE) /* 6 */
+#define SIZE_ENTROPY_POOL (256)
+
+#define OFFSET_MEMORY_MAP (OFFSET_ENTROPY_POOL + SIZE_ENTROPY_POOL) /* 262 */
+#define SIZE_MEMORY_MAP (6)
+
+#define OFFSET_FIRST_PWD (OFFSET_MEMORY_MAP + SIZE_MEMORY_MAP) /* 268 */
+
 // //////////////// //
 // Password Section //
 // //////////////// //
 
 // The maximum number of password that the memory can handle.
-// For 32KB fram it is 184. For test it is 35.
-#define MAXIMUM_NUMBER_OF_PWD 35
+// For 8KB fram it is 47
+#define MAXIMUM_NUMBER_OF_PWD 47
 
-#define START_OF_OLED_BUFFER (4)
-#define OLED_BUFFER_SIZE (1024)
-
-#define OFFSET_ENTROPY_SIZE (OLED_BUFFER_SIZE + START_OF_OLED_BUFFER)
-#define OFFSET_ENTROPY_POOL (OFFSET_ENTROPY_SIZE + 2)
-#define ENTROPY_POOL_SIZE (1024)
-#define OFFSET_MEMORY_MAP (OFFSET_ENTROPY_POOL + ENTROPY_POOL_SIZE)
-#define MEMORY_MAP_SIZE (23)
 
 #define SIZE_OF_PWD_BLOCK (166)
-#define FIRST_PWD_OFFSET (2077)
 
-#define PWD_ADDR(pwdID, pwdField) (FIRST_PWD_OFFSET + SIZE_OF_PWD_BLOCK * pwdID + pwdField)
+#define PWD_ADDR(pwdID, pwdField) (OFFSET_FIRST_PWD + SIZE_OF_PWD_BLOCK * pwdID + pwdField)
 #define PWD_OFFSET_PREV_PWD_UTIL (0)
 #define PWD_OFFSET_NEXT_PWD_UTIL (1)
 #define PWD_OFFSET_PREV_PWD_ALPHA (2)
@@ -75,20 +101,23 @@ extern uint8_t CURRENT_USR_NAME[64];
 
 #undef FRAM_BUFFER
 
-// Size of the fram in byte
-#define FRAM_BYTE_SIZE (8192)
-#define OFFSET_OPTIONS_FLAG (0)
-#define OFFSET_OPTION_INITIALIZED (4)
-#define OFFSET_FIRST_PWD_UTIL (1)
-#define OFFSET_FIRST_PWD_ALPHA (2)
-#define OFFSET_NUM_PWD (3)
-
 extern uint8_t OPTIONS_FLAG;     // The options flag stored in fram
 
 extern uint8_t FIRST_PWD_UTIL;  // bytes 2 and 3 of fram
 extern uint8_t FIRST_PWD_ALPHA; // bytes 4 and 5 of fram
 extern uint8_t NUM_PWD;         // bytes 6 of fram
 
-extern uint8_t MEMORY_MAP[23]; // The memory map
+extern uint8_t MEMORY_MAP[6]; // The memory map
+
+#define KEYBOARD_ENABLE
+
+#define blink(n) \
+DDRD |= (1<<5);\
+uint8_t i = 0; \
+for(;i < n*2; ++i) \
+{ \
+  PORTD ^= (1<<5); \
+    _delay_ms(200); \
+}
 
 #endif // GLOBALS_HEADER_THOMAS_CHEVALIER

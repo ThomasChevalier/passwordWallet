@@ -4,3 +4,9 @@ oldSources/
 *.[do]
 *.hex
 depend/
+*.bin
+*.eep
+*.elf
+*.lss
+*.map
+*.sym

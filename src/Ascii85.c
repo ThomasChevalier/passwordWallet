@@ -36,7 +36,7 @@ void decode_16B(char *input, uint8_t *output)
     uint8_t i =0;
     uint32_t sum;
 
-   uint32_t powers[5] = {52200625, 614125, 7225, 85, 1};
+    uint32_t powers[5] = {52200625, 614125, 7225, 85, 1};
     for(; i < 4; ++i)
     {
         sum = 0;

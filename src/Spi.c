@@ -60,7 +60,7 @@ void spi_read(uint8_t* buffer, uint8_t size)
     }
 }
 
-uint8_t spi_read_8()
+uint8_t spi_read_8(void)
 {
     SPDR = 0x00;
     while (!(SPSR & _BV(SPIF)));

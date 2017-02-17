@@ -14,7 +14,7 @@
 #include "Events.h"
 
 
-void draw_main_menu()
+void draw_main_menu(void)
 {
 	oled_clear_display();
 	draw_browse_dock(0,0);
@@ -33,9 +33,13 @@ void draw_browse_dock(char letter, uint8_t highlight)
 {
 	static char lastLetter = '@';
 	if(letter == 0)
+	{
 		letter = lastLetter;
+	}
 	else
+	{
 		lastLetter = letter;
+	}
 
 	draw_char_column((highlight<<4) | (1<<5),letter);
 	oled_v_line(7, 0, 64, WHITE);
@@ -47,16 +51,26 @@ void draw_option_menu(uint8_t currentChoice)
 	oled_clear_display();
 	uint8_t pos;
 	if(currentChoice == 0)
+	{
 		pos = 0;
+	}
 	else if(currentChoice == 6)
+	{
 		pos = 2;
+	}
 	else
+	{
 		pos = 1;
+	}
 
 	if(currentChoice == 6)
+	{
 		--currentChoice;
+	}
 	if(currentChoice > 0)
+	{
 		--currentChoice;
+	}
 
 	currentChoice += 4;
 
@@ -99,7 +113,9 @@ void draw_confirmation_screen(uint8_t choice, uint8_t yesNo)
 
 	uint8_t y = yesNo ? 28 : 18;
 	for(uint8_t i = 0; i < 7; ++i)
+	{
 		oled_h_line(55, y+i, 16, INVERSE);
+	}
 
 	oled_display();
 }
@@ -124,86 +140,98 @@ void type_string(char* string_typed, uint8_t maxLen)
 		}
 
 		buttons_update_event();
-	    uint8_t event = getEvents(); // Mask of events
+	    uint8_t event = events_get(); // Mask of events
 
 	    if(event & EVENT_BUTTON_1)
-		{
-			char c = string_typed[pos];
-			if(c == ' ')
-				string_typed[pos] = 127;
-			else
-				string_typed[pos] = c - 1;
-		}
-		else if(event & EVENT_BUTTON_2)
-		{
+	    {
+	    	char c = string_typed[pos];
+	    	if(c == ' ')
+	    	{
+	    		string_typed[pos] = 127;
+	    	}
+	    	else
+	    	{
+	    		string_typed[pos] = c - 1;
+	    	}
+	    }
+	    else if(event & EVENT_BUTTON_2)
+	    {
 			// Maximum size has been reached
-			if(pos == maxLen-1)
-			{
-				running = 0;
-			}
-			else
-			{
+	    	if(pos == maxLen-1)
+	    	{
+	    		running = 0;
+	    	}
+	    	else
+	    	{
 				// Erase functionnality
-				if(string_typed[pos] == 127)
-				{
-					if(have_erased)
-					{
-						running = 0;
-					}
-					else
-					{
-						for(uint8_t i = pos+1; i < maxLen; ++i)
-						{
-							string_typed[i] = 0;
-						}
-						have_erased = 1;
-					}
-				}
-				else
-				{
-					have_erased = 0;
-					++pos;
-					if(string_typed[pos] == 0)
-						string_typed[pos] = 127;
-				}
-			}
-		}
-		else if(event & EVENT_BUTTON_3)
-		{
-			char c = string_typed[pos];
-			if(c == 127)
-				string_typed[pos] = ' ';
-			else
-				string_typed[pos] = c + 1;
-		}
-		else if(event & EVENT_BUTTON_4)
-		{
-			if(string_typed[pos] == 127)
-			{
-				for(uint8_t i = pos+1; i < maxLen; ++i)
-				{
-					string_typed[i] = 0;
-				}
-			}
+	    		if(string_typed[pos] == 127)
+	    		{
+	    			if(have_erased)
+	    			{
+	    				running = 0;
+	    			}
+	    			else
+	    			{
+	    				for(uint8_t i = pos+1; i < maxLen; ++i)
+	    				{
+	    					string_typed[i] = 0;
+	    				}
+	    				have_erased = 1;
+	    			}
+	    		}
+	    		else
+	    		{
+	    			have_erased = 0;
+	    			++pos;
+	    			if(string_typed[pos] == 0)
+	    			{
+	    				string_typed[pos] = 127;
+	    			}
+	    		}
+	    	}
+	    }
+	    else if(event & EVENT_BUTTON_3)
+	    {
+	    	char c = string_typed[pos];
+	    	if(c == 127)
+	    	{
+	    		string_typed[pos] = ' ';
+	    	}
+	    	else
+	    	{
+	    		string_typed[pos] = c + 1;
+	    	}
+	    }
+	    else if(event & EVENT_BUTTON_4)
+	    {
+	    	if(string_typed[pos] == 127)
+	    	{
+	    		for(uint8_t i = pos+1; i < maxLen; ++i)
+	    		{
+	    			string_typed[i] = 0;
+	    		}
+	    	}
 
-			if(pos >= 1)
-			{
-				pos --;
-			}
-			else
-			{
-				running = 0;
-			}
-		}
-		if(event)
-		{
-			draw_typing_screen(string_typed, pos);
-		}
+	    	if(pos >= 1)
+	    	{
+	    		pos --;
+	    	}
+	    	else
+	    	{
+	    		running = 0;
+	    	}
+	    }
+	    if(event)
+	    {
+	    	draw_typing_screen(string_typed, pos);
+	    }
 	}
 	for(uint8_t i = 0; i < maxLen; ++i)
 	{
 		if(string_typed[i] == 127)
+		{
 			string_typed[i] = 0;
+		}
 	}
 
 }
@@ -252,7 +280,7 @@ void draw_char_column(uint8_t column_and_flags, char letter)
 			{
 				c += 27;
 			}
-				
+
 			else if(x > 'Z')
 			{
 				c-= 27;

@@ -45,7 +45,7 @@ DECLARE_TRANSITION(STATE_INIT)
     fram_write_bytes(OFFSET_ENTROPY_SIZE, (uint8_t*)(&entropyPoolSize), 2);
 
     // Read the memory map
-    fram_read_bytes(OFFSET_MEMORY_MAP, MEMORY_MAP, MEMORY_MAP_SIZE);
+    fram_read_bytes(OFFSET_MEMORY_MAP, MEMORY_MAP, SIZE_MEMORY_MAP);
 
   	goto_first_pwd();
 	read_all_names();
@@ -58,7 +58,9 @@ DECLARE_TRANSITION(STATE_INIT)
 DECLARE_TRANSITION(STATE_MAIN)
 {
 	if(event & EVENT_USB_DISCONNECTED)
+	{
 		return STATE_SAVE;
+	}
 
 	if(event & EVENT_BUTTON_1)
 	{
@@ -93,7 +95,9 @@ DECLARE_TRANSITION(STATE_BROWSE)
 	static char letter = '@';
 
 	if(event & EVENT_USB_DISCONNECTED)
+	{
 		return STATE_SAVE;
+	}
 
 	draw_browse_dock(letter,1);
 	oled_display();	
@@ -123,7 +127,7 @@ DECLARE_TRANSITION(STATE_BROWSE)
 	return STATE_BROWSE;
 }
 
-static void show_executing()
+static void show_executing(void)
 {
 	oled_clear_display();
 	str_to_buffer(str_action_executing_index);
@@ -245,7 +249,9 @@ DECLARE_TRANSITION(STATE_OPTION)
 	static uint8_t confirmYesNo = 0;
 
 	if(event & EVENT_USB_DISCONNECTED)
+	{
 		return STATE_SAVE;
+	}
 
 	if(event & EVENT_BUTTON_1)
 	{

@@ -3,7 +3,7 @@
 
 #include <avr/pgmspace.h>
 
-static const uint8_t font[]  PROGMEM =
+static const uint8_t font[] PROGMEM =
 {
     0x00, 0x00, 0x00, 0x00, /* space */
     0x17, 0x00, 0x00, 0x00, /* ! */

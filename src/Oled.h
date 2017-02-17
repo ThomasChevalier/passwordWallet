@@ -58,30 +58,30 @@
 #define SSD1306_VERTICAL_AND_LEFT_HORIZONTAL_SCROLL 0x2A
 
 // Hardware
-void oled_setup_hardware();
+void oled_setup_hardware(void);
 
-void oled_reset_high();
-void oled_reset_low();
+void oled_reset_high(void);
+void oled_reset_low(void);
 
-void oled_deselect();
-void oled_select();
+void oled_deselect(void);
+void oled_select(void);
 
-void oled_dc_high();
-void oled_dc_low();
+void oled_dc_high(void);
+void oled_dc_low(void);
 
-void oled_setup_spi();
+void oled_setup_spi(void);
 
 
 // Software
-void oled_init();
+void oled_init(void);
 void oled_draw_pixel(uint8_t x, uint8_t y, uint8_t color);
 void oled_command(uint8_t c);
 void oled_invert_display(uint8_t i); // Invert all the colors
 
 // dim(1) = moins de contraste, moins d'énergie consommée
 void oled_dim(uint8_t dim);
-void oled_display();
-void oled_clear_display();
+void oled_display(void);
+void oled_clear_display(void);
 void oled_h_line(uint8_t x, uint8_t y, uint8_t w, uint8_t color);
 //void oled_internal_h_line(uint8_t x, uint8_t y, uint8_t w, uint8_t color);
 void oled_v_line(uint8_t x, uint8_t y, uint8_t h, uint8_t color);

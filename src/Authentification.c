@@ -5,25 +5,25 @@
 #include <avr/eeprom.h>
 #include <util/delay.h>
 
-#include "Oled.h"
-#include "Rfid.h"
-#include "String.h"
-#include "Random.h"
-
 #include "Globals.h"
 
+#include "Rfid.h"
+
 #include "Aes.h"
+#include "Random.h"
 #include "Ascii85.h"
 
 #include "Buttons.h"
 #include "Events.h"
+
+#include "Oled.h"
+#include "ProgressBar.h"
+#include "String.h"
+
 #include "Passwords.h"
 
-#include "ProgressBar.h"
 
-#include "Ascii85.h"
-
-static void waitRfidTag()
+static void waitRfidTag(void)
 {
     while(1)
     {
@@ -38,7 +38,7 @@ static void waitRfidTag()
 }
 
 // Return 1 if success, 0 otherwise
-static uint8_t authenticate_on_card()
+static uint8_t authenticate_on_card(void)
 {
     // sak == 0x08 <=> MIFARE 1K
     if(rfid_uid.sak != 0x08)
@@ -71,7 +71,7 @@ static uint8_t authenticate_on_card()
     return 0;
 }
 
-void wait_for_valid_card()
+void wait_for_valid_card(void)
 {
     uint8_t noCard = 1;
     oled_dim(1); // Save 4 mA
@@ -80,6 +80,7 @@ void wait_for_valid_card()
         // Waiting for the user to present his card
         waitRfidTag();
         oled_clear_display();
+        oled_display();
 
         // Trying to authenticate
         if(authenticate_on_card())
@@ -123,11 +124,11 @@ void wait_for_valid_card()
     // Normal contrast
     oled_dim(0);
 
-    eventHappen(EVENT_PASSWORD_ENTERED);
+    events_happen(EVENT_PASSWORD_ENTERED);
 }
 
 // Check if the key is valid against memory buffer
-uint8_t check_key()
+uint8_t check_key(void)
 {
     uint8_t randSeq[16];
     uint8_t* eeprom_addr = 0;
@@ -161,7 +162,7 @@ uint8_t check_key()
     return 1;
 }
 
-void change_master_key()
+void change_master_key(void)
 {
     // rfid may be power down
     rfid_init();
@@ -251,7 +252,7 @@ void change_master_key()
     {
         eeprom_busy_wait();
         eeprom_update_byte(eeprom_addr+16, encryptionValidation[i]);
-         ++eeprom_addr;
+        ++eeprom_addr;
     }
     progress_add(2);
     progress_end();

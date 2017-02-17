@@ -40,6 +40,6 @@ void spi_send_8(uint8_t data);
 // Read size bytes from spi bus
 void spi_read(uint8_t* buffer, uint8_t size);
 // Read one byte
-uint8_t spi_read_8();
+uint8_t spi_read_8(void);
 
 #endif // SPI_HEADER_THOMAS_CHEVALIER

@@ -19,14 +19,14 @@ void read_usr_name(uint8_t* key);
 void set_username(uint8_t* usr_name, uint8_t usr_len, uint8_t* key);
 
 // Goto the first password, depending upon the sort method
-void goto_first_pwd();
+void goto_first_pwd(void);
 // Return the ID of the password before pwd_index. Loop if necessary
 uint16_t prev_pwd(uint16_t pwd_index);
 // Return the ID of the password after pwd_index. Loop if necessary
 uint16_t next_pwd(uint16_t pwd_index);
 
 // Increment the counter of utilisation of the current password. Should be called each time a password is used.
-void increment_pwd_counter();
+void increment_pwd_counter(void);
 
 // Set a new name for the current password. pwd_name should be less than 32 byte long
 void set_pwd_name(char* pwd_name);
@@ -35,12 +35,12 @@ void read_pwd_name(char* pwd_name, uint16_t pwd_index);
 
 
 // Read the all password names.
-void read_all_names();
+void read_all_names(void);
 
 // Return a 32 character random password. This function may be blockant.
 void generate_password(char* output);
 
-void delete_password();
+void delete_password(void);
 
 // Add a new password
 // Password name should be 32 bytes long

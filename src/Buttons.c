@@ -1,8 +1,7 @@
 #include "Buttons.h"
 
-#include <avr/interrupt.h>
-#include "Events.h"
 #include "Globals.h"
+#include "Events.h"
 #include "PinDefinition.h"
 
 void buttons_update_event()
@@ -24,17 +23,17 @@ void buttons_update_event()
 
 void buttons_setup_hardware()
 {
-	// Buttons' pins defined as input
-	BUTTON_1_DDR &= ~(1 << BUTTON_1_PIN_NUM);
-	BUTTON_2_DDR &= ~(1 << BUTTON_2_PIN_NUM);
+    // Buttons' pins defined as input
+    BUTTON_1_DDR &= ~(1 << BUTTON_1_PIN_NUM);
+    BUTTON_2_DDR &= ~(1 << BUTTON_2_PIN_NUM);
     BUTTON_3_DDR &= ~(1 << BUTTON_3_PIN_NUM);
-	BUTTON_4_DDR &= ~(1 << BUTTON_4_PIN_NUM);
+    BUTTON_4_DDR &= ~(1 << BUTTON_4_PIN_NUM);
 
     // Active pull-up resistors
-	BUTTON_1_PORT |= (1 << BUTTON_1_PIN_NUM);
-	BUTTON_2_PORT |= (1 << BUTTON_2_PIN_NUM);
+    BUTTON_1_PORT |= (1 << BUTTON_1_PIN_NUM);
+    BUTTON_2_PORT |= (1 << BUTTON_2_PIN_NUM);
     BUTTON_3_PORT |= (1 << BUTTON_3_PIN_NUM);
-	BUTTON_4_PORT |= (1 << BUTTON_4_PIN_NUM);
+    BUTTON_4_PORT |= (1 << BUTTON_4_PIN_NUM);
 }
 
 unsigned char buttons_pressed()
@@ -43,65 +42,22 @@ unsigned char buttons_pressed()
     // Check the 4 buttons and write corresponding byte
     if (BUTTON_1_PIN & (1<<BUTTON_1_PIN_NUM))
     {
-        rep |= ((OPTIONS_FLAG>>3)&0x01) ? EVENT_BUTTON_3 : EVENT_BUTTON_1;
+        rep |= ( OPTIONS_FLAG & (1<<OPTIONS_FLAG_OFFSET_ORIENTATION) ) ? EVENT_BUTTON_3 : EVENT_BUTTON_1;
     }
     if (BUTTON_2_PIN & (1<<BUTTON_2_PIN_NUM))
     {
-        rep |= ((OPTIONS_FLAG>>3)&0x01) ? EVENT_BUTTON_4 : EVENT_BUTTON_2;
+        rep |= ( OPTIONS_FLAG & (1<<OPTIONS_FLAG_OFFSET_ORIENTATION) ) ? EVENT_BUTTON_4 : EVENT_BUTTON_2;
     }
     if (BUTTON_3_PIN & (1<<BUTTON_3_PIN_NUM))
     {
-        rep |= ((OPTIONS_FLAG>>3)&0x01) ? EVENT_BUTTON_1 : EVENT_BUTTON_3;
+        rep |= ( OPTIONS_FLAG & (1<<OPTIONS_FLAG_OFFSET_ORIENTATION) ) ? EVENT_BUTTON_1 : EVENT_BUTTON_3;
     }
     if (BUTTON_4_PIN & (1<<BUTTON_4_PIN_NUM))
     {
-    	rep |= ((OPTIONS_FLAG>>3)&0x01) ? EVENT_BUTTON_2 : EVENT_BUTTON_4;
+        rep |= ( OPTIONS_FLAG & (1<<OPTIONS_FLAG_OFFSET_ORIENTATION) ) ? EVENT_BUTTON_2 : EVENT_BUTTON_4;
     }
 
     rep ^= 0x0F; // Inverse result because here 1 <=> released (input pullup) and we want 1 <=> pressed
 
     return rep;
 }
-
-
-
-/*
-void debounce(unsigned char* butt)
-{
-    static unsigned char counter1 = 0;
-    static unsigned char counter2 = 0;
-    static unsigned char counter3 = 0;
-    static unsigned char lastState = 0x00; // Default case
-
-    _debounce_one(0x01, butt, &lastState, &counter1);
-    _debounce_one(0x02, butt, &lastState, &counter2);
-    _debounce_one(0x04, butt, &lastState, &counter3);
-
-}
-
-void _debounce_one(unsigned char bitMask, unsigned char *butt, unsigned char* lastState, unsigned char* counter)
-{
-    unsigned char reading = (*butt) & bitMask;
-    unsigned char last = (*lastState) & bitMask;
-    *butt = (last) ? (*butt) | bitMask : (*butt) & (0xFF ^ bitMask); // By default, ignore changement and set the state to the last state
-
-    if(reading != last)
-    {
-        ++(*counter);
-        if((*counter) > 10)
-        {
-            --(*counter);
-            // State changed
-            // Last become actual read and read become ... read
-            *lastState = (reading) ? (*lastState) | bitMask : (*lastState) & (0xFF ^ bitMask);
-            *butt = (reading) ? (*butt) | bitMask : (*butt) & (0xFF ^ bitMask);
-            //(*counter) = 0; // Long press = multiple press
-        }
-    }
-    else
-    {
-        (*counter) = 0;
-    }
-
-}
-//*/

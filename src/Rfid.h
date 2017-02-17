@@ -206,9 +206,9 @@ typedef struct
 
 
 // Hardware
-void rfid_setup_hardware();
-void rfid_select();
-void rfid_deselect();
+void rfid_setup_hardware(void);
+void rfid_select(void);
+void rfid_deselect(void);
 
 /*
 8.6 Power reduction modes
@@ -220,13 +220,13 @@ sinks including the oscillator. All digital input buffers are separated from the
 clamped internally (except pin NRSTPD). The output pins are frozen at either a HIGH or
 LOW level.
 */
-void rfid_reset_high();
-void rfid_reset_low();
+void rfid_reset_high(void);
+void rfid_reset_low(void);
 
 
 // Software
 
-void rfid_setup_spi();
+void rfid_setup_spi(void);
 
 // Basic interface functions
 void rfid_pcd_write_register(uint8_t reg, uint8_t value);
@@ -238,12 +238,12 @@ void rfid_pcd_clear_register_bit_mask(uint8_t reg, uint8_t mask);
 StatusCode rfid_pcd_calculate_crc(uint8_t *data, uint8_t length, uint8_t *result);
 
 // Functions for manipulating the MFRC522
-void rfid_init();
-void rfid_power_down();
-void rfid_pcd_reset();
-void rfid_pcd_antenna_on();
-void rfid_pcd_antenna_off();
-uint8_t rfid_pcd_get_antenna_gain();
+void rfid_init(void);
+void rfid_power_down(void);
+void rfid_pcd_reset(void);
+void rfid_pcd_antenna_on(void);
+void rfid_pcd_antenna_off(void);
+uint8_t rfid_pcd_get_antenna_gain(void);
 void rfid_pcd_set_antenna_gain(uint8_t mask);
 
 // Functions for communicating with PICCs
@@ -254,11 +254,11 @@ StatusCode rfid_PICC_requestA(uint8_t *bufferATQA, uint8_t *bufferSize);
 // StatusCode rfid_PICC_wakeupA(uint8_t *bufferATQA, uint8_t *bufferSize);
 // StatusCode rfid_PICC_REQA_or_WUPA(uint8_t command, uint8_t *bufferATQA, uint8_t *bufferSize);
 StatusCode rfid_PICC_select(Uid *uid);
-StatusCode rfid_PICC_haltA();
+StatusCode rfid_PICC_haltA(void);
 
 // Functions for communicating with MIFARE PICCs
 StatusCode rfid_pcd_authenticate(uint8_t command, uint8_t blockAddr, MIFARE_Key *key, Uid *uid);
-void rfid_pcd_stopCrypto1();
+void rfid_pcd_stopCrypto1(void);
 StatusCode rfid_MIFARE_read(uint8_t blockAddr, uint8_t *buffer, uint8_t *bufferSize);
 StatusCode rfid_MIFARE_write(uint8_t blockAddr, uint8_t *buffer, uint8_t bufferSize);
 // StatusCode rfid_MIFARE_decrement(uint8_t blockAddr, long delta);
@@ -278,13 +278,13 @@ StatusCode rfid_pcd_MIFARE_transceive(uint8_t *sendData, uint8_t sendLen, uint8_
 
 // Advanced functions for MIFARE
 //void rfid_MIFARE_setAccessBits(uint8_t *accessBitBuffer, uint8_t g0, uint8_t g1, uint8_t g2, uint8_t g3);
-//uint8_t /* bool */ rfid_MIFARE_openUidBackdoor();
+//uint8_t /* bool */ rfid_MIFARE_openUidBackdoor(void);
 //uint8_t /* bool */ rfid_MIFARE_setUid(uint8_t *newUid, uint8_t uidSize);
-//uint8_t /* bool */ rfid_MIFARE_unbrickUidSector();
+//uint8_t /* bool */ rfid_MIFARE_unbrickUidSector(void);
 
 // Convenience functions - does not add extra functionality
-uint8_t /* bool */ rfid_PICC_IsNewCardPresent();
-uint8_t /* bool */ rfid_PICC_ReadCardSerial();
+uint8_t /* bool */ rfid_PICC_IsNewCardPresent(void);
+uint8_t /* bool */ rfid_PICC_ReadCardSerial(void);
 
 //StatusCode rfid_MIFARE_twoStepHelper(uint8_t command, uint8_t blockAddr, long data);
 

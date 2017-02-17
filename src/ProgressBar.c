@@ -9,12 +9,6 @@ void progress_begin(uint8_t complexity)
 	PROGRESS_COMPLEXITY = complexity;
 	PROGRESS_ADVANCE = 0;
 
-	// Clear progress bar section
-	// for(uint8_t i = 0; i < 5; ++i)
-	// {
-	// 	oled_h_line(14, 56+i, 100, BLACK);
-	// }
-
 	// Frame of progress bar
 	oled_h_line(14, 56, 100, WHITE);
 	oled_h_line(14, 61, 100, WHITE);
@@ -26,7 +20,9 @@ void progress_begin(uint8_t complexity)
 void progress_add(uint8_t work)
 {
 	if(PROGRESS_COMPLEXITY == 0)
+	{
 		return;
+	}
 
 	uint16_t adv  = PROGRESS_ADVANCE;
 	const uint16_t cplx = PROGRESS_COMPLEXITY;
@@ -44,7 +40,7 @@ void progress_add(uint8_t work)
 	oled_display();
 }
 
-void progress_end()
+void progress_end(void)
 {
 	PROGRESS_COMPLEXITY = 0;
 	PROGRESS_ADVANCE = 0;

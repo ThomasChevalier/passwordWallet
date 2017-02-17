@@ -59,13 +59,10 @@ typedef struct Fram_id_
 
 // Setup pin direction for fram
 // Pin direction for general spi pin MUST have been set before doing any operation
-void fram_setup_hardware();
+void fram_setup_hardware(void);
 
 // Setup spi mode and clock
-void fram_setup_spi();
-
-// Send a command, must be one of FRAM_OPCODE
-void fram_send_command(uint8_t command);
+void fram_setup_spi(void);
 
 // Read one byte of memory at addr
 uint8_t fram_read_byte(uint16_t addr);
@@ -78,15 +75,16 @@ void fram_write_byte(uint16_t addr, uint8_t byte);
 void fram_write_bytes(uint16_t addr, uint8_t* buffer, uint8_t size);
 
 // Read product id, see Fram_id struct declaration
-Fram_id fram_read_id();
+Fram_id fram_read_id(void);
+
 // Read the status register
-uint8_t fram_read_register();
+uint8_t fram_read_register(void);
 // Write the status register, bit 1 and 0 are ignored
 void fram_write_register(uint8_t reg);
 
 // Pull cs down
-void fram_select();
+void fram_select(void);
 // Pull cs up
-void fram_deselect();
+void fram_deselect(void);
 
 #endif // FRAM_HEADER_THOMAS_CHEVALIER

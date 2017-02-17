@@ -16,11 +16,13 @@
 #include "Ascii85.h"
 #include "Rfid.h"
 
-uint8_t usr_setup_is_initialized()
+uint8_t usr_setup_is_initialized(void)
 {
 	const uint8_t optFlag = fram_read_byte(OFFSET_OPTIONS_FLAG);
-	if((optFlag & (1<<OFFSET_OPTION_INITIALIZED)) == 0)
+	if((optFlag & (1<<OPTIONS_FLAG_OFFSET_INITIALIZED)) == 0)
+	{
 		return 0;
+	}
 	if(buttons_pressed() == 0x0F)
 	{
 		return 0;
@@ -28,7 +30,7 @@ uint8_t usr_setup_is_initialized()
 	return 1;
 }
 
-uint8_t usr_setup_do_initialization()
+uint8_t usr_setup_do_initialization(void)
 {
 	{
 		oled_clear_display();
@@ -97,21 +99,21 @@ uint8_t usr_setup_do_initialization()
   	change_master_key();
 
   	// Device is now initialized !
-  	fram_write_byte(OFFSET_OPTIONS_FLAG, (1<<OFFSET_OPTION_INITIALIZED));
+  	fram_write_byte(OFFSET_OPTIONS_FLAG, (1<<OPTIONS_FLAG_OFFSET_INITIALIZED));
 
   	// Force the next state
-  	eventHappen(EVENT_PASSWORD_ENTERED);
+  	events_happen(EVENT_PASSWORD_ENTERED);
   	return 1;
 
 }
 
-uint8_t usr_setup_check_card_lost()
+uint8_t usr_setup_check_card_lost(void)
 {
 	// Button up and down
 	return (buttons_pressed() == 0x05) ? 1 : 0;
 }
 
-uint8_t usr_setup_recover_key()
+uint8_t usr_setup_recover_key(void)
 {
 	_delay_ms(1000);
 	char usrKey[21] = {0};
@@ -125,7 +127,7 @@ uint8_t usr_setup_recover_key()
 	_delay_ms(10000);
 	if(check_key())
 	{
-		eventHappen(EVENT_PASSWORD_ENTERED);
+		events_happen(EVENT_PASSWORD_ENTERED);
 		return 1;
 	}
 	return 0;

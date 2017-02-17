@@ -23,4 +23,4 @@ uint8_t FIRST_PWD_UTIL = 0;
 uint8_t FIRST_PWD_ALPHA = 0;
 uint8_t NUM_PWD = 0;
 
-uint8_t MEMORY_MAP[23];
+uint8_t MEMORY_MAP[6];

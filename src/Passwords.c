@@ -15,13 +15,14 @@ void update_encryption_with(uint8_t *new_key)
 {
 
 	// For all the chunk used ...
-	for(uint8_t i = 0; i < MEMORY_MAP_SIZE; ++i)
+	for(uint8_t i = 0; i < SIZE_MEMORY_MAP; ++i)
 	{
+		const uint8_t memory_byte = MEMORY_MAP[i];
 		for(uint8_t j = 0; j < 8; ++j)
 		{
 			if(i*8+j<MAXIMUM_NUMBER_OF_PWD)
 			{
-				if(MEMORY_MAP[i] && (1<<j))
+				if(memory_byte & (1<<j))
 				{
 					// ... Change the key
 					CURRENT_PASSWORD_ID = i*8+j;
@@ -139,7 +140,7 @@ void set_username(uint8_t* usr_name, uint8_t usr_len, uint8_t* key)
 // Return MAXIMUM_NUMBER_OF_PWD if there is no entry
 static uint8_t getFirstEntryFrom(const uint8_t index)
 {
-	for(uint8_t i = index / 8; i < MEMORY_MAP_SIZE; ++i)
+	for(uint8_t i = index / 8; i < SIZE_MEMORY_MAP; ++i)
 	{
 		// Begin at index
 		uint8_t j = (i==index/8) ? index % 8 : 0;
@@ -207,7 +208,7 @@ uint16_t prev_pwd(uint16_t pwd_index)
 
 		if(pwdAddr == pwd_index) // No previous password
 		{
-			COUNT_DOWN_LOOP_BEG(i, (MEMORY_MAP_SIZE-1))
+			COUNT_DOWN_LOOP_BEG(i, (SIZE_MEMORY_MAP-1))
 				COUNT_DOWN_LOOP_BEG(j, 7)
 					if(i*8+j < MAXIMUM_NUMBER_OF_PWD)
 					{
@@ -218,7 +219,7 @@ uint16_t prev_pwd(uint16_t pwd_index)
 						}
 					}
 				COUNT_DOWN_LOOP_END(j, 7)
-			COUNT_DOWN_LOOP_END(i, (MEMORY_MAP_SIZE-1))
+			COUNT_DOWN_LOOP_END(i, (SIZE_MEMORY_MAP-1))
 			loopExit_2:;
 		}
 		
@@ -237,7 +238,7 @@ uint16_t prev_pwd(uint16_t pwd_index)
 uint16_t next_pwd(uint16_t pwd_index)
 {
 	uint16_t pwdAddr = 0;
-	uint8_t sortingMethod = (OPTIONS_FLAG >> 1) & 0x03;
+	uint8_t sortingMethod = ((OPTIONS_FLAG & (1<<OPTIONS_FLAG_OFFSET_SORTING_METHOD_L)) + (OPTIONS_FLAG & (1<<OPTIONS_FLAG_OFFSET_SORTING_METHOD_H))) >> OPTIONS_FLAG_OFFSET_SORTING_METHOD_L;
 	if(sortingMethod == 0)
 	{
 		// Search for a new entry
@@ -258,7 +259,7 @@ uint16_t next_pwd(uint16_t pwd_index)
 }
 
 
-void increment_pwd_counter()
+void increment_pwd_counter(void)
 {
 	uint16_t count;
 	fram_read_bytes(PWD_ADDR(CURRENT_PASSWORD_ID, PWD_OFFSET_PWD_COUNT), (uint8_t*)(&count), 2);
@@ -276,7 +277,7 @@ void read_pwd_name(char* pwd_name, uint16_t pwd_index)
 	fram_read_bytes(PWD_ADDR(CURRENT_PASSWORD_ID, PWD_OFFSET_PWD_NAME), (uint8_t*)pwd_name, 32);
 }
 
-void read_all_names()
+void read_all_names(void)
 {
 	read_pwd_name(PWD_NAME_1, prev_pwd(CURRENT_PASSWORD_ID));
 	read_pwd_name(PWD_NAME_2, CURRENT_PASSWORD_ID);
@@ -296,7 +297,7 @@ void generate_password(char* output)
 } 
 
 
-void delete_password()
+void delete_password(void)
 {
 
 }
@@ -304,11 +305,11 @@ void delete_password()
 uint8_t add_password(char* passwordName, char* passwordData, char* userName)
 {
 	// Read the memory map
-    fram_read_bytes(OFFSET_MEMORY_MAP, MEMORY_MAP, MEMORY_MAP_SIZE);
+    fram_read_bytes(OFFSET_MEMORY_MAP, MEMORY_MAP, SIZE_MEMORY_MAP);
 
     uint8_t chunkFree = 0;
     uint8_t chunk_id = 0;
-    for(uint8_t i = 0; i < MEMORY_MAP_SIZE; ++i)
+    for(uint8_t i = 0; i < SIZE_MEMORY_MAP; ++i)
     {
     	// Loop in all the bit of the bytes
     	for(uint8_t j = 0; j < 8; ++j)

@@ -18,7 +18,7 @@
 
 #define EVENT_WHENEVER (0xFF)
 
-void eventHappen(uint8_t event);
-uint8_t getEvents();
+void events_happen(uint8_t event);
+uint8_t events_get(void);
 
 #endif // EVENTS_HEADER_THOMAS_CHEVALIER
