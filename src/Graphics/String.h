@@ -43,6 +43,10 @@ DECLARE_STRING(str_order_typePwdName);
 DECLARE_STRING(str_order_typePwdData);
 DECLARE_STRING(str_order_typeUsrName);
 
+DECLARE_STRING(str_recovery_title);
+DECLARE_STRING(str_recovery_choice1);
+DECLARE_STRING(str_recovery_choice2);
+
 extern PGM_P const string_table[] PROGMEM;
 
 extern char str_buffer[26];

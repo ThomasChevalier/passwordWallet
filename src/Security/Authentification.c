@@ -18,6 +18,7 @@
 #include "../Graphics/Ascii85.h"
 #include "../Graphics/ProgressBar.h"
 #include "../Graphics/String.h"
+#include "../Graphics/Drawing.h"
 
 #include "../FSM/Events.h"
 
@@ -37,7 +38,7 @@ static void waitRfidTag(void)
 }
 
 // Return 1 if success, 0 otherwise
-static uint8_t authenticate_on_card(void)
+uint8_t authenticate_on_card(void)
 {
     // sak == 0x08 <=> MIFARE 1K
     if(rfid_uid.sak != 0x08)
@@ -70,96 +71,6 @@ static uint8_t authenticate_on_card(void)
     return 0;
 }
 
-void wait_for_valid_card(void)
-{
-    uint8_t noCard = 1;
-    oled_dim(1); // Save 4 mA
-    do
-    {   
-        // Waiting for the user to present his card
-        waitRfidTag();
-        draw_clear();
-        draw_update();
-
-        // Trying to authenticate
-        if(authenticate_on_card())
-        {
-            // Authenticate ... success
-
-            uint8_t buffer[18];
-            uint8_t size = 18;
-
-            // Trying to read master key ...
-            if(rfid_MIFARE_read(4, buffer, &size) != STATUS_OK && size != 16)
-            {
-                // .. Failure
-                str_to_buffer(str_error_read_index);
-                draw_text(0, 0, str_buffer, 0);
-                draw_update();
-            }
-            else
-            {
-                // .. Success
-                memcpy(KEY, buffer, 16);
-
-                if(check_key()) // If the key of the rfid is the good one.
-                {
-                    noCard = 0;
-                }
-            }
-        }
-        else
-        {
-            // If the authentication fail, wait for an other card
-        }
-
-        // Necessary to procede to other communications
-        rfid_PICC_haltA();
-        rfid_pcd_stopCrypto1();
-
-    }
-    while(noCard);
-
-    // Normal contrast
-    oled_dim(0);
-
-    events_happen(EVENT_PASSWORD_ENTERED);
-}
-
-// Check if the key is valid against memory buffer
-uint8_t check_key(void)
-{
-    uint8_t randSeq[16];
-    uint8_t* eeprom_addr = 0;
-    for(uint8_t i = 0; i < 16; ++i)
-    {
-        eeprom_busy_wait();
-        randSeq[i] = eeprom_read_byte(eeprom_addr);
-        ++eeprom_addr;
-    }
-
-    uint8_t output[16];
-    const uint8_t zeroIv[16]  =
-    {0x00, 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 };
-    AES128_CBC_encrypt_buffer(output, randSeq, 16, KEY, zeroIv);
-
-    eeprom_addr = 0;
-    for(uint8_t verifCounter = 0; verifCounter < 16; ++verifCounter)
-    {
-        eeprom_busy_wait();
-        if(output[verifCounter] != eeprom_read_byte(eeprom_addr+16))
-        {
-            draw_clear();
-            str_to_buffer(str_error_pwd_index);
-            draw_text(19, 20, str_buffer, 0);
-            draw_update();
-            return 0;
-        }
-        ++eeprom_addr;
-
-    }
-    return 1;
-}
 
 void change_master_key(void)
 {

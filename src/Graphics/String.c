@@ -36,7 +36,11 @@ DEFINE_STRING(str_usrsetup_eraseMem, "FORMATAGE MEMOIRE", 23);
 
 DEFINE_STRING(str_order_typePwdName, "ENTREZ NOM MOT DE PASSE", 24); 
 DEFINE_STRING(str_order_typePwdData, "ENTREZ MOT DE PASSE", 25); 
-DEFINE_STRING(str_order_typeUsrName, "ENTREZ NOM UTILISATEUR", 26); 
+DEFINE_STRING(str_order_typeUsrName, "ENTREZ NOM UTILISATEUR", 26);
+
+DEFINE_STRING(str_recovery_title, "MODE DE RECUPERATION", 27);
+DEFINE_STRING(str_recovery_choice1, "1 - FORMATAGE COMPLET", 28);
+DEFINE_STRING(str_recovery_choice2, "2 - ENTREZ LA CLEF", 29);
 
 PGM_P const string_table[] PROGMEM = 
 {
@@ -71,7 +75,11 @@ PGM_P const string_table[] PROGMEM =
 
 	str_order_typePwdName,
 	str_order_typePwdData,
-	str_order_typeUsrName
+	str_order_typeUsrName,
+
+	str_recovery_title,
+	str_recovery_choice1,
+	str_recovery_choice2
 };
 
 void str_to_buffer(uint8_t index)

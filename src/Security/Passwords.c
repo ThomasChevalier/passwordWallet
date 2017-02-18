@@ -3,6 +3,8 @@
 
 #include <string.h>
 
+#include <avr/eeprom.h>
+
 #include "../Globals.h"
 
 #include "Aes.h"
@@ -11,6 +13,36 @@
 #include "../Graphics/ProgressBar.h"
 
 #include "../Hardware/Fram.h"
+
+uint8_t check_key(void)
+{
+	uint8_t randSeq[16];
+	uint8_t* eeprom_addr = 0;
+	for(uint8_t i = 0; i < 16; ++i)
+	{
+		eeprom_busy_wait();
+		randSeq[i] = eeprom_read_byte(eeprom_addr);
+		++eeprom_addr;
+	}
+
+	uint8_t output[16];
+	const uint8_t zeroIv[16]  =
+	{0x00, 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 };
+	AES128_CBC_encrypt_buffer(output, randSeq, 16, KEY, zeroIv);
+
+	eeprom_addr = 0;
+	for(uint8_t verifCounter = 0; verifCounter < 16; ++verifCounter)
+	{
+		eeprom_busy_wait();
+		if(output[verifCounter] != eeprom_read_byte(eeprom_addr+16))
+		{
+			return 0;
+		}
+		++eeprom_addr;
+	}
+	return 1;
+}
+
 
 void update_encryption_with(uint8_t *new_key)
 {

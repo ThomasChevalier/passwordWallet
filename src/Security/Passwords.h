@@ -3,6 +3,9 @@
 
 #include "../Globals.h"
 
+// Check the KEY buffer against a hash stored in eeprom, should return 1 if key is correct.
+uint8_t check_key(void);
+
 // Change the encryption key for all the passwords (decrypt with KEY and encrypt with new_key)
 void update_encryption_with(uint8_t *new_key);
 
