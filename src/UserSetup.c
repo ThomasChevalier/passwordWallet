@@ -4,17 +4,21 @@
 #include <avr/pgmspace.h>
 
 #include "Globals.h"
-#include "Fram.h"
-#include "Buttons.h"
-#include "Oled.h"
-#include "String.h"
-#include "ProgressBar.h"
-#include "Authentification.h"
-#include "Events.h"
-#include "Events.h"
-#include "Drawing.h"
-#include "Ascii85.h"
-#include "Rfid.h"
+
+#include "Hardware/Fram.h"
+#include "Hardware/Buttons.h"
+#include "Hardware/Rfid.h"
+
+#include "Graphics/String.h"
+#include "Graphics/ProgressBar.h"
+#include "Graphics/Drawing.h"
+#include "Graphics/Ascii85.h"
+
+#include "Security/Authentification.h"
+
+#include "FSM/Events.h"
+
+
 
 uint8_t usr_setup_is_initialized(void)
 {
@@ -33,17 +37,17 @@ uint8_t usr_setup_is_initialized(void)
 uint8_t usr_setup_do_initialization(void)
 {
 	{
-		oled_clear_display();
+		draw_clear();
 		char str_buf[100];
 		strcpy_P(str_buf, (PGM_P)pgm_read_word(&(string_table[str_usrsetup_welcome_index])));
-		oled_draw_text(0, 2, str_buf, 0);
+		draw_text(0, 2, str_buf, 0);
 		strcpy_P(str_buf, (PGM_P)pgm_read_word(&(string_table[str_usrsetup_note_index])));
-		oled_draw_text(90, 18, str_buf, 62);
+		draw_text(90, 18, str_buf, 62);
 		strcpy_P(str_buf, (PGM_P)pgm_read_word(&(string_table[str_usrsetup_warning_index])));
-		oled_draw_text(54, 34, str_buf, 45);
+		draw_text(54, 34, str_buf, 45);
 		strcpy_P(str_buf, (PGM_P)pgm_read_word(&(string_table[str_usrsetup_confirm_index])));
-		oled_draw_text(0, 48, str_buf, 65);
-		oled_display();
+		draw_text(0, 48, str_buf, 65);
+		draw_update();
 
 		_delay_ms(5000);
 
@@ -72,18 +76,18 @@ uint8_t usr_setup_do_initialization(void)
 			return 0;
 	
 		 // Ask for card
-	    oled_clear_display();
+	    draw_clear();
 	    str_to_buffer(str_misc_approachCard_index);
-	    oled_draw_text(18, 30, str_buffer, 0);
-	    oled_display();
+	    draw_text(18, 30, str_buffer, 0);
+	    draw_update();
 	}
 	
 
 	// Erase all fram memory
-	oled_clear_display();
+	draw_clear();
 	str_to_buffer(str_usrsetup_eraseMem_index);
-	oled_draw_text(30, 40, str_buffer, 0);
-	oled_display();
+	draw_text(30, 40, str_buffer, 0);
+	draw_update();
 
 	progress_begin(FRAM_BYTE_SIZE/64);
 	uint8_t zeroBuf[64] = {0};
@@ -119,11 +123,11 @@ uint8_t usr_setup_recover_key(void)
 	char usrKey[21] = {0};
 	type_string(usrKey, 20);
 	decode_16B(usrKey, KEY);
-	oled_clear_display();
-	oled_display();
+	draw_clear();
+	draw_update();
 	_delay_ms(1000);
-	oled_draw_text(0,0, usrKey, 0);
-	oled_display();
+	draw_text(0,0, usrKey, 0);
+	draw_update();
 	_delay_ms(10000);
 	if(check_key())
 	{

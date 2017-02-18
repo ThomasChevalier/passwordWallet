@@ -2,24 +2,28 @@
 
 #include "Globals.h"
 
-#include "Init.h"
 #include "UserSetup.h"
-#include "Oled.h"
-#include "Authentification.h"
-#include "Keyboard.h"
-#include "Random.h"
-#include "Buttons.h"
 
-#include "States.h"
-#include "Transitions.h"
-#include "Events.h"
+#include "System/System.h"
+#include "Hardware/Hardware.h"
+#include "Security/Security.h"
+
+#include "Graphics/Drawing.h"
+#include "Security/Authentification.h"
+#include "Hardware/Keyboard.h"
+#include "Security/Random.h"
+#include "Hardware/Buttons.h"
+
+#include "FSM/States.h"
+#include "FSM/Transitions.h"
+#include "FSM/Events.h"
 
 int main(void)
 {
-	// Init of the µC
+	// Initialization
 	init_system();
 	init_hardware();
-	init_software();
+	init_security();
 	
 	State states[NUM_STATES];
 	states[STATE_INIT]  =   (State)
@@ -51,8 +55,9 @@ int main(void)
 		if(!usr_setup_do_initialization())
 		{
       		// Device has not been initialized
-			oled_clear_display();
-			oled_display();
+			draw_clear();
+			draw_update();
+
 			wait_for_valid_card();
 		}
 	}
@@ -62,18 +67,19 @@ int main(void)
 		if(!usr_setup_recover_key())
 		{
 			// And typed a wrong key
-			oled_clear_display();
-			oled_display();
+			draw_clear();
+			draw_update();
+
 			wait_for_valid_card();
 		}
 	}
 	else
 	{
     #ifdef FRAM_BUFFER
-		oled_clear_display();
+		draw_clear();
     #endif
 
-		oled_display();
+		draw_update();
     	// Wait until there is a rfid card, with the good password
 		wait_for_valid_card();
 	}
@@ -88,7 +94,7 @@ int main(void)
 
 		if(currentState->event_mask & event)
 		{
-			uint8_t newState = currentState->transition(event);
+			const uint8_t newState = currentState->transition(event);
 			currentState = &states[newState];
 		}
 

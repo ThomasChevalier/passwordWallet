@@ -9,11 +9,11 @@ F_USB        = $(F_CPU)
 OPTIMIZATION = s
 TARGET       = main
 SDIR=src
-CDIR=config
-SRC          = $(wildcard $(SDIR)/*.c) $(LUFA_SRC_USB) $(wildcard $(CDIR)/*.c)
+CDIR=src/UsbConfig
+SRC          = $(wildcard $(SDIR)/*.c) $(LUFA_SRC_USB) $(wildcard $(SDIR)/*/*.c)
 LUFA_PATH    = ./LUFA
 CC_FLAGS     = -DUSE_LUFA_CONFIG_HEADER -I$(CDIR)/ -flto -s -fdata-sections
-LD_FLAGS     = -Wl,--gc-sections -Os -flto -s
+LD_FLAGS     = -Os -flto -s
 
 # Default target
 all:
