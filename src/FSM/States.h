@@ -8,7 +8,8 @@
 #include "States/State_Main.h"
 #include "States/State_Browse.h"
 #include "States/State_Options.h"
-
-
+#include "States/State_Option_Password.h"
+#include "States/State_Option_Sort.h"
+#include "States/State_Option_Advanced.h"
 
 #endif // STATES_HEADER_THOMAS_CHEVALIER

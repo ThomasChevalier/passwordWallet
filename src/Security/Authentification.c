@@ -170,7 +170,7 @@ void change_master_key(void)
 
     // Display new key
     draw_clear();
-    str_to_buffer(str_misc_hereIsNewKey_index);
+    str_to_buffer(str_misc_hereIsKey_index);
     draw_text(12, 10, str_buffer, 0);
     char outputText[20];
     encode_16B(KEY, outputText);

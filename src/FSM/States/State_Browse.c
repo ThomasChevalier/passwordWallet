@@ -5,18 +5,17 @@
 
 #include "../../Graphics/Drawing.h"
 
+static char letter = '@';
+
 void state_browse_begin (void)
 {
-
+	draw_main_menu();
+	draw_browse_dock(letter,1);
+	draw_update();	
 }
 
 uint8_t state_browse_transition (uint8_t event)
 {
-	static char letter = '@';
-
-	draw_browse_dock(letter,1);
-	draw_update();	
-
 	if(event & EVENT_BUTTON_1)
 	{
 		letter = (letter == '@') ? 'Z' : letter - 1;
@@ -25,7 +24,6 @@ uint8_t state_browse_transition (uint8_t event)
 	}
 	else if(event & EVENT_BUTTON_2)
 	{
-		draw_main_menu();
 		return STATE_MAIN;
 	}
 	else if(event & EVENT_BUTTON_3)
@@ -36,7 +34,6 @@ uint8_t state_browse_transition (uint8_t event)
 	}
 	else if(event & EVENT_BUTTON_4)
 	{
-		draw_option_menu(0);
 		return STATE_OPTION;
 	}
 	return STATE_BROWSE;

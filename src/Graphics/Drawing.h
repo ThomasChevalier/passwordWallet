@@ -18,7 +18,9 @@ void draw_v_line(uint8_t x, uint8_t y, uint8_t h, uint8_t color);
 
 void draw_main_menu(void);
 void draw_browse_dock(char letter, uint8_t highlight);
-void draw_option_menu(uint8_t currentChoice);
+
+void draw_list(uint8_t index, uint8_t minIndex, uint8_t maxIndex);
+
 void draw_confirmation_screen(uint8_t choice, uint8_t yesNo);
 
 void type_string(char* string_typed, uint8_t maxLen);

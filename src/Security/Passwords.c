@@ -14,6 +14,49 @@
 
 #include "../Hardware/Fram.h"
 
+void no_encryption_copy_key_from_eeprom(void)
+{
+	uint8_t* eeprom_addr = (uint8_t *)32;
+	for(uint8_t i = 0; i < 16; ++i)
+	{
+		eeprom_busy_wait();
+        KEY[i] = eeprom_read_byte(eeprom_addr);
+        ++eeprom_addr;
+	}
+}
+
+void disable_encryption(void)
+{
+	// Store key in eeprom
+	uint8_t* eeprom_addr = (uint8_t *)32;
+	for(uint8_t i = 0; i < 16; ++i)
+	{
+		eeprom_busy_wait();
+        eeprom_update_byte(eeprom_addr, KEY[i]);
+        ++eeprom_addr;
+	}
+	
+	// Update flags
+	OPTIONS_FLAG |= (1<<OPTIONS_FLAG_OFFSET_NO_ENCRYPTION);
+	fram_write_byte(OFFSET_OPTIONS_FLAG, OPTIONS_FLAG);
+}
+
+void enable_encryption(void)
+{
+	// Remove key from eeprom
+	uint8_t* eeprom_addr = (uint8_t *)32;
+	for(uint8_t i = 0; i < 16; ++i)
+	{
+		eeprom_busy_wait();
+        eeprom_write_byte(eeprom_addr, 0);
+        ++eeprom_addr;
+	}
+	
+	// Update flags
+	OPTIONS_FLAG &= ~(1<<OPTIONS_FLAG_OFFSET_NO_ENCRYPTION);
+	fram_write_byte(OFFSET_OPTIONS_FLAG, OPTIONS_FLAG);
+}
+
 uint8_t check_key(void)
 {
 	uint8_t randSeq[16];

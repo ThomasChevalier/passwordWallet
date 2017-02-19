@@ -8,6 +8,23 @@
 // Define if this is the first pression on a button
 extern uint8_t FIRST_PRESS;
 
+// /////////////////// //
+// Option Menu Section //
+// /////////////////// //
+
+#define OPTION_MENU_MIN_STR_INDEX (0)
+#define OPTION_MENU_MAX_CHOICE (5)
+
+#define OPTION_PASSWORD_MENU_MIN_STR_INDEX (OPTION_MENU_MAX_CHOICE + OPTION_MENU_MIN_STR_INDEX)
+#define OPTION_PASSWORD_MENU_MAX_CHOICE (5)
+
+#define OPTION_SORT_MENU_MIN_STR_INDEX (OPTION_PASSWORD_MENU_MAX_CHOICE + OPTION_PASSWORD_MENU_MIN_STR_INDEX)
+#define OPTION_SORT_MENU_MAX_CHOICE (3)
+
+#define OPTION_ADVANCED_MENU_MIN_STR_INDEX (OPTION_SORT_MENU_MAX_CHOICE + OPTION_SORT_MENU_MIN_STR_INDEX)
+#define OPTION_ADVANCED_MENU_MAX_CHOICE (6)
+
+
 // /////////////////////////////////////// //
 //  Finite state machine related variables //
 // /////////////////////////////////////// //
@@ -111,13 +128,6 @@ extern uint8_t MEMORY_MAP[6]; // The memory map
 
 #define KEYBOARD_ENABLE
 
-#define blink(n) \
-DDRD |= (1<<5);\
-uint8_t i = 0; \
-for(;i < n*2; ++i) \
-{ \
-  PORTD ^= (1<<5); \
-    _delay_ms(200); \
-}
+void blink(uint8_t times);
 
 #endif // GLOBALS_HEADER_THOMAS_CHEVALIER

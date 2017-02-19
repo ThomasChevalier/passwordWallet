@@ -1,4 +1,5 @@
 #include <util/delay.h>  // for _delay_ms()
+#include <avr/pgmspace.h> // For PROGMEM
 
 #include "Globals.h"
 
@@ -10,6 +11,7 @@
 
 #include "Security/Authentification.h"
 #include "Security/Random.h"
+#include "Security/Passwords.h"
 
 #include "Hardware/Keyboard.h"
 #include "Hardware/Buttons.h"
@@ -51,66 +53,49 @@ int main(void)
 	const uint8_t optFlag = fram_read_byte(OFFSET_OPTIONS_FLAG);
 	if((optFlag & (1<<OPTIONS_FLAG_OFFSET_INITIALIZED)) == 0)
 	{
-		do_full_reset();
+		state_recovery_do_full_reset();
 	}
 	
-	State states[NUM_STATES];
-	states[STATE_WAIT_CARD] =	(State)
+	const State states[NUM_STATES] = 
 	{
-		EVENT_ALL_BUTTON | EVENT_RFID_TAG_PRESENT, 	state_wait_card_transition, state_wait_card_begin, state_wait_card_end
-	};
-	states[STATE_RECOVERY]  =		(State)
-	{
-		EVENT_ALL_BUTTON, state_recovery_transition, state_recovery_begin, state_recovery_end
-	};
-	states[STATE_MAIN]  =		(State)
-	{
-		EVENT_ALL_BUTTON, state_main_transition, state_main_begin, state_main_end
-	};
-	states[STATE_BROWSE] =		(State)
-	{
-		EVENT_ALL_BUTTON, state_browse_transition, state_browse_begin, state_browse_end
-	};
-	states[STATE_OPTION]=		(State)
-	{
-		EVENT_ALL_BUTTON, state_options_transition, state_options_begin, state_options_end
+		{state_wait_card_transition, state_wait_card_begin, state_wait_card_end}, 					// STATE_WAIT_CARD
+		{state_recovery_transition, state_recovery_begin, state_recovery_end},						// STATE_RECOVERY
+		{state_main_transition, state_main_begin, state_main_end},									// STATE_MAIN
+		{state_browse_transition, state_browse_begin, state_browse_end},							// STATE_BROWSE
+		{state_options_transition, state_options_begin, state_options_end},							// STATE_OPTION
+		{state_option_password_transition, state_option_password_begin, state_option_password_end},	// STATE_OPTION_PASSWORD
+		{state_option_sort_transition, state_option_sort_begin, state_option_sort_end},				// STATE_OPTION_SORT
+		{state_option_advanced_transition, state_option_advanced_begin, state_option_advanced_end}	// STATE_OPTION_ADVANCED 
 	};
 
-	State* currentState = &states[STATE_WAIT_CARD];
-	uint8_t currentStateNum = (uint8_t)STATE_WAIT_CARD;
+	State const * currentState = &states[STATE_WAIT_CARD];
+	uint8_t currentStateNum = STATE_WAIT_CARD;
+
+	// If the device is not encrypted, skip WAIT_CARD state
+	if(OPTIONS_FLAG & (1<<OPTIONS_FLAG_OFFSET_NO_ENCRYPTION))
+	{
+		currentState = &states[STATE_MAIN];
+		currentStateNum = STATE_MAIN;
+		no_encryption_copy_key_from_eeprom();
+	}
 
 	currentState->begin();
 
-	
-
 	while(RUNNING)
 	{
-		// Check rfid event only when we are waiting card (and so we are sure that the rfid reader is on, because the state WAIT_CARD initialize it)
-		if(currentStateNum == (uint8_t)STATE_WAIT_CARD)
-		{
-			if(rfid_PICC_IsNewCardPresent() && rfid_PICC_ReadCardSerial())
-			{
-				events_happen(EVENT_RFID_TAG_PRESENT);
-			}
-		}
-
 		keyboard_loop();
 		random_save_entropy();
 
 		buttons_update_event();
 		uint8_t event = events_get(); // Mask of events
 
-		if(currentState->event_mask & event)
+		const uint8_t newState = currentState->transition(event);
+		if(currentStateNum != newState)
 		{
-			const uint8_t newState = currentState->transition(event);
-			if(currentStateNum != newState)
-			{
-				currentState->end();
-				currentState = &states[newState];
-				currentStateNum = newState;
-				currentState->begin();
-			}
-			
+			currentState->end();
+			currentState = &states[newState];
+			currentStateNum = newState;
+			currentState->begin();
 		}
 
 		if(FIRST_PRESS)

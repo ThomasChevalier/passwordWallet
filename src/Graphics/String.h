@@ -15,20 +15,12 @@ DECLARE_STRING(str_error_auth);
 DECLARE_STRING(str_error_read);
 DECLARE_STRING(str_error_pwd);
 
-DECLARE_STRING(str_option_regen);
-DECLARE_STRING(str_option_changePwd);
-DECLARE_STRING(str_option_changeUsr);
-DECLARE_STRING(str_option_delPwd);
-DECLARE_STRING(str_option_addPwd);
-DECLARE_STRING(str_option_changeMasterKey);
-DECLARE_STRING(str_option_changeOrientation);
-
 DECLARE_STRING(str_misc_approachCard);
 DECLARE_STRING(str_misc_yes);
 DECLARE_STRING(str_misc_no);
 DECLARE_STRING(str_misc_generateKey);
 DECLARE_STRING(str_misc_updateEncryptVerif);
-DECLARE_STRING(str_misc_hereIsNewKey);
+DECLARE_STRING(str_misc_hereIsKey);
 
 DECLARE_STRING(str_action_executing);
 DECLARE_STRING(str_action_finished);
@@ -47,10 +39,43 @@ DECLARE_STRING(str_recovery_title);
 DECLARE_STRING(str_recovery_choice1);
 DECLARE_STRING(str_recovery_choice2);
 
+DECLARE_STRING(str_self_test_fram_ok);
+DECLARE_STRING(str_self_test_fram_fail);
+DECLARE_STRING(str_self_test_rfid_ok);
+DECLARE_STRING(str_self_test_rfid_fail);
+DECLARE_STRING(str_self_test_button_ok);
+DECLARE_STRING(str_self_test_button_fail);
+
 extern PGM_P const string_table[] PROGMEM;
+
+DECLARE_STRING(str_option_password);
+DECLARE_STRING(str_option_sort);
+DECLARE_STRING(str_option_advanced);
+DECLARE_STRING(str_option_addPwd);
+DECLARE_STRING(str_option_changeOrientation);
+
+DECLARE_STRING(str_option_pwd_regenerate);
+DECLARE_STRING(str_option_pwd_changePwd);
+DECLARE_STRING(str_option_pwd_changeUsrName);
+DECLARE_STRING(str_option_pwd_changePwdName);
+DECLARE_STRING(str_option_pwd_delete);
+
+DECLARE_STRING(str_option_sort_noSorting);
+DECLARE_STRING(str_option_sort_byUsage);
+DECLARE_STRING(str_option_sort_alphabetical);
+
+DECLARE_STRING(str_option_advanced_changeKey);
+DECLARE_STRING(str_option_advanced_disableEncryption);
+DECLARE_STRING(str_option_advanced_enableEncryption);
+DECLARE_STRING(str_option_advanced_showKey);
+DECLARE_STRING(str_option_advanced_selfTest);
+DECLARE_STRING(str_option_advanced_doFullReset);
+
+extern PGM_P const string_options_table[] PROGMEM;
 
 extern char str_buffer[26];
 
+void str_option_to_buffer(uint8_t index);
 void str_to_buffer(uint8_t index);
 
 

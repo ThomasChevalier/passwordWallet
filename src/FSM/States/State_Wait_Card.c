@@ -26,8 +26,8 @@ void state_wait_card_begin(void)
 
 uint8_t state_wait_card_transition (uint8_t event)
 {
-	// There is a new card to read (event = EVENT_RFID_TAG_PRESENT)
-	if(event & EVENT_RFID_TAG_PRESENT)
+	// There is a new card to read
+	if(rfid_PICC_IsNewCardPresent() && rfid_PICC_ReadCardSerial())
 	{
 		if(authenticate_on_card())
 		{
@@ -38,6 +38,7 @@ uint8_t state_wait_card_transition (uint8_t event)
 			if(rfid_MIFARE_read(4, buffer, &size) != STATUS_OK && size != 16)
 			{
 				// .. Failure
+				draw_clear();
 				str_to_buffer(str_error_read_index);
 				draw_text(0, 0, str_buffer, 0);
 				draw_update();
@@ -72,12 +73,13 @@ uint8_t state_wait_card_transition (uint8_t event)
         rfid_pcd_stopCrypto1();
 	}
 	// Check for the recovery sequence
-	else if((event & EVENT_ALL_BUTTON) == EVENT_ALL_BUTTON)
+	else if((event & EVENT_ALL_BUTTONS) == EVENT_ALL_BUTTONS)
 	{
 		return STATE_RECOVERY;
 	}
 
 	// No rfid tag or wrong rfid tag, try again ...
+	// Or no events
 	return STATE_WAIT_CARD;
 }
 

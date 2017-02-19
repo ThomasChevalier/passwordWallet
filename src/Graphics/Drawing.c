@@ -141,40 +141,36 @@ void draw_browse_dock(char letter, uint8_t highlight)
 	draw_v_line(7, 0, 64, WHITE);
 }
 
-
-void draw_option_menu(uint8_t currentChoice)
+// Index is in the range [minIndex; maxIndex]
+// Draw a list of string from str_option_table
+void draw_list(uint8_t index, uint8_t minIndex, uint8_t maxIndex)
 {
 	draw_clear();
-	uint8_t pos;
-	if(currentChoice == 0)
+
+	// The position of the selected text (0 is the top, 1 the middle, 2 the bottom)
+	uint8_t pos = 1;
+	if(index == minIndex)
 	{
 		pos = 0;
 	}
-	else if(currentChoice == 6)
+	else if(index == maxIndex)
 	{
 		pos = 2;
 	}
-	else
-	{
-		pos = 1;
-	}
 
-	if(currentChoice == 6)
+	if(index == maxIndex)
 	{
-		--currentChoice;
+		--index;
 	}
-	if(currentChoice > 0)
+	if(index != minIndex)
 	{
-		--currentChoice;
+		--index;
 	}
-
-	currentChoice += 4;
 
 	uint8_t i = 0;
 	for(; i < 3; ++i)
 	{
-		str_to_buffer(currentChoice);
-		++currentChoice;
+		str_option_to_buffer(index + i);
 		draw_text(2, i*23+2, str_buffer, 0);
 	}
 
@@ -191,6 +187,33 @@ void draw_option_menu(uint8_t currentChoice)
 	}
 	draw_update();
 }
+
+// void draw_option_menu(uint8_t currentChoice)
+// {
+// 	draw_clear();
+// 	uint8_t pos;
+// 	if(currentChoice == 0)
+// 	{
+// 		pos = 0;
+// 	}
+// 	else if(currentChoice == (OPTION_MENU_MAX_CHOICE-1))
+// 	{
+// 		pos = 2;
+// 	}
+// 	else
+// 	{
+// 		pos = 1;
+// 	}
+
+// 	if(currentChoice == (OPTION_MENU_MAX_CHOICE-1))
+// 	{
+// 		--currentChoice;
+// 	}
+// 	if(currentChoice != 0)
+// 	{
+// 		--currentChoice;
+// 	}
+// }
 
 // yesNo = 0 = no
 // yesNo = 1 = yes

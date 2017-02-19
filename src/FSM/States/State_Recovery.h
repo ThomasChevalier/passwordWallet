@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-void do_full_reset(void);
+void state_recovery_do_full_reset(void);
 
 void state_recovery_begin (void);
 uint8_t state_recovery_transition (uint8_t event);

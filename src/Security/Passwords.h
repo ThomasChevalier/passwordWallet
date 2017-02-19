@@ -3,6 +3,17 @@
 
 #include "../Globals.h"
 
+// Only use it when the device is not encrypted, copy the content of the key stored in eeprom in ram
+void no_encryption_copy_key_from_eeprom(void);
+
+// Disable encryption of the device
+void disable_encryption(void);
+
+// Enable encryption of the device
+// Don't generate a new key, change_master_key should be called first.
+// This function erase the key from eeprom and update flags
+void enable_encryption(void);
+
 // Check the KEY buffer against a hash stored in eeprom, should return 1 if key is correct.
 uint8_t check_key(void);
 

@@ -9,13 +9,13 @@
 
 void init_hardware(void)
 {
-    spi_setup_hardware();
-    fram_setup_hardware();
-    oled_setup_hardware();
-    rfid_setup_hardware();
-    buttons_setup_hardware();
+	spi_setup_hardware();
+	fram_setup_hardware();
+	oled_setup_hardware();
+	rfid_setup_hardware();
+	buttons_setup_hardware();
 
-    oled_init();
-    rfid_init();
-    keyboard_init();
+	oled_init();
+	rfid_init();
+	keyboard_init();
 }
