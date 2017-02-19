@@ -9,21 +9,19 @@
 #include "../../Graphics/ProgressBar.h"
 #include "../../Graphics/String.h"
 
-#include "../../Security/Passwords.h"
+#include "../../Security/Password.h"
+#include "../../Security/Password_List.h"
 
 static uint8_t currentChoice = 0;
 
 static void do_regenerate_pwd(void)
 {
-	char tempPwd[32] = {0};
-
 	draw_clear();
 	str_option_to_buffer(str_option_pwd_regenerate_index);
 	draw_text(40, 40, str_buffer, 0);
 	progress_begin(52);		
 
-	generate_password(tempPwd);
-	set_password((uint8_t*)(tempPwd), 31, KEY);
+	password_regenerate(CURRENT_PASSWORD_ID);
 
 	progress_end();
 }
@@ -40,7 +38,7 @@ static void do_change_pwd(void)
 	const uint8_t strLen = strlen(tempPwd);
 	progress_begin(21 + 32 - strLen);	
 
-	set_password((uint8_t*)(tempPwd), strLen, KEY);
+	password_set_data(CURRENT_PASSWORD_ID, (uint8_t*)tempPwd, strLen, KEY);
 
 	progress_end();
 }
@@ -55,9 +53,9 @@ static void do_change_id(void)
 	str_option_to_buffer(str_option_pwd_changeUsrName_index);
 	draw_text(17, 40, str_buffer, 0);
 	const uint8_t strLen = strlen(tempStr);
-	progress_begin(21 + 64 - strLen);	
+	progress_begin(21 + 64 - strLen);
 
-	set_username((uint8_t*)(tempStr), strLen, KEY);
+	password_set_usr_name(CURRENT_PASSWORD_ID, (uint8_t*)(tempStr), strLen, KEY);
 
 	progress_end();
 }
@@ -66,7 +64,7 @@ static void do_change_name(void)
 {
 	type_string(PWD_NAME_2, 32);
 
-	set_pwd_name(PWD_NAME_2);
+	password_set_name(CURRENT_PASSWORD_ID, (uint8_t*)PWD_NAME_2, 32);
 }
 
 void state_option_password_begin (void)

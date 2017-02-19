@@ -9,7 +9,7 @@
 
 #include "Aes.h"
 #include "Random.h"
-#include "Passwords.h"
+#include "Encryption.h"
 
 #include "../Hardware/Rfid.h"
 #include "../Hardware/Buttons.h"
@@ -129,7 +129,7 @@ void change_master_key(void)
     }
 
     // Update encryption key
-    update_encryption_with(newKey);
+    encryption_update_key(newKey);
     memcpy(KEY, newKey, 16);
 
     // Update encryption validation
@@ -144,7 +144,7 @@ void change_master_key(void)
     for(uint8_t i = 0; i < 16; ++i)
     {
         randomSequence[i] = random_request_byte();
-        eeprom_busy_wait();
+        
         eeprom_update_byte(eeprom_addr, randomSequence[i]);
         ++eeprom_addr;
         progress_add(1);
@@ -160,7 +160,7 @@ void change_master_key(void)
     eeprom_addr = 0;
     for(uint8_t i = 0; i < 16; ++i)
     {
-        eeprom_busy_wait();
+        
         eeprom_update_byte(eeprom_addr+16, encryptionValidation[i]);
         ++eeprom_addr;
     }

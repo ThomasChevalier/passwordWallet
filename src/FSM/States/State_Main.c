@@ -7,7 +7,8 @@
 
 #include "../../Hardware/Keyboard.h"
 
-#include "../../Security/Passwords.h"
+#include "../../Security/Password.h"
+#include "../../Security/Password_List.h"
 
 void state_main_begin (void)
 {
@@ -26,7 +27,7 @@ uint8_t state_main_transition (uint8_t event)
 	else if(event & EVENT_BUTTON_2)
 	{
 		keyboard_send((char*)CURRENT_PASSWORD_DATA, strlen((char*)CURRENT_PASSWORD_DATA));
-		increment_pwd_counter();
+		password_increment_counter(CURRENT_PASSWORD_ID);
 	}
 	else if(event & EVENT_BUTTON_3)
 	{

@@ -11,7 +11,8 @@
 #include "../../Hardware/Oled.h"
 
 #include "../../Security/Authentification.h"
-#include "../../Security/Passwords.h"
+#include "../../Security/Password_List.h"
+#include "../../Security/Encryption.h"
 
 #include "../../Graphics/String.h"
 #include "../../Graphics/Drawing.h"
@@ -48,7 +49,7 @@ uint8_t state_wait_card_transition (uint8_t event)
 				// .. Success
 				memcpy(KEY, buffer, 16);
 
-				if(check_key()) // If the key of the rfid is the good one.
+				if(encryption_check_key()) // If the key of the rfid is the good one.
 				{
 					// Then go to the main state
 					goto_first_pwd();

@@ -14,7 +14,7 @@
 #include "../../Hardware/Buttons.h"
 
 #include "../../Security/Authentification.h"
-#include "../../Security/Passwords.h"
+#include "../../Security/Encryption.h"
 
 #include "../Hardware/SelfTest.h"
 
@@ -72,7 +72,7 @@ uint8_t state_option_advanced_transition (uint8_t event)
 				// If device is encrypted
 				if(OPTIONS_FLAG & (1<<OPTIONS_FLAG_OFFSET_NO_ENCRYPTION))
 				{
-					disable_encryption();
+					encryption_disable();
 				}
 				return STATE_MAIN;
 			case 2:
@@ -80,7 +80,7 @@ uint8_t state_option_advanced_transition (uint8_t event)
 				if(!(OPTIONS_FLAG & (1<<OPTIONS_FLAG_OFFSET_NO_ENCRYPTION)))
 				{
 					change_master_key();
-					enable_encryption();
+					encryption_enable();
 				}
 				return STATE_MAIN;
 			case 3:

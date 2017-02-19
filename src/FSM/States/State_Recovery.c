@@ -13,7 +13,7 @@
 #include "../../Hardware/Fram.h"
 #include "../../Hardware/Buttons.h"
 
-#include "../../Security/Passwords.h"
+#include "../../Security/Encryption.h"
 #include "../../Security/Authentification.h"
 
 void state_recovery_do_full_reset(void)
@@ -47,7 +47,7 @@ static uint8_t do_recover_key(void)
 	char usrKey[21] = {0};
 	type_string(usrKey, 20);
 	decode_16B(usrKey, KEY);
-	if(check_key())
+	if(encryption_check_key())
 	{
 		return 1;
 	}

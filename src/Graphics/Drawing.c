@@ -241,6 +241,7 @@ void draw_confirmation_screen(uint8_t choice, uint8_t yesNo)
 
 void type_string(char* string_typed, uint8_t maxLen)
 {
+	memset(string_typed, 0, maxLen);
 	uint8_t pos = 0;
 	uint8_t have_erased = 0;
 	uint8_t running = 1;

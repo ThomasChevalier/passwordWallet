@@ -58,30 +58,23 @@
 #define SSD1306_VERTICAL_AND_LEFT_HORIZONTAL_SCROLL 0x2A
 
 // Hardware
-void oled_setup_hardware(void);
-
-void oled_reset_high(void);
-void oled_reset_low(void);
-
-void oled_deselect(void);
-void oled_select(void);
-
-void oled_dc_high(void);
-void oled_dc_low(void);
-
-void oled_setup_spi(void);
-
+void oled_setup_hardware	(void);
+void oled_reset_high		(void);
+void oled_reset_low			(void);
+void oled_deselect			(void);
+void oled_select			(void);
+void oled_dc_high			(void);
+void oled_dc_low			(void);
+void oled_setup_spi			(void);
 
 // Software
-void oled_init(void);
-void oled_draw_pixel(uint8_t x, uint8_t y, uint8_t color);
-void oled_command(uint8_t c);
-void oled_invert_display(uint8_t i); // Invert all the colors
-
-// dim(1) = moins de contraste, moins d'énergie consommée
-void oled_dim(uint8_t dim);
-void oled_display(void);
-void oled_clear_display(void);
+void oled_init				(void);
+void oled_draw_pixel		(uint8_t x, uint8_t y, uint8_t color);
+void oled_command			(uint8_t c);
+void oled_invert_display	(uint8_t i); // Invert all the colors
+void oled_dim				(uint8_t dim); // dim(1) = less contrast = less power
+void oled_display			(void);
+void oled_clear_display		(void);
 
 
 #endif // OLED_HEADER_THOMAS_CHEVALIER

@@ -23,23 +23,12 @@
 #define SPI_CLOCK_MASK 0x03  // SPR1 = bit 1, SPR0 = bit 0 on SPCR
 #define SPI_2XCLOCK_MASK 0x01  // SPI2X = bit 0 on SPSR
 
-
-//Initialize SPI Master Device
-void spi_setup_hardware(void);
-
-// Shift full array through target device
-void spi_transfer(uint8_t * dataout, uint8_t * datain, uint8_t len);
-// Write 8 bit on bus and receive 8
-uint8_t spi_transfer_8(uint8_t data);
-
-// Shift full array to target device without receiving any byte
-void spi_send(uint8_t * dataout, uint8_t len);
-// Write 8 bit on bus
-void spi_send_8(uint8_t data);
-
-// Read size bytes from spi bus
-void spi_read(uint8_t* buffer, uint8_t size);
-// Read one byte
-uint8_t spi_read_8(void);
+void	spi_setup_hardware	(void);													//Initialize SPI Master Device
+void	spi_transfer		(uint8_t * dataout, uint8_t * datain, uint8_t len);		// Shift full array through target device
+uint8_t spi_transfer_8		(uint8_t data);											// Write 8 bit on bus and receive 8
+void	spi_send			(uint8_t * dataout, uint8_t len);						// Shift full array to target device without receiving any byte
+void	spi_send_8			(uint8_t data);											// Write 8 bit on bus
+void	spi_read			(uint8_t* buffer, uint8_t size);						// Read size bytes from spi bus
+uint8_t spi_read_8			(void);													// Read one byte
 
 #endif // SPI_HEADER_THOMAS_CHEVALIER

@@ -1,5 +1,7 @@
 #include "Buttons.h"
 
+#include <avr/io.h>
+
 #include "../Globals.h"
 #include "../FSM/Events.h"
 #include "PinDefinition.h"
