@@ -2,6 +2,6 @@
 #define SECURITY_HEADER_THOMAS_CHEVALIER
 
 // Init the random generator
-void init_security(void);
+void security_init(void);
 
 #endif // SECURITY_HEADER_THOMAS_CHEVALIER

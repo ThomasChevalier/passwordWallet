@@ -123,6 +123,10 @@ void password_set_usr_name (uint8_t pwd_id, uint8_t* usr, uint8_t lenght, uint8_
 void password_set_name (uint8_t pwd_id, uint8_t* name, uint8_t lenght)
 {
 	fram_write_bytes(PWD_ADDR(pwd_id, PWD_OFFSET_PWD_NAME), (uint8_t*)name, lenght);
+	for(uint8_t i = lenght; i < 32; ++i)
+	{
+		fram_write_byte(PWD_ADDR(pwd_id, PWD_OFFSET_PWD_NAME) + i, 0);
+	}
 }
 
 void password_set_prev_pwd_util (uint8_t pwd_id, uint8_t val)
@@ -156,6 +160,7 @@ void password_increment_counter (uint8_t pwd_id)
 	password_set_counter(pwd_id, counter + 1);
 }
 
+// Progress complexity = 31
 void password_regenerate (uint8_t pwd_id)
 {
 	uint8_t newPwd[32];

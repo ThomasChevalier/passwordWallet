@@ -12,7 +12,7 @@
 
 void state_main_begin (void)
 {
-	read_all_names();
+	password_read_data(CURRENT_PASSWORD_ID, CURRENT_PASSWORD_DATA, KEY);
 	draw_main_menu();
 }
 
@@ -20,8 +20,12 @@ uint8_t state_main_transition (uint8_t event)
 {
 	if(event & EVENT_BUTTON_1)
 	{
-		CURRENT_PASSWORD_ID = prev_pwd(CURRENT_PASSWORD_ID);
-		read_all_names();
+		if(NUM_PWD > 0)
+		{
+			CURRENT_PASSWORD_ID = pwd_list_get_prev_pwd_id(CURRENT_PASSWORD_ID);
+			password_read_data(CURRENT_PASSWORD_ID, CURRENT_PASSWORD_DATA, KEY);
+		}
+		
 		draw_main_menu();
 	}
 	else if(event & EVENT_BUTTON_2)
@@ -31,8 +35,11 @@ uint8_t state_main_transition (uint8_t event)
 	}
 	else if(event & EVENT_BUTTON_3)
 	{
-		CURRENT_PASSWORD_ID = next_pwd(CURRENT_PASSWORD_ID);
-		read_all_names();
+		if(NUM_PWD > 0)
+		{
+			CURRENT_PASSWORD_ID = pwd_list_get_next_pwd_id(CURRENT_PASSWORD_ID);
+			password_read_data(CURRENT_PASSWORD_ID, CURRENT_PASSWORD_DATA, KEY);
+		}
 		draw_main_menu();
 	}
 	else if(event & EVENT_BUTTON_4)

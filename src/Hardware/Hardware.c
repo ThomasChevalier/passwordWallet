@@ -7,7 +7,7 @@
 #include "Rfid.h"
 #include "Spi.h"
 
-void init_hardware(void)
+void hardware_init(void)
 {
 	spi_setup_hardware();
 	fram_setup_hardware();

@@ -21,8 +21,6 @@ void draw_browse_dock(char letter, uint8_t highlight);
 
 void draw_list(uint8_t index, uint8_t minIndex, uint8_t maxIndex);
 
-void draw_confirmation_screen(uint8_t choice, uint8_t yesNo);
-
 void type_string(char* string_typed, uint8_t maxLen);
 
 void draw_typing_screen(char* str, uint8_t column);

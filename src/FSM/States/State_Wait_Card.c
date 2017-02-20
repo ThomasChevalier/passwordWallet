@@ -52,7 +52,7 @@ uint8_t state_wait_card_transition (uint8_t event)
 				if(encryption_check_key()) // If the key of the rfid is the good one.
 				{
 					// Then go to the main state
-					goto_first_pwd();
+					CURRENT_PASSWORD_ID = pwd_list_get_first_pwd_id();
 					return STATE_MAIN;
 				}
 				else

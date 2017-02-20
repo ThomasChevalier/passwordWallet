@@ -20,7 +20,7 @@ void buttons_update_event()
 	{
 		FIRST_PRESS = 0;
 	}
-	GLOBALS_EVENTS |= butts;
+	events_happen(butts);
 }
 
 void buttons_setup_hardware()

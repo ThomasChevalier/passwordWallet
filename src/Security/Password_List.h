@@ -3,25 +3,34 @@
 
 #include <stdint.h>
 
-// Goto the first password, depending upon the sort method
-void goto_first_pwd(void);
-// Return the ID of the password before pwd_index. Loop if necessary
-uint16_t prev_pwd(uint16_t pwd_index);
-// Return the ID of the password after pwd_index. Loop if necessary
-uint16_t next_pwd(uint16_t pwd_index);
+uint8_t	pwd_list_get_first_pwd_id				(void);
+uint8_t	pwd_list_get_first_pwd_id_sort_none		(void);
+uint8_t	pwd_list_get_first_pwd_id_sort_usage	(void);
+uint8_t	pwd_list_get_first_pwd_id_sort_alpha	(void);
 
-// Read the all password names.
-void read_all_names(void);
+uint8_t	pwd_list_get_prev_pwd_id				(uint8_t pwd_id);
+uint8_t	pwd_list_get_prev_pwd_id_sort_none		(uint8_t pwd_id);
+uint8_t	pwd_list_get_prev_pwd_id_sort_usage		(uint8_t pwd_id);
+uint8_t	pwd_list_get_prev_pwd_id_sort_alpha		(uint8_t pwd_id);
 
-void delete_password(void);
+uint8_t	pwd_list_get_next_pwd_id				(uint8_t pwd_id);
+uint8_t	pwd_list_get_next_pwd_id_sort_none		(uint8_t pwd_id);
+uint8_t	pwd_list_get_next_pwd_id_sort_usage		(uint8_t pwd_id);
+uint8_t	pwd_list_get_next_pwd_id_sort_alpha		(uint8_t pwd_id);
+
+void	pwd_list_delete_pwd						(uint8_t pwd_id);
 
 // Add a new password
 // Password name should be 32 bytes long
 // Password data should be 32 bytes long
 // User name     should be 64 bytes long
-// Return 1 if there is no enough memory
-// Return 0 if success.
-uint8_t add_password(char* passwordName, char* passwordData, char* userName);
+// Return MAXIMUM_NUMBER_OF_PWD if there is no enough memory
+// Return the new password id if success.
+uint8_t	pwd_list_add_pwd						(uint8_t* name, uint8_t* data, uint8_t* usrName);	// Return 1 if success, 0 if memory is full
+
+void	pwd_list_swap							(uint8_t pwd1, uint8_t pwd2);
+void	pwd_list_sort_usage						(void);
+void	pwd_list_sort_alpha						(void);
 
 
 

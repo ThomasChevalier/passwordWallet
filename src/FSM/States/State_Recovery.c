@@ -20,8 +20,8 @@ void state_recovery_do_full_reset(void)
 {
 	// Erase all fram memory
 	draw_clear();
-	str_to_buffer(str_usrsetup_eraseMem_index);
-	draw_text(30, 40, str_buffer, 0);
+	str_to_buffer(str_recovery_eraseMem_index);
+	draw_text(20, 40, str_buffer, 0);
 	draw_update();
 
 	progress_begin(FRAM_BYTE_SIZE/64);

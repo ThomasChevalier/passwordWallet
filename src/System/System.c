@@ -11,7 +11,7 @@
 #endif
 
 
-void init_system(void)
+void system_init(void)
 {
 	// this needs to be called before setup() or some functions won't
 	// work there

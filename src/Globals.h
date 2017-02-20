@@ -104,10 +104,6 @@ extern uint8_t KEY[16]; // The main 128 AES key
 extern uint8_t CURRENT_PASSWORD_ID;      // The current password id, start to 0, it is in the order of the memory
 extern uint8_t CURRENT_PASSWORD_DATA[32]; // The current password decrypted
 
-// The names of the three passwords displayed
-extern char PWD_NAME_1[32];
-extern char PWD_NAME_2[32];
-extern char PWD_NAME_3[32];
 
 // The decrypted user name of password displayed. Only the current username is necessary, since the others name are not displayed.
 extern uint8_t CURRENT_USR_NAME[64];
@@ -124,7 +120,7 @@ extern uint8_t FIRST_PWD_UTIL;  // bytes 2 and 3 of fram
 extern uint8_t FIRST_PWD_ALPHA; // bytes 4 and 5 of fram
 extern uint8_t NUM_PWD;         // bytes 6 of fram
 
-extern uint8_t MEMORY_MAP[6]; // The memory map
+extern uint8_t MEMORY_MAP[SIZE_MEMORY_MAP]; // The memory map
 
 #define KEYBOARD_ENABLE
 

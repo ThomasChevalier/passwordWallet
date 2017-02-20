@@ -80,7 +80,7 @@ void change_master_key(void)
     // Ask for card
     draw_clear();
     str_to_buffer(str_misc_approachCard_index);
-    draw_text(18, 30, str_buffer, 0);
+    draw_text(8, 30, str_buffer, 0);
     draw_update();
 
     // Waiting for the user to present his card
@@ -90,7 +90,7 @@ void change_master_key(void)
     uint8_t newKey[16];
     draw_clear();
     str_to_buffer(str_misc_generateKey_index);
-    draw_text(15, 40, str_buffer, 0);
+    draw_text(10, 40, str_buffer, 0);
     progress_begin(16);
     for(uint8_t i = 0; i < 16; ++i)
     {
@@ -138,7 +138,7 @@ void change_master_key(void)
     draw_clear();
     progress_begin(20);
     str_to_buffer(str_misc_updateEncryptVerif_index);
-    draw_text(20, 40, str_buffer, 0);
+    draw_text(10, 40, str_buffer, 0);
     uint8_t randomSequence[16];
     uint8_t* eeprom_addr = 0;
     for(uint8_t i = 0; i < 16; ++i)
@@ -171,10 +171,10 @@ void change_master_key(void)
     // Display new key
     draw_clear();
     str_to_buffer(str_misc_hereIsKey_index);
-    draw_text(12, 10, str_buffer, 0);
+    draw_text(17, 10, str_buffer, 0);
     char outputText[20];
     encode_16B(KEY, outputText);
-    draw_text(15, 30, outputText, 20);
+    draw_text(0, 30, outputText, 20);
     draw_update();
 
 

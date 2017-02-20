@@ -2,7 +2,7 @@
 
 #include "Random.h"
 
-void init_security(void)
+void security_init(void)
 {
 	random_init();
 }

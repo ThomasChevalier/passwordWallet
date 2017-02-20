@@ -30,7 +30,7 @@ static void do_change_pwd(void)
 {
 	char tempPwd[32] = {0};
 	memcpy(tempPwd, CURRENT_PASSWORD_DATA, 32);
-	type_string(tempPwd, 32);
+	type_string(tempPwd, 31);
 
 	draw_clear();
 	str_option_to_buffer(str_option_pwd_changePwd_index);
@@ -47,7 +47,7 @@ static void do_change_id(void)
 {
 	char tempStr[64] = {0};
 	memcpy(tempStr, CURRENT_USR_NAME, 64);
-	type_string(tempStr, 64);
+	type_string(tempStr, 63);
 
 	draw_clear();
 	str_option_to_buffer(str_option_pwd_changeUsrName_index);
@@ -62,9 +62,24 @@ static void do_change_id(void)
 
 static void do_change_name(void)
 {
-	type_string(PWD_NAME_2, 32);
+	char name[32];
+	password_read_name(CURRENT_PASSWORD_ID, (uint8_t*)name);
+	type_string(name, 31);
 
-	password_set_name(CURRENT_PASSWORD_ID, (uint8_t*)PWD_NAME_2, 32);
+	password_set_name(CURRENT_PASSWORD_ID, (uint8_t*)name, 32);
+}
+
+static void do_delete_password(void)
+{
+	uint8_t prevPwd = 0;
+	if(NUM_PWD > 1)
+	{
+		prevPwd = pwd_list_get_prev_pwd_id(CURRENT_PASSWORD_ID);
+	}
+	
+	pwd_list_delete_pwd(CURRENT_PASSWORD_ID);
+
+	CURRENT_PASSWORD_ID = prevPwd;
 }
 
 void state_option_password_begin (void)
@@ -90,6 +105,10 @@ uint8_t state_option_password_transition (uint8_t event)
 	}
 	else if(event & EVENT_BUTTON_2)
 	{
+		if(NUM_PWD == 0)
+		{
+			return STATE_MAIN;
+		}
 		switch(currentChoice)
 		{
 			case 0:
@@ -105,7 +124,7 @@ uint8_t state_option_password_transition (uint8_t event)
 				do_change_name();
 				return STATE_MAIN;
 			case 4:
-				delete_password();
+				do_delete_password();
 				return STATE_MAIN;
 			default:
 				// Impossible

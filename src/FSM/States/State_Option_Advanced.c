@@ -25,10 +25,10 @@ static void do_show_key(void)
 	 // Display key
     draw_clear();
     str_to_buffer(str_misc_hereIsKey_index);
-    draw_text(12, 10, str_buffer, 0);
+    draw_text(17, 10, str_buffer, 0);
     char outputText[20];
     encode_16B(KEY, outputText);
-    draw_text(15, 30, outputText, 20);
+    draw_text(0, 30, outputText, 20);
     draw_update();
 }
 
@@ -70,14 +70,14 @@ uint8_t state_option_advanced_transition (uint8_t event)
 				return STATE_MAIN;
 			case 1:
 				// If device is encrypted
-				if(OPTIONS_FLAG & (1<<OPTIONS_FLAG_OFFSET_NO_ENCRYPTION))
+				if((OPTIONS_FLAG & (1<<OPTIONS_FLAG_OFFSET_NO_ENCRYPTION)) == 0)
 				{
 					encryption_disable();
 				}
 				return STATE_MAIN;
 			case 2:
 				// If device is not encrypted
-				if(!(OPTIONS_FLAG & (1<<OPTIONS_FLAG_OFFSET_NO_ENCRYPTION)))
+				if(OPTIONS_FLAG & (1<<OPTIONS_FLAG_OFFSET_NO_ENCRYPTION))
 				{
 					change_master_key();
 					encryption_enable();

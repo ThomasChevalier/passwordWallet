@@ -1,5 +1,4 @@
 #include <util/delay.h>  // for _delay_ms()
-#include <avr/pgmspace.h> // For PROGMEM
 
 #include "Globals.h"
 
@@ -9,9 +8,9 @@
 
 #include "Graphics/Drawing.h"
 
-#include "Security/Authentification.h"
 #include "Security/Random.h"
 #include "Security/Encryption.h"
+#include "Security/Password_List.h"
 
 #include "Hardware/Keyboard.h"
 #include "Hardware/Buttons.h"
@@ -20,7 +19,7 @@
 #include "FSM/States.h"
 #include "FSM/Events.h"
 
-void init_program(void)
+void program_init(void)
 {
 	draw_update();
 
@@ -41,11 +40,11 @@ void init_program(void)
 int main(void)
 {
 	// Initialization
-	init_system();
-	init_hardware();
-	init_security();
+	system_init();
+	hardware_init();
+	security_init();
 
-	init_program();
+	program_init();
 
 	// If the device has not been initialized yet
 	const uint8_t optFlag = fram_read_byte(OFFSET_OPTIONS_FLAG);

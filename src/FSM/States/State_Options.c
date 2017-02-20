@@ -66,7 +66,7 @@ static void do_new_pwd(void)
 	cpx += 21 +(64-strlen(tempStr));
 	progress_begin(cpx);
 
-	add_password(pwdName, pwdData, tempStr);
+	pwd_list_add_pwd((uint8_t*)pwdName, (uint8_t*)pwdData, (uint8_t*)tempStr);
 
 	progress_end();
 }
