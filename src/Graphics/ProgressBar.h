@@ -4,6 +4,8 @@
 #include <stdint.h>
 
 void progress_begin(uint8_t complexity);
+void progress_pause(void);
+void progress_continue(void);
 void progress_add(uint8_t work);
 void progress_end(void);
 

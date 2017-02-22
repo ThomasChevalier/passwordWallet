@@ -1,5 +1,7 @@
 #include "State_Recovery.h"
 
+#include <string.h>
+
 #include <util/delay.h>
 
 #include "../StatesDefine.h"
@@ -37,8 +39,12 @@ void state_recovery_do_full_reset(void)
 	// Get a master key
 	change_master_key();
 
+	// Clear variables
+	CURRENT_PASSWORD_ID = GLOBALS_EVENTS = FIRST_PRESS = NUM_PWD = OPTIONS_FLAG = 0;
+	memset(MEMORY_MAP, 0, SIZE_MEMORY_MAP);
+
 	// Device is now initialized !
-	OPTIONS_FLAG = (1<<OPTIONS_FLAG_OFFSET_INITIALIZED);
+	OPTIONS_FLAG |= (1<<OPTIONS_FLAG_OFFSET_INITIALIZED);
 	fram_write_byte(OFFSET_OPTIONS_FLAG, (1<<OPTIONS_FLAG_OFFSET_INITIALIZED));
 }
 
@@ -62,11 +68,11 @@ void state_recovery_begin (void)
 
 	str_to_buffer(str_recovery_title_index);
 	draw_clear();
-	draw_text(20, 10, str_buffer, 0);
+	draw_text(10, 10, str_buffer, 0);
 	str_to_buffer(str_recovery_choice1_index);
-	draw_text(20, 30, str_buffer, 0);
+	draw_text(10, 30, str_buffer, 0);
 	str_to_buffer(str_recovery_choice2_index);
-	draw_text(20, 50, str_buffer, 0);
+	draw_text(10, 50, str_buffer, 0);
 	draw_update();
 
 	while(buttons_pressed()); // Wait for the user to release all the keys

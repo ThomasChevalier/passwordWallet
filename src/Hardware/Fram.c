@@ -123,3 +123,13 @@ void fram_deselect()
 {
 	FRAM_CS_PORT |= (1<<FRAM_CS_PIN_NUM);
 }
+
+uint8_t fram_test (void)
+{
+	Fram_id id = fram_read_id();
+	if(id.manufacturer_id != 0x04 || id.continuation_code != 0x7F)
+	{
+		return 0;
+	}
+	return 1;
+}

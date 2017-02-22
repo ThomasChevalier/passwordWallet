@@ -13,25 +13,26 @@ DEFINE_STRING(str_error_pwd, "Mauvais mot de passe", 3);
 DEFINE_STRING(str_misc_approachCard, "Approchez votre carte", 4);
 DEFINE_STRING(str_misc_generateKey, "Generation de la clef", 5);
 DEFINE_STRING(str_misc_updateEncryptVerif, "M.a.j. de la validation", 6);
-DEFINE_STRING(str_misc_hereIsKey, "Voici votre clef", 7);
+DEFINE_STRING(str_misc_updatePwd, "M.a.j. des mots de passe", 7);
+DEFINE_STRING(str_misc_hereIsKey, "Voici votre clef", 8);
 
+DEFINE_STRING(str_order_typePwdName, "ENTREZ NOM MOT DE PASSE", 9); 
+DEFINE_STRING(str_order_typePwdData, "ENTREZ MOT DE PASSE", 10); 
+DEFINE_STRING(str_order_typeUsrName, "ENTREZ NOM UTILISATEUR", 11);
 
+DEFINE_STRING(str_recovery_eraseMem, "FORMATAGE MEMOIRE", 12);
+DEFINE_STRING(str_recovery_title, "MODE DE RECUPERATION", 13);
+DEFINE_STRING(str_recovery_choice1, "1 - FORMATAGE COMPLET", 14);
+DEFINE_STRING(str_recovery_choice2, "2 - ENTREZ LA CLEF", 15);
 
-DEFINE_STRING(str_order_typePwdName, "ENTREZ NOM MOT DE PASSE", 8); 
-DEFINE_STRING(str_order_typePwdData, "ENTREZ MOT DE PASSE", 9); 
-DEFINE_STRING(str_order_typeUsrName, "ENTREZ NOM UTILISATEUR", 10);
+DEFINE_STRING(str_self_test_fram_ok, "MEMOIRE OK", 16);
+DEFINE_STRING(str_self_test_fram_fail, "MEMOIRE HS", 17);
+DEFINE_STRING(str_self_test_rfid_ok, "RFID OK", 18);
+DEFINE_STRING(str_self_test_rfid_fail, "RFID HS", 19);
+DEFINE_STRING(str_self_test_button_ok, "BOUTON OK", 20);
+DEFINE_STRING(str_self_test_button_fail, "BOUTON HS", 21);
 
-DEFINE_STRING(str_recovery_eraseMem, "FORMATAGE MEMOIRE", 11);
-DEFINE_STRING(str_recovery_title, "MODE DE RECUPERATION", 12);
-DEFINE_STRING(str_recovery_choice1, "1 - FORMATAGE COMPLET", 13);
-DEFINE_STRING(str_recovery_choice2, "2 - ENTREZ LA CLEF", 14);
-
-DEFINE_STRING(str_self_test_fram_ok, "MEMOIRE OK", 15);
-DEFINE_STRING(str_self_test_fram_fail, "MEMOIRE HS", 16);
-DEFINE_STRING(str_self_test_rfid_ok, "RFID OK", 17);
-DEFINE_STRING(str_self_test_rfid_fail, "RFID HS", 18);
-DEFINE_STRING(str_self_test_button_ok, "BOUTON OK", 19);
-DEFINE_STRING(str_self_test_button_fail, "BOUTON HS", 20);
+DEFINE_STRING(str_self_test_fail, "ERREUR : appareil HS", 22);
 
 PGM_P const string_table[] PROGMEM = 
 {
@@ -43,6 +44,7 @@ PGM_P const string_table[] PROGMEM =
 	str_misc_approachCard,
 	str_misc_generateKey,
 	str_misc_updateEncryptVerif,
+	str_misc_updatePwd,
 	str_misc_hereIsKey,
 	
 	str_order_typePwdName,
@@ -59,7 +61,8 @@ PGM_P const string_table[] PROGMEM =
 	str_self_test_rfid_ok,
 	str_self_test_rfid_fail,
 	str_self_test_button_ok,
-	str_self_test_button_fail
+	str_self_test_button_fail,
+	str_self_test_fail
 };
 
 DEFINE_STRING(str_option_password, "Mot de passe ...", 0);
@@ -82,7 +85,7 @@ DEFINE_STRING(str_option_advanced_changeKey, "Changer clef maitre", 13);
 DEFINE_STRING(str_option_advanced_disableEncryption, "Desactiver cryptage", 14);
 DEFINE_STRING(str_option_advanced_enableEncryption, "Activer cryptage", 15);
 DEFINE_STRING(str_option_advanced_showKey, "Montrer clef maitre", 16);
-DEFINE_STRING(str_option_advanced_selfTest, "Self test", 17);
+DEFINE_STRING(str_option_advanced_selfTest, "Auto test", 17);
 DEFINE_STRING(str_option_advanced_doFullReset, "FORMATER", 18);
 
 

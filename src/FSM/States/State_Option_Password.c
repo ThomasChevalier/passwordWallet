@@ -28,34 +28,49 @@ static void do_regenerate_pwd(void)
 
 static void do_change_pwd(void)
 {
-	char tempPwd[32] = {0};
-	memcpy(tempPwd, CURRENT_PASSWORD_DATA, 32);
-	type_string(tempPwd, 31);
+	uint8_t tempPwd[32] = {0};
+
+	password_read_data(CURRENT_PASSWORD_ID, tempPwd, KEY);
+
+
+	if(!type_string((char*)tempPwd, 31))
+	{
+		// If nothing changed
+		return;
+	}
 
 	draw_clear();
 	str_option_to_buffer(str_option_pwd_changePwd_index);
 	draw_text(14, 40, str_buffer, 0);
-	const uint8_t strLen = strlen(tempPwd);
+	const uint8_t strLen = strlen((char*)tempPwd);
 	progress_begin(21 + 32 - strLen);	
 
-	password_set_data(CURRENT_PASSWORD_ID, (uint8_t*)tempPwd, strLen, KEY);
+	password_set_data(CURRENT_PASSWORD_ID, tempPwd, strLen, KEY);
+
+	// Get the list sorted
+	pwd_list_sort_alpha();
 
 	progress_end();
 }
 
-static void do_change_id(void)
+static void do_change_usr_name(void)
 {
-	char tempStr[64] = {0};
-	memcpy(tempStr, CURRENT_USR_NAME, 64);
-	type_string(tempStr, 63);
+	uint8_t tempStr[64] = {0};
+	password_read_usr_name(CURRENT_PASSWORD_ID, tempStr, KEY);
+	
+	if(!type_string((char*)tempStr, 63))
+	{
+		// If nothing changed
+		return;
+	}
 
 	draw_clear();
 	str_option_to_buffer(str_option_pwd_changeUsrName_index);
 	draw_text(17, 40, str_buffer, 0);
-	const uint8_t strLen = strlen(tempStr);
+	const uint8_t strLen = strlen((char*)tempStr);
 	progress_begin(21 + 64 - strLen);
 
-	password_set_usr_name(CURRENT_PASSWORD_ID, (uint8_t*)(tempStr), strLen, KEY);
+	password_set_usr_name(CURRENT_PASSWORD_ID, tempStr, strLen, KEY);
 
 	progress_end();
 }
@@ -64,7 +79,11 @@ static void do_change_name(void)
 {
 	char name[32];
 	password_read_name(CURRENT_PASSWORD_ID, (uint8_t*)name);
-	type_string(name, 31);
+	if(!type_string(name, 31))
+	{
+		// If nothing changed
+		return;
+	}
 
 	password_set_name(CURRENT_PASSWORD_ID, (uint8_t*)name, 32);
 }
@@ -118,7 +137,7 @@ uint8_t state_option_password_transition (uint8_t event)
 				do_change_pwd();
 				return STATE_MAIN;
 			case 2:
-				do_change_id();
+				do_change_usr_name();
 				return STATE_MAIN;
 			case 3:
 				do_change_name();

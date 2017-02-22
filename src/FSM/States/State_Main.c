@@ -12,34 +12,37 @@
 
 void state_main_begin (void)
 {
-	password_read_data(CURRENT_PASSWORD_ID, CURRENT_PASSWORD_DATA, KEY);
 	draw_main_menu();
 }
 
 uint8_t state_main_transition (uint8_t event)
 {
+	// If there is no password don't navigate in the list or send password
+	if( ((event & EVENT_BUTTON_1) || (event & EVENT_BUTTON_2) || (event & EVENT_BUTTON_3))
+		&& NUM_PWD == 0)
+	{
+		return STATE_MAIN;
+	}
+	
 	if(event & EVENT_BUTTON_1)
 	{
-		if(NUM_PWD > 0)
-		{
-			CURRENT_PASSWORD_ID = pwd_list_get_prev_pwd_id(CURRENT_PASSWORD_ID);
-			password_read_data(CURRENT_PASSWORD_ID, CURRENT_PASSWORD_DATA, KEY);
-		}
-		
+		CURRENT_PASSWORD_ID = pwd_list_get_prev_pwd_id(CURRENT_PASSWORD_ID);
 		draw_main_menu();
 	}
 	else if(event & EVENT_BUTTON_2)
 	{
-		keyboard_send((char*)CURRENT_PASSWORD_DATA, strlen((char*)CURRENT_PASSWORD_DATA));
+		uint8_t pwd_data[32] = {0};
+		password_read_data(CURRENT_PASSWORD_ID, pwd_data, KEY);
+		//keyboard_send((char*)pwd_data, strlen((char*)pwd_data));
 		password_increment_counter(CURRENT_PASSWORD_ID);
+		if(pwd_list_get_sorting_method() == PWD_SORTING_USAGE)
+		{
+			pwd_list_sort_usage();
+		}
 	}
 	else if(event & EVENT_BUTTON_3)
 	{
-		if(NUM_PWD > 0)
-		{
-			CURRENT_PASSWORD_ID = pwd_list_get_next_pwd_id(CURRENT_PASSWORD_ID);
-			password_read_data(CURRENT_PASSWORD_ID, CURRENT_PASSWORD_DATA, KEY);
-		}
+		CURRENT_PASSWORD_ID = pwd_list_get_next_pwd_id(CURRENT_PASSWORD_ID);
 		draw_main_menu();
 	}
 	else if(event & EVENT_BUTTON_4)

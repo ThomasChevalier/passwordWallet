@@ -3,6 +3,9 @@
 #include "../Globals.h"
 #include "Drawing.h"
 
+static uint8_t PROGRESS_COMPLEXITY;
+static uint8_t PROGRESS_ADVANCE;
+static uint8_t PROGRESS_PAUSE_CPX;
 
 void progress_begin(uint8_t complexity)
 {
@@ -15,6 +18,16 @@ void progress_begin(uint8_t complexity)
 	draw_v_line(14, 57, 4, WHITE);
 	draw_v_line(113, 57, 4, WHITE);
 	draw_update();
+}
+
+void progress_pause(void)
+{
+	PROGRESS_PAUSE_CPX = PROGRESS_COMPLEXITY;
+	PROGRESS_COMPLEXITY = 0;
+}
+void progress_continue(void)
+{
+	PROGRESS_COMPLEXITY = PROGRESS_PAUSE_CPX;
 }
 
 void progress_add(uint8_t work)

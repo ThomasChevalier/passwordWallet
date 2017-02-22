@@ -15,6 +15,7 @@
 #include "Hardware/Keyboard.h"
 #include "Hardware/Buttons.h"
 #include "Hardware/Fram.h"
+#include "Hardware/SelfTest.h"
 
 #include "FSM/States.h"
 #include "FSM/Events.h"
@@ -25,8 +26,6 @@ void program_init(void)
 
 	// Read the flags and data from fram
 	OPTIONS_FLAG = fram_read_byte(OFFSET_OPTIONS_FLAG);
-	FIRST_PWD_UTIL = fram_read_byte(OFFSET_FIRST_PWD_UTIL);;
-	FIRST_PWD_ALPHA = fram_read_byte(OFFSET_FIRST_PWD_ALPHA);
 	NUM_PWD = fram_read_byte(OFFSET_NUM_PWD);
 
 	// Delete all entropy pool, because it cannot be trusted (someone may have corrupt the data)
@@ -45,6 +44,15 @@ int main(void)
 	security_init();
 
 	program_init();
+
+	// Check the device
+	if(!self_test_check())
+	{
+		// The device does not behave correctly, freeze it
+		draw_clear();
+		draw_update();
+		while(1);
+	}
 
 	// If the device has not been initialized yet
 	const uint8_t optFlag = fram_read_byte(OFFSET_OPTIONS_FLAG);

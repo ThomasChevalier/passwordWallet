@@ -11,6 +11,8 @@
 
 #include "../Hardware/Fram.h"
 
+#include "../Graphics/ProgressBar.h"
+
 void encryption_copy_key_from_eeprom(void)
 {
 	eeprom_read_block(KEY, (void*)32, 16);
@@ -80,6 +82,9 @@ void encryption_update_key(uint8_t *new_key)
 			{
 				if(memory_byte & (1<<j))
 				{
+					// Pause progress bar because otherwise password_set_* will add progress
+					progress_pause();
+					
 					// ... Change the key
 					CURRENT_PASSWORD_ID = i*8+j;
 
@@ -88,9 +93,12 @@ void encryption_update_key(uint8_t *new_key)
 
 					password_read_usr_name(i*8+j, buffer, KEY);
 					password_set_usr_name(i*8+j, buffer, strlen((char*)(buffer)), new_key);
+
+					progress_continue();
+					progress_add(1);
 				}
 			}
 		}
 	}
-
+	memcpy(KEY, new_key, 16);
 }

@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 
+uint8_t	pwd_list_get_sorting_method				(void);
 uint8_t	pwd_list_get_first_pwd_id				(void);
 uint8_t	pwd_list_get_first_pwd_id_sort_none		(void);
 uint8_t	pwd_list_get_first_pwd_id_sort_usage	(void);

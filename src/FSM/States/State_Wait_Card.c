@@ -41,7 +41,7 @@ uint8_t state_wait_card_transition (uint8_t event)
 				// .. Failure
 				draw_clear();
 				str_to_buffer(str_error_read_index);
-				draw_text(0, 0, str_buffer, 0);
+				draw_text(19, 20, str_buffer, 0);
 				draw_update();
 			}
 			else
@@ -59,7 +59,7 @@ uint8_t state_wait_card_transition (uint8_t event)
 				{
 					draw_clear();
 					str_to_buffer(str_error_pwd_index);
-					draw_text(19, 20, str_buffer, 0);
+					draw_text(15, 20, str_buffer, 0);
 					draw_update();
 				}
 			}

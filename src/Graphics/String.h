@@ -18,6 +18,7 @@ DECLARE_STRING(str_error_pwd);
 DECLARE_STRING(str_misc_approachCard);
 DECLARE_STRING(str_misc_generateKey);
 DECLARE_STRING(str_misc_updateEncryptVerif);
+DECLARE_STRING(str_misc_updatePwd);
 DECLARE_STRING(str_misc_hereIsKey);
 
 DECLARE_STRING(str_recovery_eraseMem);
@@ -36,6 +37,7 @@ DECLARE_STRING(str_self_test_rfid_ok);
 DECLARE_STRING(str_self_test_rfid_fail);
 DECLARE_STRING(str_self_test_button_ok);
 DECLARE_STRING(str_self_test_button_fail);
+DECLARE_STRING(str_self_test_fail);
 
 extern PGM_P const string_table[] PROGMEM;
 

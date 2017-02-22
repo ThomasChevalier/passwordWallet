@@ -82,7 +82,7 @@ void draw_hex(uint8_t x, uint8_t y, uint8_t* hexBuffer, uint8_t hexBufferSize)
 {
 	uint8_t index = 0;
 	char str[hexBufferSize * 2];
-	for(index = 0; index < hexBufferSize; ++index)
+	for(index = hexBufferSize-1; index != (uint8_t)-1; --index)
 	{
 		uint8_t nibble = hexBuffer[index] >> 4;// High
 		str[index * 2] = (nibble < 10) ? nibble + '0' : (nibble-10) + 'A';
@@ -118,16 +118,20 @@ void draw_main_menu(void)
 	draw_browse_dock(0,0);
 
 	draw_h_line(8, 20, 120, WHITE);
-
 	draw_h_line(8, 43, 120, WHITE);
 
-	char pwdName[32];
-	password_read_name(pwd_list_get_prev_pwd_id(CURRENT_PASSWORD_ID), (uint8_t*)pwdName);
-	draw_text(10, 2 , pwdName, 0);
-	password_read_name(CURRENT_PASSWORD_ID, (uint8_t*)pwdName);
-	draw_text(10, 23, pwdName, 0);
-	password_read_name(pwd_list_get_next_pwd_id(CURRENT_PASSWORD_ID), (uint8_t*)pwdName);
-	draw_text(10, 46, pwdName, 0);
+	draw_hex(100, 0, &MEMORY_MAP[0], 1);
+
+	if(NUM_PWD != 0)
+	{
+		char pwdName[32];
+		password_read_name(pwd_list_get_prev_pwd_id(CURRENT_PASSWORD_ID), (uint8_t*)pwdName);
+		draw_text(10, 2 , pwdName, 0);
+		password_read_name(CURRENT_PASSWORD_ID, (uint8_t*)pwdName);
+		draw_text(10, 23, pwdName, 0);
+		password_read_name(pwd_list_get_next_pwd_id(CURRENT_PASSWORD_ID), (uint8_t*)pwdName);
+		draw_text(10, 46, pwdName, 0);
+	}
 	
 	draw_update();
 }
@@ -195,10 +199,11 @@ void draw_list(uint8_t index, uint8_t minIndex, uint8_t maxIndex)
 	draw_update();
 }
 
-void type_string(char* string_typed, uint8_t maxLen)
+uint8_t type_string(char* string_typed, uint8_t maxLen)
 {
 	uint8_t pos = 0;
 	uint8_t running = 1;
+	uint8_t modified = 0;
 	string_typed[strlen(string_typed)] = 127;
 	draw_typing_screen(string_typed, pos);
 
@@ -230,6 +235,7 @@ void type_string(char* string_typed, uint8_t maxLen)
 			{
 				string_typed[pos] = c - 1;
 			}
+			modified = 1;
 		}
 		else if(event & EVENT_BUTTON_2)
 		{
@@ -277,6 +283,7 @@ void type_string(char* string_typed, uint8_t maxLen)
 			{
 				string_typed[pos] = c + 1;
 			}
+			modified = 1;
 		}
 		else if(event & EVENT_BUTTON_4)
 		{
@@ -309,7 +316,7 @@ void type_string(char* string_typed, uint8_t maxLen)
 			string_typed[i] = 0;
 		}
 	}
-
+	return modified;
 }
 
 void draw_typing_screen(char* str, uint8_t column)

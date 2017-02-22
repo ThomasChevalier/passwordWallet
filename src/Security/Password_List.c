@@ -12,7 +12,7 @@
 
 #include "../Hardware/Fram.h"
 
-static uint8_t get_sorting_method(void)
+uint8_t pwd_list_get_sorting_method(void)
 {
 	return (OPTIONS_FLAG & ((1<<OPTIONS_FLAG_OFFSET_SORTING_METHOD_L)|(1<<OPTIONS_FLAG_OFFSET_SORTING_METHOD_H))) >> OPTIONS_FLAG_OFFSET_SORTING_METHOD_L;
 }
@@ -51,16 +51,16 @@ static uint8_t get_first_entry_from(const uint8_t index)
 
 uint8_t pwd_list_get_first_pwd_id (void)
 {
-	uint8_t sortingMethod = get_sorting_method();
-	if(sortingMethod == 0)
+	uint8_t sortingMethod = pwd_list_get_sorting_method();
+	if(sortingMethod == PWD_SORTING_NONE)
 	{
 		return pwd_list_get_first_pwd_id_sort_none();
 	}
-	else if(sortingMethod == 1)
+	else if(sortingMethod == PWD_SORTING_USAGE)
 	{
 		return pwd_list_get_first_pwd_id_sort_usage();
 	}
-	else if(sortingMethod == 2)
+	else if(sortingMethod == PWD_SORTING_ALPHA)
 	{
 		return pwd_list_get_first_pwd_id_sort_alpha();
 	}
@@ -75,27 +75,27 @@ uint8_t pwd_list_get_first_pwd_id_sort_none (void)
 
 uint8_t pwd_list_get_first_pwd_id_sort_usage (void)
 {
-	return FIRST_PWD_UTIL;
+	return fram_read_byte(OFFSET_FIRST_PWD_UTIL);
 }
 
 uint8_t pwd_list_get_first_pwd_id_sort_alpha (void)
 {
-	return FIRST_PWD_ALPHA;
+	return fram_read_byte(OFFSET_FIRST_PWD_ALPHA);
 }
 
 
 uint8_t pwd_list_get_prev_pwd_id (uint8_t pwd_id)
 {
-	uint8_t sortingMethod = get_sorting_method();
-	if(sortingMethod == 0)
+	uint8_t sortingMethod = pwd_list_get_sorting_method();
+	if(sortingMethod == PWD_SORTING_NONE)
 	{
 		return pwd_list_get_prev_pwd_id_sort_none(pwd_id);
 	}
-	else if(sortingMethod == 1)
+	else if(sortingMethod == PWD_SORTING_USAGE)
 	{
 		return pwd_list_get_prev_pwd_id_sort_usage(pwd_id);
 	}
-	else if(sortingMethod == 2)
+	else if(sortingMethod == PWD_SORTING_ALPHA)
 	{
 		return pwd_list_get_prev_pwd_id_sort_alpha(pwd_id);
 	}
@@ -106,9 +106,18 @@ uint8_t pwd_list_get_prev_pwd_id (uint8_t pwd_id)
 uint8_t pwd_list_get_prev_pwd_id_sort_none (uint8_t pwd_id)
 {
 	// Scans the memory map in reverse
-	for(uint8_t i = pwd_id / 8; i != (uint8_t)-1; --i)
+	// If we do not decrement pwd_id then the function will found pwd_id directly and it will be bad
+
+	// Loop
+	uint8_t first_candidate = pwd_id - 1;
+	if(pwd_id == 0)
 	{
-		uint8_t j = (i == pwd_id / 8) ? pwd_id % 8 : 7;
+		first_candidate = MAXIMUM_NUMBER_OF_PWD-1;
+	}
+
+	for(uint8_t i = first_candidate / 8; i != (uint8_t)-1; --i)
+	{
+		uint8_t j = (i == first_candidate / 8) ? first_candidate % 8 : 7;
 		for(; j != (uint8_t)-1; --j)
 		{
 			if(MEMORY_MAP[i] & (1<<j))
@@ -118,10 +127,22 @@ uint8_t pwd_list_get_prev_pwd_id_sort_none (uint8_t pwd_id)
 		}
 	}
 	// No password had been found before pwd_id, so loop (scan from MAXIMUM_NUMBER_OF_PWD to 0)
-	if(pwd_id != MAXIMUM_NUMBER_OF_PWD-1)
+	if(pwd_id != 0) // If pwd_id == 0 then we have already search all the chunk
 	{
-		return pwd_list_get_prev_pwd_id_sort_none(MAXIMUM_NUMBER_OF_PWD-1);
+		uint8_t last_pwd = MAXIMUM_NUMBER_OF_PWD-1;
+		for(uint8_t i = last_pwd / 8; i != (uint8_t)-1; --i)
+		{
+			uint8_t j = (i == last_pwd / 8) ? last_pwd % 8 : 7;
+			for(; j != (uint8_t)-1; --j)
+			{
+				if(MEMORY_MAP[i] & (1<<j))
+				{
+					return i*8+j;
+				}
+			}
+		}
 	}
+	// There is no password in the list, return pwd_id
 	return pwd_id;
 }
 
@@ -138,16 +159,16 @@ uint8_t pwd_list_get_prev_pwd_id_sort_alpha (uint8_t pwd_id)
 
 uint8_t pwd_list_get_next_pwd_id (uint8_t pwd_id)
 {
-	uint8_t sortingMethod = get_sorting_method();
-	if(sortingMethod == 0)
+	uint8_t sortingMethod = pwd_list_get_sorting_method();
+	if(sortingMethod == PWD_SORTING_NONE)
 	{
 		return pwd_list_get_next_pwd_id_sort_none(pwd_id);
 	}
-	else if(sortingMethod == 1)
+	else if(sortingMethod == PWD_SORTING_USAGE)
 	{
 		return pwd_list_get_next_pwd_id_sort_usage(pwd_id);
 	}
-	else if(sortingMethod == 2)
+	else if(sortingMethod == PWD_SORTING_ALPHA)
 	{
 		return pwd_list_get_next_pwd_id_sort_alpha(pwd_id);
 	}
@@ -157,7 +178,8 @@ uint8_t pwd_list_get_next_pwd_id (uint8_t pwd_id)
 
 uint8_t pwd_list_get_next_pwd_id_sort_none (uint8_t pwd_id)
 {
-	return get_first_entry_from(pwd_id);
+	// Since get_first_entry_from(i) return i if the chunk i is used, we must add 1 to pwd_id
+	return get_first_entry_from(pwd_id+1);
 }
 
 uint8_t pwd_list_get_next_pwd_id_sort_usage (uint8_t pwd_id)
@@ -186,9 +208,12 @@ void pwd_list_delete_pwd (uint8_t pwd_id)
 	password_set_prev_pwd_util(next_util, prev_util);
 	password_set_prev_pwd_alpha(next_alpha, prev_alpha);
 
+	
 	// Unset memory map flag for this chunk
-	MEMORY_MAP[pwd_id / 8] &= ~(1<<(pwd_id%8));
-	fram_write_bytes(OFFSET_MEMORY_MAP, MEMORY_MAP, SIZE_MEMORY_MAP);
+	const uint8_t mem_byte_id = pwd_id / 8;
+	MEMORY_MAP[mem_byte_id] &= ~(1<<(pwd_id%8));
+	// Update the byte that has changed
+	fram_write_byte(OFFSET_MEMORY_MAP + mem_byte_id, MEMORY_MAP[mem_byte_id]); 
 
 	// There is now one less password
 	--NUM_PWD;
@@ -218,8 +243,9 @@ uint8_t pwd_list_add_pwd (uint8_t* name, uint8_t* data, uint8_t* usrName)
 			{
 				chunk_free = 1;
 				pwd_id = i * 8 + j;
-				MEMORY_MAP[i] &= (1<<j); // Set the bit, this chunk is now used
-				fram_write_bytes(OFFSET_MEMORY_MAP, MEMORY_MAP, SIZE_MEMORY_MAP);
+				MEMORY_MAP[i] |= (1<<j); // Set the bit, this chunk is now used
+				// Update the byte that has changed
+				fram_write_byte(OFFSET_MEMORY_MAP+i, MEMORY_MAP[i]);
 			}
 		}
 	}
@@ -280,8 +306,8 @@ uint8_t pwd_list_add_pwd (uint8_t* name, uint8_t* data, uint8_t* usrName)
 
 	// We have inserted the password at the end of each list (alpha and usage) but it is not sorted.
 	// We must sort them.
-	pwd_list_sort_usage();
-	pwd_list_sort_alpha();
+	//pwd_list_sort_usage();
+	//pwd_list_sort_alpha();
 	return 1; // Success
 }
 

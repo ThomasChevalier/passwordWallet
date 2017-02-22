@@ -54,6 +54,8 @@ void keyboard_send(char* data, unsigned char dataLen)
 	// We divide data in slice of 6 character because the maximum number of character that the keyboard can send at one time is 6.
 	for(uint8_t slice = 0; slice < (dataLen + 5)/ 6; ++slice)
 	{
+		// Clear buffer (previous text may be present)
+		memset(keyboard_text_buffer, 0, 6);
 		// Handle a slice of 6 characters
 		uint8_t i = 0;
 		for(i = 0; i < dataLen - slice * 6; ++i)
@@ -227,7 +229,9 @@ void EVENT_USB_Device_StartOfFrame(void)
 {
 	/* One millisecond has elapsed, decrement the idle time remaining counter if it has not already elapsed */
 	if (IdleMSRemaining)
+	{
 	  IdleMSRemaining--;
+	}
 }
 
 /** Fills the given HID report data structure with the next HID report to send to the host.
@@ -368,7 +372,9 @@ void HID_Task(void)
 {
 	/* Device must be connected and configured for the task to run */
 	if (USB_DeviceState != DEVICE_STATE_Configured)
+	{
 	  return;
+	}
 
 	/* Send the next keypress report to the host */
 	SendNextReport();

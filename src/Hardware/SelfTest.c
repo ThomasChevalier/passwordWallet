@@ -15,7 +15,6 @@
 
 static void test_oled(void)
 {
-	blink(2);
 	oled_init();
 	// Test pixels
 	for(uint8_t y = 0; y < SSD1306_LCDHEIGHT; ++y)
@@ -39,50 +38,22 @@ static void test_oled(void)
 
 static void test_fram(void)
 {
-	uint16_t badByte = 0;
-	for(uint16_t i = 0; i < FRAM_BYTE_SIZE; ++i)
-	{
-		uint8_t value = fram_read_byte(i);
-		fram_write_byte(i, 0xAA);
-		uint8_t verif = fram_read_byte(i);
-		if(verif != 0xAA)
-		{
-			badByte = 1;
-			break;
-		}
-		else
-		{
-			fram_write_byte(i, 0x55);
-			verif = fram_read_byte(i);
-			if(verif != 0x55)
-			{
-				badByte = 1;
-				break;
-			}
-		}
-		fram_write_byte(i, value);
-	}
-	if(badByte)
+	if(!fram_test())
 	{
 		str_to_buffer(str_self_test_fram_fail_index);
 		draw_text(0, 0, str_buffer, 0);
-		draw_hex(100, 0, (uint8_t*)&badByte, 2);
 		draw_update();
 	}
 	else
 	{
 		str_to_buffer(str_self_test_fram_ok_index);
 		draw_text(0, 0, str_buffer, 0);
-		draw_hex(100, 0, (uint8_t*)&badByte, 2);
 		draw_update();
 	}
-	
-	_delay_ms(5000);
 }
 
 static void test_rfid(void)
 {
-	blink(2);
 	if(rfid_pcd_perform_self_test() == 0)
 	{
 		str_to_buffer(str_self_test_rfid_fail_index);
@@ -95,7 +66,6 @@ static void test_rfid(void)
 		draw_text(0, 10, str_buffer, 0);
 		draw_update();
 	}
-	_delay_ms(5000);
 }
 
 static void test_buttons(void)
@@ -127,19 +97,36 @@ static void test_buttons(void)
 
 static void test_keyboard(void)
 {
-	blink(2);
 	for(char c = ' '; c < '~'+1; ++c)
 	{
 		keyboard_send(&c, 1);
 	}
 }
+
+// Assume that all is initialized
+uint8_t self_test_check (void)
+{
+	// Check fram and rfid
+	if(fram_test() == 0 || rfid_pcd_perform_self_test() == 0)
+	{
+		draw_clear();
+		str_to_buffer(str_self_test_fail_index);
+		draw_text(0, 0, str_buffer, 0);
+		draw_update();
+		_delay_ms(3000);
+		self_test_execute();
+		return 0;
+	}
+	return 1;
+}
+
 void self_test_execute(void)
 {
 	blink(5);
-	_delay_ms(5000);
 	test_oled();
 	test_fram();
 	test_rfid();
 	test_buttons();
 	test_keyboard();
+	blink(5);
 }
