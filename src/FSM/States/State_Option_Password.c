@@ -9,6 +9,7 @@
 #include "../../Graphics/ProgressBar.h"
 #include "../../Graphics/String.h"
 
+#include "../../Security/Security.h"
 #include "../../Security/Password.h"
 #include "../../Security/Password_List.h"
 
@@ -32,7 +33,6 @@ static void do_change_pwd(void)
 
 	password_read_data(CURRENT_PASSWORD_ID, tempPwd, KEY);
 
-
 	if(!type_string((char*)tempPwd, 31))
 	{
 		// If nothing changed
@@ -47,8 +47,7 @@ static void do_change_pwd(void)
 
 	password_set_data(CURRENT_PASSWORD_ID, tempPwd, strLen, KEY);
 
-	// Get the list sorted
-	pwd_list_sort_alpha();
+	security_erase_data(tempPwd, 32);
 
 	progress_end();
 }
@@ -71,6 +70,7 @@ static void do_change_usr_name(void)
 	progress_begin(21 + 64 - strLen);
 
 	password_set_usr_name(CURRENT_PASSWORD_ID, tempStr, strLen, KEY);
+	security_erase_data(tempStr, 64);
 
 	progress_end();
 }
@@ -86,6 +86,8 @@ static void do_change_name(void)
 	}
 
 	password_set_name(CURRENT_PASSWORD_ID, (uint8_t*)name, 32);
+	// Get the list sorted
+	pwd_list_sort_alpha();
 }
 
 static void do_delete_password(void)

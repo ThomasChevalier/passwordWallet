@@ -60,7 +60,7 @@ static void do_new_pwd(void)
 
 	draw_clear();
 	str_option_to_buffer(str_option_addPwd_index);
-	draw_text(17, 40, str_buffer, 0);
+	draw_text(12, 40, str_buffer, 0);
 	uint8_t strLen = strlen(pwdData);
 	uint8_t cpx = 21 + (32-strLen);
 	cpx += 21 +(64-strlen(tempStr));

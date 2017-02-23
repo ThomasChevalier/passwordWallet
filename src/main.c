@@ -43,8 +43,6 @@ int main(void)
 	hardware_init();
 	security_init();
 
-	program_init();
-
 	// Check the device
 	if(!self_test_check())
 	{
@@ -53,6 +51,8 @@ int main(void)
 		draw_update();
 		while(1);
 	}
+
+	program_init();
 
 	// If the device has not been initialized yet
 	const uint8_t optFlag = fram_read_byte(OFFSET_OPTIONS_FLAG);
@@ -105,12 +105,27 @@ int main(void)
 
 		if(FIRST_PRESS)
 		{
-			_delay_ms(150);
+			for(uint8_t i = 0; i < 150; ++i)
+			{
+				_delay_ms(1);
+				if(!RUNNING)
+				{
+					break;
+				}
+			}
 		}
 		else
 		{
-			_delay_ms(50);
+			for(uint8_t i = 0; i < 50; ++i)
+			{
+				_delay_ms(1);
+				if(!RUNNING)
+				{
+					break;
+				}
+			}
 			
 		}
 	}
+	security_erase_data(KEY, 16);
 }

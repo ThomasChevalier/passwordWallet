@@ -21,7 +21,7 @@
 #define WIDTH 128
 #define HEIGHT 64
 
-#ifndef FRAM_BUFFER
+#ifndef STORE_SCREEN_BUFFER_IN_FRAM
 static uint8_t buffer[SSD1306_LCDHEIGHT * SSD1306_LCDWIDTH / 8] =
 {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -205,9 +205,9 @@ void oled_draw_pixel(uint8_t x, uint8_t y, uint8_t color)
 	}
 
 	// x is which column
-	#ifdef FRAM_BUFFER
+	#ifdef STORE_SCREEN_BUFFER_IN_FRAM
 
-	uint8_t buf = fram_read_byte(START_OF_OLED_BUFFER + (x+ (y/8)*WIDTH));
+	uint8_t buf = fram_read_byte(OFFSET_OLED_BUFFER + (x+ (y/8)*WIDTH));
 	uint8_t val = (1 << (y&7));
 	switch (color)
 	{
@@ -221,7 +221,7 @@ void oled_draw_pixel(uint8_t x, uint8_t y, uint8_t color)
 		buf ^= val;
 		break;
 	}
-	fram_write_byte(START_OF_OLED_BUFFER + (x+ (y/8)*WIDTH), buf);
+	fram_write_byte(OFFSET_OLED_BUFFER + (x+ (y/8)*WIDTH), buf);
 
 	#else
 
@@ -285,7 +285,7 @@ void oled_display(void)
 	oled_dc_high();
 	oled_select();
 
-	#ifdef FRAM_BUFFER
+	#ifdef STORE_SCREEN_BUFFER_IN_FRAM
 	uint8_t pixBuff[64];
 	
 	uint8_t i = 0;
@@ -293,7 +293,7 @@ void oled_display(void)
 	for(; i < ((HEIGHT * WIDTH / 8) / 64); ++i)
 	{
 		oled_deselect();
-		fram_read_bytes(START_OF_OLED_BUFFER + i*64, pixBuff, 64);
+		fram_read_bytes(OFFSET_OLED_BUFFER + i*64, pixBuff, 64);
 		oled_setup_spi();
 		oled_select();
 		for(j = 0; j < 64; ++j)
@@ -318,7 +318,7 @@ void oled_display(void)
 void oled_clear_display(void)
 {
 	uint16_t i=0;
-	#ifdef FRAM_BUFFER
+	#ifdef STORE_SCREEN_BUFFER_IN_FRAM
 	uint8_t zeroArray[64] = {0};
 	for(; i < ((HEIGHT * WIDTH / 8) / 64); ++i)
 	{

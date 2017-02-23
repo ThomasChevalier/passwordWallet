@@ -1,0 +1,3 @@
+#!/bin/bash
+# This script check if the microcontroller is detected and retrieve fuse option into two file
+avrdude -p m32u4 -U lfuse:r:low_fuse_val.hex:h -U hfuse:r:high_fuse_val.hex:h -cstk500v1 -P/dev/ttyACM0 -b19200

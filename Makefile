@@ -12,7 +12,7 @@ SDIR=src
 CDIR=src/UsbConfig
 SRC          = $(wildcard $(SDIR)/*.c) $(LUFA_SRC_USB) $(wildcard $(SDIR)/*/*.c) $(wildcard $(SDIR)/FSM/States/*.c)
 LUFA_PATH    = ./LUFA
-CC_FLAGS     = -DUSE_LUFA_CONFIG_HEADER -I$(CDIR)/ -flto -s -fdata-sections -Werror 
+CC_FLAGS     = -DUSE_LUFA_CONFIG_HEADER -I$(CDIR)/ -flto -s -fdata-sections -Werror
 LD_FLAGS     = -Os -flto -s
 
 # Default target

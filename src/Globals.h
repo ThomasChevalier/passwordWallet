@@ -3,6 +3,9 @@
 
 #include <stdint.h>
 
+#undef STORE_SCREEN_BUFFER_IN_FRAM
+#define KEYBOARD_ENABLE
+
 // This file should contain the global variables used in this project
 
 // Define if this is the first pression on a button
@@ -28,7 +31,6 @@ extern uint8_t FIRST_PRESS;
 // /////////////////////////////////////// //
 //  Finite state machine related variables //
 // /////////////////////////////////////// //
-
 
 extern volatile uint8_t RUNNING; // Is the program running ?
 extern uint8_t GLOBALS_EVENTS;   // Current events, not to be accessed by interrupt
@@ -57,7 +59,14 @@ extern uint8_t GLOBALS_EVENTS;   // Current events, not to be accessed by interr
 #define OFFSET_NUM_PWD (OFFSET_FIRST_PWD_ALPHA + SIZE_FIRST_PWD_ALPHA) /* 3 */
 #define SIZE_NUM_PWD (1)
 
-#define OFFSET_ENTROPY_SIZE (OFFSET_NUM_PWD + SIZE_NUM_PWD) /* 4 */
+#define OFFSET_OLED_BUFFER (OFFSET_NUM_PWD + SIZE_NUM_PWD) /* 3 */
+#ifdef STORE_SCREEN_BUFFER_IN_FRAM
+#define SIZE_OLED_BUFFER (1024)
+#else
+#define SIZE_OLED_BUFFER (0)
+#endif
+
+#define OFFSET_ENTROPY_SIZE (OFFSET_OLED_BUFFER + SIZE_OLED_BUFFER) /* 4 */
 #define SIZE_ENTROPY_SIZE (2)
 
 #define OFFSET_ENTROPY_POOL (OFFSET_ENTROPY_SIZE + SIZE_ENTROPY_SIZE) /* 6 */
@@ -94,7 +103,6 @@ extern uint8_t GLOBALS_EVENTS;   // Current events, not to be accessed by interr
 #define PWD_SORTING_USAGE (1)
 #define PWD_SORTING_ALPHA (2)
 
-// For test purpose key is 000102030405060708090A0B0C0D0E0F
 extern uint8_t KEY[16]; // The main 128 AES key
 extern uint8_t CURRENT_PASSWORD_ID;      // The current password id, start to 0, it is in the order of the memory
 
@@ -102,15 +110,11 @@ extern uint8_t CURRENT_PASSWORD_ID;      // The current password id, start to 0,
 // Options stored in FRAM //
 // ////////////////////// //
 
-#undef FRAM_BUFFER
-
 extern uint8_t OPTIONS_FLAG;     // The options flag stored in fram
 
 extern uint8_t NUM_PWD;         // bytes 6 of fram
 
 extern uint8_t MEMORY_MAP[SIZE_MEMORY_MAP]; // The memory map
-
-#define KEYBOARD_ENABLE
 
 void blink(uint8_t times);
 

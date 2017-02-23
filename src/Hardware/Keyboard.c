@@ -6,6 +6,8 @@
 
 #include "Ascii2Keycode.h"
 
+#include <avr/io.h>
+
 #ifdef KEYBOARD_ENABLE
 
 /** Indicates what report mode the host has requested, true for normal HID reporting mode, \c false for special boot
@@ -104,7 +106,7 @@ void EVENT_USB_Device_Connect(void)
  */
 void EVENT_USB_Device_Disconnect(void)
 {
-	
+	RUNNING = 0;
 }
 
 /** Event handler for the USB_ConfigurationChanged event. This is fired when the host sets the current configuration

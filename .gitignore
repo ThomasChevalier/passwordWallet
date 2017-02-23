@@ -1,6 +1,5 @@
 build/
 *.old
-oldSources/
 *.[do]
 *.hex
 depend/

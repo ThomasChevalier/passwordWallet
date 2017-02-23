@@ -4,8 +4,6 @@
 
 #include "../Globals.h"
 
-#include "Aes.h"
-#include "Random.h"
 #include "Password.h"
 
 #include "../Graphics/ProgressBar.h"
@@ -146,14 +144,28 @@ uint8_t pwd_list_get_prev_pwd_id_sort_none (uint8_t pwd_id)
 	return pwd_id;
 }
 
+static uint8_t get_id_helper(uint8_t pwd_id, uint8_t(*read_first)(uint8_t), uint8_t(*read_second)(uint8_t))
+{
+	uint8_t id = read_first(pwd_id);
+	// This is the beginning of the list
+	if(id == MAXIMUM_NUMBER_OF_PWD)
+	{
+		for(uint8_t i = 0; i < NUM_PWD-1; ++i)
+		{
+			pwd_id = read_second(pwd_id);
+		}
+		return pwd_id;
+	}
+	return id;
+}
 uint8_t pwd_list_get_prev_pwd_id_sort_usage (uint8_t pwd_id)
 {
-	return password_read_prev_pwd_util(pwd_id);
+	return get_id_helper(pwd_id, password_read_prev_pwd_util, password_read_next_pwd_util);
 }
 
 uint8_t pwd_list_get_prev_pwd_id_sort_alpha (uint8_t pwd_id)
 {
-	return password_read_prev_pwd_alpha(pwd_id);
+	return get_id_helper(pwd_id, password_read_prev_pwd_alpha, password_read_next_pwd_alpha);
 }
 
 
@@ -184,12 +196,12 @@ uint8_t pwd_list_get_next_pwd_id_sort_none (uint8_t pwd_id)
 
 uint8_t pwd_list_get_next_pwd_id_sort_usage (uint8_t pwd_id)
 {
-	return password_read_next_pwd_util(pwd_id);
+	return get_id_helper(pwd_id, password_read_next_pwd_util, password_read_prev_pwd_util);
 }
 
 uint8_t pwd_list_get_next_pwd_id_sort_alpha (uint8_t pwd_id)
 {
-	return password_read_next_pwd_alpha(pwd_id);
+	return get_id_helper(pwd_id, password_read_next_pwd_alpha, password_read_prev_pwd_alpha);
 }
 
 
@@ -201,13 +213,41 @@ void pwd_list_delete_pwd (uint8_t pwd_id)
 	uint8_t prev_alpha = password_read_prev_pwd_alpha(pwd_id);
 	uint8_t next_alpha = password_read_next_pwd_alpha(pwd_id);
 
-	// Update the list
-	password_set_next_pwd_util(prev_util, next_util);
-	password_set_next_pwd_alpha(prev_alpha, next_alpha);
+	// First password of the list util
+	if(next_util != MAXIMUM_NUMBER_OF_PWD)
+	{
+		password_set_prev_pwd_util(next_util, prev_util);
+	}
+	if(prev_util == MAXIMUM_NUMBER_OF_PWD)
+	{
+		// If it is not the last too
+		if(next_util != MAXIMUM_NUMBER_OF_PWD)
+		{
+			fram_write_byte(OFFSET_FIRST_PWD_UTIL, next_util);
+		}
+	}
+	else
+	{
+		password_set_next_pwd_util(prev_util, next_util);
+	}
 
-	password_set_prev_pwd_util(next_util, prev_util);
-	password_set_prev_pwd_alpha(next_alpha, prev_alpha);
-
+	// First password of the list alpha
+	if(next_alpha != MAXIMUM_NUMBER_OF_PWD)
+	{
+		password_set_prev_pwd_alpha(next_alpha, prev_alpha);
+	}
+	if(prev_alpha == MAXIMUM_NUMBER_OF_PWD)
+	{
+		// If it is not the last too
+		if(next_alpha != MAXIMUM_NUMBER_OF_PWD)
+		{
+			fram_write_byte(OFFSET_FIRST_PWD_ALPHA, next_alpha);
+		}
+	}
+	else
+	{
+		password_set_next_pwd_alpha(prev_alpha, next_alpha);
+	}
 	
 	// Unset memory map flag for this chunk
 	const uint8_t mem_byte_id = pwd_id / 8;
@@ -222,7 +262,7 @@ void pwd_list_delete_pwd (uint8_t pwd_id)
 	// Clear the whole password chunk
 	for(uint8_t i = 0; i < SIZE_OF_PWD_BLOCK; ++i)
 	{
-		fram_write_byte(PWD_ADDR(pwd_id, 0), 0);
+		fram_write_byte(PWD_ADDR(pwd_id, 0)+i, 0);
 	}
 }
 
@@ -236,7 +276,7 @@ uint8_t pwd_list_add_pwd (uint8_t* name, uint8_t* data, uint8_t* usrName)
 		// Loop in all the bit of the bytes
 		for(uint8_t j = 0; j < 8 && (!chunk_free); ++j)
 		{
-			if(i * 8 + j > MAXIMUM_NUMBER_OF_PWD)
+			if(i * 8 + j >= MAXIMUM_NUMBER_OF_PWD)
 				break;
 
 			if( (MEMORY_MAP[i] & (1<<j))== 0) // the bit is not set, there is a free chunk
@@ -254,17 +294,18 @@ uint8_t pwd_list_add_pwd (uint8_t* name, uint8_t* data, uint8_t* usrName)
 		return 0; // Not enough memory
 	}
 
-	uint8_t prev_util	= 0;
-	uint8_t next_util	= 0;
-	uint8_t prev_alpha	= 0;
-	uint8_t next_alpha	= 0;
+	// Initial value if there is no password
+	uint8_t prev_util	= MAXIMUM_NUMBER_OF_PWD;
+	uint8_t next_util	= MAXIMUM_NUMBER_OF_PWD;
+	uint8_t prev_alpha	= MAXIMUM_NUMBER_OF_PWD;
+	uint8_t next_alpha	= MAXIMUM_NUMBER_OF_PWD;
 
 	// If this is not the first password
 	if(NUM_PWD != 0)
 	{
 		// The new password became the last of the list
 		// The previous element is the last of the list
-		// The next element is the begin of the list
+		// The next element is nothing
 
 		uint8_t last_pwd_util = pwd_list_get_prev_pwd_id_sort_usage(pwd_list_get_first_pwd_id_sort_usage());
 		uint8_t last_pwd_alpha = pwd_list_get_prev_pwd_id_sort_alpha(pwd_list_get_first_pwd_id_sort_alpha());
@@ -273,17 +314,13 @@ uint8_t pwd_list_add_pwd (uint8_t* name, uint8_t* data, uint8_t* usrName)
 		prev_util = last_pwd_util;
 		prev_alpha = last_pwd_alpha;
 
-		// Point to the next element of the last of the list (before insertion). This should be the beginning of the list
-		next_util = pwd_list_get_first_pwd_id_sort_usage();
-		next_alpha = pwd_list_get_first_pwd_id_sort_alpha();
+		// Point to an invalid id to point out that this is the end of the list
+		next_util = MAXIMUM_NUMBER_OF_PWD;
+		next_alpha = MAXIMUM_NUMBER_OF_PWD;
 
 		// Set the last of the list to point to this new pwd
 		password_set_next_pwd_util	(prev_util,  pwd_id);
 		password_set_next_pwd_alpha	(prev_alpha, pwd_id);
-
-		// Set the first of the list to point to this new pwd
-		password_set_prev_pwd_util	(next_util,  pwd_id);
-		password_set_prev_pwd_alpha	(next_alpha, pwd_id);
 	}
 
 	// Set up list
@@ -307,45 +344,43 @@ uint8_t pwd_list_add_pwd (uint8_t* name, uint8_t* data, uint8_t* usrName)
 	// We have inserted the password at the end of each list (alpha and usage) but it is not sorted.
 	// We must sort them.
 	//pwd_list_sort_usage();
-	//pwd_list_sort_alpha();
+	pwd_list_sort_alpha();
 	return 1; // Success
 }
 
-void pwd_list_swap (uint8_t pwd1, uint8_t pwd2)
+
+static void swap_neighbours(uint8_t lower, uint8_t upper,
+							uint8_t(*read_prev)(uint8_t), uint8_t(*read_next)(uint8_t),
+							void(*set_prev)(uint8_t, uint8_t), void (*set_next)(uint8_t, uint8_t))
 {
-	// Save values
-	const uint8_t prev_util1	= password_read_prev_pwd_util	(pwd1);
-	const uint8_t next_util1	= password_read_next_pwd_util	(pwd1);
-	const uint8_t prev_alpha1	= password_read_prev_pwd_alpha	(pwd1);
-	const uint8_t next_alpha1	= password_read_next_pwd_alpha	(pwd1);
+	const uint8_t prev_lower	= read_prev	(lower);
+	const uint8_t next_upper	= read_next	(upper);
 
-	const uint8_t prev_util2	= password_read_prev_pwd_util	(pwd2);
-	const uint8_t next_util2	= password_read_next_pwd_util	(pwd2);
-	const uint8_t prev_alpha2	= password_read_prev_pwd_alpha	(pwd2);
-	const uint8_t next_alpha2	= password_read_next_pwd_alpha	(pwd2);
+	// First case : the lower id
+	set_prev (lower, upper);
+	set_next (lower, next_upper);
 
-	// Exchange values of pwd 1 and pwd 2
-	password_set_prev_pwd_util	(pwd1, prev_util2);
-	password_set_next_pwd_util	(pwd1, next_util2);
-	password_set_prev_pwd_alpha	(pwd1, prev_alpha2);
-	password_set_next_pwd_alpha	(pwd1, next_alpha2);
+	// Upper id
+	set_prev (upper, prev_lower);
+	set_next (upper, lower);
 
-	password_set_prev_pwd_util	(pwd2, prev_util1);
-	password_set_next_pwd_util	(pwd2, next_util1);
-	password_set_prev_pwd_alpha	(pwd2, prev_alpha1);
-	password_set_next_pwd_alpha	(pwd2, next_alpha1);
+	if(prev_lower != MAXIMUM_NUMBER_OF_PWD)
+	{
+		set_next(prev_lower, upper);
+	}
+	if(next_upper != MAXIMUM_NUMBER_OF_PWD)
+	{
+		set_prev	(next_upper, lower);
+	}
+}
+static void swap_neighbours_util(uint8_t lower, uint8_t upper)
+{
+	swap_neighbours(lower, upper, password_read_prev_pwd_util, password_read_next_pwd_util, password_set_prev_pwd_util, password_set_next_pwd_util);
+}
 
-	// Set the previous and the next password of pwd 1 to point to pwd 2
-	password_set_next_pwd_util	(prev_util1,	pwd2);
-	password_set_next_pwd_alpha	(prev_alpha1,	pwd2);
-	password_set_prev_pwd_util	(next_util1,	pwd2);
-	password_set_prev_pwd_alpha	(next_alpha1,	pwd2);
-
-	// Set the previous and the next password of pwd 2 to point to pwd 1
-	password_set_next_pwd_util	(prev_util2,	pwd1);
-	password_set_next_pwd_alpha	(prev_alpha2,	pwd1);
-	password_set_prev_pwd_util	(next_util2,	pwd1);
-	password_set_prev_pwd_alpha	(next_alpha2,	pwd1);
+static void swap_neighbours_alpha(uint8_t lower, uint8_t upper)
+{
+	swap_neighbours(lower, upper, password_read_prev_pwd_alpha, password_read_next_pwd_alpha, password_set_prev_pwd_alpha, password_set_next_pwd_alpha);
 }
 
 void pwd_list_sort_usage (void)
@@ -355,18 +390,31 @@ void pwd_list_sort_usage (void)
 		return;
 	}
 
+
 	const uint8_t first = pwd_list_get_first_pwd_id_sort_usage();
 	uint8_t current = password_read_next_pwd_util(first);
 	uint8_t prev = first;
 
-	// The condition will be met because the list loop
-	while(current != first)
+	for(uint8_t i = 0; i < NUM_PWD-1; ++i)
 	{
-		uint16_t counter = password_read_counter(current);
-		while(counter < password_read_counter(prev))
+		uint16_t current_count = password_read_counter(current);
+		uint16_t prev_count = password_read_counter(prev);
+
+
+		while(prev != MAXIMUM_NUMBER_OF_PWD && current_count < prev_count)
 		{
-			pwd_list_swap(current, prev);
+			// If we swap with the first pwd, be sure that we update the first pwd id
+			if(prev == first)
+			{
+				fram_write_byte(OFFSET_FIRST_PWD_UTIL, current);
+			}
+			swap_neighbours_util(prev, current);
 			prev = password_read_prev_pwd_util(current);
+			if(prev == MAXIMUM_NUMBER_OF_PWD)
+			{
+				break;
+			}
+			prev_count = password_read_counter(prev);
 		}
 		current = password_read_next_pwd_util(current);
 	}
@@ -382,9 +430,9 @@ void pwd_list_sort_alpha (void)
 	const uint8_t first = pwd_list_get_first_pwd_id_sort_alpha();
 	uint8_t current = password_read_next_pwd_alpha(first);
 	uint8_t prev = first;
+	uint8_t sorting_position = current;
 
-	// The condition will be met because the list loop
-	while(current != first)
+	while(current != MAXIMUM_NUMBER_OF_PWD)
 	{
 		char nameCurrent[32];
 		password_read_name(current, (uint8_t*)nameCurrent);
@@ -392,12 +440,39 @@ void pwd_list_sort_alpha (void)
 		char namePrev[32];
 		password_read_name(prev, (uint8_t*)namePrev);
 
-		while(strcmp(nameCurrent, namePrev) < 0)
+		while(prev != MAXIMUM_NUMBER_OF_PWD && strcmp(nameCurrent, namePrev) < 0)
 		{
-			pwd_list_swap(current, prev);
+			// If we swap with the first pwd, be sure that we update the first pwd id
+			if(prev == first)
+			{
+				fram_write_byte(OFFSET_FIRST_PWD_ALPHA, current);
+			}
+			swap_neighbours_alpha(prev, current);
+			sorting_position = prev;
 			prev = password_read_prev_pwd_alpha(current);
+			if(prev == MAXIMUM_NUMBER_OF_PWD)
+			{
+				break;
+			}
 			password_read_name(prev, (uint8_t*) namePrev);
 		}
-		current = password_read_next_pwd_alpha(current);
+		current = password_read_next_pwd_alpha(sorting_position);
 	}
+	// // The condition will be met because the list loop
+	// while(current != first)
+	// {
+	// 	char nameCurrent[32];
+	// 	password_read_name(current, (uint8_t*)nameCurrent);
+
+	// 	char namePrev[32];
+	// 	password_read_name(prev, (uint8_t*)namePrev);
+
+	// 	while(strcmp(nameCurrent, namePrev) < 0)
+	// 	{
+	// 		pwd_list_swap(current, prev);
+	// 		prev = password_read_prev_pwd_alpha(current);
+	// 		password_read_name(prev, (uint8_t*) namePrev);
+	// 	}
+	// 	current = password_read_next_pwd_alpha(current);
+	// }
 }

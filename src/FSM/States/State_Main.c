@@ -7,8 +7,16 @@
 
 #include "../../Hardware/Keyboard.h"
 
+#include "../../Security/Security.h"
 #include "../../Security/Password.h"
 #include "../../Security/Password_List.h"
+
+volatile void *spc_memset(volatile void *dst, int c, size_t len) {
+	volatile char *buf;
+
+	for (buf = (volatile char *)dst;  len;  buf[--len] = c);
+	return dst;
+}
 
 void state_main_begin (void)
 {
@@ -33,7 +41,11 @@ uint8_t state_main_transition (uint8_t event)
 	{
 		uint8_t pwd_data[32] = {0};
 		password_read_data(CURRENT_PASSWORD_ID, pwd_data, KEY);
+
 		//keyboard_send((char*)pwd_data, strlen((char*)pwd_data));
+
+		security_erase_data(pwd_data, 32);
+		
 		password_increment_counter(CURRENT_PASSWORD_ID);
 		if(pwd_list_get_sorting_method() == PWD_SORTING_USAGE)
 		{

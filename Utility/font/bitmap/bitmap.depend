@@ -1,0 +1,93 @@
+# depslib dependency file v1.0
+1401891788 source:c:\users\toshiba\documents\programmation\console\bitmap\main.cpp
+	<iostream>
+	"Bitmap.h"
+	"Pixel.h"
+	"FileHeader.h"
+	"ImageHeader.h"
+
+1401891788 er.h"
+
+1401891143 source:c:\users\toshiba\documents\programmation\console\bitmap\bitmap.cpp
+	"Bitmap.h"
+
+1397301447 
+
+1401889780 c:\users\toshiba\documents\programmation\console\bitmap\bitmap.h
+	<string>
+	<deque>
+	<fstream>
+	<iostream>
+	<cmath>
+	<cassert>
+	<memory>
+	"Pixel.h"
+	"FileHeader.h"
+	"ImageHeader.h"
+	"Matrix.h"
+
+1397301490 c:\users\toshiba\documents\programmation\console\bitmap\pixel.h
+	<ostream>
+	"Color.h"
+
+1397291641 c:\users\toshiba\documents\programmation\console\bitmap\color.h
+
+1397383609 c:\users\toshiba\documents\programmation\console\bitmap\fileheader.h
+
+1397383444 c:\users\toshiba\documents\programmation\console\bitmap\imageheader.h
+
+1397389513 c:\users\toshiba\documents\programmation\console\bitmap\matrix.h
+	<vector>
+	<algorithm>
+	<exception>
+	<stdexcept>
+
+1397389513 >
+
+1397301447 source:c:\users\toshiba\documents\programmation\console\bitmap\pixel.cpp
+	"Pixel.h"
+
+1487624068 source:/home/thomas/Documents/Git/PasswordWallet/Utility/font/bitmap/main.cpp
+	<iostream>
+	<iomanip>
+	<sstream>
+	"Bitmap.h"
+	"Pixel.h"
+	"FileHeader.h"
+	"ImageHeader.h"
+
+1402330686 /home/thomas/Documents/Git/PasswordWallet/Utility/font/bitmap/Bitmap.h
+	<string>
+	<deque>
+	<fstream>
+	<iostream>
+	<cmath>
+	<cassert>
+	<memory>
+	"Pixel.h"
+	"FileHeader.h"
+	"ImageHeader.h"
+	"Matrix.h"
+
+1402325970 /home/thomas/Documents/Git/PasswordWallet/Utility/font/bitmap/Pixel.h
+	<ostream>
+	"Color.h"
+
+1487616471 /home/thomas/Documents/Git/PasswordWallet/Utility/font/bitmap/Color.h
+
+1397383608 /home/thomas/Documents/Git/PasswordWallet/Utility/font/bitmap/FileHeader.h
+
+1397383444 /home/thomas/Documents/Git/PasswordWallet/Utility/font/bitmap/ImageHeader.h
+
+1487624141 /home/thomas/Documents/Git/PasswordWallet/Utility/font/bitmap/Matrix.h
+	<vector>
+	<algorithm>
+	<exception>
+	<stdexcept>
+
+1397301446 source:/home/thomas/Documents/Git/PasswordWallet/Utility/font/bitmap/Pixel.cpp
+	"Pixel.h"
+
+1487624135 source:/home/thomas/Documents/Git/PasswordWallet/Utility/font/bitmap/Bitmap.cpp
+	"Bitmap.h"
+

@@ -8,6 +8,7 @@
 
 #include "Aes.h"
 #include "Password.h"
+#include "Security.h"
 
 #include "../Hardware/Fram.h"
 
@@ -100,5 +101,6 @@ void encryption_update_key(uint8_t *new_key)
 			}
 		}
 	}
+	security_erase_data(buffer, 64);
 	memcpy(KEY, new_key, 16);
 }

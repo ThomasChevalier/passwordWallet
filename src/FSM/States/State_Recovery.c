@@ -36,12 +36,12 @@ void state_recovery_do_full_reset(void)
 	}
 	progress_end();
 
-	// Get a master key
-	change_master_key();
-
 	// Clear variables
 	CURRENT_PASSWORD_ID = GLOBALS_EVENTS = FIRST_PRESS = NUM_PWD = OPTIONS_FLAG = 0;
 	memset(MEMORY_MAP, 0, SIZE_MEMORY_MAP);
+
+	// Get a master key
+	change_master_key();
 
 	// Device is now initialized !
 	OPTIONS_FLAG |= (1<<OPTIONS_FLAG_OFFSET_INITIALIZED);

@@ -125,12 +125,21 @@ void draw_main_menu(void)
 	if(NUM_PWD != 0)
 	{
 		char pwdName[32];
-		password_read_name(pwd_list_get_prev_pwd_id(CURRENT_PASSWORD_ID), (uint8_t*)pwdName);
+
+		uint8_t pwd_id = pwd_list_get_prev_pwd_id(CURRENT_PASSWORD_ID);
+		password_read_name(pwd_id, (uint8_t*)pwdName);
 		draw_text(10, 2 , pwdName, 0);
-		password_read_name(CURRENT_PASSWORD_ID, (uint8_t*)pwdName);
+		draw_hex(50, 2, &pwd_id, 1);
+
+		pwd_id = CURRENT_PASSWORD_ID;
+		password_read_name(pwd_id, (uint8_t*)pwdName);
 		draw_text(10, 23, pwdName, 0);
-		password_read_name(pwd_list_get_next_pwd_id(CURRENT_PASSWORD_ID), (uint8_t*)pwdName);
+		draw_hex(50, 23, &pwd_id, 1);
+
+		pwd_id = pwd_list_get_next_pwd_id(CURRENT_PASSWORD_ID);
+		password_read_name(pwd_id, (uint8_t*)pwdName);
 		draw_text(10, 46, pwdName, 0);
+		draw_hex(50, 46, &pwd_id, 1);
 	}
 	
 	draw_update();

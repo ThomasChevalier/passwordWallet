@@ -29,7 +29,6 @@ void	pwd_list_delete_pwd						(uint8_t pwd_id);
 // Return the new password id if success.
 uint8_t	pwd_list_add_pwd						(uint8_t* name, uint8_t* data, uint8_t* usrName);	// Return 1 if success, 0 if memory is full
 
-void	pwd_list_swap							(uint8_t pwd1, uint8_t pwd2);
 void	pwd_list_sort_usage						(void);
 void	pwd_list_sort_alpha						(void);
 
