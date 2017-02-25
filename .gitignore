@@ -1,11 +1,13 @@
-build/
+Code/build/
 *.old
 *.[do]
 *.hex
-depend/
+Code/depend/
 *.bin
 *.eep
 *.elf
 *.lss
 *.map
 *.sym
+Utility/editor/build-pwd_wallet_editor-Desktop_Qt_5_8_0_GCC_64bit-Debug/
+Utility/editor/build-pwd_wallet_editor-Desktop_Qt_5_8_0_GCC_64bit-Release/
