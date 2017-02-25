@@ -10,7 +10,7 @@ Introduction
 ------------
 
 The self test permits the device to test itself. Maximum duration of the procedure is ~38 seconds
-
+If the lend blink 3 times it indicate a failure for the test, 2 times it indicates a success and 1 times it indicates the beginning of a sequence
 I. Start of self test (5 seconds)
 	1. The led blink 5 times (for a total duration of 5 seconds)
 
