@@ -28,6 +28,11 @@ void state_wait_card_begin(void)
 
 uint8_t state_wait_card_transition (uint8_t event)
 {
+	if(event & EVENT_INIT_COMMUNICATION)
+	{
+		return STATE_COMMUNICATION;
+	}
+	
 	// There is a new card to read
 	if(rfid_PICC_IsNewCardPresent() && rfid_PICC_ReadCardSerial())
 	{

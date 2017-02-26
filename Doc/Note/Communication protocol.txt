@@ -1,0 +1,33 @@
+=========================================
+             PASSWORD WALLET             
+           COMMUNICATION PROTOCOL          
+
+By Thomas Chevalier (c) 2017
+All rights reserved.
+=========================================
+
+Introduction
+------------
+
+The pc and the device can communicate through a virtual serial port, emulated by the device itself.
+The pc send all the command, the device only respond to the command.
+Command are shown below.
+
+Command
+-------
+
+|-------------------------------|---------|-----------------------------------------------------------------------------------------------------------------
+|          Command              |  Byte   |                                                  Description
+|-------------------------------|---------|-----------------------------------------------------------------------------------------------------------------
+|       Init communication      |  0xA5   | When the device receive this byte and the communication is not inited, it switch to communication state
+|-------------------------------|---------|-----------------------------------------------------------------------------------------------------------------
+|       End communication       |  0x5A   | When the device receive this byte and the communication is inited, it switch to main state and end all transfers
+|-------------------------------|---------|-----------------------------------------------------------------------------------------------------------------
+|           Get Fram            |  0x01   | Request the device to send all the content of the fram
+|-------------------------------|---------|-----------------------------------------------------------------------------------------------------------------
+|           Set Fram            |  0x02   | The pc send an array of byte and the device must write it to the fram, from address 0 to the end
+|-------------------------------|---------|-----------------------------------------------------------------------------------------------------------------
+|            Get Key            |  0x03   | Request the device to send the main KEY
+|-------------------------------|---------|-----------------------------------------------------------------------------------------------------------------
+|            Set Key            |  0x04   | The pc send 16 byte and the device interpret those byte as the main key (and check the key against the hash)
+|-------------------------------|---------|-----------------------------------------------------------------------------------------------------------------

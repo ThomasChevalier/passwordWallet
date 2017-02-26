@@ -113,6 +113,11 @@ void state_option_password_begin (void)
 
 uint8_t state_option_password_transition (uint8_t event)
 {
+	if(event & EVENT_INIT_COMMUNICATION)
+	{
+		return STATE_COMMUNICATION;
+	}
+	
 	if(event & EVENT_BUTTON_1)
 	{
 		if(currentChoice == 0)

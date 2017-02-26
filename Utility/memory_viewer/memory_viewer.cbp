@@ -36,6 +36,16 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Unit filename="Application.cpp" />
+		<Unit filename="Application.h" />
+		<Unit filename="Command.cpp" />
+		<Unit filename="Command.h" />
+		<Unit filename="FileHelper.cpp" />
+		<Unit filename="FileHelper.h" />
+		<Unit filename="Info.cpp" />
+		<Unit filename="Info.h" />
+		<Unit filename="Password.cpp" />
+		<Unit filename="Password.h" />
 		<Unit filename="main.cpp" />
 		<Extensions>
 			<code_completion />

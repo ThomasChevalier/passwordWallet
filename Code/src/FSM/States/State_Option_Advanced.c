@@ -38,16 +38,6 @@ static void do_show_key(void)
     draw_update();
 }
 
-static void do_serial_dump(void)
-{
-	uint8_t buffer[64];
-	for(uint16_t i = 0; i < FRAM_BYTE_SIZE / 64; ++i)
-	{
-		fram_read_bytes(i * 64, buffer, 64);
-		serial_send(buffer ,64);
-	}
-}
-
 void state_option_advanced_begin (void)
 {
 	currentChoice = 0;
@@ -58,6 +48,11 @@ void state_option_advanced_begin (void)
 
 uint8_t state_option_advanced_transition (uint8_t event)
 {
+	if(event & EVENT_INIT_COMMUNICATION)
+	{
+		return STATE_COMMUNICATION;
+	}
+	
 	// Let the user note his key when do_show_key is called
 	static uint8_t exit_at_next_event = 0;
 	if(exit_at_next_event && (event&EVENT_ALL_BUTTONS))
@@ -111,10 +106,6 @@ uint8_t state_option_advanced_transition (uint8_t event)
 		else if(currentChoice == 5)
 		{
 			state_recovery_do_full_reset();
-		}
-		else if(currentChoice == 6)
-		{
-			do_serial_dump();
 		}
 		return STATE_MAIN;
 	}

@@ -97,6 +97,11 @@ static void do_new_pwd(void)
 
 uint8_t state_options_transition (uint8_t event)
 {
+	if(event & EVENT_INIT_COMMUNICATION)
+	{
+		return STATE_COMMUNICATION;
+	}
+	
 	if(event & EVENT_BUTTON_1)
 	{
 		if(currentChoice == 0)

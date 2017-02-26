@@ -1,11 +1,11 @@
 #include "Serial.h"
 
-// For test only
+#include "../Globals.h"
+#include "../FSM/Events.h"
+
 #include "../Graphics/Drawing.h"
 
-#include "../Globals.h"
-#include "Buttons.h"
-#include "../FSM/Events.h"
+#include "../FSM/States/State_Communication.h"
 
 #ifdef SERIAL_ENABLE
 /** Contains the current baud rate and other settings of the virtual serial port. While this demo does not use
@@ -140,14 +140,13 @@ void CDC_Task(void)
 	if (USB_DeviceState != DEVICE_STATE_Configured)
 	  return;
 
-	/* Flag management - Only allow one string to be sent per action */
 	if (send_buffer_ptr != NULL && LineEncoding.BaudRateBPS)
 	{
 
 		/* Select the Serial Tx Endpoint */
 		Endpoint_SelectEndpoint(CDC_TX_EPADDR);
 
-		/* Write the String to the Endpoint */
+		/* Write the data to the Endpoint */
 		Endpoint_Write_Stream_LE(send_buffer_ptr, send_buffer_lenght, NULL);
 
 		send_buffer_ptr = NULL;
@@ -174,7 +173,7 @@ void CDC_Task(void)
 	/* Select the Serial Rx Endpoint */
 	Endpoint_SelectEndpoint(CDC_RX_EPADDR);
 
-	/* Throw away any received data from the host */
+	/* Get data from the host */
 	if (Endpoint_IsOUTReceived())
 	{
 		/* Create a temp buffer big enough to hold the incoming endpoint packet */
@@ -189,9 +188,7 @@ void CDC_Task(void)
 		/* Finalize the stream transfer to send the last packet */
 		Endpoint_ClearOUT();
 
-		draw_clear();
-		draw_hex(0, 0, buffer, dataLength);
-		draw_update();
+		state_communication_process_data(buffer, dataLength);
 	}
 }
 

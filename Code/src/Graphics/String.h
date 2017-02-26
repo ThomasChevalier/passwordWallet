@@ -41,6 +41,11 @@ DECLARE_STRING(str_self_test_button_ok);
 DECLARE_STRING(str_self_test_button_fail);
 DECLARE_STRING(str_self_test_fail);
 
+DECLARE_STRING(str_communication_what);
+DECLARE_STRING(str_communication_dont_unplug);
+DECLARE_STRING(str_communication_end);
+DECLARE_STRING(str_communication_unplug);
+
 extern PGM_P const string_table[] PROGMEM;
 
 DECLARE_STRING(str_option_password);
@@ -65,7 +70,6 @@ DECLARE_STRING(str_option_advanced_enableEncryption);
 DECLARE_STRING(str_option_advanced_showKey);
 DECLARE_STRING(str_option_advanced_selfTest);
 DECLARE_STRING(str_option_advanced_doFullReset);
-DECLARE_STRING(str_option_advanced_communicate);
 
 extern PGM_P const string_options_table[] PROGMEM;
 

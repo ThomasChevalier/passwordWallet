@@ -86,6 +86,11 @@ void state_recovery_begin (void)
 
 uint8_t state_recovery_transition (uint8_t event)
 {
+	if(event & EVENT_INIT_COMMUNICATION)
+	{
+		return STATE_COMMUNICATION;
+	}
+	
 	// Select recovery option
 	if(recovery_choice == 0)
 	{

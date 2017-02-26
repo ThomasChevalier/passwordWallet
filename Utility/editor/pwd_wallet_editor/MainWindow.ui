@@ -6,15 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>693</width>
+    <height>442</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Password Wallet Editor</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QVBoxLayout" name="verticalLayout">
+   <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
      <widget class="QLabel" name="labelConnect">
       <property name="text">
@@ -36,9 +36,47 @@
      <widget class="QPlainTextEdit" name="textArea"/>
     </item>
     <item>
-     <widget class="QPushButton" name="buttonSend">
+     <widget class="QWidget" name="widgetAction" native="true">
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <layout class="QGridLayout" name="gridLayout">
+         <item row="0" column="0">
+          <widget class="QPushButton" name="buttonSetFram">
+           <property name="text">
+            <string>Changer fram</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QPushButton" name="buttonGetFram">
+           <property name="text">
+            <string>Obtenir fram</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QPushButton" name="buttonSetKey">
+           <property name="text">
+            <string>Changer clef</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QPushButton" name="buttonGetKey">
+           <property name="text">
+            <string>Obtenir clef</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="buttonDisconnect">
       <property name="text">
-       <string>PushButton</string>
+       <string>Déconnexion</string>
       </property>
      </widget>
     </item>
@@ -49,7 +87,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>400</width>
+     <width>693</width>
      <height>26</height>
     </rect>
    </property>

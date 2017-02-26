@@ -48,7 +48,8 @@ int main(void)
 		{state_options_transition,			state_options_begin, 			state_options_end},				// STATE_OPTION
 		{state_option_password_transition,	state_option_password_begin, 	state_option_password_end},		// STATE_OPTION_PASSWORD
 		{state_option_sort_transition,		state_option_sort_begin, 		state_option_sort_end},			// STATE_OPTION_SORT
-		{state_option_advanced_transition,	state_option_advanced_begin, 	state_option_advanced_end}		// STATE_OPTION_ADVANCED 
+		{state_option_advanced_transition,	state_option_advanced_begin, 	state_option_advanced_end},		// STATE_OPTION_ADVANCED 
+		{state_communication_transition,	state_communication_begin,		state_communication_end}		// STATE_COMMUNICATION
 	};
 
 	State const * currentState = &states[STATE_WAIT_CARD];

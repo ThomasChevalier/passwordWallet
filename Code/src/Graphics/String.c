@@ -35,6 +35,11 @@ DEFINE_STRING(str_self_test_button_ok,		"BOUTON OK",					22	);
 DEFINE_STRING(str_self_test_button_fail,	"BOUTON HS",					23	);
 DEFINE_STRING(str_self_test_fail,			"ERREUR : appareil HS",			24	);
 
+DEFINE_STRING(str_communication_what,		"Transfert en cours ...",		25	);
+DEFINE_STRING(str_communication_dont_unplug,"NE PAS DEBRANCHER",			26	);
+DEFINE_STRING(str_communication_end,		"Transfert fini",				27	);
+DEFINE_STRING(str_communication_unplug,		"Debranchez puis branchez",		28	);
+
 PGM_P const string_table[] PROGMEM = 
 {
 	str_error_card,
@@ -65,7 +70,12 @@ PGM_P const string_table[] PROGMEM =
 	str_self_test_rfid_fail,
 	str_self_test_button_ok,
 	str_self_test_button_fail,
-	str_self_test_fail
+	str_self_test_fail,
+
+	str_communication_what,
+	str_communication_dont_unplug,
+	str_communication_end,
+	str_communication_unplug
 };
 
 DEFINE_STRING(str_option_password, "Mot de passe ...", 0);
@@ -90,7 +100,6 @@ DEFINE_STRING(str_option_advanced_enableEncryption, "Activer cryptage", 15);
 DEFINE_STRING(str_option_advanced_showKey, "Montrer clef maitre", 16);
 DEFINE_STRING(str_option_advanced_selfTest, "Auto test", 17);
 DEFINE_STRING(str_option_advanced_doFullReset, "FORMATER", 18);
-DEFINE_STRING(str_option_advanced_communicate, "SERIAL", 19);
 
 
 PGM_P const string_options_table[] PROGMEM = 
@@ -116,8 +125,7 @@ PGM_P const string_options_table[] PROGMEM =
 	str_option_advanced_enableEncryption,
 	str_option_advanced_showKey,
 	str_option_advanced_selfTest,
-	str_option_advanced_doFullReset,
-	str_option_advanced_communicate
+	str_option_advanced_doFullReset
 };
 
 void str_option_to_buffer(uint8_t index)

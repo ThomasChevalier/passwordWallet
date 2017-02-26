@@ -25,10 +25,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += main.cpp\
         MainWindow.cpp \
-    SerialSetupDialog.cpp
+    SerialSetupDialog.cpp \
+    SerialDevice.cpp
 
 HEADERS  += MainWindow.h \
-    SerialSetupDialog.h
+    SerialSetupDialog.h \
+    SerialDevice.h
 
 FORMS    += MainWindow.ui \
     SerialSetupDialog.ui

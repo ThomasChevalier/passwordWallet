@@ -13,34 +13,33 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     ui->textArea->hide();
-
-    QString fileName = QFileDialog::getSaveFileName(this, "Fichier de dump", "/home/");
-    if(!fileName.isEmpty())
-    {
-        m_savingFile.setFileName(fileName);
-        if(!m_savingFile.open(QFile::WriteOnly))
-        {
-            qDebug() << "Error opening " << fileName << " in write only mode.";
-        }
-    }
+    ui->widgetAction->hide();
+    ui->buttonDisconnect->hide();
 }
 
 MainWindow::~MainWindow()
 {
+    m_device.endCommunication();
     delete ui;
 }
 
-void MainWindow::slot_ready_read()
+void MainWindow::slot_fram_received(const QByteArray &fram)
 {
-    if(m_savingFile.isOpen())
+    QString fileName = QFileDialog::getSaveFileName(this, "Fichier dump fram", "/home/");
+    if(!fileName.isEmpty())
     {
-        m_savingFile.write(m_serial.readAll());
+        QFile savingFile(fileName);
+        if(!savingFile.open(QFile::WriteOnly))
+        {
+            qDebug() << "Error opening " << fileName << " in write only mode.";
+        }
+        savingFile.write(fram);
     }
-    else
-    {
-        ui->textArea->appendPlainText(QString::fromLocal8Bit(m_serial.readAll().toHex()));
-    }
+}
 
+void MainWindow::slot_key_received(const QByteArray& key)
+{
+    ui->textArea->appendPlainText(QString::fromLocal8Bit(key.toHex()));
 }
 
 void MainWindow::on_buttonConnect_clicked()
@@ -49,42 +48,86 @@ void MainWindow::on_buttonConnect_clicked()
     int result = diag.exec();
     if(result == QDialog::Accepted && !diag.port().isNull())
     {
-        if(connectToSerial(diag.port()))
+        if(m_device.connectTo(diag.port()))
         {
+            m_device.initCommunication();
+            connect(&m_device, &SerialDevice::framReceived, this, &MainWindow::slot_fram_received);
+            connect(&m_device, &SerialDevice::keyReceived, this, &MainWindow::slot_key_received);
             ui->textArea->show();
+            ui->widgetAction->show();
+            ui->buttonDisconnect->show();
             ui->labelConnect->hide();
             ui->buttonConnect->hide();
+            ui->statusBar->showMessage(QString("Connected to %1 (VID = %2 PID = %3)").arg(diag.port().portName(), diag.port().vendorIdentifier(), diag.port().productIdentifier()));
             return;
         }
     }
     ui->labelConnect->show();
     ui->buttonConnect->show();
     ui->textArea->hide();
+    ui->widgetAction->hide();
+    ui->buttonDisconnect->hide();
 }
 
-void MainWindow::on_buttonSend_clicked()
+void MainWindow::on_buttonDisconnect_clicked()
 {
-    if(m_serial.isOpen())
-    {
-        m_serial.write(QString("Test123").toLocal8Bit());
-    }
+    m_device.endCommunication();
+    m_device.disconnectSerial();
+    ui->labelConnect->show();
+    ui->buttonConnect->show();
+    ui->textArea->hide();
+    ui->widgetAction->hide();
+    ui->buttonDisconnect->hide();
 }
 
-bool MainWindow::connectToSerial(QSerialPortInfo port)
+void MainWindow::on_buttonSetFram_clicked()
 {
-    m_serial.setPort(port);
-
-    if(m_serial.open(QSerialPort::ReadWrite))
+    QString fileName = QFileDialog::getOpenFileName(this, "Fram file");
+    if(fileName.isEmpty())
     {
-        qDebug() << "Connected on " << port.portName() << " : PID = " << port.productIdentifier() << " VID = " << port.vendorIdentifier();
-        connect(&m_serial, &QSerialPort::readyRead, this, &MainWindow::slot_ready_read);
-        return true;
+        return;
     }
-    else
+    QFile framFile(fileName);
+    if(!framFile.open(QFile::ReadOnly))
     {
-        qDebug() << "Connect error : " << m_serial.errorString();
-        qDebug() <<"(" << port.portName() << " : PID = " << port.productIdentifier() << " VID = " << port.vendorIdentifier() << ")";
-        return false;
+        qDebug() << "Impossible d'ouvrir \"" << fileName << "\" en lecture seulement.";
+        return;
     }
+    if(framFile.size() != 8192)
+    {
+        qDebug() << "Fichier invalide (taille incompatible).";
+        return;
+    }
+    m_device.setFram(framFile.readAll());
+}
 
+void MainWindow::on_buttonGetFram_clicked()
+{
+    m_device.requestFramDump();
+}
+
+void MainWindow::on_buttonSetKey_clicked()
+{
+    QString fileName = QFileDialog::getOpenFileName(this, "Key file");
+    if(fileName.isEmpty())
+    {
+        return;
+    }
+    QFile keyFile(fileName);
+    if(!keyFile.open(QFile::ReadOnly))
+    {
+        qDebug() << "Impossible d'ouvrir \"" << fileName << "\" en lecture seulement.";
+        return;
+    }
+    if(keyFile.size() != 16)
+    {
+        qDebug() << "Fichier invalide (taille incompatible).";
+        return;
+    }
+    m_device.setKey(keyFile.readAll());
+}
+
+void MainWindow::on_buttonGetKey_clicked()
+{
+    m_device.requestKey();
 }
