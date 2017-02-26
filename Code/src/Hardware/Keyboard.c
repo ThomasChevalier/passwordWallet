@@ -2,8 +2,6 @@
 
 #include <string.h>
 
-#include <avr/power.h>
-
 #include "Ascii2Keycode.h"
 
 #include <avr/io.h>
@@ -39,12 +37,6 @@ void keyboard_init(void)
 {
 	#ifdef KEYBOARD_ENABLE
 	memset(keyboard_text_buffer, 0, 64);
-	
-	/* Disable clock division */
-	clock_prescale_set(clock_div_1);
-
-	USB_Init();
-
 	#endif // KEYBOARD_ENABLE
 }
 
@@ -71,6 +63,7 @@ void keyboard_send(char* data, unsigned char dataLen)
 		while(keyboard_buffer_lenght != 0)
 		{
 			keyboard_loop();
+			USB_USBTask(); // Needed here
 		}
 		
 	}
@@ -80,40 +73,35 @@ void keyboard_send(char* data, unsigned char dataLen)
 void keyboard_loop(void)
 {
 #ifdef KEYBOARD_ENABLE
-
 	HID_Task();
-	USB_USBTask();
-
 #endif // KEYBOARD_ENABLE
 }
-
-#ifdef KEYBOARD_ENABLE
 
 /** Event handler for the USB_Connect event. This indicates that the device is enumerating via the status LEDs and
  *  starts the library USB task to begin the enumeration and USB management process.
  */
-void EVENT_USB_Device_Connect(void)
+void keyboard_on_device_connect(void)
 {
-	/* Indicate USB enumerating */
-	//LEDs_SetAllLEDs(LEDMASK_USB_ENUMERATING);
-
+	#ifdef KEYBOARD_ENABLE
 	/* Default to report protocol on connect */
 	UsingReportProtocol = 1;
+	#endif
 }
 
 /** Event handler for the USB_Disconnect event. This indicates that the device is no longer connected to a host via
  *  the status LEDs.
  */
-void EVENT_USB_Device_Disconnect(void)
+void keyboard_on_device_disconnect(void)
 {
-	RUNNING = 0;
+
 }
 
 /** Event handler for the USB_ConfigurationChanged event. This is fired when the host sets the current configuration
  *  of the USB device after enumeration, and configures the keyboard device endpoints.
  */
-void EVENT_USB_Device_ConfigurationChanged(void)
+uint8_t keyboard_on_configuration_changed(void)
 {
+	#ifdef KEYBOARD_ENABLE
 	uint8_t ConfigSuccess = 1;
 
 	/* Setup HID Report Endpoints */
@@ -122,17 +110,20 @@ void EVENT_USB_Device_ConfigurationChanged(void)
 
 	/* Turn on Start-of-Frame events for tracking HID report period expiry */
 	USB_Device_EnableSOFEvents();
+	return ConfigSuccess;
 
-	/* Indicate endpoint configuration success or failure */
-	//LEDs_SetAllLEDs(ConfigSuccess ? LEDMASK_USB_READY : LEDMASK_USB_ERROR);
+	#else
+	return 1;
+	#endif
 }
 
 /** Event handler for the USB_ControlRequest event. This is used to catch and process control requests sent to
  *  the device from the USB host before passing along unhandled control requests to the library for processing
  *  internally.
  */
-void EVENT_USB_Device_ControlRequest(void)
+void keyboard_on_control_request(void)
 {
+	#ifdef KEYBOARD_ENABLE
 	/* Handle HID Class specific requests */
 	switch (USB_ControlRequest.bRequest)
 	{
@@ -224,18 +215,22 @@ void EVENT_USB_Device_ControlRequest(void)
 
 			break;
 	}
+	#endif
 }
 
 /** Event handler for the USB device Start Of Frame event. */
-void EVENT_USB_Device_StartOfFrame(void)
+void keyboard_on_start_of_frame(void)
 {
+	#ifdef KEYBOARD_ENABLE
 	/* One millisecond has elapsed, decrement the idle time remaining counter if it has not already elapsed */
 	if (IdleMSRemaining)
 	{
 	  IdleMSRemaining--;
 	}
+	#endif
 }
 
+#ifdef KEYBOARD_ENABLE
 /** Fills the given HID report data structure with the next HID report to send to the host.
  *
  *  \param[out] ReportData  Pointer to a HID report data structure to be filled
@@ -280,27 +275,6 @@ void CreateKeyboardReport(USB_KeyboardReport_Data_t* const ReportData)
 	}
 	keyboard_buffer_lenght -= i;
 
-}
-
-/** Processes a received LED report, and updates the board LEDs states to match.
- *
- *  \param[in] LEDReport  LED status report from the host
- */
-void ProcessLEDReport(const uint8_t LEDReport)
-{
-	/*uint8_t LEDMask = LEDS_LED2;
-
-	if (LEDReport & HID_KEYBOARD_LED_NUMLOCK)
-	  LEDMask |= LEDS_LED1;
-
-	if (LEDReport & HID_KEYBOARD_LED_CAPSLOCK)
-	  LEDMask |= LEDS_LED3;
-
-	if (LEDReport & HID_KEYBOARD_LED_SCROLLLOCK)
-	  LEDMask |= LEDS_LED4;
-
-	// Set the status LEDs to the current Keyboard LED status 
-	LEDs_SetAllLEDs(LEDMask);*/
 }
 
 /** Sends the next HID report to the host, via the keyboard data endpoint. */
@@ -357,11 +331,11 @@ void ReceiveNextReport(void)
 		/* Check to see if the packet contains data */
 		if (Endpoint_IsReadWriteAllowed())
 		{
-			/* Read in the LED report from the host */
-			uint8_t LEDReport = Endpoint_Read_8();
+			// /* Read in the LED report from the host */
+			// uint8_t LEDReport = Endpoint_Read_8();
 
-			/* Process the read LED report from the host */
-			ProcessLEDReport(LEDReport);
+			// /* Process the read LED report from the host */
+			// ProcessLEDReport(LEDReport);
 		}
 
 		/* Handshake the OUT Endpoint - clear endpoint and ready for next report */

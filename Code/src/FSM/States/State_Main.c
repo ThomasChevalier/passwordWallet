@@ -1,5 +1,7 @@
 #include "State_Main.h"
 
+#include <string.h>
+
 #include "../StatesDefine.h"
 #include "../Events.h"
 

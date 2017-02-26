@@ -9,8 +9,8 @@
 #include "../Security/Random.h"
 
 #include "../Hardware/Fram.h"
-#include "../Hardware/Keyboard.h"
 #include "../Hardware/Buttons.h"
+#include "../Hardware/USB.h"
 
 #include "../FSM/Events.h"
 
@@ -36,7 +36,7 @@ void program_init(void)
 
 void program_update(void)
 {
-	keyboard_loop();
+	USB_loop();
 	random_save_entropy();
 
 	first_press = buttons_update_event();
@@ -58,7 +58,7 @@ void program_wait(void)
 	}
 	else
 	{
-		for(uint8_t i = 0; i < 40; ++i)
+		for(uint8_t i = 0; i < 50; ++i)
 		{
 			_delay_ms(1);
 			if(!RUNNING)

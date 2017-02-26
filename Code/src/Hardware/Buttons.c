@@ -6,7 +6,7 @@
 #include "../FSM/Events.h"
 #include "PinDefinition.h"
 
-uint8_t buttons_update_event()
+uint8_t buttons_update_event(void)
 {
 	static uint8_t last_butts = 0;
 
@@ -24,7 +24,7 @@ uint8_t buttons_update_event()
 	
 }
 
-void buttons_setup_hardware()
+void buttons_setup_hardware(void)
 {
 	// Buttons' pins defined as input
 	BUTTON_1_DDR &= ~(1 << BUTTON_1_PIN_NUM);
@@ -39,7 +39,7 @@ void buttons_setup_hardware()
 	BUTTON_4_PORT |= (1 << BUTTON_4_PIN_NUM);
 }
 
-unsigned char buttons_pressed()
+uint8_t buttons_pressed(void)
 {
 	uint8_t rep = 0;
 	// Check the 4 buttons and write corresponding byte

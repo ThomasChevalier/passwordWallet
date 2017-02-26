@@ -41,6 +41,8 @@
 
 #ifndef _LUFA_CONFIG_H_
 #define _LUFA_CONFIG_H_
+	
+	#include "../Globals.h"
 
 	#if (ARCH == ARCH_AVR8)
 
@@ -74,7 +76,9 @@
 //		#define DEVICE_STATE_AS_GPIOR            {Insert Value Here}
 		#define FIXED_NUM_CONFIGURATIONS         1
 //		#define CONTROL_ONLY_DEVICE
-//		#define INTERRUPT_CONTROL_ENDPOINT
+#if defined(KEYBOARD_ENABLE) && defined(SERIAL_ENABLE)
+		#define INTERRUPT_CONTROL_ENDPOINT
+#endif
 //		#define NO_DEVICE_REMOTE_WAKEUP
 //		#define NO_DEVICE_SELF_POWER
 

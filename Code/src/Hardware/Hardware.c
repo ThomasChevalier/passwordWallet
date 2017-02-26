@@ -2,7 +2,7 @@
 
 #include "Buttons.h"
 #include "Fram.h"
-#include "Keyboard.h"
+#include "USB.h"
 #include "Oled.h"
 #include "Rfid.h"
 #include "Spi.h"
@@ -19,5 +19,5 @@ void hardware_init(void)
 
 	oled_init();
 	rfid_init();
-	keyboard_init();
+	USB_init();
 }

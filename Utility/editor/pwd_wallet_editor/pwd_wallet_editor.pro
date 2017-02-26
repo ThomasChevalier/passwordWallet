@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui serialport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -24,8 +24,11 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += main.cpp\
-        MainWindow.cpp
+        MainWindow.cpp \
+    SerialSetupDialog.cpp
 
-HEADERS  += MainWindow.h
+HEADERS  += MainWindow.h \
+    SerialSetupDialog.h
 
-FORMS    += MainWindow.ui
+FORMS    += MainWindow.ui \
+    SerialSetupDialog.ui

@@ -4,7 +4,12 @@
 #include <stdint.h>
 
 #undef STORE_SCREEN_BUFFER_IN_FRAM
-#define KEYBOARD_ENABLE
+#undef KEYBOARD_ENABLE
+#define SERIAL_ENABLE
+
+#if defined(KEYBOARD_ENABLE) || defined(SERIAL_ENABLE)
+#define USB_ENABLE
+#endif
 
 // This file should contain the global variables used in this project
 

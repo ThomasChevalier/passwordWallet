@@ -1,0 +1,2 @@
+#!/bin/bash
+avrdude -v {program.verify} -patmega32u4 -cstk500v1 -P/dev/ttyACM9 -b19200 -Uflash:w:"main.hex":i

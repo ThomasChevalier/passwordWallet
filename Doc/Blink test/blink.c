@@ -3,7 +3,7 @@
 
 void main () 
 {
-	DDRD |= _BV(DDD5); // portb 0 output
+	DDRD |= _BV(DDD5); // portd 5 output
 	
 	while(1)
 	{
