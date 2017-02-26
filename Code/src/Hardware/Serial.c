@@ -1,5 +1,8 @@
 #include "Serial.h"
 
+// For test only
+#include "../Graphics/Drawing.h"
+
 #include "../Globals.h"
 #include "Buttons.h"
 #include "../FSM/Events.h"
@@ -18,6 +21,9 @@ static CDC_LineEncoding_t LineEncoding = { .BaudRateBPS = 0,
                                            .ParityType  = CDC_PARITY_None,
                                            .DataBits    = 8                            };
 
+static uint8_t *send_buffer_ptr;
+static uint8_t send_buffer_lenght;
+
 #endif
 
 void serial_init (void)
@@ -32,6 +38,18 @@ void serial_loop (void)
 	#endif
 }
 
+void serial_send (uint8_t* buffer, uint8_t lenght)
+{
+	#ifdef SERIAL_ENABLE
+	send_buffer_ptr = buffer;
+	send_buffer_lenght = lenght;
+	while(send_buffer_ptr != NULL)
+	{
+		serial_loop();
+		USB_USBTask();
+	}
+	#endif
+}
 
 void serial_on_device_connect (void)
 {
@@ -118,30 +136,22 @@ void serial_on_start_of_frame (void)
 /** Function to manage CDC data transmission and reception to and from the host. */
 void CDC_Task(void)
 {
-	char*       ReportString    = NULL;
-	static bool ActionSent      = false;
-
 	/* Device must be connected and configured for the task to run */
 	if (USB_DeviceState != DEVICE_STATE_Configured)
 	  return;
 
-	uint8_t butt = buttons_pressed();
-	/* Determine if a joystick action has occurred */
-	if (butt & EVENT_BUTTON_1)
-	  ReportString = "Button 1\r\n";
-	else
-	  ActionSent = false;
-
 	/* Flag management - Only allow one string to be sent per action */
-	if ((ReportString != NULL) && (ActionSent == false) && LineEncoding.BaudRateBPS)
+	if (send_buffer_ptr != NULL && LineEncoding.BaudRateBPS)
 	{
-		ActionSent = true;
 
 		/* Select the Serial Tx Endpoint */
 		Endpoint_SelectEndpoint(CDC_TX_EPADDR);
 
 		/* Write the String to the Endpoint */
-		Endpoint_Write_Stream_LE(ReportString, strlen(ReportString), NULL);
+		Endpoint_Write_Stream_LE(send_buffer_ptr, send_buffer_lenght, NULL);
+
+		send_buffer_ptr = NULL;
+		send_buffer_lenght = 0;
 
 		/* Remember if the packet to send completely fills the endpoint */
 		bool IsFull = (Endpoint_BytesInEndpoint() == CDC_TXRX_EPSIZE);
@@ -166,7 +176,23 @@ void CDC_Task(void)
 
 	/* Throw away any received data from the host */
 	if (Endpoint_IsOUTReceived())
-	  Endpoint_ClearOUT();
+	{
+		/* Create a temp buffer big enough to hold the incoming endpoint packet */
+		uint8_t  buffer[Endpoint_BytesInEndpoint()];
+
+		/* Remember how large the incoming packet is */
+		uint16_t dataLength = Endpoint_BytesInEndpoint();
+
+		/* Read in the incoming packet into the buffer */
+		Endpoint_Read_Stream_LE(&buffer, dataLength, NULL);
+
+		/* Finalize the stream transfer to send the last packet */
+		Endpoint_ClearOUT();
+
+		draw_clear();
+		draw_hex(0, 0, buffer, dataLength);
+		draw_update();
+	}
 }
 
 

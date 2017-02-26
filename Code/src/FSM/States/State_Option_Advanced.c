@@ -12,6 +12,8 @@
 #include "../../Graphics/Ascii85.h"
 
 #include "../../Hardware/Buttons.h"
+#include "../../Hardware/Fram.h"
+#include "../../Hardware/Serial.h"
 
 #include "../../Security/Security.h"
 #include "../../Security/Authentification.h"
@@ -34,6 +36,16 @@ static void do_show_key(void)
     security_erase_data(outputText, 20);
 
     draw_update();
+}
+
+static void do_serial_dump(void)
+{
+	uint8_t buffer[64];
+	for(uint16_t i = 0; i < FRAM_BYTE_SIZE / 64; ++i)
+	{
+		fram_read_bytes(i * 64, buffer, 64);
+		serial_send(buffer ,64);
+	}
 }
 
 void state_option_advanced_begin (void)
@@ -99,6 +111,10 @@ uint8_t state_option_advanced_transition (uint8_t event)
 		else if(currentChoice == 5)
 		{
 			state_recovery_do_full_reset();
+		}
+		else if(currentChoice == 6)
+		{
+			do_serial_dump();
 		}
 		return STATE_MAIN;
 	}

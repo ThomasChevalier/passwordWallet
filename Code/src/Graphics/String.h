@@ -65,6 +65,7 @@ DECLARE_STRING(str_option_advanced_enableEncryption);
 DECLARE_STRING(str_option_advanced_showKey);
 DECLARE_STRING(str_option_advanced_selfTest);
 DECLARE_STRING(str_option_advanced_doFullReset);
+DECLARE_STRING(str_option_advanced_communicate);
 
 extern PGM_P const string_options_table[] PROGMEM;
 

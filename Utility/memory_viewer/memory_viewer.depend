@@ -1,0 +1,13 @@
+# depslib dependency file v1.0
+1488124982 source:/home/thomas/Documents/Git/PasswordWallet/Utility/memory_viewer/main.cpp
+	<iostream>
+	<string>
+	<fstream>
+	<cstdint>
+	<sstream>
+	<iomanip>
+	"../../Code/src/Globals.h"
+
+1488115893 /home/thomas/Documents/Git/PasswordWallet/Code/src/Globals.h
+	<stdint.h>
+

@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QtSerialPort/QSerialPort>
+#include <QFile>
 
 namespace Ui {
 class MainWindow;
@@ -19,11 +20,13 @@ public:
 public slots:
     void slot_ready_read();
     void on_buttonConnect_clicked();
+    void on_buttonSend_clicked();
 
 private:
-    void connectToSerial(QSerialPortInfo port);
+    bool connectToSerial(QSerialPortInfo port);
     Ui::MainWindow *ui;
     QSerialPort m_serial;
+    QFile m_savingFile;
 };
 
 #endif // MAINWINDOW_H

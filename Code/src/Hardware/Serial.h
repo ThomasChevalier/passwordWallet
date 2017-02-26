@@ -18,6 +18,7 @@ void CDC_Task(void);
 
 void serial_init	(void);
 void serial_loop	(void);
+void serial_send	(uint8_t* buffer, uint8_t lenght);
 
 void	serial_on_device_connect			(void);
 void	serial_on_device_disconnect			(void);

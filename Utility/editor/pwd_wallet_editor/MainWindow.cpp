@@ -3,6 +3,8 @@
 
 #include "SerialSetupDialog.h"
 
+#include <QFileDialog>
+
 #include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -11,6 +13,16 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     ui->textArea->hide();
+
+    QString fileName = QFileDialog::getSaveFileName(this, "Fichier de dump", "/home/");
+    if(!fileName.isEmpty())
+    {
+        m_savingFile.setFileName(fileName);
+        if(!m_savingFile.open(QFile::WriteOnly))
+        {
+            qDebug() << "Error opening " << fileName << " in write only mode.";
+        }
+    }
 }
 
 MainWindow::~MainWindow()
@@ -20,7 +32,15 @@ MainWindow::~MainWindow()
 
 void MainWindow::slot_ready_read()
 {
-    ui->textArea->appendPlainText(QString::fromLocal8Bit(m_serial.readAll()));
+    if(m_savingFile.isOpen())
+    {
+        m_savingFile.write(m_serial.readAll());
+    }
+    else
+    {
+        ui->textArea->appendPlainText(QString::fromLocal8Bit(m_serial.readAll().toHex()));
+    }
+
 }
 
 void MainWindow::on_buttonConnect_clicked()
@@ -29,32 +49,42 @@ void MainWindow::on_buttonConnect_clicked()
     int result = diag.exec();
     if(result == QDialog::Accepted && !diag.port().isNull())
     {
-        connectToSerial(diag.port());
-        ui->textArea->show();
-        ui->labelConnect->hide();
-        ui->buttonConnect->hide();
+        if(connectToSerial(diag.port()))
+        {
+            ui->textArea->show();
+            ui->labelConnect->hide();
+            ui->buttonConnect->hide();
+            return;
+        }
     }
-    else
+    ui->labelConnect->show();
+    ui->buttonConnect->show();
+    ui->textArea->hide();
+}
+
+void MainWindow::on_buttonSend_clicked()
+{
+    if(m_serial.isOpen())
     {
-        ui->labelConnect->show();
-        ui->buttonConnect->show();
-        ui->textArea->hide();
+        m_serial.write(QString("Test123").toLocal8Bit());
     }
 }
 
-void MainWindow::connectToSerial(QSerialPortInfo port)
+bool MainWindow::connectToSerial(QSerialPortInfo port)
 {
     m_serial.setPort(port);
 
-    if(m_serial.open(QSerialPort::ReadOnly))
+    if(m_serial.open(QSerialPort::ReadWrite))
     {
         qDebug() << "Connected on " << port.portName() << " : PID = " << port.productIdentifier() << " VID = " << port.vendorIdentifier();
         connect(&m_serial, &QSerialPort::readyRead, this, &MainWindow::slot_ready_read);
+        return true;
     }
     else
     {
         qDebug() << "Connect error : " << m_serial.errorString();
         qDebug() <<"(" << port.portName() << " : PID = " << port.productIdentifier() << " VID = " << port.vendorIdentifier() << ")";
+        return false;
     }
 
 }

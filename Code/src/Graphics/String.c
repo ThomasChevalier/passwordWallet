@@ -90,6 +90,7 @@ DEFINE_STRING(str_option_advanced_enableEncryption, "Activer cryptage", 15);
 DEFINE_STRING(str_option_advanced_showKey, "Montrer clef maitre", 16);
 DEFINE_STRING(str_option_advanced_selfTest, "Auto test", 17);
 DEFINE_STRING(str_option_advanced_doFullReset, "FORMATER", 18);
+DEFINE_STRING(str_option_advanced_communicate, "SERIAL", 19);
 
 
 PGM_P const string_options_table[] PROGMEM = 
@@ -115,7 +116,8 @@ PGM_P const string_options_table[] PROGMEM =
 	str_option_advanced_enableEncryption,
 	str_option_advanced_showKey,
 	str_option_advanced_selfTest,
-	str_option_advanced_doFullReset
+	str_option_advanced_doFullReset,
+	str_option_advanced_communicate
 };
 
 void str_option_to_buffer(uint8_t index)
