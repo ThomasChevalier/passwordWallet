@@ -6,7 +6,8 @@
 class FileHeader
 {
 public:
-    FileHeader()
+    FileHeader():
+	fileSize(0), rsv(0), offsetImg(0)
     {
         reset();
     }

@@ -31,10 +31,16 @@ public slots:
     void on_buttonSetKey_clicked();
     void on_buttonGetKey_clicked();
 
+    void on_actionOpenBackup_triggered();
+
 private:
+
+    QByteArray openFramFile();
+
     bool connectToSerial(QSerialPortInfo port);
     Ui::MainWindow *ui;
     SerialDevice m_device;
+    QByteArray m_fram;
 };
 
 #endif // MAINWINDOW_H

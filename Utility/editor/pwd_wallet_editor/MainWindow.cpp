@@ -15,13 +15,15 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->textArea->hide();
     ui->widgetAction->hide();
     ui->buttonDisconnect->hide();
+
+    connect(ui->actionQuit, &QAction::triggered, this, &MainWindow::close);
 }
 
 MainWindow::~MainWindow()
 {
-    m_device.endCommunication();
+    on_buttonDisconnect_clicked();
     delete ui;
-}
+}// 20b4aa14de3d744d0a82021d20d74bb8
 
 void MainWindow::slot_fram_received(const QByteArray &fram)
 {
@@ -46,20 +48,25 @@ void MainWindow::on_buttonConnect_clicked()
 {
     SerialSetupDialog diag;
     int result = diag.exec();
-    if(result == QDialog::Accepted && !diag.port().isNull())
+    QSerialPortInfo port = diag.port();
+    if(result == QDialog::Accepted && !port.isNull())
     {
-        if(m_device.connectTo(diag.port()))
+        if(m_device.connectTo(port))
         {
             m_device.initCommunication();
-            connect(&m_device, &SerialDevice::framReceived, this, &MainWindow::slot_fram_received);
-            connect(&m_device, &SerialDevice::keyReceived, this, &MainWindow::slot_key_received);
+            connect(&m_device, &SerialDevice::framReceived, this, &MainWindow::slot_fram_received, Qt::UniqueConnection);
+            connect(&m_device, &SerialDevice::keyReceived, this, &MainWindow::slot_key_received, Qt::UniqueConnection);
             ui->textArea->show();
             ui->widgetAction->show();
             ui->buttonDisconnect->show();
             ui->labelConnect->hide();
             ui->buttonConnect->hide();
-            ui->statusBar->showMessage(QString("Connected to %1 (VID = %2 PID = %3)").arg(diag.port().portName(), diag.port().vendorIdentifier(), diag.port().productIdentifier()));
+            ui->statusBar->showMessage("Connected to " + port.portName() + " (VID =" + QString::number(port.vendorIdentifier()) + " PID =" + QString::number(port.productIdentifier()) +")", 2000);
             return;
+        }
+        else
+        {
+            ui->statusBar->showMessage("Unable to connect to device");
         }
     }
     ui->labelConnect->show();
@@ -78,27 +85,16 @@ void MainWindow::on_buttonDisconnect_clicked()
     ui->textArea->hide();
     ui->widgetAction->hide();
     ui->buttonDisconnect->hide();
+    ui->textArea->clear();
 }
 
 void MainWindow::on_buttonSetFram_clicked()
 {
-    QString fileName = QFileDialog::getOpenFileName(this, "Fram file");
-    if(fileName.isEmpty())
+    QByteArray fram = openFramFile();
+    if(!fram.isEmpty())
     {
-        return;
+        m_device.setFram(openFramFile());
     }
-    QFile framFile(fileName);
-    if(!framFile.open(QFile::ReadOnly))
-    {
-        qDebug() << "Impossible d'ouvrir \"" << fileName << "\" en lecture seulement.";
-        return;
-    }
-    if(framFile.size() != 8192)
-    {
-        qDebug() << "Fichier invalide (taille incompatible).";
-        return;
-    }
-    m_device.setFram(framFile.readAll());
 }
 
 void MainWindow::on_buttonGetFram_clicked()
@@ -130,4 +126,30 @@ void MainWindow::on_buttonSetKey_clicked()
 void MainWindow::on_buttonGetKey_clicked()
 {
     m_device.requestKey();
+}
+
+void MainWindow::on_actionOpenBackup_triggered()
+{
+    m_fram = openFramFile();
+}
+
+QByteArray MainWindow::openFramFile()
+{
+    QString fileName = QFileDialog::getOpenFileName(this, "Fram file");
+    if(fileName.isEmpty())
+    {
+        return QByteArray();
+    }
+    QFile framFile(fileName);
+    if(!framFile.open(QFile::ReadOnly))
+    {
+        qDebug() << "Impossible d'ouvrir \"" << fileName << "\" en lecture seulement.";
+        return QByteArray();
+    }
+    if(framFile.size() != 8192)
+    {
+        qDebug() << "Fichier invalide (taille incompatible).";
+        return QByteArray();
+    }
+    return framFile.readAll();
 }

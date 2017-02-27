@@ -8,6 +8,10 @@
 #include "Keyboard.h"
 #include "Serial.h"
 
+#include "Fram.h" // test only
+
+#include "../Security/Security.h"
+
 void USB_init (void)
 {
 	#ifdef USB_ENABLE
@@ -38,6 +42,9 @@ void EVENT_USB_Device_Connect (void)
 
 void EVENT_USB_Device_Disconnect (void)
 {
+	// Erase key as fast as possible
+	fram_write_byte(5000, 0xFF);
+	security_erase_data(KEY, 16);
 	RUNNING = 0;
 	keyboard_on_device_disconnect();
 	serial_on_device_disconnect();

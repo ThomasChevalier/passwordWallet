@@ -48,13 +48,15 @@ void state_option_advanced_begin (void)
 
 uint8_t state_option_advanced_transition (uint8_t event)
 {
+	// Let the user note his key when do_show_key is called
+	static uint8_t exit_at_next_event = 0;
+
 	if(event & EVENT_INIT_COMMUNICATION)
 	{
 		return STATE_COMMUNICATION;
 	}
 	
-	// Let the user note his key when do_show_key is called
-	static uint8_t exit_at_next_event = 0;
+	
 	if(exit_at_next_event && (event&EVENT_ALL_BUTTONS))
 	{
 		exit_at_next_event = 0;
@@ -98,6 +100,7 @@ uint8_t state_option_advanced_transition (uint8_t event)
 		{
 			do_show_key();
 			exit_at_next_event = 1;
+			return STATE_OPTION_ADVANCED;
 		}
 		else if(currentChoice == 4)
 		{

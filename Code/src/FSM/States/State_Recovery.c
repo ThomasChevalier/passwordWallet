@@ -81,7 +81,7 @@ void state_recovery_begin (void)
 	{
 		program_update(); // Don't freeze the program
 	};
-	
+	events_get(); // Clear event variable
 }
 
 uint8_t state_recovery_transition (uint8_t event)
@@ -97,12 +97,10 @@ uint8_t state_recovery_transition (uint8_t event)
 		if(event & EVENT_BUTTON_1)
 		{
 			recovery_choice = 1;
-			_delay_ms(1000);
 		}
 		else if(event & EVENT_BUTTON_3)
 		{
 			recovery_choice = 2;
-			_delay_ms(1000);
 		}
 	}
 	else if(recovery_choice == 1)

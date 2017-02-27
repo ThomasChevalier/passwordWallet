@@ -2,15 +2,36 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <sstream>
 
 #include "Command.h"
 #include "Info.h"
 #include "Password.h"
 
-#include "../../Code/src/Globals.h"
+#include "Globals.h"
+
+Key::Key(): valid(false)
+{
+
+}
+
+void Key::set(uint8_t data_, uint8_t lenght)
+{
+	if(lenght != 16)
+	{
+		std::cerr << "Wrong key lenght\n";
+		valid = false;
+		return;
+	}
+	for(uint8_t i = 0; i < lenght; ++i)
+	{
+		data[i] = data_;
+	}
+}
+
 
 Application::Application(const std::string& fileName):
-	m_currentId(0)
+	m_file(), m_currentId(0), m_key()
 {
 	openFile(fileName);
 }
@@ -20,10 +41,7 @@ void Application::run()
 	Command cmd("");
 	do
 	{
-		std::cout << "\n> " << std::flush;
-		std::string str;
-		getline(std::cin, str);
-		cmd.setString(str);
+		cmd.setString(readCommand());
 		execute(cmd);
 	}while(cmd.getType() != Command::Quit);
 }
@@ -42,6 +60,15 @@ void Application::quit()
 {
 	std::cerr << "Error made application quit.\n";
 	exit(1);
+}
+
+std::string Application::readCommand()
+{
+	std::cout << "\n> ";
+	std::string str;
+	getline(std::cin, str);
+
+	return str;
 }
 
 void Application::execute(const Command& cmd)
@@ -160,4 +187,24 @@ void Application::execute(const Command& cmd)
 			std::cout << pwd << std::endl;
 		}
 	}
+	else if(type == Command::SetKey)
+	{
+		std::istringstream iss(cmd.getString());
+		std::string word;
+		iss >> word; // Read set
+		iss >> word; // Read key
+		iss >> word; // Read the file name
+		if(!iss)
+		{
+			std::cout << "Enter file name : ";
+			getline(std::cin, word);
+		}
+		std::ifstream keyFile(word, std::ifstream::in | std::ifstream::binary);
+		if(!keyFile)
+		{
+			std::cerr << "Can't open " << word << " in read only mode. Wrong file name ?\n";
+		}
+
+	}
 }
+

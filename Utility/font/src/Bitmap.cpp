@@ -1,7 +1,7 @@
 #include "Bitmap.h"
 
 Bitmap::Bitmap():
-    m_data(), m_height(0), m_width(0), m_isOpen(false),
+    m_data(), m_height(0), m_width(0), m_fileName(), m_isOpen(false),
      m_fileHeader(), m_imageHeader()
 {}
 
@@ -13,7 +13,7 @@ Bitmap::Bitmap(const std::string &fileName):
 }
 
 Bitmap::Bitmap(unsigned int width, unsigned int height):
-    m_data(), m_height(height), m_width(width), m_isOpen(false),
+    m_data(), m_height(height), m_width(width), m_fileName(), m_isOpen(false),
      m_fileHeader(), m_imageHeader()
 {
     m_data = std::make_shared< Matrix<Pixel> >(m_width, m_height, Pixel());

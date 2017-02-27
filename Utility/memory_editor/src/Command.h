@@ -18,8 +18,9 @@ struct Command
 		ReadPrev,
 		ReadCurrent,
 		ReadIndex,
-
 		ReadAll,
+
+		SetKey,
 
 		Quit,
 
@@ -33,6 +34,7 @@ struct Command
 	Command_Type getType() const;
 
 	void setString(const std::string& command);
+	std::string getString() const { return m_command; }
 
 private:
 	void parseCommand();

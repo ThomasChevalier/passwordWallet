@@ -8,18 +8,21 @@
 
 #include "../../Hardware/Serial.h"
 #include "../../Hardware/Fram.h"
-#include "../../Hardware/Led.h"
 
 #include "../../Program/Program.h"
 #include "../../Security/Encryption.h"
 
 // Flag for communication state
 #define FLAG_INITED (1<<0)
-#define FLAG_WAIT_FRAM_DATA (1<<1)
-#define FLAG_WAIT_KEY_DATA (1<<2)
 
-#define FLAG_SEND_FRAM_DATA (1<<3)
-#define FLAG_SEND_KEY_DATA (1<<4)
+#define FLAG_SEND_FRAM_DATA (1<<1)
+#define FLAG_WAIT_FRAM_DATA (1<<2)
+
+#define FLAG_SEND_KEY_DATA (1<<3)
+#define FLAG_WAIT_KEY_DATA (1<<4)
+
+
+#define FLAG_END_COMMUNICATION (1<<5)
 
 static uint8_t communication_flag = 0;
 
@@ -46,8 +49,46 @@ void state_communication_process_data(uint8_t* buffer, uint8_t lenght)
 	{
 		events_happen(EVENT_INIT_COMMUNICATION);
 	}
-	if((communication_flag & FLAG_INITED) == 0)
+	if((communication_flag & FLAG_INITED) == 0 || (communication_flag & FLAG_END_COMMUNICATION) == 1)
 		return;
+
+	// Command
+	if((communication_flag&FLAG_WAIT_FRAM_DATA) == 0 && (communication_flag&FLAG_WAIT_KEY_DATA) == 0 )
+	{
+		uint8_t byte = buffer[0];
+		if(byte == 0x5A && (communication_flag & FLAG_INITED) == 1)
+		{
+			communication_flag |= FLAG_END_COMMUNICATION;
+		}
+		else if(byte == 0x01)
+		{
+			communication_flag |= FLAG_SEND_FRAM_DATA;
+		}
+		else if(byte == 0x02)
+		{
+			communication_flag |= FLAG_WAIT_FRAM_DATA;
+			data_received = 0;
+		}
+		else if(byte == 0x03)
+		{
+			communication_flag |= FLAG_SEND_KEY_DATA;
+		}
+		else if(communication_flag == 0x04)
+		{
+			communication_flag |= FLAG_WAIT_KEY_DATA;
+			data_received = 0;
+		}
+		else
+		{
+			// Unknown command
+		}
+		++buffer; 
+		--lenght;
+	}
+	if(lenght == 0)
+	{
+		return;
+	}
 
 	// We are waiting for fram data (set fram command)
 	if(communication_flag & FLAG_WAIT_FRAM_DATA)
@@ -84,40 +125,11 @@ void state_communication_process_data(uint8_t* buffer, uint8_t lenght)
 			memcpy(KEY+data_received, buffer, 16-data_received);
 			data_received = 16;
 		}
-		if(data_received == 16)
+		if(data_received >= 16)
 		{
 			communication_flag &= ~FLAG_WAIT_KEY_DATA;
 		}
 		return;
-	}
-
-	// Command
-	if(lenght == 1)
-	{
-		uint8_t byte = buffer[0];
-		switch(byte)
-		{
-		case 0x5A:
-			if((communication_flag & FLAG_INITED) == 1)
-			{
-				events_happen(EVENT_END_COMMUNICATION);
-			}
-			break;
-		case 0x01:
-			communication_flag |= FLAG_SEND_FRAM_DATA;
-			break;
-		case 0x02:
-			communication_flag |= FLAG_WAIT_FRAM_DATA;
-			data_received = 0;
-			break;
-		case 0x03:
-			communication_flag |= FLAG_SEND_KEY_DATA;
-			break;
-		case 0x04:
-			communication_flag |= FLAG_WAIT_KEY_DATA;
-			data_received = 0;
-			break;
-		}
 	}
 
 }
@@ -137,16 +149,18 @@ void state_communication_begin (void)
 
 uint8_t state_communication_transition (uint8_t event)
 {
-	if(event & EVENT_END_COMMUNICATION)
+	if(communication_flag & FLAG_END_COMMUNICATION)
 	{
 		draw_clear();
-		str_to_buffer(str_communication_end_index);
-		draw_text(5, 0, str_buffer, 0);
-		str_to_buffer(str_communication_unplug_index);
-		draw_text(0, 10, str_buffer, 0);
-		draw_update();
-
-		while(1);
+		program_init();
+		if(encryption_check_key())
+		{
+			return STATE_MAIN;
+		}
+		else
+		{
+			return STATE_WAIT_CARD;
+		}
 	}
 
 	if(communication_flag & FLAG_SEND_FRAM_DATA)

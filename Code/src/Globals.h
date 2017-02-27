@@ -17,7 +17,7 @@
 // LED //
 // /// //
 
-#define LED_BLINK_DELAY (250)
+#define LED_BLINK_DELAY (150)
 
 // /////////////////// //
 // Option Menu Section //

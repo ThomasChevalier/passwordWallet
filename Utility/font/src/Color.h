@@ -16,7 +16,8 @@ public:
         m_r(rValue), m_g(gValue), m_b(bValue)
     {}
 
-    Color(ColorValue value)
+    Color(ColorValue value):
+	m_r(0), m_g(0), m_b(0)
     {
         setPredefined(value);
     }

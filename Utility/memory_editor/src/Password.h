@@ -30,6 +30,7 @@ struct Password
 
 private:
 	std::ifstream& m_file;
+	bool m_valid;
 };
 
 std::ostream& operator<<( std::ostream &stream, const Password & pwd );

@@ -1,5 +1,3 @@
-#include <util/delay.h>  // for _delay_ms()
-
 #include "Globals.h"
 
 #include "System/System.h"
@@ -82,4 +80,6 @@ int main(void)
 		program_wait();
 	}
 	security_erase_data(KEY, 16);
+
+	while(1);
 }

@@ -5,11 +5,11 @@
 
 #include "FileHelper.h"
 
-#include "../../Code/src/Globals.h"
+#include "Globals.h"
 
 Password::Password(uint8_t id_, std::ifstream& file):
 	prev_pwd_util(0), next_pwd_util(0), prev_pwd_alpha(0), next_pwd_alpha(0), count(0), id(id_),
-	m_file(file)
+	m_file(file), m_valid(false)
 {
 	memset(name, 0, 32);
 	memset(iv_pwd, 0, 16);
@@ -24,12 +24,8 @@ void Password::readFromFile()
 {
 	if((id+1)*SIZE_OF_PWD_BLOCK + OFFSET_FIRST_PWD-1 > FRAM_BYTE_SIZE)
 	{
+		m_valid = false;
 		std::cerr << "Error, too large pwd_id.\n";
-		return;
-	}
-	if(id < 0)
-	{
-		std::cerr << "Error, invalid pwd index\n";
 		return;
 	}
 
@@ -45,10 +41,16 @@ void Password::readFromFile()
 	m_file.read(reinterpret_cast<char*>(pwd), 32);
 	m_file.read(reinterpret_cast<char*>(iv_usr), 16);
 	m_file.read(reinterpret_cast<char*>(usr), 64);
+	m_valid = true;
 }
 
 void Password::print(std::ostream& stream) const
 {
+	if(!m_valid)
+	{
+		return;
+	}
+	
 	stream << "Password " << static_cast<int>(id);
 	stream << "\nName : " << name;
 	stream << "\n\tCounter = " << static_cast<int>(count);

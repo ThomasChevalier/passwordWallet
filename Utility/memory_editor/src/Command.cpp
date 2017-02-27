@@ -56,7 +56,7 @@ void Command::parseCommand()
 		{
 			int id = 0;
 			iss >> id;
-			if(!iss)
+			if(!iss || id > 255)
 			{
 				std::cerr << "Invalid index\n";
 			}
@@ -109,6 +109,18 @@ void Command::parseCommand()
 		else
 		{
 			std::cerr << "Unknow argument for command read \"" << word << "\"\n";
+		}
+	}
+	else if(word == "set")
+	{
+		iss >> word;
+		if(word == "key")
+		{
+			m_type = SetKey;
+		}
+		else
+		{
+			std::cerr << "Unknow argument for command set \"" << word << "\"\n";
 		}
 	}
 	else

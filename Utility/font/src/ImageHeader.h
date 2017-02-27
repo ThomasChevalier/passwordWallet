@@ -6,7 +6,9 @@
 class ImageHeader
 {
 public:
-    ImageHeader()
+    ImageHeader():
+	sizeHeader(0), width(0), height(0), nbPlane(0), bpp(0), compression(0),
+	sizeImg(0), hRes(0), vRes(0), cPalette(0), cIPalette(0)
     {
         reset();
     }
