@@ -20,7 +20,7 @@ void ReceiveNextReport						(void);
 #endif // KEYBOARD_ENABLE
 
 void keyboard_init	(void);
-void keyboard_send	(char* data, unsigned char dataLen);
+void keyboard_send	(char* data, uint8_t dataLen);
 void keyboard_loop	(void);
 
 void	keyboard_on_device_connect			(void);

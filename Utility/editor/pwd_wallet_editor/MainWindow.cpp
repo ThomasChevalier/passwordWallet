@@ -122,7 +122,7 @@ void MainWindow::on_buttonSetKey_clicked()
     }
     m_device.setKey(keyFile.readAll());
 }
-
+//cd317bd92b9cd8a80dc27f0ccbfc4ef1
 void MainWindow::on_buttonGetKey_clicked()
 {
     m_device.requestKey();

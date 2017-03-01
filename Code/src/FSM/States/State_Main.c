@@ -49,7 +49,7 @@ uint8_t state_main_transition (uint8_t event)
 		password_increment_counter(CURRENT_PASSWORD_ID);
 		if(pwd_list_get_sorting_method() == PWD_SORTING_USAGE)
 		{
-			pwd_list_sort_usage();
+			//pwd_list_sort_usage();
 		}
 	}
 	else if(event & EVENT_BUTTON_3)

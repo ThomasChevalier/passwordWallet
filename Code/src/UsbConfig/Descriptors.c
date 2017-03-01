@@ -145,6 +145,22 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor =
 
 			.MaxPowerConsumption    = USB_CONFIG_POWER_MA(100)
 		},
+#if defined(SERIAL_ENABLE) && defined(KEYBOARD_ENABLE)
+		.CDC_IAD =
+		{
+			.Header                 = {.Size = sizeof(USB_Descriptor_Interface_Association_t), .Type = DTYPE_InterfaceAssociation},
+
+			.FirstInterfaceIndex    = INTERFACE_ID_CDC_CCI,
+			.TotalInterfaces        = 2,
+
+			.Class                  = CDC_CSCP_CDCClass,
+			.SubClass               = CDC_CSCP_ACMSubclass,
+			.Protocol               = CDC_CSCP_ATCommandProtocol,
+
+			.IADStrIndex            = NO_DESCRIPTOR
+		},
+#endif
+
 #ifdef SERIAL_ENABLE
 	.CDC_CCI_Interface =
 		{

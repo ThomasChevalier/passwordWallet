@@ -4,8 +4,8 @@
 #include <stdint.h>
 
 #undef STORE_SCREEN_BUFFER_IN_FRAM
-#undef KEYBOARD_ENABLE
-#define SERIAL_ENABLE
+#define KEYBOARD_ENABLE
+#undef SERIAL_ENABLE
 
 #if defined(KEYBOARD_ENABLE) || defined(SERIAL_ENABLE)
 #define USB_ENABLE

@@ -1,5 +1,7 @@
 #include "State_Communication.h"
 
+#include <string.h>
+
 #include "../StatesDefine.h"
 #include "../Events.h"
 
@@ -125,7 +127,7 @@ void state_communication_process_data(uint8_t* buffer, uint8_t lenght)
 			memcpy(KEY+data_received, buffer, 16-data_received);
 			data_received = 16;
 		}
-		if(data_received >= 16)
+		if(data_received == 16)
 		{
 			communication_flag &= ~FLAG_WAIT_KEY_DATA;
 		}

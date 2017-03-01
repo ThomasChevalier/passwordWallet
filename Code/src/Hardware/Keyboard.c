@@ -1,10 +1,13 @@
 #include "Keyboard.h"
 
+#include <avr/io.h>
 #include <string.h>
 
 #include "Ascii2Keycode.h"
 
-#include <avr/io.h>
+#include "Led.h"
+
+
 
 #ifdef KEYBOARD_ENABLE
 
@@ -28,25 +31,30 @@ static uint16_t IdleMSRemaining = 0;
  * keyboard_send fill it with slices of the total text.
  * Maximum size is 6 because boot compliant keyboard can only send 6 press at a time.
  */
-static char keyboard_text_buffer[6];
-static uint8_t keyboard_buffer_lenght = 0;
+//static char keyboard_text_buffer[6];
+//static uint8_t keyboard_buffer_lenght = 0;
+
+static char letterToSend;
+static uint8_t needToSend;
 
 #endif // KEYBOARD_ENABLE
 
 void keyboard_init(void)
 {
 	#ifdef KEYBOARD_ENABLE
-	memset(keyboard_text_buffer, 0, 64);
+	//memset(keyboard_text_buffer, 0, 6);
+	letterToSend = 0;
+	needToSend = 0;
 	#endif // KEYBOARD_ENABLE
 }
 
 
-void keyboard_send(char* data, unsigned char dataLen)
+void keyboard_send(char* data, uint8_t dataLen)
 {
 	#ifdef KEYBOARD_ENABLE
 	// { (dataLen + 5)/ 6 } is used to around the result of (dataLen/6) to the upper integer
 	// We divide data in slice of 6 character because the maximum number of character that the keyboard can send at one time is 6.
-	for(uint8_t slice = 0; slice < (dataLen + 5)/ 6; ++slice)
+	/*for(uint8_t slice = 0; slice < (dataLen + 5)/ 6; ++slice)
 	{
 		// Clear buffer (previous text may be present)
 		memset(keyboard_text_buffer, 0, 6);
@@ -64,9 +72,21 @@ void keyboard_send(char* data, unsigned char dataLen)
 		{
 			keyboard_loop();
 			USB_USBTask(); // Needed here
+		}*/
+
+		for(uint8_t i = 0; i < dataLen; ++i)
+		{
+			letterToSend = data[i];
+			needToSend = 1;
+			do
+			{
+				keyboard_loop();
+				USB_USBTask();
+				_delay_ms(5); // A delay is needed
+			}while(needToSend);
 		}
 		
-	}
+	//}
 	#endif // KEYBOARD_ENABLE
 }
 
@@ -237,12 +257,13 @@ void keyboard_on_start_of_frame(void)
  */
 void CreateKeyboardReport(USB_KeyboardReport_Data_t* const ReportData)
 {
-	uint8_t UsedKeyCodes = 0;
+	//uint8_t UsedKeyCodes = 0;
 
 	/* Clear the report contents */
 	memset(ReportData, 0, sizeof(USB_KeyboardReport_Data_t));
 
 	// Loop through the buffer of keycode
+	/*
 	uint8_t i = 0;
 	for(i = 0; i < keyboard_buffer_lenght; ++i)
 	{
@@ -273,7 +294,24 @@ void CreateKeyboardReport(USB_KeyboardReport_Data_t* const ReportData)
 			}
 		}
 	}
-	keyboard_buffer_lenght -= i;
+	keyboard_buffer_lenght -= i;*/
+
+	if(needToSend)
+	{
+		uint8_t keycode = pgm_read_byte_near(ascii_to_keycode_map + (letterToSend-' '));
+		const uint8_t modifier = keycode & (1<<7); // Read MSB
+		keycode &= 0x7F; // Clear MSB
+		ReportData->KeyCode[0] = keycode;
+		if(modifier)
+		{
+			ReportData->Modifier = HID_KEYBOARD_MODIFIER_LEFTSHIFT;
+		}
+		else
+		{
+			ReportData->Modifier = 0;
+		}
+		needToSend = 0;
+	}
 
 }
 
