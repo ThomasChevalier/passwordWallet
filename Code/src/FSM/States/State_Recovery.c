@@ -22,6 +22,9 @@
 
 void state_recovery_do_full_reset(void)
 {
+	// Save orientation
+	uint8_t orientation = (OPTIONS_FLAG&OPTIONS_FLAG_OFFSET_ORIENTATION);
+
 	// Erase all fram memory
 	draw_clear();
 	str_to_buffer(str_recovery_eraseMem_index);
@@ -36,6 +39,10 @@ void state_recovery_do_full_reset(void)
 		progress_add(1);
 	}
 	progress_end();
+
+	// Restore orientation
+	OPTIONS_FLAG = orientation << OPTIONS_FLAG_OFFSET_ORIENTATION;
+	fram_write_byte(OFFSET_OPTIONS_FLAG, OPTIONS_FLAG);
 
 	// Clear variables
 	CURRENT_PASSWORD_ID = GLOBALS_EVENTS = NUM_PWD = OPTIONS_FLAG = 0;

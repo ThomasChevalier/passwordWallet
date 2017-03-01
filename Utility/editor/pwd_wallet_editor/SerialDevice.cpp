@@ -40,7 +40,7 @@ void SerialDevice::requestFramDump()
         qDebug() << "Cannot request key while performing other action.";
         return;
     }
-
+    m_fram.clear();
     sendByte(0x01);
     m_waitingFram = true;
 }
@@ -52,7 +52,7 @@ void SerialDevice::requestKey()
         qDebug() << "Cannot request key while performing other action.";
         return;
     }
-
+    m_key.clear();
     sendByte(0x03);
     m_waitingKey = true;
 }
@@ -110,7 +110,7 @@ void SerialDevice::slot_ready_read()
     if(m_waitingFram)
     {
         m_fram.append(m_serial.readAll());
-        if(m_fram.size() == 8192)
+        if(m_fram.size() >= 8192)
         {
             emit framReceived(m_fram);
             m_waitingFram = false;
@@ -119,15 +119,11 @@ void SerialDevice::slot_ready_read()
     else if(m_waitingKey)
     {
         m_key.append(m_serial.readAll());
-        if(m_key.size() == 16)
+        if(m_key.size() >= 16)
         {
             emit keyReceived(m_key);
             m_waitingKey = false;
         }
-    }
-    else
-    {
-        qDebug() << "Received data whereas nothing was expected";
     }
 }
 

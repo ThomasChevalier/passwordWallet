@@ -44,7 +44,6 @@ private:
     bool m_sendingKey;
     qint64 m_bytesWritten;
 
-
     QByteArray m_fram;
     QByteArray m_key;
 };
