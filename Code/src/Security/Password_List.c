@@ -102,49 +102,44 @@ uint8_t pwd_list_get_prev_pwd_id (uint8_t pwd_id)
 	return pwd_id;
 }
 
+// This function return the first id less than pwd_id, or if there is no such id
+// it return the first id from the last password to the first password
+// If there is only one password then this function returns pwd_id
+// If there is no password then this function returns MAXIMUM_NUMBER_OF_PWD
 uint8_t pwd_list_get_prev_pwd_id_sort_none (uint8_t pwd_id)
 {
-	// Scans the memory map in reverse
-	// If we do not decrement pwd_id then the function will found pwd_id directly and it will be bad
+	const uint8_t search_from = MAXIMUM_NUMBER_OF_PWD-1;
+	uint8_t found = MAXIMUM_NUMBER_OF_PWD; // Intialize it with an impossible value
 
-	// Loop
-	uint8_t first_candidate = pwd_id - 1;
-	if(pwd_id == 0)
+	for(uint8_t i = (search_from) / 8; i != (uint8_t)-1; --i)
 	{
-		first_candidate = MAXIMUM_NUMBER_OF_PWD-1;
-	}
-
-	for(uint8_t i = first_candidate / 8; i != (uint8_t)-1; --i)
-	{
+		// Read the memory map stored in fram
 		const uint8_t memory_byte = fram_read_byte(OFFSET_MEMORY_MAP+i);
-		uint8_t j = (i == first_candidate / 8) ? first_candidate % 8 : 7;
+
+		uint8_t j = (i == search_from / 8) ? search_from % 8 : 7;
+
 		for(; j != (uint8_t)-1; --j)
 		{
+			// If there is a chunk used
 			if(memory_byte & (1<<j))
 			{
-				return i*8+j;
-			}
-		}
-	}
-	// No password had been found before pwd_id, so loop (scan from MAXIMUM_NUMBER_OF_PWD to 0)
-	if(pwd_id != 0) // If pwd_id == 0 then we have already search all the chunk
-	{
-		uint8_t last_pwd = MAXIMUM_NUMBER_OF_PWD-1;
-		for(uint8_t i = last_pwd / 8; i != (uint8_t)-1; --i)
-		{
-			const uint8_t memory_byte = fram_read_byte(OFFSET_MEMORY_MAP+i);
-			uint8_t j = (i == last_pwd / 8) ? last_pwd % 8 : 7;
-			for(; j != (uint8_t)-1; --j)
-			{
-				if(memory_byte & (1<<j))
+				const uint8_t id = i*8+j;
+				// Return the first id less than pwd_id
+				if(id < pwd_id)
 				{
-					return i*8+j;
+					return id;
+				}
+
+				// If nothing has been found yet
+				if(found == MAXIMUM_NUMBER_OF_PWD)
+				{
+					found = id;
 				}
 			}
 		}
 	}
-	// There is no password in the list, return pwd_id
-	return pwd_id;
+	// Nothing has been found below pwd_id, return the first id we match
+	return found;
 }
 
 static uint8_t get_id_helper(uint8_t pwd_id, uint8_t(*read_first)(uint8_t), uint8_t(*read_second)(uint8_t))
