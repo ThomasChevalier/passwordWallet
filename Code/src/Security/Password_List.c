@@ -22,6 +22,7 @@ static uint8_t get_first_entry_from(const uint8_t index)
 {
 	for(uint8_t i = index / 8; i < SIZE_MEMORY_MAP; ++i)
 	{
+		const uint8_t memory_byte = fram_read_byte(OFFSET_MEMORY_MAP+i);
 		// Begin at index
 		uint8_t j = (i==index/8) ? index % 8 : 0;
 
@@ -31,7 +32,7 @@ static uint8_t get_first_entry_from(const uint8_t index)
 			{
 				goto nothingFound;
 			}
-			if(MEMORY_MAP[i] & (1<<j)) // The bit is set, we have found a chunk
+			if(memory_byte & (1<<j)) // The bit is set, we have found a chunk
 			{
 				return i*8+j;
 			}
@@ -115,10 +116,11 @@ uint8_t pwd_list_get_prev_pwd_id_sort_none (uint8_t pwd_id)
 
 	for(uint8_t i = first_candidate / 8; i != (uint8_t)-1; --i)
 	{
+		const uint8_t memory_byte = fram_read_byte(OFFSET_MEMORY_MAP+i);
 		uint8_t j = (i == first_candidate / 8) ? first_candidate % 8 : 7;
 		for(; j != (uint8_t)-1; --j)
 		{
-			if(MEMORY_MAP[i] & (1<<j))
+			if(memory_byte & (1<<j))
 			{
 				return i*8+j;
 			}
@@ -130,10 +132,11 @@ uint8_t pwd_list_get_prev_pwd_id_sort_none (uint8_t pwd_id)
 		uint8_t last_pwd = MAXIMUM_NUMBER_OF_PWD-1;
 		for(uint8_t i = last_pwd / 8; i != (uint8_t)-1; --i)
 		{
+			const uint8_t memory_byte = fram_read_byte(OFFSET_MEMORY_MAP+i);
 			uint8_t j = (i == last_pwd / 8) ? last_pwd % 8 : 7;
 			for(; j != (uint8_t)-1; --j)
 			{
-				if(MEMORY_MAP[i] & (1<<j))
+				if(memory_byte & (1<<j))
 				{
 					return i*8+j;
 				}
@@ -260,9 +263,9 @@ void pwd_list_delete_pwd (uint8_t pwd_id)
 	
 	// Unset memory map flag for this chunk
 	const uint8_t mem_byte_id = pwd_id / 8;
-	MEMORY_MAP[mem_byte_id] &= ~(1<<(pwd_id%8));
+	const uint8_t memory_byte = fram_read_byte(OFFSET_MEMORY_MAP+mem_byte_id);
 	// Update the byte that has changed
-	fram_write_byte(OFFSET_MEMORY_MAP + mem_byte_id, MEMORY_MAP[mem_byte_id]); 
+	fram_write_byte(OFFSET_MEMORY_MAP + mem_byte_id, memory_byte & (~(1<<(pwd_id%8))) ); 
 
 	// There is now one less password
 	--NUM_PWD;
@@ -280,18 +283,20 @@ uint8_t pwd_list_add_pwd (uint8_t* name, uint8_t* data, uint8_t* usrName)
 	for(uint8_t i = 0; i < SIZE_MEMORY_MAP && (!chunk_free); ++i)
 	{
 		// Loop in all the bit of the bytes
+		const uint8_t memory_byte = fram_read_byte(OFFSET_MEMORY_MAP+i);
 		for(uint8_t j = 0; j < 8 && (!chunk_free); ++j)
 		{
 			if(i * 8 + j >= MAXIMUM_NUMBER_OF_PWD)
 				break;
 
-			if( (MEMORY_MAP[i] & (1<<j))== 0) // the bit is not set, there is a free chunk
+			if( (memory_byte & (1<<j))== 0) // the bit is not set, there is a free chunk
 			{
 				chunk_free = 1;
 				pwd_id = i * 8 + j;
-				MEMORY_MAP[i] |= (1<<j); // Set the bit, this chunk is now used
+
+				 // Set the bit, this chunk is now used
 				// Update the byte that has changed
-				fram_write_byte(OFFSET_MEMORY_MAP+i, MEMORY_MAP[i]);
+				fram_write_byte(OFFSET_MEMORY_MAP+i, memory_byte | (1<<j));
 			}
 		}
 	}

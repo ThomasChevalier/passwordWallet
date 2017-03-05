@@ -46,7 +46,6 @@ void state_recovery_do_full_reset(void)
 
 	// Clear variables
 	CURRENT_PASSWORD_ID = GLOBALS_EVENTS = NUM_PWD = OPTIONS_FLAG = 0;
-	memset(MEMORY_MAP, 0, SIZE_MEMORY_MAP);
 
 	// Get a master key
 	change_master_key();

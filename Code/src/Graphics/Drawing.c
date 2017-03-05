@@ -121,8 +121,6 @@ void draw_main_menu(void)
 	draw_h_line(8, 20, 120, WHITE);
 	draw_h_line(8, 43, 120, WHITE);
 
-	draw_hex(100, 0, &MEMORY_MAP[0], 1);
-
 	if(NUM_PWD != 0)
 	{
 		char pwdName[32];

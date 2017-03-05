@@ -5,7 +5,7 @@
 
 #undef STORE_SCREEN_BUFFER_IN_FRAM
 #define KEYBOARD_ENABLE
-#undef SERIAL_ENABLE
+#define SERIAL_ENABLE
 
 #if defined(KEYBOARD_ENABLE) || defined(SERIAL_ENABLE)
 #define USB_ENABLE
@@ -121,7 +121,5 @@ extern uint8_t CURRENT_PASSWORD_ID;			// The current password id, start to 0, it
 extern uint8_t OPTIONS_FLAG;     // The options flag stored in fram
 
 extern uint8_t NUM_PWD;         // bytes 6 of fram
-
-extern uint8_t MEMORY_MAP[SIZE_MEMORY_MAP]; // The memory map
 
 #endif // GLOBALS_HEADER_THOMAS_CHEVALIER

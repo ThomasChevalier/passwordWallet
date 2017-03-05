@@ -76,7 +76,7 @@ void encryption_update_key(uint8_t *new_key)
 	// For all the chunk used ...
 	for(uint8_t i = 0; i < SIZE_MEMORY_MAP; ++i)
 	{
-		const uint8_t memory_byte = MEMORY_MAP[i];
+		const uint8_t memory_byte = fram_read_byte(OFFSET_MEMORY_MAP + i);
 		for(uint8_t j = 0; j < 8; ++j)
 		{
 			if(i*8+j<MAXIMUM_NUMBER_OF_PWD)

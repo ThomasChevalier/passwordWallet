@@ -11,5 +11,3 @@ uint8_t CURRENT_PASSWORD_ID = 0;
 
 uint8_t OPTIONS_FLAG = 0;
 uint8_t NUM_PWD = 0;
-
-uint8_t MEMORY_MAP[SIZE_MEMORY_MAP];
