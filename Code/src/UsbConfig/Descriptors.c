@@ -167,7 +167,7 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor =
 		},
 #endif
 
-#ifdef SERIAL_ENABLE
+#if defined(SERIAL_ENABLE)
 	.CDC_CCI_Interface =
 		{
 			.Header                 = {.Size = sizeof(USB_Descriptor_Interface_t), .Type = DTYPE_Interface},
@@ -254,7 +254,11 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor =
 			.EndpointSize           = CDC_TXRX_EPSIZE,
 			.PollingIntervalMS      = 0x05
 		}
-#elif defined(KEYBOARD_ENABLE)
+		#if defined(SERIAL_ENABLE) && defined(KEYBOARD_ENABLE)
+		,
+		#endif
+#endif
+#if defined(KEYBOARD_ENABLE)
 		.HID_Interface =
 		{
 			.Header                 = {.Size = sizeof(USB_Descriptor_Interface_t), .Type = DTYPE_Interface},
