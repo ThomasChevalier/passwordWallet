@@ -6,7 +6,7 @@
 volatile uint8_t RUNNING = 1;
 uint8_t GLOBALS_EVENTS = 0;
 
-uint8_t KEY[16];
+uint8_t KEY[KEY_SIZE];
 uint8_t CURRENT_PASSWORD_ID = 0;
 
 uint8_t OPTIONS_FLAG = 0;

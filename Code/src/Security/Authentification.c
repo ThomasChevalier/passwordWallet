@@ -143,14 +143,15 @@ void change_master_key(void)
 
 	// Generate random sequence
 	draw_clear();
-	progress_begin(20);
+	progress_begin(EEPROM_RANDSEQ_SIZE + 4);
 	str_to_buffer(str_communication_dont_unplug_index);
 	draw_text(15, 3, str_buffer, 0);
 	str_to_buffer(str_misc_updateEncryptVerif_index);
 	draw_text(10, 40, str_buffer, 0);
-	uint8_t randomSequence[16];
-	uint8_t* eeprom_addr = 0;
-	for(uint8_t i = 0; i < 16; ++i)
+
+	uint8_t randomSequence[EEPROM_RANDSEQ_SIZE];
+	uint8_t* eeprom_addr = EEPROM_OFFSET_RANDSEQ;
+	for(uint8_t i = 0; i < EEPROM_RANDSEQ_SIZE; ++i)
 	{
 		randomSequence[i] = random_request_byte();
 		
@@ -160,17 +161,17 @@ void change_master_key(void)
 	}
 
 	// Encrypt that sequence
-	uint8_t encryptionValidation[16];
+	uint8_t encryptionValidation[EEPROM_RANDSEQ_SIZE];
 	const uint8_t zeroIv[16]  = {0x00, 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 };
-	AES128_CBC_encrypt_buffer(encryptionValidation, randomSequence, 16, KEY, zeroIv);
+	AES128_CBC_encrypt_buffer(encryptionValidation, randomSequence, EEPROM_RANDSEQ_SIZE, KEY, zeroIv);
 	progress_add(2);
 
 	// Write it to the eeprom
-	eeprom_addr = 0;
-	for(uint8_t i = 0; i < 16; ++i)
+	eeprom_addr = (uint8_t*)EEPROM_OFFSET_VALIDATION;
+	for(uint8_t i = 0; i < EEPROM_RANDSEQ_SIZE; ++i)
 	{
 		
-		eeprom_update_byte(eeprom_addr+16, encryptionValidation[i]);
+		eeprom_update_byte(eeprom_addr, encryptionValidation[i]);
 		++eeprom_addr;
 	}
 	progress_add(2);

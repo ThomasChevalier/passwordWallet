@@ -16,13 +16,13 @@
 
 void encryption_copy_key_from_eeprom(void)
 {
-	eeprom_read_block(KEY, (void*)32, 16);
+	eeprom_read_block(KEY, (void*)EEPROM_OFFSET_KEY, EEPROM_KEY_SIZE);
 }
 
 void encryption_disable(void)
 {
 	// Store key in eeprom
-	eeprom_update_block(KEY, (void*)32, 16);
+	eeprom_update_block(KEY, (void*)EEPROM_OFFSET_KEY, EEPROM_KEY_SIZE);
 
 	// Update flags
 	OPTIONS_FLAG |= (1<<OPTIONS_FLAG_OFFSET_NO_ENCRYPTION);
@@ -32,8 +32,8 @@ void encryption_disable(void)
 void encryption_enable(void)
 {
 	// Remove key from eeprom
-	uint8_t* eeprom_addr = (uint8_t *)32;
-	for(uint8_t i = 0; i < 16; ++i)
+	uint8_t* eeprom_addr = (uint8_t *)EEPROM_OFFSET_KEY;
+	for(uint8_t i = 0; i < EEPROM_KEY_SIZE; ++i)
 	{
         eeprom_update_byte(eeprom_addr, 0);
         ++eeprom_addr;
@@ -47,20 +47,20 @@ void encryption_enable(void)
 uint8_t encryption_check_key(void)
 {
 	// Read the random sequence from eeprom (address [0;15])
-	uint8_t randSeq[16];
-	eeprom_read_block(randSeq, (void*)0, 16);
+	uint8_t randSeq[EEPROM_RANDSEQ_SIZE];
+	eeprom_read_block(randSeq, (void*)EEPROM_OFFSET_RANDSEQ, EEPROM_RANDSEQ_SIZE);
 
 	// Encrypt the random sequence with the KEY
-	uint8_t output[16];
+	uint8_t output[EEPROM_VALIDATION_SIZE];
 	const uint8_t zeroIv[16]  =
 	{0x00, 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 };
-	AES128_CBC_encrypt_buffer(output, randSeq, 16, KEY, zeroIv);
+	AES128_CBC_encrypt_buffer(output, randSeq, EEPROM_VALIDATION_SIZE, KEY, zeroIv);
 
 	// And check if it match with the already encrypted data (address [16;31])
-	uint8_t* eeprom_addr = (uint8_t*)0;
-	for(uint8_t verifCounter = 0; verifCounter < 16; ++verifCounter)
+	uint8_t* eeprom_addr = (uint8_t*)EEPROM_VALIDATION_SIZE;
+	for(uint8_t verifCounter = 0; verifCounter < EEPROM_VALIDATION_SIZE; ++verifCounter)
 	{
-		if(output[verifCounter] != eeprom_read_byte(eeprom_addr+16))
+		if(output[verifCounter] != eeprom_read_byte(eeprom_addr))
 		{
 			return 0;
 		}

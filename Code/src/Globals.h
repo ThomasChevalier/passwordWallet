@@ -111,7 +111,8 @@ extern uint8_t GLOBALS_EVENTS;   // Current events, not to be accessed by interr
 #define PWD_SORTING_USAGE (1)
 #define PWD_SORTING_ALPHA (2)
 
-extern uint8_t KEY[16]; 					// The main 128 AES key. It should be the only place where the key is stored for a long period
+#define KEY_SIZE (16)
+extern uint8_t KEY[KEY_SIZE]; 					// The main 128 AES key. It should be the only place where the key is stored for a long period
 extern uint8_t CURRENT_PASSWORD_ID;			// The current password id, start to 0, it is in the order of the memory
 
 // ////////////////////// //
@@ -121,5 +122,18 @@ extern uint8_t CURRENT_PASSWORD_ID;			// The current password id, start to 0, it
 extern uint8_t OPTIONS_FLAG;     // The options flag stored in fram
 
 extern uint8_t NUM_PWD;         // bytes 6 of fram
+
+// ////////////////////// //
+// Options stored in FRAM //
+// ////////////////////// //
+
+#define EEPROM_OFFSET_RANDSEQ (0)
+#define EEPROM_RANDSEQ_SIZE (16)
+
+#define EEPROM_OFFSET_VALIDATION (EEPROM_OFFSET_RANDSEQ + EEPROM_RANDSEQ_SIZE)
+#define EEPROM_VALIDATION_SIZE (16)
+
+#define EEPROM_OFFSET_KEY (EEPROM_OFFSET_VALIDATION + EEPROM_VALIDATION_SIZE)
+#define EEPROM_KEY_SIZE KEY_SIZE
 
 #endif // GLOBALS_HEADER_THOMAS_CHEVALIER
