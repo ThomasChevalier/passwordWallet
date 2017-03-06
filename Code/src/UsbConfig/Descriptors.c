@@ -136,7 +136,13 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor =
 			.Header                 = {.Size = sizeof(USB_Descriptor_Configuration_Header_t), .Type = DTYPE_Configuration},
 
 			.TotalConfigurationSize = sizeof(USB_Descriptor_Configuration_t),
-			.TotalInterfaces        = 2,
+			#if defined(KEYBOARD_ENABLE) && defined(SERIAL_ENABLE)
+			.TotalInterfaces        = 3,
+			#elif defined(SERIAL_ENABLE)
+			.TotalInterfaces		= 2,
+			#elif defined(KEYBOARD_ENABLE)
+			.TotalInterfaces		= 1,
+			#endif
 
 			.ConfigurationNumber    = 1,
 			.ConfigurationStrIndex  = NO_DESCRIPTOR,
