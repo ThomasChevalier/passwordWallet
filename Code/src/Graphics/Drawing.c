@@ -2,8 +2,6 @@
 
 #include <string.h>
 
-#include <util/delay.h>
-
 #include "../Globals.h"
 
 #include "String.h"
@@ -15,9 +13,6 @@
 #include "../Security/Password_List.h"
 
 // For type string
-#include "../Security/Random.h"
-#include "../Hardware/Keyboard.h"
-#include "../Hardware/Buttons.h"
 #include "../FSM/Events.h"
 #include "../Program/Program.h"
 

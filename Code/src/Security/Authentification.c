@@ -124,7 +124,12 @@ void change_master_key(void)
 		goto EXIT;
 	}
 
+	// From here, the code must be error free, otherwise the key will be lost
+	// The device should not be disconnected too
+
 	draw_clear();
+	str_to_buffer(str_communication_dont_unplug_index);
+	draw_text(15, 3, str_buffer, 0);
 	str_to_buffer(str_misc_updatePwd_index);
 	draw_text(5, 40, str_buffer, 0);
 	progress_begin(NUM_PWD);
@@ -139,6 +144,8 @@ void change_master_key(void)
 	// Generate random sequence
 	draw_clear();
 	progress_begin(20);
+	str_to_buffer(str_communication_dont_unplug_index);
+	draw_text(15, 3, str_buffer, 0);
 	str_to_buffer(str_misc_updateEncryptVerif_index);
 	draw_text(10, 40, str_buffer, 0);
 	uint8_t randomSequence[16];
