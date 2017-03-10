@@ -76,8 +76,11 @@ int main(void)
 			currentStateNum = newState;
 			currentState->begin();
 		}
-
-		program_wait();
+		// Don't wait in communication state, it slow down the transmission
+		if(currentStateNum != STATE_COMMUNICATION)
+		{
+			program_wait();
+		}
 	}
 	security_erase_data(KEY, 16);
 
