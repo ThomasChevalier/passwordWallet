@@ -27,8 +27,7 @@ void state_options_begin (void)
 
 static void do_inverse_screen(void)
 {
-	OPTIONS_FLAG ^= (1<<OPTIONS_FLAG_OFFSET_ORIENTATION);
-	fram_write_byte(OFFSET_OPTIONS_FLAG, OPTIONS_FLAG);
+	update_opt_flags(OPTIONS_FLAG ^ (1<<OPTIONS_FLAG_OFFSET_ORIENTATION));
 }
 
 static void do_new_pwd(void)

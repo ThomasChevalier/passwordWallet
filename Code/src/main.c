@@ -82,7 +82,6 @@ int main(void)
 			program_wait();
 		}
 	}
-	security_erase_data(KEY, 16);
 
 	while(1);
 }

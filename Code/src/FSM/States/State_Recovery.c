@@ -41,8 +41,7 @@ void state_recovery_do_full_reset(void)
 	progress_end();
 
 	// Restore orientation
-	OPTIONS_FLAG = orientation << OPTIONS_FLAG_OFFSET_ORIENTATION;
-	fram_write_byte(OFFSET_OPTIONS_FLAG, OPTIONS_FLAG);
+	update_opt_flags(orientation << OPTIONS_FLAG_OFFSET_ORIENTATION);
 
 	// Clear variables
 	CURRENT_PASSWORD_ID = GLOBALS_EVENTS = NUM_PWD = OPTIONS_FLAG = 0;
@@ -51,8 +50,7 @@ void state_recovery_do_full_reset(void)
 	change_master_key();
 
 	// Device is now initialized !
-	OPTIONS_FLAG |= (1<<OPTIONS_FLAG_OFFSET_INITIALIZED);
-	fram_write_byte(OFFSET_OPTIONS_FLAG, (1<<OPTIONS_FLAG_OFFSET_INITIALIZED));
+	update_opt_flags((1<<OPTIONS_FLAG_OFFSET_INITIALIZED));
 }
 
 static uint8_t do_recover_key(void)

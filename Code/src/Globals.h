@@ -121,6 +121,8 @@ extern uint8_t CURRENT_PASSWORD_ID;			// The current password id, start to 0, it
 
 extern uint8_t OPTIONS_FLAG;     // The options flag stored in fram
 
+void update_opt_flags(uint8_t opt_flag);
+
 extern uint8_t NUM_PWD;         // bytes 6 of fram
 
 // ////////////////////// //

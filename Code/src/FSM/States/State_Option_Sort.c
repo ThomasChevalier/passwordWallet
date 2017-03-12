@@ -14,21 +14,16 @@ static uint8_t currentChoice = 0;
 
 static void do_no_sorting(void)
 {
-	OPTIONS_FLAG &= 0xF9;
-	fram_write_byte(OFFSET_OPTIONS_FLAG, OPTIONS_FLAG);
+	update_opt_flags(OPTIONS_FLAG & 0xF9);
 }
 
 static void do_sort_usage(void)
 {
-	OPTIONS_FLAG &= 0xF9;
-	OPTIONS_FLAG |= 0x02;
-	fram_write_byte(OFFSET_OPTIONS_FLAG, OPTIONS_FLAG);
+	update_opt_flags((OPTIONS_FLAG&0xF9)|0x02);
 }
 static void do_sort_alpha(void)
 {
-	OPTIONS_FLAG &= 0xF9;
-	OPTIONS_FLAG |= 0x04;
-	fram_write_byte(OFFSET_OPTIONS_FLAG, OPTIONS_FLAG);
+	update_opt_flags((OPTIONS_FLAG&0xF9)|0x04);
 }
 
 void state_option_sort_begin (void)

@@ -25,8 +25,7 @@ void encryption_disable(void)
 	eeprom_update_block(KEY, (void*)EEPROM_OFFSET_KEY, EEPROM_KEY_SIZE);
 
 	// Update flags
-	OPTIONS_FLAG |= (1<<OPTIONS_FLAG_OFFSET_NO_ENCRYPTION);
-	fram_write_byte(OFFSET_OPTIONS_FLAG, OPTIONS_FLAG);
+	update_opt_flags(OPTIONS_FLAG | (1<<OPTIONS_FLAG_OFFSET_NO_ENCRYPTION));
 }
 
 void encryption_enable(void)
@@ -40,8 +39,7 @@ void encryption_enable(void)
 	}
 	
 	// Update flags
-	OPTIONS_FLAG &= ~(1<<OPTIONS_FLAG_OFFSET_NO_ENCRYPTION);
-	fram_write_byte(OFFSET_OPTIONS_FLAG, OPTIONS_FLAG);
+	update_opt_flags(OPTIONS_FLAG & ~(1<<OPTIONS_FLAG_OFFSET_NO_ENCRYPTION));
 }
 
 uint8_t encryption_check_key(void)

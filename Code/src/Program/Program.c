@@ -47,10 +47,6 @@ void program_wait(void)
 		for(uint8_t i = 0; i < 150; ++i)
 		{
 			_delay_ms(1);
-			if(!RUNNING)
-			{
-				break;
-			}
 		}
 	}
 	else
@@ -58,12 +54,7 @@ void program_wait(void)
 		for(uint8_t i = 0; i < 50; ++i)
 		{
 			_delay_ms(1);
-			if(!RUNNING)
-			{
-				break;
-			}
 		}
-		
 	}
 }
 
