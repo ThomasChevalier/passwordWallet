@@ -12,7 +12,7 @@ static const uint8_t ascii_to_keycode_map[] PROGMEM =
 * |                       KEYCODE / MODIFIER                       |   ASCII   |
 */
 
-	HID_KEYBOARD_SC_ESCAPE, 										/* space */
+	HID_KEYBOARD_SC_SPACE,	 										/* space */
 	HID_KEYBOARD_SC_1_AND_EXCLAMATION | (1<<7), 					/* ! */
 	HID_KEYBOARD_SC_APOSTROPHE_AND_QUOTE | (1<<7), 					/* " */
 	HID_KEYBOARD_SC_3_AND_HASHMARK | (1<<7), 						/* # */
