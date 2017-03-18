@@ -14,6 +14,9 @@
 #define SPI_CLOCK_DIV8 0x05
 #define SPI_CLOCK_DIV32 0x06
 
+#define SPI_MASTER 0x10
+#define SPI_ENABLE 0x40
+
 #define SPI_MODE0 0x00
 #define SPI_MODE1 0x04
 #define SPI_MODE2 0x08

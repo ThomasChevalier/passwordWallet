@@ -1,3 +1,4 @@
+
 #ifndef STRING_HEADER_THOMAS_CHEVALIER
 #define STRING_HEADER_THOMAS_CHEVALIER
 
@@ -68,6 +69,7 @@ DECLARE_STRING(str_option_advanced_changeKey);
 DECLARE_STRING(str_option_advanced_disableEncryption);
 DECLARE_STRING(str_option_advanced_enableEncryption);
 DECLARE_STRING(str_option_advanced_showKey);
+DECLARE_STRING(str_option_advanced_keyboardDisposition);
 DECLARE_STRING(str_option_advanced_selfTest);
 DECLARE_STRING(str_option_advanced_doFullReset);
 

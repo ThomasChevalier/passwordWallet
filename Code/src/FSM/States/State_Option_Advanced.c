@@ -38,6 +38,11 @@ static void do_show_key(void)
     draw_update();
 }
 
+static void do_change_keyboard_disposition(void)
+{
+	update_opt_flags(OPTIONS_FLAG ^ (1<<OPTIONS_FLAG_OFFSET_QWERTY));
+}
+
 void state_option_advanced_begin (void)
 {
 	currentChoice = 0;
@@ -104,9 +109,13 @@ uint8_t state_option_advanced_transition (uint8_t event)
 		}
 		else if(currentChoice == 4)
 		{
-			self_test_execute();
+			do_change_keyboard_disposition();
 		}
 		else if(currentChoice == 5)
+		{
+			self_test_execute();
+		}
+		else if(currentChoice == 6)
 		{
 			state_recovery_do_full_reset();
 		}

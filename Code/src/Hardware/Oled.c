@@ -134,9 +134,9 @@ void oled_dc_low()
 void oled_setup_spi()
 {
 	// SPIE=0 SPE=1 DORD=0 MSTR=1 CPOL=1 CPHA=0 SPR1=0 SPR0=0
-	SPCR = 0x58;
-	//SPSR &= ~(1<<SPI2X); // DeActive 2x speed mode
-	SPSR |= (1<<SPI2X); // Active 2x speed mode
+	SPCR = SPI_MASTER | SPI_ENABLE | (1<<3);
+	SPSR &= ~(1<<SPI2X); // DeActive 2x speed mode
+	//SPSR |= (1<<SPI2X); // Active 2x speed mode
 }
 
 // Software

@@ -25,6 +25,7 @@ void progress_pause(void)
 	PROGRESS_PAUSE_CPX = PROGRESS_COMPLEXITY;
 	PROGRESS_COMPLEXITY = 0;
 }
+
 void progress_continue(void)
 {
 	PROGRESS_COMPLEXITY = PROGRESS_PAUSE_CPX;
@@ -38,12 +39,11 @@ void progress_add(uint8_t work)
 	}
 
 	uint16_t adv  = PROGRESS_ADVANCE;
-	const uint16_t cplx = PROGRESS_COMPLEXITY;
 
-	const uint8_t minimum_pix = adv * 100 / cplx;
+	const uint8_t minimum_pix = adv * 100 / PROGRESS_COMPLEXITY;
 	PROGRESS_ADVANCE += work;
 	adv = PROGRESS_ADVANCE;
-	const uint8_t maximum_pix = adv * 100 / cplx;
+	const uint8_t maximum_pix = adv * 100 / PROGRESS_COMPLEXITY;
 
 	for(uint8_t i = 0; i < 4; ++i)
 	{

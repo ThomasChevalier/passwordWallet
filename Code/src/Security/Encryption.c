@@ -31,12 +31,7 @@ void encryption_disable(void)
 void encryption_enable(void)
 {
 	// Remove key from eeprom
-	uint8_t* eeprom_addr = (uint8_t *)EEPROM_OFFSET_KEY;
-	for(uint8_t i = 0; i < EEPROM_KEY_SIZE; ++i)
-	{
-        eeprom_update_byte(eeprom_addr, 0);
-        ++eeprom_addr;
-	}
+	eeprom_update_block(0, (void*)EEPROM_OFFSET_KEY, EEPROM_KEY_SIZE);
 	
 	// Update flags
 	update_opt_flags(OPTIONS_FLAG & ~(1<<OPTIONS_FLAG_OFFSET_NO_ENCRYPTION));
@@ -85,8 +80,6 @@ void encryption_update_key(uint8_t *new_key)
 					progress_pause();
 					
 					// ... Change the key
-					CURRENT_PASSWORD_ID = i*8+j;
-
 					password_read_data(i*8+j, buffer, KEY);
 					password_set_data(i*8+j,buffer, strlen((char*)(buffer)), new_key);
 

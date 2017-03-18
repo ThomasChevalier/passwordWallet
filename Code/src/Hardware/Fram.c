@@ -18,7 +18,7 @@ void fram_setup_hardware()
 void fram_setup_spi()
 {
 	// SPIE=0 SPE=1 DORD=0 MSTR=1 CPOL=0 CPHA=0 SPR1=0 SPR0=0
-	SPCR = 0x50;
+	SPCR = SPI_ENABLE | SPI_MASTER | SPI_CLOCK_DIV4;
 	SPSR |= (1<<SPI2X); // Active 2x speed mode
 }
 

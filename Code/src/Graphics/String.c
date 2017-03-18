@@ -98,8 +98,9 @@ DEFINE_STRING(str_option_advanced_changeKey, "Changer clef maitre", 13);
 DEFINE_STRING(str_option_advanced_disableEncryption, "Desactiver cryptage", 14);
 DEFINE_STRING(str_option_advanced_enableEncryption, "Activer cryptage", 15);
 DEFINE_STRING(str_option_advanced_showKey, "Montrer clef maitre", 16);
-DEFINE_STRING(str_option_advanced_selfTest, "Auto test", 17);
-DEFINE_STRING(str_option_advanced_doFullReset, "FORMATER", 18);
+DEFINE_STRING(str_option_advanced_keyboardDisposition, "Changer langue clavier", 17);
+DEFINE_STRING(str_option_advanced_selfTest, "Auto test", 18);
+DEFINE_STRING(str_option_advanced_doFullReset, "FORMATER", 19);
 
 
 PGM_P const string_options_table[] PROGMEM = 
@@ -124,6 +125,7 @@ PGM_P const string_options_table[] PROGMEM =
 	str_option_advanced_disableEncryption,
 	str_option_advanced_enableEncryption,
 	str_option_advanced_showKey,
+	str_option_advanced_keyboardDisposition,
 	str_option_advanced_selfTest,
 	str_option_advanced_doFullReset
 };
