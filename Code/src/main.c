@@ -1,3 +1,5 @@
+#include <avr/interrupt.h>
+
 #include "Globals.h"
 
 #include "System/System.h"
@@ -9,10 +11,18 @@
 
 #include "Hardware/Fram.h"
 #include "Hardware/SelfTest.h"
+#include "Hardware/Led.h"
 
 #include "FSM/States.h"
 #include "FSM/Events.h"
 
+ISR(BADISR_vect)
+{
+    for(;;)
+    {
+    	led_blink(1);
+    }
+}
 
 int main(void)
 {
@@ -28,7 +38,11 @@ int main(void)
 		while(1);
 	}
 
+	// Read and initialize various variable
 	program_init();
+
+	// Check the reset reason and display it
+	system_read_reset_source();
 
 	// If the device has not been initialized yet
 	const uint8_t optFlag = fram_read_byte(OFFSET_OPTIONS_FLAG);

@@ -59,7 +59,6 @@ uint8_t state_wait_card_transition (uint8_t event)
 				if(encryption_check_key()) // If the key of the rfid is the good one.
 				{
 					// Then go to the main state
-					CURRENT_PASSWORD_ID = pwd_list_get_first_pwd_id();
 					return STATE_MAIN;
 				}
 				else
@@ -97,4 +96,9 @@ void state_wait_card_end(void)
 	rfid_power_down();
 	// Normal contrast
     oled_dim(0);
+
+    // Initialize and sort all the data
+    CURRENT_PASSWORD_ID = pwd_list_get_first_pwd_id();
+    pwd_list_sort_usage();
+    pwd_list_sort_alpha();
 }

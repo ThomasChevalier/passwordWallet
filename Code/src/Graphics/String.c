@@ -40,6 +40,11 @@ DEFINE_STRING(str_communication_dont_unplug,"NE PAS DEBRANCHER",			26	);
 DEFINE_STRING(str_communication_end,		"Transfert fini",				27	);
 DEFINE_STRING(str_communication_unplug,		"Debranchez puis branchez",		28	);
 
+DEFINE_STRING(str_reset_external,			"External reset", 				29	);
+DEFINE_STRING(str_reset_brownout,			"Brownout reset", 				30	);
+DEFINE_STRING(str_reset_watchdog,			"Watchdog reset", 				31	);
+DEFINE_STRING(str_reset_jtag,				"JTAG reset"	, 				32	);
+
 PGM_P const string_table[] PROGMEM = 
 {
 	str_error_card,
@@ -75,7 +80,12 @@ PGM_P const string_table[] PROGMEM =
 	str_communication_what,
 	str_communication_dont_unplug,
 	str_communication_end,
-	str_communication_unplug
+	str_communication_unplug,
+
+	str_reset_external,
+	str_reset_brownout,
+	str_reset_watchdog,
+	str_reset_jtag
 };
 
 DEFINE_STRING(str_option_password, "Mot de passe ...", 0);

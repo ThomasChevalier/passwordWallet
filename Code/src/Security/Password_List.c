@@ -349,8 +349,8 @@ uint8_t pwd_list_add_pwd (uint8_t* name, uint8_t* data, uint8_t* usrName)
 
 	// We have inserted the password at the end of each list (alpha and usage) but it is not sorted.
 	// We must sort them.
-	//pwd_list_sort_usage();
-	//pwd_list_sort_alpha();
+	pwd_list_sort_usage();
+	pwd_list_sort_alpha();
 	return 1; // Success
 }
 
@@ -391,6 +391,9 @@ static void swap_neighbours_alpha(uint8_t lower, uint8_t upper)
 
 void pwd_list_sort_usage (void)
 {
+	// Not working yet
+	return;
+
 	if(NUM_PWD < 2)
 	{
 		return;
@@ -427,6 +430,9 @@ void pwd_list_sort_usage (void)
 
 void pwd_list_sort_alpha (void)
 {
+	// Not working yet
+	return;
+	
 	if(NUM_PWD < 2)
 	{
 		return;

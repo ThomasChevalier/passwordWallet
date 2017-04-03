@@ -47,6 +47,11 @@ DECLARE_STRING(str_communication_dont_unplug);
 DECLARE_STRING(str_communication_end);
 DECLARE_STRING(str_communication_unplug);
 
+DECLARE_STRING(str_reset_external);
+DECLARE_STRING(str_reset_brownout);
+DECLARE_STRING(str_reset_watchdog);
+DECLARE_STRING(str_reset_jtag);
+
 extern PGM_P const string_table[] PROGMEM;
 
 DECLARE_STRING(str_option_password);

@@ -3,6 +3,11 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>  // for sei()
 
+#include "../Graphics/Drawing.h"
+#include "../Graphics/String.h"
+
+#include "../Program/Program.h"
+
 #ifndef cbi
 #define cbi(sfr, bit) (_SFR_BYTE(sfr) &= ~_BV(bit))
 #endif
@@ -69,13 +74,58 @@ void system_init(void)
 
 
 
+#if defined(ADCSRA)
 	// set a2d prescaler so we are inside the desired 50-200 KHz range.
-
-	sbi(ADCSRA, ADPS2);
-	sbi(ADCSRA, ADPS1);
-	cbi(ADCSRA, ADPS0);
-
+	#if F_CPU >= 16000000 // 16 MHz / 128 = 125 KHz
+		sbi(ADCSRA, ADPS2);
+		sbi(ADCSRA, ADPS1);
+		sbi(ADCSRA, ADPS0);
+	#elif F_CPU >= 8000000 // 8 MHz / 64 = 125 KHz
+		sbi(ADCSRA, ADPS2);
+		sbi(ADCSRA, ADPS1);
+		cbi(ADCSRA, ADPS0);
+	#elif F_CPU >= 4000000 // 4 MHz / 32 = 125 KHz
+		sbi(ADCSRA, ADPS2);
+		cbi(ADCSRA, ADPS1);
+		sbi(ADCSRA, ADPS0);
+	#elif F_CPU >= 2000000 // 2 MHz / 16 = 125 KHz
+		sbi(ADCSRA, ADPS2);
+		cbi(ADCSRA, ADPS1);
+		cbi(ADCSRA, ADPS0);
+	#elif F_CPU >= 1000000 // 1 MHz / 8 = 125 KHz
+		cbi(ADCSRA, ADPS2);
+		sbi(ADCSRA, ADPS1);
+		sbi(ADCSRA, ADPS0);
+	#else // 128 kHz / 2 = 64 KHz -> This is the closest you can get, the prescaler is 2
+		cbi(ADCSRA, ADPS2);
+		cbi(ADCSRA, ADPS1);
+		sbi(ADCSRA, ADPS0);
+	#endif
 	// enable a2d conversions
 	sbi(ADCSRA, ADEN);
+#endif
 
+}
+
+// Read the reset source and display it
+void system_read_reset_source(void)
+{
+	uint8_t str_index = 0;
+
+	// Ignore power on reset
+	if(MCUSR & (1<<PORF )) {return;}
+
+	if(MCUSR & (1<<EXTRF)) {str_index = str_reset_external_index;}
+	if(MCUSR & (1<<BORF )) {str_index = str_reset_brownout_index;}
+	if(MCUSR & (1<<WDRF )) {str_index = str_reset_watchdog_index;}
+	if(MCUSR & (1<<JTRF )) {str_index = str_reset_jtag_index;}
+	MCUSR = 0;
+
+	draw_clear();
+	str_to_buffer(str_index);
+	draw_text(0, 0, str_buffer, 0);
+	draw_update();
+
+	// Wait for anything
+	program_pause_until_event(0xFF);
 }

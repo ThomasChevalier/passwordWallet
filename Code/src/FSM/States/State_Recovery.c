@@ -33,11 +33,14 @@ void state_recovery_do_full_reset(void)
 
 	progress_begin(FRAM_BYTE_SIZE/128);
 
-	for(uint16_t i = 0; i < FRAM_BYTE_SIZE/128; ++i)
+	// Do .. While loop is 6 bytes smaller than for loop in this case
+	uint8_t i = FRAM_BYTE_SIZE/128;
+	do
 	{
+		--i;
 		fram_set(i*128, 0, 128);
 		progress_add(1);
-	}
+	}while(i);
 	progress_end();
 
 	// Restore orientation

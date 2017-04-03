@@ -13,6 +13,7 @@
 
 #include "../../Program/Program.h"
 #include "../../Security/Encryption.h"
+#include "../Security/Password_List.h"
 
 // Flag for communication state
 #define FLAG_INITED (1<<0)
@@ -157,6 +158,9 @@ uint8_t state_communication_transition (uint8_t event)
 		program_init();
 		if(encryption_check_key())
 		{
+			// If the fram has been modified, the list must be resorted
+			pwd_list_sort_usage();
+			pwd_list_sort_alpha();
 			return STATE_MAIN;
 		}
 		else

@@ -87,7 +87,7 @@ static void do_change_name(void)
 
 	password_set_name(CURRENT_PASSWORD_ID, (uint8_t*)name, 32);
 	// Get the list sorted
-	//pwd_list_sort_alpha();
+	pwd_list_sort_alpha();
 }
 
 static void do_delete_password(void)
