@@ -298,18 +298,21 @@ void CreateKeyboardReport(USB_KeyboardReport_Data_t* const ReportData)
 
 	if(needToSend)
 	{
-		uint8_t keycode = pgm_read_byte_near(ascii_to_keycode_map + (letterToSend-' '));
-		const uint8_t modifier = keycode & (1<<7); // Read MSB
-		keycode &= 0x7F; // Clear MSB
+		uint8_t keycode = pgm_read_byte_near(ascii_to_keycode(letterToSend));
+		const uint8_t modifier = keycode & 0XC0; // Read modifiers
+		keycode &= 0XC0; // Clear modifiers
 		ReportData->KeyCode[0] = keycode;
-		if(modifier)
+
+		ReportData->Modifier = 0;
+		if(modifier & KEYCODE_MODIFIER_SHIFT)
 		{
-			ReportData->Modifier = HID_KEYBOARD_MODIFIER_LEFTSHIFT;
+			ReportData->Modifier |= HID_KEYBOARD_MODIFIER_LEFTSHIFT;
 		}
-		else
+		if(modifier & KEYCODE_MODIFIER_ALTGR)
 		{
-			ReportData->Modifier = 0;
+			ReportData->Modifier |= HID_KEYBOARD_MODIFIER_RIGHTALT;
 		}
+
 		needToSend = 0;
 	}
 

@@ -20,7 +20,6 @@ typedef enum {
 
 typedef struct State_
 {
-	// uint8_t event_mask;			// Each bit of the event_mask is an event, a bit set to 1 mean the state react to the specified event
 	uint8_t (*transition)(uint8_t);	// Transition to the next state, return new state number
 	void (*begin)(void); // The "constructor" of the state, called when the state is entered
 	void (*end)(void); // The "destructor" of the state, called when the state is left
