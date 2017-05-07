@@ -17,6 +17,9 @@
 // LED //
 // /// //
 
+/**
+ * @brief This define holds the duration of the delay between the led on and the led off, in milliseconds.
+ */
 #define LED_BLINK_DELAY (150)
 
 // /////////////////// //
@@ -40,8 +43,15 @@
 //  Finite state machine related variables //
 // /////////////////////////////////////// //
 
-extern volatile uint8_t RUNNING; // Is the program running ?
-extern uint8_t GLOBALS_EVENTS;   // Current events, not to be accessed by interrupt
+/**
+ * @brief If the programm is running then this variable equal 1, 0 otherwise.
+ */
+extern volatile uint8_t RUNNING;
+
+/**
+ * @brief Current events. Should not be accessed in an interrupt.
+ */
+extern uint8_t GLOBALS_EVENTS;
 
 // ///////////// //
 // Fram Section  //
@@ -90,8 +100,10 @@ extern uint8_t GLOBALS_EVENTS;   // Current events, not to be accessed by interr
 // Password Section //
 // //////////////// //
 
-// The maximum number of password that the memory can handle.
-// For 8KB fram it is 47
+/**
+ * @brief The maximum number of password that the memory can handle.
+ * For 8KB memory it is 47
+ */
 #define MAXIMUM_NUMBER_OF_PWD (47)
 
 #define SIZE_OF_PWD_BLOCK (166)
@@ -113,18 +125,38 @@ extern uint8_t GLOBALS_EVENTS;   // Current events, not to be accessed by interr
 #define PWD_SORTING_ALPHA (2)
 
 #define KEY_SIZE (16)
-extern uint8_t KEY[KEY_SIZE]; 					// The main 128 AES key. It should be the only place where the key is stored for a long period
-extern uint8_t CURRENT_PASSWORD_ID;			// The current password id, start to 0, it is in the order of the memory
+/**
+ * @brief The main 128 AES key. It should be the only place where the key is stored for a long period
+ */
+extern uint8_t KEY[KEY_SIZE];
+
+/**
+ * @brief The current password id, start to 0, it is in the order of the memory
+ */
+extern uint8_t CURRENT_PASSWORD_ID;
 
 // ////////////////////// //
 // Options stored in FRAM //
 // ////////////////////// //
 
-extern uint8_t OPTIONS_FLAG;     // The options flag stored in fram
+/**
+ * @brief The options flag stored in fram
+ */
+extern uint8_t OPTIONS_FLAG;
 
+/**
+ * @brief Write to OPTIONS_FLAG and send it to FRAM.
+ * @details Should be the only way to write to OPTIONS_FLAG.
+ * First set OPTIONS_FLAG to opt_flag then write OPTIONS_FLAG to FRAM.
+ * 
+ * @param opt_flag The new value of OPTIONS_FLAG.
+ */
 void update_opt_flags(uint8_t opt_flag);
 
-extern uint8_t NUM_PWD;         // bytes 6 of fram
+/**
+ * @brief The number of password stored in memory now.
+ */
+extern uint8_t NUM_PWD;
 
 // ////////////////////// //
 // Options stored in FRAM //
@@ -138,5 +170,12 @@ extern uint8_t NUM_PWD;         // bytes 6 of fram
 
 #define EEPROM_OFFSET_KEY (EEPROM_OFFSET_VALIDATION + EEPROM_VALIDATION_SIZE)
 #define EEPROM_KEY_SIZE KEY_SIZE
+
+/* *********** */
+/* RETURN CODE */
+/* *********** */
+
+#define RETURN_SUCCESS (1)
+#define RETURN_ERROR (0)
 
 #endif // GLOBALS_HEADER_THOMAS_CHEVALIER

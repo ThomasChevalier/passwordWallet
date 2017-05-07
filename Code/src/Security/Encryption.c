@@ -55,11 +55,11 @@ uint8_t encryption_check_key(void)
 	{
 		if(output[verifCounter] != eeprom_read_byte(eeprom_addr))
 		{
-			return 0;
+			return RETURN_ERROR;
 		}
 		++eeprom_addr;
 	}
-	return 1;
+	return RETURN_SUCCESS;
 }
 
 

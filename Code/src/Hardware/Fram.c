@@ -5,6 +5,7 @@ All rights reserved
 
 */
 
+#include "../Globals.h"
 #include "Fram.h"
 #include "Spi.h"
 #include "PinDefinition.h"
@@ -144,7 +145,7 @@ uint8_t fram_test (void)
 	Fram_id id = fram_read_id();
 	if(id.manufacturer_id != 0x04 || id.continuation_code != 0x7F)
 	{
-		return 0;
+		return RETURN_ERROR;
 	}
-	return 1;
+	return RETURN_SUCCESS;
 }

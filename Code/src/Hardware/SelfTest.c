@@ -39,7 +39,7 @@ static void test_oled(void)
 
 static void test_fram(void)
 {
-	if(!fram_test())
+	if(fram_test() == RETURN_ERROR)
 	{
 		str_to_buffer(str_self_test_fram_fail_index);
 		draw_text(0, 0, str_buffer, 0);

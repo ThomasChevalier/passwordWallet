@@ -35,7 +35,6 @@ HIGH=WP  -|      |- SCK
 
 // WARNING : it is to the user to disable interrupt before any spi operation
 
-
 typedef enum
 {
 	F_WREN = 0x06, // Set write enable latch
@@ -57,18 +56,98 @@ typedef struct Fram_id_
 	uint8_t product_idH;		// Second byte of product ID : proprietary use only
 } Fram_id;
 
-void	fram_setup_hardware	(void);												// Setup pin direction for fram
-void	fram_setup_spi		(void);												// Setup spi mode and clock
-uint8_t	fram_read_byte		(uint16_t addr);									// Read one byte of memory at addr
-void	fram_read_bytes		(uint16_t addr, uint8_t* buffer, uint8_t size);		// Read bytes of memory from addr to addr + size
-void	fram_write_byte		(uint16_t addr, uint8_t byte);						// Write one byte in memory at addr
-void	fram_write_bytes	(uint16_t addr, uint8_t* buffer, uint8_t size);		// Write bytes in memory from addr to addr + size
-void	fram_set			(uint16_t addr, uint8_t val, uint8_t num);			// Write num times the value val in memory beginning at addr
-Fram_id	fram_read_id		(void);												// Read product id, see Fram_id struct declaration
-uint8_t	fram_read_register	(void);												// Read the status register
-void	fram_write_register	(uint8_t reg);										// Write the status register, bit 1 and 0 are ignored
-void	fram_select			(void);												// Pull cs down
-void	fram_deselect		(void);												// Pull cs up
-uint8_t fram_test			(void);												// Test if the fram is installed. Return 1 if OK, return 0 if fram is not installed
+/**
+ * @brief Setup pin direction for fram.
+ */
+void	fram_setup_hardware	(void);
+
+/**
+ * @brief Setup spi mode and clock speed.
+ */
+void	fram_setup_spi		(void);
+
+/**
+ * @brief Read one byte of memory.
+ * 
+ * @param addr The address to read the byte from.
+ * @return The byte that has been read.
+ */
+uint8_t	fram_read_byte		(uint16_t addr);
+
+/**
+ * @brief Read an array of bytes from memory.
+ * 
+ * @param addr The address to read the bytes from.
+ * @param buffer The array of bytes that will contains the bytes read.
+ * @param size The size of the array.
+ */
+void	fram_read_bytes		(uint16_t addr, uint8_t* buffer, uint8_t size);
+
+/**
+ * @brief Write one byte in memory.
+ * 
+ * @param addr Where to write the byte.
+ * @param byte The byte to write.
+ */
+void	fram_write_byte		(uint16_t addr, uint8_t byte);
+
+/**
+ * @brief Write an array of bytes in memory.
+ * 
+ * @param addr Where to write the bytes.
+ * @param buffer The array of bytes to write.
+ * @param size The size of the array.
+ */
+void	fram_write_bytes	(uint16_t addr, uint8_t* buffer, uint8_t size);
+
+/**
+ * @brief Write an array of bytes with a fixed value in memory.
+ * 
+ * @param addr Where to write the bytes.
+ * @param val The value of the bytes that will be written.
+ * @param num The number of bytes to write.
+ */
+void	fram_set			(uint16_t addr, uint8_t val, uint8_t num);
+
+/**
+ * @brief Read the product identifier.
+ * 
+ * @return Return a structure with all the memory info. See Fram_id declaration.
+ */
+Fram_id	fram_read_id		(void);
+
+/**
+ * @brief Read the status register of the memory.
+ * 
+ * @return Return the value of the register.
+ */
+uint8_t	fram_read_register	(void);
+
+/**
+ * @brief Write the status register.
+ * @details Bit 0 and 1 are not taken into account.
+ * 
+ * @param reg The value to write in the register.
+ */
+void	fram_write_register	(uint8_t reg);
+
+/**
+ * @brief Select the memory for spi operation.
+ * @details Pull cs low.
+ */
+void	fram_select			(void);
+
+/**
+ * @brief Deselect the memory.
+ * @details Pull cs high.
+ */
+void	fram_deselect		(void);
+
+/**
+ * @brief Test if the fram is installed.
+ * @details Check the fram identifier against known value.
+ * @return Return RETURN_SUCCESS if OK, RETURN_ERROR otherwise.
+ */
+uint8_t fram_test			(void);
 
 #endif // FRAM_HEADER_THOMAS_CHEVALIER

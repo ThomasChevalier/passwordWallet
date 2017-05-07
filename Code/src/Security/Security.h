@@ -3,10 +3,19 @@
 
 #include <stdint.h>
 
-// Init the random generator
+/**
+ * @brief Init all the security modules.
+ * @details Init the random generator
+ */
 void security_init(void);
 
-// Fill buffer with 0, even if buffer is not used after
+/**
+ * @brief Fill array with 0, even if buffer is not used after
+ * @details This is the only safe way to destroy a sensitive information.
+ * 
+ * @param buffer The memory to erase.
+ * @param lenght The lenght of the memory chunk.
+ */
 void security_erase_data(void *buffer, uint8_t lenght);
 
 #endif // SECURITY_HEADER_THOMAS_CHEVALIER

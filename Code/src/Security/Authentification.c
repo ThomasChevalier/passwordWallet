@@ -25,7 +25,9 @@
 
 #include "../Program/Program.h"
 
-
+/**
+ * @brief Wait until a new RFID tag is present. This is a blockant function.
+ */
 static void waitRfidTag(void)
 {
 	while(1)
@@ -40,7 +42,6 @@ static void waitRfidTag(void)
 	}
 }
 
-// Return 1 if success, 0 otherwise
 uint8_t authenticate_on_card(void)
 {
 	// sak == 0x08 <=> MIFARE 1K
@@ -70,10 +71,10 @@ uint8_t authenticate_on_card(void)
 		}
 		else
 		{
-			return 1; // SUCCESS !
+			return RETURN_SUCCESS;
 		}
 	}
-	return 0;
+	return RETURN_ERROR;
 }
 
 

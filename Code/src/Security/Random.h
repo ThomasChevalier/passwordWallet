@@ -3,12 +3,35 @@
 
 #include <stdint.h>
 
-extern volatile uint32_t random_dword; 		// The variable that contain the 32 bit of random
-extern volatile uint8_t random_transfer; 	// 0 => random_dword has already been written to fram | 1 => random_dword should be written to fram
 
-void	random_init					(void);							// Should be called once before any use of random_ functions
-void	random_save_entropy			(void);							// Save entropy to the fram
-uint8_t	random_request_byte			(void);							// Return a value in [0; 255] range, make the best use of entropy pool
-uint8_t	random_request_printable	(void);							// Return a value in [' '; '~'] range
+/**
+ * @brief Should be called once at the beggining of the program.
+ * @details This function initializes the global variables needed to implement the circular entropy pool and
+ * the buffer that holds the raw Timer 1 values that are used to create the entropy pool.  It then
+ * Initializes the Watch Dog Timer (WDT) to perform an interrupt every 2048 clock cycles, (about 
+ * 16 ms) which is as fast as it can be set.
+ */
+void	random_init					(void);
+
+/**
+ * @brief Save entropy to memory.
+ * @details If the entropy pool is full then the random double word is not saved.
+ */
+void	random_save_entropy			(void);
+
+/**
+ * @brief Get a byte of pure random.
+ * @details Return a value in [0; 255] range, make the best use of entropy pool
+ * The function may be blockant.
+ * @return A true random number.
+ */
+uint8_t	random_request_byte			(void);
+
+/**
+ * @brief Return an ascii printable byte.
+ * @details This function use random_request_byte so may be blockant.
+ * @return Return a character in [' '; '~'] range
+ */
+uint8_t	random_request_printable	(void);
 
 #endif // RANDOM_HEADER_THOMAS_CHEVALIER

@@ -16,6 +16,9 @@
 #include "FSM/States.h"
 #include "FSM/Events.h"
 
+/**
+ * @brief Freeze the controller in case of a wrong interrupt
+ */
 ISR(BADISR_vect)
 {
     for(;;)

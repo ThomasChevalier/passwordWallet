@@ -21,13 +21,17 @@
 static uint8_t gWDT_buffer[gWDT_buffer_SIZE];
 static uint8_t gWDT_buffer_position;
 static uint8_t gWDT_loop_counter;
-volatile uint32_t random_dword;
-volatile uint8_t random_transfer;
 
-// This function initializes the global variables needed to implement the circular entropy pool and
-// the buffer that holds the raw Timer 1 values that are used to create the entropy pool.  It then
-// Initializes the Watch Dog Timer (WDT) to perform an interrupt every 2048 clock cycles, (about 
-// 16 ms) which is as fast as it can be set.
+/**
+ * @brief 32 bits of pure random.
+ */
+static volatile uint32_t random_dword;
+
+/**
+ * @brief If the variable equal 0 then nothing has to be written to fram, else if the variable equal 1, random_dword should be written to fram
+ */
+static volatile uint8_t random_transfer;
+
 void random_init(void)
 {
     random_transfer = 0;
@@ -42,9 +46,14 @@ void random_init(void)
 }
 
 
-// This interrupt service routine is called every time the WDT interrupt is triggered.
-// With the default configuration that is approximately once every 16ms, producing 
-// approximately two 32-bit integer values every second. 
+//  
+/**
+ * @brief [This interrupt service routine is called every time the WDT interrupt is triggered.
+ * With the default configuration that is approximately once every 16ms, producing 
+ * approximately two 32-bit integer values every second.
+ * 
+ * @param val The Timer 1 low byte.
+ */
 static void isr_hardware_neutral(uint8_t val)
 {
     gWDT_buffer[gWDT_buffer_position] = val;

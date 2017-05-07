@@ -8,6 +8,13 @@
 #define KEYCODE_MODIFIER_SHIFT	(1<<7)
 #define KEYCODE_MODIFIER_ALTGR	(1<<6)
 
+/**
+ * @brief Convert a ascii character to a keyboard keycode.
+ * @details This function use azerty or qwerty layout according to the value stored in memory.
+ * 
+ * @param c The character to convert, should be in the range [' '; '~'].
+ * @return An HID keycode, with modifier.
+ */
 uint8_t ascii_to_keycode(char c);
 
 
