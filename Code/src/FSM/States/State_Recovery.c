@@ -27,8 +27,7 @@ void state_recovery_do_full_reset(void)
 
 	// Erase all fram memory
 	draw_clear();
-	str_to_buffer(str_recovery_eraseMem_index);
-	draw_text(20, 40, str_buffer, 0);
+	draw_text_index(20, 40, str_recovery_eraseMem_index);
 	draw_update();
 
 	progress_begin(FRAM_BYTE_SIZE/128);
@@ -74,13 +73,11 @@ void state_recovery_begin (void)
 {
 	recovery_choice  = 0;
 
-	str_to_buffer(str_recovery_title_index);
 	draw_clear();
+	draw_text_index(10, 10, str_recovery_title_index);
 	draw_text(10, 10, str_buffer, 0);
-	str_to_buffer(str_recovery_choice1_index);
-	draw_text(10, 30, str_buffer, 0);
-	str_to_buffer(str_recovery_choice2_index);
-	draw_text(10, 50, str_buffer, 0);
+	draw_text_index(10, 30, str_recovery_choice1_index);
+	draw_text_index(10, 50, str_recovery_choice2_index);
 	draw_update();
 
 	// Wait for the user to release all the keys

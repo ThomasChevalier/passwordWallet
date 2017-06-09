@@ -7,6 +7,7 @@
 #include "../Graphics/String.h"
 
 #include "../Program/Program.h"
+#include "../FSM/Events.h"
 
 #ifndef cbi
 #define cbi(sfr, bit) (_SFR_BYTE(sfr) &= ~_BV(bit))
@@ -122,10 +123,9 @@ void system_read_reset_source(void)
 	MCUSR = 0;
 
 	draw_clear();
-	str_to_buffer(str_index);
-	draw_text(0, 0, str_buffer, 0);
+	draw_text_index(0, 0, str_index);
 	draw_update();
 
 	// Wait for anything
-	program_pause_until_event(0xFF);
+	program_pause_until_event(EVENT_WHENEVER);
 }

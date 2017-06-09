@@ -48,8 +48,7 @@ uint8_t authenticate_on_card(void)
 	if(rfid_uid.sak != 0x08)
 	{
 		draw_clear();
-		str_to_buffer(str_error_card_index);
-		draw_text(0, 20, str_buffer, 0);
+		draw_text_index(0, 20, str_error_card_index);
 		draw_update();
 	}
 	else
@@ -65,8 +64,7 @@ uint8_t authenticate_on_card(void)
 		if(status != STATUS_OK)
 		{
 			draw_clear();
-			str_to_buffer(str_error_auth_index);
-			draw_text(0, 20, str_buffer, 0);
+			draw_text_index(0, 20, str_error_auth_index);
 			draw_update();
 		}
 		else
@@ -85,8 +83,7 @@ void change_master_key(void)
 
 	// Ask for card
 	draw_clear();
-	str_to_buffer(str_misc_approachCard_index);
-	draw_text(8, 30, str_buffer, 0);
+	draw_text_index(8, 30, str_misc_approachCard_index);
 	draw_update();
 
 	// Waiting for the user to present his card
@@ -95,8 +92,7 @@ void change_master_key(void)
 	// Generate new key
 	uint8_t newKey[16];
 	draw_clear();
-	str_to_buffer(str_misc_generateKey_index);
-	draw_text(10, 40, str_buffer, 0);
+	draw_text_index(10, 40, str_misc_generateKey_index);
 	progress_begin(16);
 	for(uint8_t i = 0; i < 16; ++i)
 	{
@@ -113,8 +109,7 @@ void change_master_key(void)
 		{
 			// .. Failure
 			draw_clear();
-			str_to_buffer(str_error_read_index);
-			draw_text(0, 20, str_buffer, 0);
+			draw_text_index(0, 20, str_error_read_index);
 			draw_update();
 			goto EXIT;
 		}
@@ -129,10 +124,8 @@ void change_master_key(void)
 	// The device should not be disconnected too
 
 	draw_clear();
-	str_to_buffer(str_communication_dont_unplug_index);
-	draw_text(15, 3, str_buffer, 0);
-	str_to_buffer(str_misc_updatePwd_index);
-	draw_text(5, 40, str_buffer, 0);
+	draw_text_index(15, 3, str_communication_dont_unplug_index);
+	draw_text_index(5, 40, str_misc_updatePwd_index);
 	progress_begin(NUM_PWD);
 
 	// Update encryption key
@@ -145,10 +138,8 @@ void change_master_key(void)
 	// Generate random sequence
 	draw_clear();
 	progress_begin(EEPROM_RANDSEQ_SIZE + 4);
-	str_to_buffer(str_communication_dont_unplug_index);
-	draw_text(15, 3, str_buffer, 0);
-	str_to_buffer(str_misc_updateEncryptVerif_index);
-	draw_text(10, 40, str_buffer, 0);
+	draw_text_index(15, 3, str_communication_dont_unplug_index);
+	draw_text_index(10, 40, str_misc_updateEncryptVerif_index);
 
 	uint8_t randomSequence[EEPROM_RANDSEQ_SIZE];
 	uint8_t* eeprom_addr = EEPROM_OFFSET_RANDSEQ;
@@ -181,8 +172,7 @@ void change_master_key(void)
 
 	// Display new key
 	draw_clear();
-	str_to_buffer(str_misc_hereIsKey_index);
-	draw_text(17, 10, str_buffer, 0);
+	draw_text_index(17, 10, str_misc_hereIsKey_index);
 	char outputText[20];
 	encode_16B(KEY, outputText);
 	draw_text(0, 30, outputText, 20);

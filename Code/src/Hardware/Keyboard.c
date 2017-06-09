@@ -25,14 +25,9 @@ static uint16_t IdleCount = 500;
  *  milliseconds. This is separate to the IdleCount timer and is incremented and compared as the host may request
  *  the current idle period via a Get Idle HID class request, thus its value must be preserved.
  */
+
 static uint16_t IdleMSRemaining = 0;
 
-/** The buffer of what have to be sent to the host.
- * keyboard_send fill it with slices of the total text.
- * Maximum size is 6 because boot compliant keyboard can only send 6 press at a time.
- */
-//static char keyboard_text_buffer[6];
-//static uint8_t keyboard_buffer_lenght = 0;
 
 static char letterToSend;
 static uint8_t needToSend;
@@ -97,9 +92,6 @@ void keyboard_loop(void)
 #endif // KEYBOARD_ENABLE
 }
 
-/** Event handler for the USB_Connect event. This indicates that the device is enumerating via the status LEDs and
- *  starts the library USB task to begin the enumeration and USB management process.
- */
 void keyboard_on_device_connect(void)
 {
 	#ifdef KEYBOARD_ENABLE
@@ -108,17 +100,13 @@ void keyboard_on_device_connect(void)
 	#endif
 }
 
-/** Event handler for the USB_Disconnect event. This indicates that the device is no longer connected to a host via
- *  the status LEDs.
- */
+
 void keyboard_on_device_disconnect(void)
 {
 
 }
 
-/** Event handler for the USB_ConfigurationChanged event. This is fired when the host sets the current configuration
- *  of the USB device after enumeration, and configures the keyboard device endpoints.
- */
+
 uint8_t keyboard_on_configuration_changed(void)
 {
 	#ifdef KEYBOARD_ENABLE
@@ -137,10 +125,6 @@ uint8_t keyboard_on_configuration_changed(void)
 	#endif
 }
 
-/** Event handler for the USB_ControlRequest event. This is used to catch and process control requests sent to
- *  the device from the USB host before passing along unhandled control requests to the library for processing
- *  internally.
- */
 void keyboard_on_control_request(void)
 {
 	#ifdef KEYBOARD_ENABLE
@@ -238,7 +222,7 @@ void keyboard_on_control_request(void)
 	#endif
 }
 
-/** Event handler for the USB device Start Of Frame event. */
+
 void keyboard_on_start_of_frame(void)
 {
 	#ifdef KEYBOARD_ENABLE

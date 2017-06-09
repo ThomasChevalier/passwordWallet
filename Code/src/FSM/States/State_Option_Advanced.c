@@ -26,16 +26,17 @@ static uint8_t currentChoice = 0;
 static void do_show_key(void)
 {
 	 // Display key
-    draw_clear();
-    str_to_buffer(str_misc_hereIsKey_index);
-    draw_text(17, 10, str_buffer, 0);
-    char outputText[20];
-    encode_16B(KEY, outputText);
-    draw_text(0, 30, outputText, 20);
+	draw_clear();
+	
+	draw_text_index(17, 10, str_misc_hereIsKey_index);
 
-    security_erase_data(outputText, 20);
+	char outputText[20];
+	encode_16B(KEY, outputText);
+	draw_text(0, 30, outputText, 20);
 
-    draw_update();
+	security_erase_data(outputText, 20);
+
+	draw_update();
 }
 
 static void do_change_keyboard_disposition(void)

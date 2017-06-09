@@ -26,12 +26,56 @@
 #define SPI_CLOCK_MASK 0x03  // SPR1 = bit 1, SPR0 = bit 0 on SPCR
 #define SPI_2XCLOCK_MASK 0x01  // SPI2X = bit 0 on SPSR
 
-void	spi_setup_hardware	(void);													//Initialize SPI Master Device
-uint8_t spi_transfer_8		(uint8_t data);											// Write 8 bit on bus and receive 8
-void	spi_send			(uint8_t * dataout, uint8_t len);						// Shift full array to target device without receiving any byte
-void	spi_send_8			(uint8_t data);											// Write 8 bit on bus
-void	spi_read			(uint8_t* buffer, uint8_t size);						// Read size bytes from spi bus
-uint8_t spi_read_8			(void);													// Read one byte
-void	spi_set				(uint8_t val, uint8_t num);								// Send num times the value val to the device
+/**
+ * @brief Setup register for SPI.
+ * @details Setup pin direction for MISO, SCK, SS and MOSI.
+ */
+void	spi_setup_hardware	(void);
+
+/**
+ * @brief Send a byte via the spi port and read one.
+ * 
+ * @param data The byte to send.
+ * @return The byte that the slave send.
+ */
+uint8_t spi_transfer_8		(uint8_t data);
+
+/**
+ * @brief Shift full array to target device without receiving any byte.
+ * 
+ * @param dataout The array of bytes to send.
+ * @param len The lenght of the array.
+ */
+void	spi_send			(uint8_t * dataout, uint8_t len);
+
+/**
+ * @brief Write one byte on the bus without receiving anything.
+ * 
+ * @param data The byte to send.
+ */
+void	spi_send_8			(uint8_t data);
+
+/**
+ * @brief Read an array of byte from spi bus.
+ * 
+ * @param buffer The array that contains the content read.
+ * @param size How many bytes to read.
+ */
+void	spi_read			(uint8_t* buffer, uint8_t size);
+
+/**
+ * @brief Read one byte from the bus.
+ * @details Send a dummy byte (0x00). Same as spi_transfer_8(0x00).
+ * @return The byte that the slave send.
+ */
+uint8_t spi_read_8			(void);
+
+/**
+ * @brief Send several times a byte on the spi bus.
+ * 
+ * @param val The byte to send several times.
+ * @param num How many times the byte must be sent.
+ */
+void	spi_set				(uint8_t val, uint8_t num);
 
 #endif // SPI_HEADER_THOMAS_CHEVALIER

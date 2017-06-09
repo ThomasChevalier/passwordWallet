@@ -35,8 +35,7 @@ static void do_new_pwd(void)
 	if(NUM_PWD == MAXIMUM_NUMBER_OF_PWD-1)
 	{
 		draw_clear();
-		str_to_buffer(str_error_not_enough_memory_index);
-		draw_text(0, 10, str_buffer, 0);
+		draw_text_index(0, 10, str_error_not_enough_memory_index);
 		draw_update();
 		_delay_ms(2000);
 		return;
@@ -46,23 +45,20 @@ static void do_new_pwd(void)
 	char pwdName[32] = {0};
 	char pwdData[32] = {0};
 
-	str_to_buffer(str_order_typePwdName_index);
 	draw_clear();
-	draw_text(0, 10, str_buffer, 0);
+	draw_text_index(0, 10, str_order_typePwdName_index);
 	draw_update();
 	_delay_ms(1000);
 	type_string(pwdName,31);
 
-	str_to_buffer(str_order_typePwdData_index);
 	draw_clear();
-	draw_text(0, 10, str_buffer, 0);
+	draw_text_index(0, 10, str_order_typePwdData_index);
 	draw_update();
 	_delay_ms(1000);
 	type_string(pwdData,31);
 
-	str_to_buffer(str_order_typeUsrName_index);
 	draw_clear();
-	draw_text(0, 10, str_buffer, 0);
+	draw_text_index(0, 10, str_order_typeUsrName_index);
 	draw_update();
 	_delay_ms(1000);
 	type_string(usrName,63); // usr name
@@ -84,10 +80,8 @@ static void do_new_pwd(void)
 	if(!result)
 	{
 		draw_clear();
-		str_to_buffer(str_error_not_enough_memory_index);
-		draw_text(0, 10, str_buffer, 0);
-		str_to_buffer(str_error_cannot_add_pwd_index);
-		draw_text(0, 22, str_buffer, 0);
+		draw_text_index(0, 10, str_error_not_enough_memory_index);
+		draw_text_index(0, 22, str_error_cannot_add_pwd_index);
 		draw_update();
 		_delay_ms(2000);
 	}

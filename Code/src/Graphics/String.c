@@ -5,45 +5,45 @@
 
 char str_buffer[26];
 
-DEFINE_STRING(str_error_card,				"ERREUR : carte inconnue",		0	);
-DEFINE_STRING(str_error_auth,				"ERREUR d'authentification",	1	);
-DEFINE_STRING(str_error_read,				"ERREUR de lecture",			2	);
-DEFINE_STRING(str_error_pwd,				"Mauvais mot de passe",			3	);
-DEFINE_STRING(str_error_not_enough_memory,	"Memoire insuffisante",			4	);
-DEFINE_STRING(str_error_cannot_add_pwd,		"Ajout impossible",				5	);
+DEFINE_STRING(str_error_card,               "ERREUR : carte inconnue",      0   );
+DEFINE_STRING(str_error_auth,               "ERREUR d'authentification",    1   );
+DEFINE_STRING(str_error_read,               "ERREUR de lecture",            2   );
+DEFINE_STRING(str_error_pwd,                "Mauvais mot de passe",         3   );
+DEFINE_STRING(str_error_not_enough_memory,  "Memoire insuffisante",         4   );
+DEFINE_STRING(str_error_cannot_add_pwd,     "Ajout impossible",             5   );
 	
-DEFINE_STRING(str_misc_approachCard,		"Approchez votre carte", 		6	);
-DEFINE_STRING(str_misc_generateKey,			"Generation de la clef",		7	);
-DEFINE_STRING(str_misc_updateEncryptVerif,	"M.a.j. de la validation",		8	);
-DEFINE_STRING(str_misc_updatePwd,			"M.a.j. des mots de passe", 	9	);
-DEFINE_STRING(str_misc_hereIsKey,			"Voici votre clef",				10	);
+DEFINE_STRING(str_misc_approachCard,        "Approchez votre carte",        6   );
+DEFINE_STRING(str_misc_generateKey,         "Generation de la clef",        7   );
+DEFINE_STRING(str_misc_updateEncryptVerif,  "M.a.j. de la validation",      8   );
+DEFINE_STRING(str_misc_updatePwd,           "M.a.j. des mots de passe",     9   );
+DEFINE_STRING(str_misc_hereIsKey,           "Voici votre clef",             10  );
 		
-DEFINE_STRING(str_order_typePwdName,		"ENTREZ NOM MOT DE PASSE",		11	); 
-DEFINE_STRING(str_order_typePwdData,		"ENTREZ MOT DE PASSE",			12	); 
-DEFINE_STRING(str_order_typeUsrName,		"ENTREZ NOM UTILISATEUR",		13	);
+DEFINE_STRING(str_order_typePwdName,        "ENTREZ NOM MOT DE PASSE",      11  ); 
+DEFINE_STRING(str_order_typePwdData,        "ENTREZ MOT DE PASSE",          12  ); 
+DEFINE_STRING(str_order_typeUsrName,        "ENTREZ NOM UTILISATEUR",       13  );
 		
-DEFINE_STRING(str_recovery_eraseMem,		"FORMATAGE MEMOIRE",			14	);
-DEFINE_STRING(str_recovery_title,			"MODE DE RECUPERATION",			15	);
-DEFINE_STRING(str_recovery_choice1,			"1 - FORMATAGE COMPLET",		16	);
-DEFINE_STRING(str_recovery_choice2,			"2 - ENTREZ LA CLEF",			17	);
+DEFINE_STRING(str_recovery_eraseMem,        "FORMATAGE MEMOIRE",            14  );
+DEFINE_STRING(str_recovery_title,           "MODE DE RECUPERATION",         15  );
+DEFINE_STRING(str_recovery_choice1,         "1 - FORMATAGE COMPLET",        16  );
+DEFINE_STRING(str_recovery_choice2,         "2 - ENTREZ LA CLEF",           17  );
 	
-DEFINE_STRING(str_self_test_fram_ok,		"MEMOIRE OK",					18	);
-DEFINE_STRING(str_self_test_fram_fail,		"MEMOIRE HS",					19	);
-DEFINE_STRING(str_self_test_rfid_ok,		"RFID OK",						20	);
-DEFINE_STRING(str_self_test_rfid_fail,		"RFID HS",						21	);
-DEFINE_STRING(str_self_test_button_ok,		"BOUTON OK",					22	);
-DEFINE_STRING(str_self_test_button_fail,	"BOUTON HS",					23	);
-DEFINE_STRING(str_self_test_fail,			"ERREUR : appareil HS",			24	);
+DEFINE_STRING(str_self_test_fram_ok,        "MEMOIRE OK",                   18  );
+DEFINE_STRING(str_self_test_fram_fail,      "MEMOIRE HS",                   19  );
+DEFINE_STRING(str_self_test_rfid_ok,        "RFID OK",                      20  );
+DEFINE_STRING(str_self_test_rfid_fail,      "RFID HS",                      21  );
+DEFINE_STRING(str_self_test_button_ok,      "BOUTON OK",                    22  );
+DEFINE_STRING(str_self_test_button_fail,    "BOUTON HS",                    23  );
+DEFINE_STRING(str_self_test_fail,           "ERREUR : appareil HS",         24  );
 
-DEFINE_STRING(str_communication_what,		"Transfert en cours ...",		25	);
-DEFINE_STRING(str_communication_dont_unplug,"NE PAS DEBRANCHER",			26	);
-DEFINE_STRING(str_communication_end,		"Transfert fini",				27	);
-DEFINE_STRING(str_communication_unplug,		"Debranchez puis branchez",		28	);
+DEFINE_STRING(str_communication_what,       "Transfert en cours ...",       25  );
+DEFINE_STRING(str_communication_dont_unplug,"NE PAS DEBRANCHER",            26  );
+DEFINE_STRING(str_communication_end,        "Transfert fini",               27  );
+DEFINE_STRING(str_communication_unplug,     "Debranchez puis branchez",     28  );
 
-DEFINE_STRING(str_reset_external,			"External reset", 				29	);
-DEFINE_STRING(str_reset_brownout,			"Brownout reset", 				30	);
-DEFINE_STRING(str_reset_watchdog,			"Watchdog reset", 				31	);
-DEFINE_STRING(str_reset_jtag,				"JTAG reset"	, 				32	);
+DEFINE_STRING(str_reset_external,           "External reset",               29  );
+DEFINE_STRING(str_reset_brownout,           "Brownout reset",               30  );
+DEFINE_STRING(str_reset_watchdog,           "Watchdog reset",               31  );
+DEFINE_STRING(str_reset_jtag,               "JTAG reset"    ,               32  );
 
 PGM_P const string_table[] PROGMEM = 
 {
@@ -88,29 +88,29 @@ PGM_P const string_table[] PROGMEM =
 	str_reset_jtag
 };
 
-DEFINE_STRING(str_option_password, "Mot de passe ...", 0);
-DEFINE_STRING(str_option_sort	, "Tri ...", 1);
-DEFINE_STRING(str_option_advanced, "Plus d'options ...", 2);
-DEFINE_STRING(str_option_addPwd, "Nouveau mot de passe", 3);
-DEFINE_STRING(str_option_changeOrientation, "Retourner l'affichage", 4);
+DEFINE_STRING(str_option_password,                      "Mot de passe ...",         0   );
+DEFINE_STRING(str_option_sort,                          "Tri ...",                  1   );
+DEFINE_STRING(str_option_advanced,                      "Plus d'options ...",       2   );
+DEFINE_STRING(str_option_addPwd,                        "Nouveau mot de passe",     3   );
+DEFINE_STRING(str_option_changeOrientation,             "Retourner l'affichage",    4   );
 
-DEFINE_STRING(str_option_pwd_regenerate, "Regenerer", 5);
-DEFINE_STRING(str_option_pwd_changePwd, "Changer mot de passe", 6);
-DEFINE_STRING(str_option_pwd_changeUsrName, "Changer identifiant", 7);
-DEFINE_STRING(str_option_pwd_changePwdName, "Changer nom", 8);
-DEFINE_STRING(str_option_pwd_delete, "Supprimer", 9);
+DEFINE_STRING(str_option_pwd_regenerate,                "Regenerer",                5   );
+DEFINE_STRING(str_option_pwd_changePwd,                 "Changer mot de passe",     6   );
+DEFINE_STRING(str_option_pwd_changeUsrName,             "Changer identifiant",      7   );
+DEFINE_STRING(str_option_pwd_changePwdName,             "Changer nom",              8   );
+DEFINE_STRING(str_option_pwd_delete,                    "Supprimer",                9   );
 
-DEFINE_STRING(str_option_sort_noSorting, "Pas de tri", 10);
-DEFINE_STRING(str_option_sort_byUsage, "Par utilisation", 11);
-DEFINE_STRING(str_option_sort_alphabetical, "Alphabetique", 12);
+DEFINE_STRING(str_option_sort_noSorting,                "Pas de tri",               10  );
+DEFINE_STRING(str_option_sort_byUsage,                  "Par utilisation",          11  );
+DEFINE_STRING(str_option_sort_alphabetical,             "Alphabetique",             12  );
 
-DEFINE_STRING(str_option_advanced_changeKey, "Changer clef maitre", 13);
-DEFINE_STRING(str_option_advanced_disableEncryption, "Desactiver cryptage", 14);
-DEFINE_STRING(str_option_advanced_enableEncryption, "Activer cryptage", 15);
-DEFINE_STRING(str_option_advanced_showKey, "Montrer clef maitre", 16);
-DEFINE_STRING(str_option_advanced_keyboardDisposition, "Changer langue clavier", 17);
-DEFINE_STRING(str_option_advanced_selfTest, "Auto test", 18);
-DEFINE_STRING(str_option_advanced_doFullReset, "FORMATER", 19);
+DEFINE_STRING(str_option_advanced_changeKey,            "Changer clef maitre",      13  );
+DEFINE_STRING(str_option_advanced_disableEncryption,    "Desactiver cryptage",      14  );
+DEFINE_STRING(str_option_advanced_enableEncryption,     "Activer cryptage",         15  );
+DEFINE_STRING(str_option_advanced_showKey,              "Montrer clef maitre",      16  );
+DEFINE_STRING(str_option_advanced_keyboardDisposition,  "Changer langue clavier",   17  );
+DEFINE_STRING(str_option_advanced_selfTest,             "Auto test",                18  );
+DEFINE_STRING(str_option_advanced_doFullReset,          "FORMATER",                 19  );
 
 
 PGM_P const string_options_table[] PROGMEM = 

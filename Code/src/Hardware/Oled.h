@@ -58,22 +58,95 @@
 #define SSD1306_VERTICAL_AND_LEFT_HORIZONTAL_SCROLL 0x2A
 
 // Hardware
+/**
+ * @brief Setup pin direction and level for the oled screen.
+ */
 void oled_setup_hardware	(void);
+
+/**
+ * @brief Pull the reset pin high.
+ */
 void oled_reset_high		(void);
+
+/**
+ * @brief Pull the reset pin low.
+ */
 void oled_reset_low			(void);
+
+/**
+ * @brief Pull the CS pin high.
+ */
 void oled_deselect			(void);
+
+/**
+ * @brief Pull the CS pin low.
+ */
 void oled_select			(void);
+
+/**
+ * @brief Pull the data/command pin high.
+ */
 void oled_dc_high			(void);
+
+/**
+ * @brief Pull the data/command pin low.
+ */
 void oled_dc_low			(void);
+
+/**
+ * @brief Setup spi register for the oled.
+ */
 void oled_setup_spi			(void);
 
 // Software
+/**
+ * @brief Setup the oled software, send command to the screen.
+ * @details This function take about 11 ms.
+ */
 void oled_init				(void);
+
+/**
+ * @brief Draw a pixel in the pixel buffer.
+ * @details This DOES NOT display a pixel on the screen, oled_display should be called for that.
+ * 
+ * @param x The x coordinate of the pixel.
+ * @param y The y coordinate of the pixel.
+ * @param color The color of the pixel (BLACK, WHITE or INVERSE)
+ */
 void oled_draw_pixel		(uint8_t x, uint8_t y, uint8_t color);
+
+/**
+ * @brief Send a command to the oled display.
+ * @details Use it if you really know what you are doing.
+ * 
+ * @param c The byte to send as a command.
+ */
 void oled_command			(uint8_t c);
-void oled_invert_display	(uint8_t i); // Invert all the colors
+
+/**
+ * @brief Invert all the color of the display.
+ * @details Black become white and white become black.
+ * 
+ * @param i If i is no zero then switch to invert mode, else if i equals 0 then switch to normal mode.
+ */
+void oled_invert_display	(uint8_t i);
+
+/**
+ * @brief Dim the display.
+ * @details When the display is dimmed it has less contrast and use less power.
+ * 
+ * @param dim If 'dim' is no zero then dim the display, else go to normal contrast.
+ */
 void oled_dim				(uint8_t dim); // dim(1) = less contrast = less power
+
+/**
+ * @brief Send the internal pixel buffer to the oled screen.
+ */
 void oled_display			(void);
+
+/**
+ * @brief Set the internal pixel buffer to zero.
+ */
 void oled_clear_display		(void);
 
 

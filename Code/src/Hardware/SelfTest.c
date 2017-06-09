@@ -41,15 +41,13 @@ static void test_fram(void)
 {
 	if(fram_test() == RETURN_ERROR)
 	{
-		str_to_buffer(str_self_test_fram_fail_index);
-		draw_text(0, 0, str_buffer, 0);
+		draw_text_index(0, 0, str_self_test_fram_fail_index);
 		draw_update();
 		led_blink(3);
 	}
 	else
 	{
-		str_to_buffer(str_self_test_fram_ok_index);
-		draw_text(0, 0, str_buffer, 0);
+		draw_text_index(0, 0, str_self_test_fram_ok_index);
 		draw_update();
 		led_blink(2);
 	}
@@ -60,15 +58,13 @@ static void test_rfid(void)
 {
 	if(rfid_pcd_perform_self_test() == 0)
 	{
-		str_to_buffer(str_self_test_rfid_fail_index);
-		draw_text(0, 10, str_buffer, 0);
+		draw_text_index(0, 10, str_self_test_rfid_fail_index);
 		draw_update();
 		led_blink(3);
 	}
 	else
 	{
-		str_to_buffer(str_self_test_rfid_ok_index);
-		draw_text(0, 10, str_buffer, 0);
+		draw_text_index(0, 10, str_self_test_rfid_ok_index);
 		draw_update();
 		led_blink(2);
 	}
@@ -85,8 +81,7 @@ static void test_buttons(void)
 		{
 			if(buttons_pressed() & (1<<j))
 			{
-				str_to_buffer(str_self_test_button_ok_index);
-				draw_text(0, 20 + 8 * j, str_buffer, 0);
+				draw_text_index(0, 20 + 8 * j, str_self_test_button_ok_index);
 				draw_update();
 				led_blink(2);
 				ok = 1;
@@ -96,8 +91,7 @@ static void test_buttons(void)
 		}
 		if(ok == 0)
 		{
-			str_to_buffer(str_self_test_button_fail_index);
-			draw_text(0, 20 + 8 * j, str_buffer, 0);
+			draw_text_index(0, 20 + 8 * j, str_self_test_button_fail_index);
 			draw_update();
 			led_blink(3);
 		}
@@ -119,20 +113,19 @@ uint8_t self_test_check (void)
 	// If the fram respond and that no encryption flag is set, there is no need for rfid to work
 	if(fram_test() != 0 && fram_read_byte(OFFSET_OPTIONS_FLAG) & (1<<OPTIONS_FLAG_OFFSET_NO_ENCRYPTION))
 	{
-		return 1;
+		return RETURN_SUCCESS;
 	}
 	// Else there is someting wrong, that prevent the device to work normally
 	if(fram_test() == 0 || rfid_pcd_perform_self_test() == 0)
 	{
 		draw_clear();
-		str_to_buffer(str_self_test_fail_index);
-		draw_text(0, 0, str_buffer, 0);
+		draw_text_index(0, 0, str_self_test_fail_index);
 		draw_update();
 		_delay_ms(3000);
 		self_test_execute();
-		return 0;
+		return RETURN_ERROR;
 	}
-	return 1;
+	return RETURN_SUCCESS;
 }
 
 void self_test_execute(void)

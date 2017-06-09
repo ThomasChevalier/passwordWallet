@@ -48,17 +48,22 @@ uint8_t draw_char(uint8_t x, uint8_t y, uint8_t c)
 		{
 			oled_draw_pixel(x+i, y+(7-j), (font_byte >> (7-j)) & 0x01);
 		}
-
-
 	}
 	return 0;
 }
 
+void draw_text_index(uint8_t x, uint8_t y, uint8_t str_index)
+{
+	str_to_buffer(str_index);
+	draw_text(x, y, str_buffer, 0);
+}
 
 void draw_text(uint8_t x, uint8_t y, char *str, uint8_t str_len)
 {
 	if(str_len == 0)
+	{
 		str_len = strlen(str);
+	}
 
 	uint8_t i = 0;
 	for(i = 0; i < str_len; ++i)
@@ -170,12 +175,9 @@ void draw_list(uint8_t index, uint8_t minIndex, uint8_t maxIndex)
 	else if(index == maxIndex)
 	{
 		pos = 2;
-	}
-
-	if(index == maxIndex)
-	{
 		--index;
 	}
+	
 	if(index != minIndex)
 	{
 		--index;

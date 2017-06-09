@@ -7,12 +7,70 @@
 #define WHITE 1
 #define INVERSE 2
 
+/**
+ * @brief Clear the screen.
+ */
 void draw_clear(void);
+
+/**
+ * @brief Send the frame to the screen.
+ * @details Whatever modifications might have been done on the pixel buffer, this function should be called before anything change on the physic screen.
+ */
 void draw_update(void);
+
+/**
+ * @brief Draw a character on the screen using the system font.
+ * 
+ * @param x The x top left corner of the character.
+ * @param y The y top left corner of the character.
+ * @param c The character to draw.
+ * @return Return FONT_WIDTH - [character size], in pixel
+ */
 uint8_t draw_char(uint8_t x, uint8_t y, uint8_t c);
+
+void draw_text_index(uint8_t x, uint8_t y, uint8_t str_index);
+//#define draw_text_index(x,y,s) str_to_buffer(s); draw_text(x, y, str_buffer, 0);
+
+/**
+ * @brief Draw a string on the screen at a given position.
+ * @details New lines are added if the string is too long.
+ * 
+ * @param x The x top left corner of the first character of the string.
+ * @param y The y top left corner of the first character of the string.
+ * @param str The string of character.
+ * @param str_len The lenght of the string.
+ */
 void draw_text(uint8_t x, uint8_t y, char *str, uint8_t str_len);
+
+/**
+ * @brief Retrieive a table of byte on screen.
+ * @details WARNING : debug fonction only.
+ * 
+ * @param x The x top left corner of the character.
+ * @param y The y top left corner of the character.
+ * @param hexBuffer The array of byte to display.
+ * @param hexBufferSize The lenght of the array.
+ */
 void draw_hex(uint8_t x, uint8_t y, uint8_t* hexBuffer, uint8_t hexBufferSize);
+
+/**
+ * @brief Draw an horizontal line on the screen.
+ * 
+ * @param x The x coordinate of the first point.
+ * @param y The y coordinate of the first point.
+ * @param w The width of the line.
+ * @param color The color of the line.
+ */
 void draw_h_line(uint8_t x, uint8_t y, uint8_t w, uint8_t color);
+
+/**
+ * @brief Draw a vertical line on the screen.
+ * 
+ * @param x The x coordinate of the first point.
+ * @param y The y coordinate of the first point.
+ * @param w The height of the line.
+ * @param color The color of the line.
+ */
 void draw_v_line(uint8_t x, uint8_t y, uint8_t h, uint8_t color);
 
 

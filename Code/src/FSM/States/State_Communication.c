@@ -142,10 +142,8 @@ void state_communication_begin (void)
 	communication_flag = FLAG_INITED;
 
 	draw_clear();
-	str_to_buffer(str_communication_what_index);
-	draw_text(5, 0, str_buffer, 0);
-	str_to_buffer(str_communication_dont_unplug_index);
-	draw_text(10, 10, str_buffer, 0);
+	draw_text_index(5, 0, str_communication_what_index);
+	draw_text_index(10, 10, str_communication_dont_unplug_index);
 	draw_update();
 
 }
