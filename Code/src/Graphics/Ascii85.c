@@ -21,13 +21,8 @@ void encode_16B(uint8_t *input, char *output)
 		char tempOutput = 0;
 		for(; j < 5; ++j)
 		{
-			while(sum >= powers[j])
-			{
-				++tempOutput;
-				sum -= powers[j];
-			}
-			// tempOutput = sum / powers[j];
-			// sum -= tempOutput * powers[j];
+			tempOutput = sum / powers[j];	
+			sum -= tempOutput * powers[j];
 			tempOutput += 33;
 			output[j] = tempOutput;
 		}
