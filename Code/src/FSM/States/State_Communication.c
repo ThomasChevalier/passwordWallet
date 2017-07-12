@@ -25,8 +25,9 @@
 #define FLAG_SEND_KEY_DATA (1<<3)
 #define FLAG_WAIT_KEY_DATA (1<<4)
 
+#define FLAG_SEND_FRAM_ID (1<<5)
 
-#define FLAG_END_COMMUNICATION (1<<5)
+#define FLAG_END_COMMUNICATION (1<<6)
 
 static uint8_t communication_flag = 0;
 
@@ -43,6 +44,30 @@ static void do_fram_dump(void)
 static void do_send_key(void)
 {
 	serial_send(KEY, 16);
+}
+
+static void do_send_framId(void)
+{
+	Fram_id id = fram_read_id();
+	uint8_t buffer[5];
+	#if defined(SPI_FRAM)
+	buffer[0] = id.manufacturer_id;
+	buffer[1] = id.continuation_code;
+	buffer[2] = id.product_idL;
+	buffer[3] = id.product_idH;
+	#elif defined(I2C_FRAM)
+	buffer[0] = id.manufacturer_id >> 8;
+	buffer[1] = id.manufacturer_id & 0xFF;
+	buffer[2] = id.product_id & 0xFF;
+	buffer[3] = id.product_id >> 8;
+	#endif
+
+	#if defined(STORE_SCREEN_BUFFER_IN_FRAM)
+	buffer[4] = 0x01;
+	#else
+	buffer[4] = 0;
+	#endif
+	serial_send(buffer, 5);
 }
 
 void state_communication_process_data(uint8_t* buffer, uint8_t lenght)
@@ -77,10 +102,14 @@ void state_communication_process_data(uint8_t* buffer, uint8_t lenght)
 		{
 			communication_flag |= FLAG_SEND_KEY_DATA;
 		}
-		else if(communication_flag == 0x04)
+		else if(byte == 0x04)
 		{
 			communication_flag |= FLAG_WAIT_KEY_DATA;
 			data_received = 0;
+		}
+		else if(byte == 0x05)
+		{
+			communication_flag |= FLAG_SEND_FRAM_ID;
 		}
 		else
 		{
@@ -177,6 +206,11 @@ uint8_t state_communication_transition (uint8_t event)
 	{
 		do_send_key();
 		communication_flag &= ~FLAG_SEND_KEY_DATA;
+	}
+	else if(communication_flag & FLAG_SEND_FRAM_ID)
+	{
+		do_send_framId();
+		communication_flag &= ~FLAG_SEND_FRAM_ID;
 	}
 
 

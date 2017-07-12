@@ -31,3 +31,5 @@ Command
 |-------------------------------|---------|-----------------------------------------------------------------------------------------------------------------
 |            Set Key            |  0x04   | The pc send 16 byte and the device interpret those byte as the main key (and check the key against the hash)
 |-------------------------------|---------|-----------------------------------------------------------------------------------------------------------------
+|        Request parameter      |  0x05   | Request the device to send the fram identifier followed by a byte set to 0 if STORE_SCREEN_BUFFER_IN_FRAM is not defined, or a byte set to anything else than 0 if STORE_SCREEN_BUFFER_IN_FRAM is defined
+|-------------------------------|---------|-----------------------------------------------------------------------------------------------------------------

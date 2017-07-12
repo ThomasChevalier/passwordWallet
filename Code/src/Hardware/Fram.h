@@ -63,7 +63,7 @@ typedef struct Fram_id_
 
 typedef struct Fram_id_
 {
-	uint16_t manufacturer_id;	// Manufacturer ID : should be 0x04 for Fujistu
+	uint16_t manufacturer_id;
 	uint16_t product_id;
 } Fram_id;
 

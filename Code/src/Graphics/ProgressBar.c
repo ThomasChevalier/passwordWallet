@@ -33,28 +33,6 @@ void progress_continue(void)
 
 void progress_add(uint8_t work)
 {
-	// if(PROGRESS_COMPLEXITY == 0)
-	// {
-	// 	return;
-	// }
-
-	// uint16_t adv  = PROGRESS_ADVANCE;
-
-	// uint8_t minimum_pix = adv * 100;
-	// while(minimum_pix>PROGRESS_COMPLEXITY)minimum_pix-=PROGRESS_COMPLEXITY; // Better than divide, save 62 bytes.
-
-	// PROGRESS_ADVANCE += work;
-	// adv = PROGRESS_ADVANCE;
-	
-	// uint8_t maximum_pix = adv * 100 ;
-	// while(maximum_pix>PROGRESS_COMPLEXITY)maximum_pix-=PROGRESS_COMPLEXITY;
-
-	// for(uint8_t i = 0; i < 4; ++i)
-	// {
-	// 	draw_h_line(14+minimum_pix, 57+i, maximum_pix-minimum_pix, WHITE);
-	// }
-	
-	// draw_update();
 	if(PROGRESS_COMPLEXITY == 0)
 	{
 		return;
