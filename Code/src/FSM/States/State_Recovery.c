@@ -23,30 +23,31 @@
 void state_recovery_do_full_reset(void)
 {
 	// Save orientation
-	uint8_t orientation = (OPTIONS_FLAG&OPTIONS_FLAG_OFFSET_ORIENTATION);
+	uint8_t orientation = (OPTIONS_FLAG&(1<<OPTIONS_FLAG_OFFSET_ORIENTATION));
 
 	// Erase all fram memory
 	draw_clear();
-	draw_text_index(20, 40, str_recovery_eraseMem_index);
+	draw_text_index(17, 40, str_recovery_eraseMem_index);
 	draw_update();
 
-	progress_begin(FRAM_BYTE_SIZE/128);
+	progress_begin(FRAM_BYTE_SIZE/256);
 
 	// Do .. While loop is 6 bytes smaller than for loop in this case
-	uint8_t i = FRAM_BYTE_SIZE/128;
+	uint8_t i = FRAM_BYTE_SIZE/256;
 	do
 	{
 		--i;
-		fram_set(i*128, 0, 128);
+		fram_set(i*256, 0, 128);
+		fram_set(i*256+128, 0, 128);
 		progress_add(1);
 	}while(i);
 	progress_end();
 
-	// Restore orientation
-	update_opt_flags(orientation << OPTIONS_FLAG_OFFSET_ORIENTATION);
-
 	// Clear variables
 	CURRENT_PASSWORD_ID = GLOBALS_EVENTS = NUM_PWD = OPTIONS_FLAG = 0;
+
+	// Restore orientation
+	update_opt_flags(orientation);
 
 	// Get a master key
 	change_master_key();

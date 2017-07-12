@@ -7,7 +7,7 @@
 
 #include "../../Graphics/Drawing.h"
 
-#include "../../Hardware/Keyboard.h"
+#include "../../USB/Keyboard.h"
 
 #include "../../Security/Security.h"
 #include "../../Security/Password.h"
@@ -47,7 +47,7 @@ uint8_t state_main_transition (uint8_t event)
 		security_erase_data(pwd_data, 32);
 		
 		password_increment_counter(CURRENT_PASSWORD_ID);
-		pwd_list_sort_usage();
+		pwd_list_sort_use();
 	}
 	else if(event & EVENT_BUTTON_3)
 	{

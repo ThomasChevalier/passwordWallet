@@ -1,14 +1,14 @@
 #include "Password_List.h"
 
 #include <string.h>
+#include <iostream>
 
-#include "../Globals.h"
+#include "Globals.h"
 
 #include "Password.h"
 
-#include "../Graphics/ProgressBar.h"
 
-#include "../Hardware/Fram.h"
+#include "Fram.h"
 
 uint8_t pwd_list_get_sorting_method(void)
 {

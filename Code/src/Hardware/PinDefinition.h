@@ -39,13 +39,13 @@
 #define FRAM_CS_PIN_NUM 7
 
 // OLED
-#define OLED_CS_DDR DDRD
-#define OLED_CS_PORT PORTD
-#define OLED_CS_PIN_NUM 0
+#define OLED_CS_DDR DDRB
+#define OLED_CS_PORT PORTB
+#define OLED_CS_PIN_NUM 7
 
 #define OLED_DC_DDR DDRD
 #define OLED_DC_PORT PORTD
-#define OLED_DC_PIN_NUM 1
+#define OLED_DC_PIN_NUM 3
 
 #define OLED_RES_DDR DDRD
 #define OLED_RES_PORT PORTD

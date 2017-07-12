@@ -13,6 +13,8 @@
 #include "Hardware/SelfTest.h"
 #include "Hardware/Led.h"
 
+#include "USB/USB.h"
+
 #include "FSM/States.h"
 #include "FSM/Events.h"
 
@@ -29,9 +31,14 @@ ISR(BADISR_vect)
 
 int main(void)
 {
+	// Read asap  the reset register
+	uint8_t mcusr = MCUSR;
+	MCUSR = 0;
+
 	// Initialization
 	system_init();
 	hardware_init();
+	USB_init();
 	security_init();
 
 	// Check the device
@@ -43,9 +50,9 @@ int main(void)
 
 	// Read and initialize various variable
 	program_init();
-
+	
 	// Check the reset reason and display it
-	system_read_reset_source();
+	system_read_reset_source(mcusr);
 
 	// If the device has not been initialized yet
 	const uint8_t optFlag = fram_read_byte(OFFSET_OPTIONS_FLAG);
@@ -73,6 +80,7 @@ int main(void)
 	// If the device is not encrypted, skip WAIT_CARD state
 	if(OPTIONS_FLAG & (1<<OPTIONS_FLAG_OFFSET_NO_ENCRYPTION))
 	{
+		currentState->end(); // Do initialization of some stuff
 		currentState = &states[STATE_MAIN];
 		currentStateNum = STATE_MAIN;
 		encryption_copy_key_from_eeprom();

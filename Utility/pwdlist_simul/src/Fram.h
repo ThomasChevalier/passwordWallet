@@ -9,10 +9,6 @@ All rights reserved
 #define FRAM_HEADER_THOMAS_CHEVALIER
 
 #include <stdint.h>
-#include <avr/io.h>
-
-#include "../Globals.h"
-
 
 // See the fram datasheet : http://edevice.fujitsu.com/fj/DATASHEET/e-ds/MB85RS256B-DS501-00021-4v0-E.pdf
 
@@ -37,7 +33,6 @@ HIGH=WP  -|      |- SCK
 
 // WARNING : it is to the user to disable interrupt before any spi operation
 
-#if defined(SPI_FRAM)
 typedef enum
 {
 	F_WREN = 0x06, // Set write enable latch
@@ -59,19 +54,15 @@ typedef struct Fram_id_
 	uint8_t product_idH;		// Second byte of product ID : proprietary use only
 } Fram_id;
 
-#elif defined(I2C_FRAM)
-
-typedef struct Fram_id_
-{
-	uint16_t manufacturer_id;	// Manufacturer ID : should be 0x04 for Fujistu
-	uint16_t product_id;
-} Fram_id;
-
-#endif // SPI_FRAM
 /**
  * @brief Setup pin direction for fram.
  */
 void	fram_setup_hardware	(void);
+
+/**
+ * @brief Setup spi mode and clock speed.
+ */
+void	fram_setup_spi		(void);
 
 /**
  * @brief Read one byte of memory.
@@ -117,17 +108,11 @@ void	fram_write_bytes	(uint16_t addr, uint8_t* buffer, uint8_t size);
 void	fram_set			(uint16_t addr, uint8_t val, uint8_t num);
 
 /**
- * @brief Read the product identifier.
- * 
- * @return Return a structure with all the memory info. See Fram_id declaration.
- */
-Fram_id	fram_read_id		(void);
-
-/**
  * @brief Test if the fram is installed.
  * @details Check the fram identifier against known value.
  * @return Return RETURN_SUCCESS if OK, RETURN_ERROR otherwise.
  */
 uint8_t fram_test			(void);
 
+void fram_end(void);
 #endif // FRAM_HEADER_THOMAS_CHEVALIER

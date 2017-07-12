@@ -11,7 +11,7 @@
 #include "Buttons.h"
 #include "Rfid.h"
 #include "Fram.h"
-#include "Keyboard.h"
+#include "../USB/Keyboard.h"
 #include "Led.h"
 
 static void test_oled(void)

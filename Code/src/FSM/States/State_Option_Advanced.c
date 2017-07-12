@@ -13,7 +13,6 @@
 
 #include "../../Hardware/Buttons.h"
 #include "../../Hardware/Fram.h"
-#include "../../Hardware/Serial.h"
 
 #include "../../Security/Security.h"
 #include "../../Security/Authentification.h"

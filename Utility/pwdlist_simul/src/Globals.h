@@ -3,36 +3,13 @@
 
 #include <stdint.h>
 
-// ///////// //
-// PARAMETER //
-// ///////// //
-
-
-#undef STORE_SCREEN_BUFFER_IN_FRAM //< Wether or not the internal buffer of pixel for the oled should be stored in FRAM
-
-#define KEYBOARD_ENABLE	//< Enable or not the keyboard interface
-#define SERIAL_ENABLE	//< Enable or not the serial interface
+#undef STORE_SCREEN_BUFFER_IN_FRAM
+#define KEYBOARD_ENABLE
+#define SERIAL_ENABLE
 
 #if defined(KEYBOARD_ENABLE) || defined(SERIAL_ENABLE)
 #define USB_ENABLE
 #endif
-
-
-#undef SPI_FRAM	//< Choose the connection type of the FRAM (here this is SPI)
-#define I2C_FRAM		//< Choose the connection type of the FRAM (here this is I²C)
-
-#if defined(SPI_FRAM) && defined(I2C_FRAM)
-#error Only one type of connection can be used.
-#elif !defined(SPI_FRAM) && !defined(I2C_FRAM)
-#error A connection should be choosen
-#endif
-
-#if defined(I2C_FRAM)
-#define I2C_REQUIRED
-#endif
-
-//#define FRAM_BYTE_SIZE (8192) //< Size of the fram in byte
-#define FRAM_BYTE_SIZE (32768) //< Size of the fram in byte
 
 // This file should contain the global variables used in this project
 
@@ -80,6 +57,9 @@ extern uint8_t GLOBALS_EVENTS;
 // Fram Section  //
 // ///////////// //
 
+// Size of the fram in byte
+#define FRAM_BYTE_SIZE (8192)
+
 #define OFFSET_OPTIONS_FLAG (0)
 #define SIZE_OPTION_FLAG (1)
 #define OPTIONS_FLAG_OFFSET_NO_ENCRYPTION (0)
@@ -112,13 +92,7 @@ extern uint8_t GLOBALS_EVENTS;
 #define SIZE_ENTROPY_POOL (256)
 
 #define OFFSET_MEMORY_MAP (OFFSET_ENTROPY_POOL + SIZE_ENTROPY_POOL) /* 262 */
-#if FRAM_BYTE_SIZE == 8192
 #define SIZE_MEMORY_MAP (6)
-#elif FRAM_BYTE_SIZE == 32768
-#define SIZE_MEMORY_MAP (25)
-#else
-#error Not standart size
-#endif
 
 #define OFFSET_FIRST_PWD (OFFSET_MEMORY_MAP + SIZE_MEMORY_MAP) /* 268 */
 
@@ -130,48 +104,21 @@ extern uint8_t GLOBALS_EVENTS;
  * @brief The maximum number of password that the memory can handle.
  * For 8KB memory it is 47
  */
-#if FRAM_BYTE_SIZE == 8192
 #define MAXIMUM_NUMBER_OF_PWD (47)
-#elif FRAM_BYTE_SIZE == 32768
-#define MAXIMUM_NUMBER_OF_PWD (195)
-#else
-#error Not standart size
-#endif
+
+#define SIZE_OF_PWD_BLOCK (166)
 
 #define PWD_ADDR(pwdID, pwdField) (OFFSET_FIRST_PWD + SIZE_OF_PWD_BLOCK * pwdID + pwdField)
-
 #define PWD_OFFSET_PREV_PWD_USE (0)
-#define PWD_SIZE_PREV_PWD_USE (1)
-
-#define PWD_OFFSET_NEXT_PWD_USE (PWD_OFFSET_PREV_PWD_USE + PWD_SIZE_PREV_PWD_USE) /* 1 */
-#define PWD_SIZE_NEXT_PWD_USE (1)
-
-#define PWD_OFFSET_PREV_PWD_ALPHA (PWD_OFFSET_NEXT_PWD_USE + PWD_SIZE_NEXT_PWD_USE) /* 2 */
-#define PWD_SIZE_PREV_PWD_ALPHA (1)
-
-#define PWD_OFFSET_NEXT_PWD_ALPHA (PWD_OFFSET_PREV_PWD_ALPHA + PWD_SIZE_PREV_PWD_ALPHA) /* 3 */
-#define PWD_SIZE_NEXT_PWD_ALPHA (1)
-
-#define PWD_OFFSET_PWD_COUNT (PWD_OFFSET_NEXT_PWD_ALPHA + PWD_SIZE_NEXT_PWD_ALPHA) /* 4 */
-#define PWD_SIZE_PWD_COUNT (2)
-
-#define PWD_OFFSET_PWD_NAME (PWD_OFFSET_PWD_COUNT + PWD_SIZE_PWD_COUNT) /* 6 */
-#define PWD_SIZE_PWD_NAME (32)
-
-#define PWD_OFFSET_PWD_IV (PWD_OFFSET_PWD_NAME + PWD_SIZE_PWD_NAME) /* 38 */
-#define PWD_SIZE_PWD_IV (16)
-
-#define PWD_OFFSET_PWD_DATA (PWD_OFFSET_PWD_IV + PWD_SIZE_PWD_IV) /* 54 */
-#define PWD_SIZE_PWD_DATA (32)
-
-#define PWD_OFFSET_USR_IV (PWD_OFFSET_PWD_DATA + PWD_SIZE_PWD_DATA) /* 86 */
-#define PWD_SIZE_USR_IV (16)
-
-#define PWD_OFFSET_USR_NAME (PWD_OFFSET_USR_IV + PWD_SIZE_USR_IV) /* 102 */
-#define PWD_SIZE_USR_NAME (64)
-
-#define SIZE_OF_PWD_BLOCK (PWD_OFFSET_USR_NAME + PWD_SIZE_USR_NAME) /* 166 */
-
+#define PWD_OFFSET_NEXT_PWD_USE (1)
+#define PWD_OFFSET_PREV_PWD_ALPHA (2)
+#define PWD_OFFSET_NEXT_PWD_ALPHA (3)
+#define PWD_OFFSET_PWD_COUNT (4)
+#define PWD_OFFSET_PWD_NAME (6)
+#define PWD_OFFSET_PWD_IV (38)
+#define PWD_OFFSET_PWD_DATA (54)
+#define PWD_OFFSET_USR_IV (86)
+#define PWD_OFFSET_USR_NAME (102)
 
 #define PWD_SORTING_NONE (0)
 #define PWD_SORTING_USE (1)

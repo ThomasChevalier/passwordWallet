@@ -41,7 +41,7 @@ DEFINE_STRING(str_communication_end,        "Transfert fini",               27  
 DEFINE_STRING(str_communication_unplug,     "Debranchez puis branchez",     28  );
 
 DEFINE_STRING(str_reset_external,           "External reset",               29  );
-DEFINE_STRING(str_reset_brownout,           "Brownout reset",               30  );
+DEFINE_STRING(str_reset_brownout,           "Brown out reset",               30  );
 DEFINE_STRING(str_reset_watchdog,           "Watchdog reset",               31  );
 DEFINE_STRING(str_reset_jtag,               "JTAG reset"    ,               32  );
 

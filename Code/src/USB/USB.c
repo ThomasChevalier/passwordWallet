@@ -8,8 +8,6 @@
 #include "Keyboard.h"
 #include "Serial.h"
 
-#include "Fram.h" // test only
-
 #include "../Security/Security.h"
 
 void USB_init (void)

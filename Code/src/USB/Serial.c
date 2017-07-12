@@ -1,10 +1,6 @@
 #include "Serial.h"
 
 #include "../Globals.h"
-#include "../FSM/Events.h"
-
-#include "../Graphics/Drawing.h"
-
 #include "../FSM/States/State_Communication.h"
 
 #ifdef SERIAL_ENABLE

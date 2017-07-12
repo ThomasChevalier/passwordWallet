@@ -8,7 +8,8 @@
 #include "../../Graphics/Drawing.h"
 #include "../../Graphics/String.h"
 
-#include "../../Hardware/Serial.h"
+#include "../../USB/Serial.h"
+
 #include "../../Hardware/Fram.h"
 
 #include "../../Program/Program.h"
@@ -157,7 +158,7 @@ uint8_t state_communication_transition (uint8_t event)
 		if(encryption_check_key())
 		{
 			// If the fram has been modified, the list must be resorted
-			pwd_list_sort_usage();
+			pwd_list_sort_use();
 			pwd_list_sort_alpha();
 			return STATE_MAIN;
 		}

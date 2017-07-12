@@ -3,14 +3,12 @@
 
 #include <string.h>
 
-#include "../Globals.h"
+#include "Globals.h"
 
 #include "Aes.h"
 #include "Random.h"
 
-#include "../Graphics/ProgressBar.h"
-
-#include "../Hardware/Fram.h"
+#include "Fram.h"
 
 static void read_and_decrypt(uint8_t *output, uint16_t addr_iv, uint16_t addr_aes, uint8_t lenght_aes, uint8_t* key)
 {
@@ -45,19 +43,16 @@ static void encrypt_and_write(uint8_t *input, uint8_t len, uint16_t addr_iv, uin
 		for(uint8_t i = len + 1; i < lenght_aes; ++i)
 		{
 			input[i] = random_request_byte();
-			progress_add(1);
 		}
 	}
 
 	for(uint8_t i = 0; i < 16; ++i)
  	{
    		iv[i] = random_request_byte();
-   		progress_add(1);
   	}
 
 	AES128_CBC_encrypt_buffer(aes, input, lenght_aes, key, iv);
 
-	progress_add(5);
 
 	fram_write_bytes(addr_iv, iv, 16);
 	fram_write_bytes(addr_aes, aes, lenght_aes);
@@ -164,7 +159,7 @@ void password_regenerate (uint8_t pwd_id)
 	for(uint8_t i = 0; i < 31; ++i)
 	{
 		newPwd[i] = random_request_printable();
-		progress_add(1);
+
 	}
 	newPwd[31] = 0;
 	password_set_data(pwd_id, newPwd, 32, KEY);

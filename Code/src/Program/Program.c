@@ -10,7 +10,8 @@
 
 #include "../Hardware/Fram.h"
 #include "../Hardware/Buttons.h"
-#include "../Hardware/USB.h"
+
+#include "../USB/USB.h"
 
 #include "../FSM/Events.h"
 

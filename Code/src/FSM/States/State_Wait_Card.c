@@ -69,13 +69,13 @@ uint8_t state_wait_card_transition (uint8_t event)
 			}
 		}
 		else
-        {
-            // If the authentication fail, wait for an other card
-        }
+		{
+			// If the authentication fail, wait for an other card
+		}
 
-        // Necessary to procede to other communications
-        rfid_PICC_haltA();
-        rfid_pcd_stopCrypto1();
+		// Necessary to procede to other communications
+		rfid_PICC_haltA();
+		rfid_pcd_stopCrypto1();
 	}
 	// Check for the recovery sequence
 	else if((event & EVENT_ALL_BUTTONS) == EVENT_ALL_BUTTONS)
@@ -93,10 +93,10 @@ void state_wait_card_end(void)
 	// Save some mA
 	rfid_power_down();
 	// Normal contrast
-    oled_dim(0);
+	oled_dim(0);
 
-    // Initialize and sort all the data
-    CURRENT_PASSWORD_ID = pwd_list_get_first_pwd_id();
-    pwd_list_sort_usage();
-    pwd_list_sort_alpha();
+	// Initialize and sort all the data
+	CURRENT_PASSWORD_ID = pwd_list_get_first_pwd_id();
+	pwd_list_sort_use();
+	pwd_list_sort_alpha();
 }
