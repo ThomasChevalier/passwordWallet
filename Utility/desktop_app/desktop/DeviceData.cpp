@@ -81,3 +81,13 @@ void DeviceData::setParameter(const QByteArray &parameter)
 
     m_storeScreenBufferInFram = parameter[4] != 0;
 }
+
+quint16 DeviceData::vendorIdentifier()
+{
+    return 0x03EB;
+}
+
+quint16 DeviceData::productIdentifier()
+{
+    return 0x2044;
+}

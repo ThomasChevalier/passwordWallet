@@ -33,15 +33,7 @@ private slots:
 
 private:
 
-    void tryConnect();
-    void explorePorts();
-    void connectDevice(QSerialPortInfo& info);
-    void getParameter();
-    QTimer* m_exploreTimer;
-    bool m_connecting;
-
     Ui::MainWindow *ui;
-    ConnectionDialog m_connectDial;
 
     SerialDevice *m_serial;
     DeviceData m_data;

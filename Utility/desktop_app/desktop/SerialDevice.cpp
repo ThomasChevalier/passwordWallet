@@ -50,9 +50,24 @@ void SerialDevice::disconnectSerial()
     m_currentData.sending = false;
 }
 
+void SerialDevice::end()
+{
+    endCommunication();
+}
+
 bool SerialDevice::busy()
 {
     return WIP();
+}
+
+QSerialPort::SerialPortError SerialDevice::error() const
+{
+    return m_serial.error();
+}
+
+QString SerialDevice::portName() const
+{
+    return m_serial.portName();
 }
 
 void SerialDevice::initCommunication()
@@ -193,7 +208,7 @@ void SerialDevice::slot_error_occured(QSerialPort::SerialPortError error)
     }
     else if(error != QSerialPort::NoError)
     {
-        qDebug() << "Error : " << m_serial.errorString();
+        qDebug() << "Error : " << m_serial.errorString() << "/" << static_cast<int>(m_serial.error());
     }
 
     switch (error) {

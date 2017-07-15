@@ -24,7 +24,11 @@ public:
     bool connectSerial(QSerialPortInfo port);
     bool isConnected();
     void disconnectSerial();
+    void end();
     bool busy();
+
+    QSerialPort::SerialPortError error() const;
+    QString portName() const;
 
     void initCommunication();
     void endCommunication();

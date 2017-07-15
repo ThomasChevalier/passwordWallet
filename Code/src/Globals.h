@@ -8,18 +8,20 @@
 // ///////// //
 
 
-#undef STORE_SCREEN_BUFFER_IN_FRAM //< Wether or not the internal buffer of pixel for the oled should be stored in FRAM
+//< Wether or not the internal buffer of pixel for the oled
+//< should be stored in FRAM
+#undef STORE_SCREEN_BUFFER_IN_FRAM
 
-#define KEYBOARD_ENABLE	//< Enable or not the keyboard interface
-#define SERIAL_ENABLE	//< Enable or not the serial interface
+#define KEYBOARD_ENABLE  //< Enable or not the keyboard interface
+#define SERIAL_ENABLE    //< Enable or not the serial interface
 
 #if defined(KEYBOARD_ENABLE) || defined(SERIAL_ENABLE)
 #define USB_ENABLE
 #endif
 
 
-#undef SPI_FRAM	//< Choose the connection type of the FRAM (here this is SPI)
-#define I2C_FRAM		//< Choose the connection type of the FRAM (here this is I²C)
+#undef SPI_FRAM    //< Choose the connection type of the FRAM (here this is SPI)
+#define I2C_FRAM   //< Choose the connection type of the FRAM (here this is I²C)
 
 #if defined(SPI_FRAM) && defined(I2C_FRAM)
 #error Only one type of connection can be used.
@@ -31,8 +33,8 @@
 #define I2C_REQUIRED
 #endif
 
-//#define FRAM_BYTE_SIZE (8192) //< Size of the fram in byte
-#define FRAM_BYTE_SIZE (32768) //< Size of the fram in byte
+// #define FRAM_BYTE_SIZE (8192) //< Size of the fram in byte
+#define FRAM_BYTE_SIZE (32768)  //< Size of the fram in byte
 
 // This file should contain the global variables used in this project
 

@@ -22,19 +22,18 @@ static uint8_t send_buffer_lenght;
 
 #endif
 
-void serial_init (void)
+void serial_init(void)
 {
-
 }
 
-void serial_loop (void)
+void serial_loop(void)
 {
 	#ifdef SERIAL_ENABLE
 	CDC_Task();
 	#endif
 }
 
-void serial_send (uint8_t* buffer, uint8_t lenght)
+void serial_send(uint8_t* buffer, uint8_t lenght)
 {
 	#ifdef SERIAL_ENABLE
 	send_buffer_ptr = buffer;
@@ -47,17 +46,15 @@ void serial_send (uint8_t* buffer, uint8_t lenght)
 	#endif
 }
 
-void serial_on_device_connect (void)
+void serial_on_device_connect(void)
 {
-
 }
 
-void serial_on_device_disconnect (void)
+void serial_on_device_disconnect(void)
 {
-
 }
 
-uint8_t serial_on_configuration_changed (void)
+uint8_t serial_on_configuration_changed(void)
 {
 	#ifdef SERIAL_ENABLE
 
@@ -76,7 +73,7 @@ uint8_t serial_on_configuration_changed (void)
 	#endif
 }
 
-void serial_on_control_request (void)
+void serial_on_control_request(void)
 {
 	#ifdef SERIAL_ENABLE
 /* Process CDC specific control requests */
@@ -121,9 +118,8 @@ void serial_on_control_request (void)
 	#endif
 }
 
-void serial_on_start_of_frame (void)
+void serial_on_start_of_frame(void)
 {
-
 }
 
 
@@ -138,7 +134,6 @@ void CDC_Task(void)
 
 	if (send_buffer_ptr != NULL && LineEncoding.BaudRateBPS)
 	{
-
 		/* Select the Serial Tx Endpoint */
 		Endpoint_SelectEndpoint(CDC_TX_EPADDR);
 
@@ -190,4 +185,4 @@ void CDC_Task(void)
 
 
 
-#endif // SERIAL_ENABLE
+#endif  // SERIAL_ENABLE

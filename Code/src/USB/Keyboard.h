@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#include "../Globals.h" // For KEYBOARD_ENABLE define
+#include "../Globals.h"  // For KEYBOARD_ENABLE define
 
 #ifdef KEYBOARD_ENABLE
 
@@ -12,17 +12,17 @@
 #include <LUFA/Drivers/USB/USB.h>
 #include <LUFA/Platform/Platform.h>
 
-void HID_Task								(void);
-void CreateKeyboardReport					(USB_KeyboardReport_Data_t* const ReportData);
-void SendNextReport							(void);
-void ReceiveNextReport						(void);
+void HID_Task                               (void);
+void CreateKeyboardReport                   (USB_KeyboardReport_Data_t* const ReportData);
+void SendNextReport                         (void);
+void ReceiveNextReport                      (void);
 
 #endif // KEYBOARD_ENABLE
 
 /**
  * @brief Initialize statics variables for keyboard.
  */
-void keyboard_init	(void);
+void keyboard_init  (void);
 
 /**
  * @brief Send a string to the computer as if it was typed.
@@ -30,25 +30,25 @@ void keyboard_init	(void);
  * @param data The string to send to the computer.
  * @param dataLen The lenght of the string.
  */
-void keyboard_send	(char* data, uint8_t dataLen);
+void keyboard_send  (char* data, uint8_t dataLen);
 
 /**
  * @brief Update the keyboard related stuff.
  * @details Should be called regularly.
  */
-void keyboard_loop	(void);
+void keyboard_loop  (void);
 
 /** 
  * @brief Event handler for the USB_Connect event.
  * @details This indicates that the device is enumerating and starts the library USB task to begin the enumeration and USB management process.
  */
-void	keyboard_on_device_connect			(void);
+void    keyboard_on_device_connect          (void);
 
 /**
  * @brief Event handler for the USB_Disconnect event.
  * @details This indicates that the device is no longer connected to an host.
  */
-void	keyboard_on_device_disconnect		(void);
+void    keyboard_on_device_disconnect       (void);
 
 /**
  * @brief Event handler for the USB_ConfigurationChanged event.
@@ -57,7 +57,7 @@ void	keyboard_on_device_disconnect		(void);
  * 
  * @return Return 1 if no error occured, 0 otherwise.
  */
-uint8_t	keyboard_on_configuration_changed	(void);
+uint8_t keyboard_on_configuration_changed   (void);
 
 /**
  * @brief Event handler for the USB_ControlRequest event.
@@ -65,11 +65,11 @@ uint8_t	keyboard_on_configuration_changed	(void);
  * the device from the USB host before passing along unhandled control requests to the library for processing
  * internally.
  */
-void	keyboard_on_control_request			(void);
+void    keyboard_on_control_request         (void);
 
 /**
  * @brief Event handler for the USB device Start Of Frame event. 
  */
-void	keyboard_on_start_of_frame			(void);
+void    keyboard_on_start_of_frame          (void);
 
 #endif // KEYBOARD_HEADER_THOMAS_CHEVALIER

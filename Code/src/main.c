@@ -23,9 +23,9 @@
  */
 ISR(BADISR_vect)
 {
-    for(;;)
+    for (;;)
     {
-   	led_blink(1);
+		led_blink(1);
     }
 }
 
@@ -45,23 +45,23 @@ int main(void)
 	if(!self_test_check())
 	{
 		// The device does not behave correctly, freeze it
-		while(1);
+		while(1){}
 	}
 
 	// Read and initialize various variable
 	program_init();
-	
+
 	// Check the reset reason and display it
 	system_read_reset_source(mcusr);
 
 	// If the device has not been initialized yet
 	const uint8_t optFlag = fram_read_byte(OFFSET_OPTIONS_FLAG);
-	if((optFlag & (1<<OPTIONS_FLAG_OFFSET_INITIALIZED)) == 0)
+	if( (optFlag & (1 << OPTIONS_FLAG_OFFSET_INITIALIZED)) == 0)
 	{
 		state_recovery_do_full_reset();
 	}
-	
-	const State states[NUM_STATES] = 
+
+	const State states[NUM_STATES] =
 	{
 		{state_wait_card_transition,		state_wait_card_begin,			state_wait_card_end},			// STATE_WAIT_CARD
 		{state_recovery_transition,			state_recovery_begin,			state_recovery_end},			// STATE_RECOVERY
@@ -70,7 +70,7 @@ int main(void)
 		{state_options_transition,			state_options_begin,			state_options_end},				// STATE_OPTION
 		{state_option_password_transition,	state_option_password_begin,	state_option_password_end},		// STATE_OPTION_PASSWORD
 		{state_option_sort_transition,		state_option_sort_begin,		state_option_sort_end},			// STATE_OPTION_SORT
-		{state_option_advanced_transition,	state_option_advanced_begin,	state_option_advanced_end},		// STATE_OPTION_ADVANCED 
+		{state_option_advanced_transition,	state_option_advanced_begin,	state_option_advanced_end},		// STATE_OPTION_ADVANCED
 		{state_communication_transition,	state_communication_begin,		state_communication_end}		// STATE_COMMUNICATION
 	};
 
@@ -78,9 +78,9 @@ int main(void)
 	uint8_t currentStateNum = STATE_WAIT_CARD;
 
 	// If the device is not encrypted, skip WAIT_CARD state
-	if(OPTIONS_FLAG & (1<<OPTIONS_FLAG_OFFSET_NO_ENCRYPTION))
+	if(OPTIONS_FLAG & (1 << OPTIONS_FLAG_OFFSET_NO_ENCRYPTION))
 	{
-		currentState->end(); // Do initialization of some stuff
+		currentState->end();  // Do initialization of some stuff
 		currentState = &states[STATE_MAIN];
 		currentStateNum = STATE_MAIN;
 		encryption_copy_key_from_eeprom();
@@ -91,7 +91,7 @@ int main(void)
 	while(RUNNING)
 	{
 		program_update();
-		uint8_t event = events_get(); // Mask of events
+		uint8_t event = events_get();  // Mask of events
 
 		const uint8_t newState = currentState->transition(event);
 		if(currentStateNum != newState)
@@ -108,5 +108,5 @@ int main(void)
 		}
 	}
 
-	while(1);
+	while(1){}
 }

@@ -31,5 +31,5 @@ uint8_t i2c_receive(uint8_t addr, uint8_t* data, uint16_t length);
 void i2c_stop(void);
 
 
-#endif // I2C_REQUIRED
+#endif  // I2C_REQUIRED
 #endif // I2C_HEADER_THOMAS_CHEVALIER

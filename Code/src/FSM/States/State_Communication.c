@@ -34,7 +34,7 @@ static uint8_t communication_flag = 0;
 static void do_fram_dump(void)
 {
 	uint8_t buffer[16];
-	for(uint16_t i = 0; i < FRAM_BYTE_SIZE / 16; ++i)
+	for(uint16_t i = 0; i < FRAM_BYTE_SIZE / 16/* && (communication_flag & FLAG_END_COMMUNICATION) == 0*/; ++i)
 	{
 		fram_read_bytes(i*16, buffer, 16);
 		serial_send(buffer, 16);
@@ -78,7 +78,7 @@ void state_communication_process_data(uint8_t* buffer, uint8_t lenght)
 	{
 		events_happen(EVENT_INIT_COMMUNICATION);
 	}
-	if((communication_flag & FLAG_INITED) == 0 || (communication_flag & FLAG_END_COMMUNICATION) == 1)
+	if((communication_flag & FLAG_INITED) == 0 || (communication_flag & FLAG_END_COMMUNICATION)==FLAG_END_COMMUNICATION)
 		return;
 
 	// Command
@@ -167,7 +167,7 @@ void state_communication_process_data(uint8_t* buffer, uint8_t lenght)
 
 }
 
-void state_communication_begin (void)
+void state_communication_begin(void)
 {
 	communication_flag = FLAG_INITED;
 
@@ -175,10 +175,9 @@ void state_communication_begin (void)
 	draw_text_index(5, 0, str_communication_what_index);
 	draw_text_index(10, 10, str_communication_dont_unplug_index);
 	draw_update();
-
 }
 
-uint8_t state_communication_transition (uint8_t event)
+uint8_t state_communication_transition(uint8_t event)
 {
 	if(communication_flag & FLAG_END_COMMUNICATION)
 	{
@@ -217,7 +216,7 @@ uint8_t state_communication_transition (uint8_t event)
 	return STATE_COMMUNICATION;
 }
 
-void state_communication_end (void)
+void state_communication_end(void)
 {
 	communication_flag &= ~FLAG_INITED;
 }

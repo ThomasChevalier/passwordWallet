@@ -3,6 +3,11 @@
 
 #include <QDialog>
 
+#include <QTimer>
+#include <QList>
+#include "SerialDevice.h"
+#include "DeviceData.h"
+
 class QLabel;
 
 namespace Ui {
@@ -14,7 +19,7 @@ class ConnectionDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit ConnectionDialog(QWidget *parent = 0);
+    explicit ConnectionDialog(SerialDevice& device, DeviceData& data, QWidget *parent = 0);
     ~ConnectionDialog();
 
     enum StepResult
@@ -26,19 +31,46 @@ public:
     };
 
 public slots:
-    void goToStep(int step);
-    void setStepResult(StepResult res);
-    void stepComplete(StepResult res);
-    void setProgress(int progress, int min, int max); // For busy : 0, 0, 0
     void addMessage(QString msg);
-    void allIsComplete();
-    void reset();
+
+private slots:
+    void on_disconnected();
+    void on_framReceived(const QByteArray& fram);
+    void on_keyReceived(const QByteArray& key);
+    void on_paramReceived(const QByteArray& param);
+    void on_framReceiveProgress(qint64 received);
+
+    void on_issueLinuxEnterUsrName_clicked();
 
 private:
-    void applyResult(QLabel* lbl, StepResult res);
+
+    enum State
+    {
+        Connecting,
+        WaitingParam,
+        WaitingKey,
+        WaitingFram,
+        Complete
+    };
+
+    void tryConnect();
+
+    void explorePorts();
+    QTimer* m_exploreTimer;
+
+    void connectDevice(QSerialPortInfo& info);
+    unsigned int m_connectionAttempt;
+
+    void resolveConnectionIssue(QString userName = QString());
+    void getParameter();
 
     Ui::ConnectionDialog *ui;
-    unsigned m_currentStep;
+
+    State m_currentState;
+
+    QList<QMetaObject::Connection> m_deviceConnections;
+    SerialDevice& m_device;
+    DeviceData& m_data;
 };
 
 #endif // CONNECTIONDIALOG_H

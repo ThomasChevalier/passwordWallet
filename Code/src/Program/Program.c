@@ -38,7 +38,6 @@ void program_update(void)
 	random_save_entropy();
 
 	first_press = buttons_update_event();
-	
 }
 
 void program_wait(void)

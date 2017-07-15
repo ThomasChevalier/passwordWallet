@@ -61,6 +61,9 @@ public:
     void setDeviceKey(const QByteArray& key);
     void setParameter(const QByteArray& parameter);
 
+    static quint16 vendorIdentifier();
+    static quint16 productIdentifier();
+
 private:
     QByteArray m_key;
     QByteArray m_fram;
