@@ -10,6 +10,8 @@
 class QSerialPortInfo;
 class SerialDevice;
 
+class PasswordTabView;
+
 namespace Ui {
 class MainWindow;
 }
@@ -31,9 +33,12 @@ private slots:
     void on_paramReceived(const QByteArray& param);
     void on_framReceiveProgress(qint64 received);
 
+    void connectDevice();
+
 private:
 
     Ui::MainWindow *ui;
+    PasswordTabView *m_pwdView;
 
     SerialDevice *m_serial;
     DeviceData m_data;

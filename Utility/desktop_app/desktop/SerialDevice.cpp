@@ -28,6 +28,11 @@ SerialDevice::~SerialDevice()
 
 bool SerialDevice::connectSerial(QSerialPortInfo port)
 {
+    if(m_serial.isOpen())
+    {
+        disconnectSerial();
+    }
+
     m_serial.setPort(port);
     bool result = m_serial.open(QSerialPort::ReadWrite);
     initCommunication();
@@ -214,6 +219,10 @@ void SerialDevice::slot_error_occured(QSerialPort::SerialPortError error)
     switch (error) {
     case QSerialPort::ResourceError:
         m_serial.close();
+        m_waitingFram = false;
+        m_waitingKey = false;
+        m_waitingParam = false;
+        m_currentData.sending = false;
         emit disconnected();
         break;
     default:

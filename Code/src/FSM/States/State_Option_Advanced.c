@@ -33,6 +33,9 @@ static void do_show_key(void)
 	encode_16B(KEY, outputText);
 	draw_text(0, 30, outputText, 20);
 
+	draw_hex(0, 42, KEY, 10);
+	draw_hex(0, 50, KEY+10, 6);
+
 	security_erase_data(outputText, 20);
 
 	draw_update();

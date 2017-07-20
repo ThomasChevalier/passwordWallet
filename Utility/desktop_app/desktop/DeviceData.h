@@ -3,6 +3,9 @@
 
 #include <QtGlobal>
 #include <QByteArray>
+#include <QList>
+
+#include "Password.h"
 
 struct FRAM_I2C_Id
 {
@@ -14,7 +17,7 @@ struct FRAM_I2C_Id
 
 struct FRAM_SPI_Id
 {
-    FRAM_SPI_Id(): manufacturer_id(0), continuation_code(0),
+    FRAM_SPI_Id(): continuation_code(0), manufacturer_id(0),
         product_idL(0), product_idH(0) {}
 
     quint8 continuation_code;	// Continuation code : should be 0x7F (2)
@@ -45,28 +48,60 @@ public:
         Unknow
     };
 
+    enum SortingAlgo
+    {
+        None,
+        Use,
+        Alpha
+    };
+
+    enum Orientation
+    {
+        Normal,
+        Inverse
+    };
+
 
     DeviceData();
 
-    FRAM_Id    deviceFramId()      const;
-    QByteArray deviceKey()         const;
-    QByteArray deviceFram()        const;
-    quint32 getDeviceFramSize() const;
-    bool getStoreScreenBufferInFram() const;
+    FRAM_Id    framId()  const;
+    QByteArray key()     const;
+    QByteArray memory()  const;
+    quint32 memorySize() const;
 
-    Fram_Connection getFramConnection() const;
+    bool encryption() const;
+    SortingAlgo sorting() const;
+    Orientation orientation() const;
+    bool initialized() const;
+    bool qwerty() const;
+    quint8 firstPwdUse() const;
+    quint8 firstPwdAlpha() const;
+    quint8 passwordNum() const;
+    QByteArray memoryMap() const;
 
+    QList<Password> allPassword() const;
+    Password password(quint8 id) const;
+    quint8 maxNumPwd() const;
 
-    void setDeviceFram(const QByteArray& data);
-    void setDeviceKey(const QByteArray& key);
+    void addPassword(QString name, QString pwd, QString usrName) const;
+
+    void setMemory(const QByteArray& data);
+    void setKey(const QByteArray& key);
     void setParameter(const QByteArray& parameter);
 
     static quint16 vendorIdentifier();
     static quint16 productIdentifier();
 
+
 private:
+
+    quint16 firstPwdOffset() const;
+
+    bool storeScreenBufferInFram() const;
+    Fram_Connection getFramConnection() const;
+
     QByteArray m_key;
-    QByteArray m_fram;
+    QByteArray m_memory;
     FRAM_Id m_framId;
     bool m_storeScreenBufferInFram;
 };

@@ -36,20 +36,26 @@ uint8_t draw_char(uint8_t x, uint8_t y, uint8_t c)
 	}
 
 	uint8_t i;
-	for(i = 0; i < FONT_WIDTH; ++i)
+	uint8_t space = 0;
+	uint8_t searchSpace = 1;
+	for(i = FONT_WIDTH; i > 0; --i)
 	{
-		uint8_t font_byte = pgm_read_byte_near(font + ((c-' ') * FONT_WIDTH) + i);
-		if(font_byte == 0)
+		uint8_t font_byte = pgm_read_byte_near(font + ((c-' ') * FONT_WIDTH) + (i-1));
+		if(font_byte != 0 || !searchSpace)
 		{
-			return FONT_WIDTH - i;
+			searchSpace = 0;
+			uint8_t j = 0;
+			for(j = 0; j < 8; ++j)
+			{
+				oled_draw_pixel(x+i-1, y+(7-j), (font_byte >> (7-j)) & 0x01);
+			}
 		}
-		uint8_t j = 0;
-		for(j=0; j < 8; ++j)
+		else
 		{
-			oled_draw_pixel(x+i, y+(7-j), (font_byte >> (7-j)) & 0x01);
+			++space;
 		}
 	}
-	return 0;
+	return space;
 }
 
 void draw_text_index(uint8_t x, uint8_t y, uint8_t str_index)
@@ -85,9 +91,9 @@ void draw_hex(uint8_t x, uint8_t y, uint8_t* hexBuffer, uint8_t hexBufferSize)
 	char str[hexBufferSize * 2];
 	for(index = hexBufferSize-1; index != (uint8_t)-1; --index)
 	{
-		uint8_t nibble = hexBuffer[index] >> 4;// High
+		uint8_t nibble = hexBuffer[index] >> 4;  // High
 		str[index * 2] = (nibble < 10) ? nibble + '0' : (nibble-10) + 'A';
-		nibble = hexBuffer[index] & 0x0F; // Low
+		nibble = hexBuffer[index] & 0x0F;  // Low
 		str[index * 2 + 1] = (nibble < 10) ? nibble + '0' : (nibble-10) + 'A';
 	}
 	draw_text(x, y, str, hexBufferSize * 2);
@@ -116,7 +122,7 @@ void draw_v_line(uint8_t x, uint8_t y, uint8_t h, uint8_t color)
 void draw_main_menu(void)
 {
 	draw_clear();
-	draw_browse_dock(0,0);
+	draw_browse_dock(0, 0);
 
 	draw_h_line(8, 20, 120, WHITE);
 	draw_h_line(8, 43, 120, WHITE);
@@ -140,7 +146,7 @@ void draw_main_menu(void)
 		draw_text(10, 46, pwdName, 0);
 		draw_hex(50, 46, &pwd_id, 1);
 	}
-	
+
 	draw_update();
 }
 
@@ -156,7 +162,7 @@ void draw_browse_dock(char letter, uint8_t highlight)
 		lastLetter = letter;
 	}
 
-	draw_char_column((highlight<<4) | (1<<5),letter);
+	draw_char_column((highlight << 4) | (1 << 5), letter);
 	draw_v_line(7, 0, 64, WHITE);
 }
 
@@ -177,7 +183,7 @@ void draw_list(uint8_t index, uint8_t minIndex, uint8_t maxIndex)
 		pos = 2;
 		--index;
 	}
-	
+
 	if(index != minIndex)
 	{
 		--index;
@@ -217,8 +223,8 @@ uint8_t type_string(char* string_typed, uint8_t maxLen)
 	while(running)
 	{
 		program_update();
-		
-		uint8_t event = events_get(); // Mask of events
+
+		uint8_t event = events_get();  // Mask of events
 		if(event & EVENT_BUTTON_1)
 		{
 			char c = string_typed[pos];
@@ -292,7 +298,7 @@ uint8_t type_string(char* string_typed, uint8_t maxLen)
 
 			if(pos >= 1)
 			{
-				pos --;
+				pos--;
 			}
 			else
 			{
@@ -352,7 +358,7 @@ void draw_char_column(uint8_t column_and_flags, char letter)
 	{
 		for(y = 0; y < 64; ++y)
 		{
-			oled_draw_pixel(x,y,BLACK);
+			oled_draw_pixel(x, y, BLACK);
 		}
 	}
 	#if defined(BIG_FONT)
@@ -397,7 +403,7 @@ void draw_char_column(uint8_t column_and_flags, char letter)
 				c-= 96;
 			}
 		}
-		
+
 		draw_char(((column_and_flags&0xF)*7)+1,
 			#if defined(BIG_FONT)
 				y*12,
@@ -409,7 +415,7 @@ void draw_char_column(uint8_t column_and_flags, char letter)
 	}
 	if((column_and_flags>>4) & 0x01)
 	{
-		for(y = 0; y < 
+		for(y = 0; y <
 				#if defined(BIG_FONT)
 					11;
 				#elif defined(SMALL_FONT)

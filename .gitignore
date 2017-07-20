@@ -13,3 +13,5 @@ Utility/editor/build-pwd_wallet_editor-Desktop_Qt_5_8_0_GCC_64bit-Debug/
 Utility/editor/build-pwd_wallet_editor-Desktop_Qt_5_8_0_GCC_64bit-Release/
 Utility/desktop_app/build-desktop-Desktop_Qt_5_9_1_GCC_64bit-Debug
 *.pro.user.*
+kicad/password_wallet-cache.lib
+kicad/password_wallet.bak

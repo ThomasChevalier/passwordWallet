@@ -34,7 +34,7 @@ static uint8_t communication_flag = 0;
 static void do_fram_dump(void)
 {
 	uint8_t buffer[16];
-	for(uint16_t i = 0; i < FRAM_BYTE_SIZE / 16/* && (communication_flag & FLAG_END_COMMUNICATION) == 0*/; ++i)
+	for(uint16_t i = 0; i < FRAM_BYTE_SIZE / 16 && (communication_flag & FLAG_END_COMMUNICATION) == 0; ++i)
 	{
 		fram_read_bytes(i*16, buffer, 16);
 		serial_send(buffer, 16);

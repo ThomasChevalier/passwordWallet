@@ -4,7 +4,11 @@
 #include <QLabel>
 #include <QSerialPortInfo>
 #include <QProcess>
+#include <QMessageBox>
+
+// DEbug
 #include <QDebug>
+#include <QFile>
 
 #define RESULT_OK_IMG QString("ok.png")
 #define RESULT_WARNING_IMG QString("warning.png")
@@ -28,8 +32,11 @@ ConnectionDialog::ConnectionDialog(SerialDevice &device, DeviceData &data, QWidg
     ui->button_close->hide();
 
     ui->widgetIssueConnectionLinux->hide();
+    ui->widgetIssueDisconnectionLinux->hide();
+    ui->buttonReconnect->hide();
 
     ui->img_search->setEnabled(true);
+    connect(this, &ConnectionDialog::rejected, this, &ConnectionDialog::on_rejected);
 
     adjustSize();
 
@@ -53,6 +60,11 @@ ConnectionDialog::~ConnectionDialog()
     }
 }
 
+bool ConnectionDialog::isConnectionComplete()
+{
+    return m_currentState == Complete;
+}
+
 void ConnectionDialog::addMessage(QString msg)
 {
     ui->text->append(msg);
@@ -66,30 +78,35 @@ void ConnectionDialog::on_disconnected()
     ui->img_param->setEnabled(false);
     ui->img_search->setEnabled(true);
     ui->img_search->setPixmap(QPixmap(RESULT_WAIT_IMG));
+    ui->progressBar->setMaximum(0);
 
     switch (m_currentState) {
     case WaitingParam:
         ui->img_param->setPixmap(QPixmap(RESULT_ERROR_IMG));
         break;
     case WaitingKey:
-        ui->img_param->setPixmap(QPixmap(RESULT_ERROR_IMG));
+        ui->img_key->setPixmap(QPixmap(RESULT_ERROR_IMG));
         break;
     case WaitingFram:
-        ui->img_param->setPixmap(QPixmap(RESULT_ERROR_IMG));
+        ui->img_content->setPixmap(QPixmap(RESULT_ERROR_IMG));
     case Complete:
         ui->label_status->setText(tr("<strong>Connexion au périphérique en cours</strong>"));
     default:
         break;
     }
-
-    tryConnect();
+    //tryConnect();
+    resolveDisconnectionIssue();
 }
 
 void ConnectionDialog::on_framReceived(const QByteArray &fram)
 {
     m_currentState = Complete;
+    QFile f("fram.hex");
+    f.open(QFile::WriteOnly);
+    f.write(fram);
+    f.close();
 
-    m_data.setDeviceFram(fram);
+    m_data.setMemory(fram);
     ui->img_content->setPixmap(QPixmap(RESULT_OK_IMG));
     addMessage(tr("Mémoire reçue"));
     ui->label_status->setText(tr("<strong>Connexion établie</strong>"));
@@ -101,14 +118,14 @@ void ConnectionDialog::on_keyReceived(const QByteArray &key)
 {
     m_currentState = WaitingFram;
 
-    m_data.setDeviceKey(key);
+    m_data.setKey(key);
     ui->img_key->setPixmap(RESULT_OK_IMG);
     addMessage(tr("Clef de chiffrement reçue"));
 
     ui->img_content->setPixmap(RESULT_WAIT_IMG);
     ui->img_content->setEnabled(true);
 
-    m_device.requestFramDump(m_data.getDeviceFramSize());
+    m_device.requestFramDump(m_data.memorySize());
 }
 
 void ConnectionDialog::on_paramReceived(const QByteArray &param)
@@ -116,23 +133,24 @@ void ConnectionDialog::on_paramReceived(const QByteArray &param)
     m_currentState = WaitingKey;
 
     addMessage(tr("Paramètres reçues"));
+    QFile f("param.hex");
+    f.open(QFile::WriteOnly);
+    f.write(param);
+    f.close();
 
     ui->img_param->setPixmap(QPixmap(RESULT_OK_IMG));
     m_data.setParameter(param);
-    addMessage(tr("Taille de la mémoire : %1").arg(m_data.getDeviceFramSize()));
+    addMessage(tr("Taille de la mémoire : %1").arg(m_data.memorySize()));
 
     ui->img_key->setPixmap(QPixmap(RESULT_WAIT_IMG));
     ui->img_key->setEnabled(true);
+    while(m_device.busy()) { QCoreApplication::processEvents(); }
     m_device.requestKey();
 }
 
 void ConnectionDialog::on_framReceiveProgress(qint64 received)
 {
-    if(received>6000)
-    {
-        m_device.end();
-    }
-    ui->progressBar->setMaximum(m_data.getDeviceFramSize());
+    ui->progressBar->setMaximum(m_data.memorySize());
     ui->progressBar->setValue(received);
 }
 
@@ -146,7 +164,7 @@ void ConnectionDialog::tryConnect()
 {
     m_currentState = Connecting;
     m_connectionAttempt = 0;
-
+    ui->buttonReconnect->hide();
     m_exploreTimer->stop();
     connect(m_exploreTimer, &QTimer::timeout, this, &ConnectionDialog::explorePorts, Qt::UniqueConnection);
     m_exploreTimer->start(1000);
@@ -169,8 +187,6 @@ void ConnectionDialog::explorePorts()
 void ConnectionDialog::connectDevice(QSerialPortInfo &info)
 {
     ++m_connectionAttempt;
-
-    //lookForConnectionOn(info);
 
     if(m_device.connectSerial(info))
     {
@@ -197,14 +213,16 @@ void ConnectionDialog::connectDevice(QSerialPortInfo &info)
     }
 }
 
+
 void ConnectionDialog::resolveConnectionIssue(QString userName)
-{
+{  
     #if defined(Q_OS_LINUX)
     ui->widgetIssueConnectionLinux->show();
     adjustSize();
 
     if(m_device.error() == QSerialPort::PermissionError)
     {
+        addMessage(tr("Résolution des problèmes relatifs aux permissions..."));
         bool needUsrName = false;
 
         QString userNameWhoami;
@@ -330,10 +348,80 @@ void ConnectionDialog::resolveConnectionIssue(QString userName)
                                              "Où [groupe] doit être remplacé par un des groupes suivants : %2<br/>"
                                              "Votre session doit être rédemarrée pour que le changement prenne effet.").arg(userName).arg(goodGroups.join(" ")));
         }
+    }  // Device error == QSerialPort::PermissionError
+#endif // defined(Q_OS_LINUX)
+}
+
+void ConnectionDialog::resolveDisconnectionIssue()
+{
+#if defined(Q_OS_LINUX)
+
+    if(m_device.error() == QSerialPort::ResourceError)
+    {
+        addMessage(tr("Résolution des problèmes relatifs à la déconnexion ..."));
+        QProcess proc_lsof;
+        addMessage(tr("Éxécution de la commande 'lsof -FpcL /dev/%1'.").arg(m_device.portName()));
+        proc_lsof.start("lsof -FpcL /dev/"+m_device.portName());
+        if(!proc_lsof.waitForFinished())
+        {
+            addMessage(tr("Échec de la commande."));
+            return;
+        }
+        else
+        {
+            QString out = proc_lsof.readAllStandardOutput();
+            if(!out.isEmpty() && out[out.size()-1]=='\n')
+            {
+                out.remove(out.size()-1);
+            }
+            addMessage(tr("Sortie de 'lsof -FpcL /dev/%1' : %2").arg(m_device.portName()).arg(out));
+            if(out.isEmpty())
+            {
+                addMessage(tr("Aucun processus ne semble utiliser le port %1").arg(m_device.portName()));
+                ui->widgetIssueDisconnectionLinux->show();
+                ui->issueDisconectionLinuxWhat->setText(tr("Votre périphérique est indisponible.\n"
+                                                           "Il se peut que vous l'ayez déconnecté volontairement, "
+                                                           "dans ce cas, vous pouvez ignorer ce message. "
+                                                           "Cependant si vous n'avez pas débranché votre périphérique, "
+                                                           "il est probable qu'une erreur soit survenu. "
+                                                           "L'utilitaire de résolution de problème n'a pas détécté d'erreur "
+                                                           "mais il se peut qu'il ne dispose pas des droits suffisants. "
+                                                           "Vous pouvez éxécuter la commande suivante en tant qu'administrateur "
+                                                           "pour vérifier qu'aucun autre processus n'utilise votre périphérique :\n"
+                                                           "lsof /dev/%1\n"
+                                                           "La commande suivante peut vous aider à désactiver 'ModemManager' :\n"
+                                                           "mv /usr/share/dbus-1/system-services/org.freedesktop.ModemManager.service /usr/share/dbus-1/system-services/org.freedesktop.ModemManager.service.disabled").arg(m_device.portName()));
+                adjustSize();
+            }
+            else
+            {
+                QString pid;
+                QString name;
+                QString user;
+
+                for(QString line : out.split("\n"))
+                {
+                    if(line.isEmpty())
+                    {
+                        continue;
+                    }
+                    switch (line[0].toLatin1()) {
+                    case 'p': pid  = line.remove(0, 1); break;
+                    case 'c': name = line.remove(0, 1); break;
+                    case 'L': user = line.remove(0, 1); break;
+                    default: break;
+                    }
+                }
+                ui->widgetIssueDisconnectionLinux->show();
+                ui->issueDisconectionLinuxWhat->setText(tr("Il semble que le processus '%1' [PID=%2], appartenant à l'utilisateur '%3' "
+                                                           "utilise votre périphérique en ce moment.").arg(name, pid, user));
+                adjustSize();
+            }
+
+        }
     }
-
-
-    #endif
+    ui->buttonReconnect->show();
+#endif // defined(Q_OS_LINUX)
 }
 
 void ConnectionDialog::getParameter()
@@ -347,3 +435,13 @@ void ConnectionDialog::getParameter()
     m_device.requestParam();
 }
 
+
+void ConnectionDialog::on_buttonReconnect_clicked()
+{
+    tryConnect();
+}
+
+void ConnectionDialog::on_rejected()
+{
+    m_device.disconnectSerial();
+}

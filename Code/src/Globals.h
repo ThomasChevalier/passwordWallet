@@ -122,7 +122,7 @@ extern uint8_t GLOBALS_EVENTS;
 #error Not standart size
 #endif
 
-#define OFFSET_FIRST_PWD (OFFSET_MEMORY_MAP + SIZE_MEMORY_MAP) /* 268 */
+#define OFFSET_FIRST_PWD (OFFSET_MEMORY_MAP + SIZE_MEMORY_MAP) /* 268 or 287*/
 
 // //////////////// //
 // Password Section //

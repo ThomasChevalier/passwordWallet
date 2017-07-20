@@ -5,6 +5,9 @@
 
 #include <QTimer>
 #include <QList>
+
+#include <QSerialPort>
+
 #include "SerialDevice.h"
 #include "DeviceData.h"
 
@@ -22,13 +25,7 @@ public:
     explicit ConnectionDialog(SerialDevice& device, DeviceData& data, QWidget *parent = 0);
     ~ConnectionDialog();
 
-    enum StepResult
-    {
-        Ok,
-        Warning,
-        Error,
-        Wait
-    };
+    bool isConnectionComplete();
 
 public slots:
     void addMessage(QString msg);
@@ -41,6 +38,10 @@ private slots:
     void on_framReceiveProgress(qint64 received);
 
     void on_issueLinuxEnterUsrName_clicked();
+
+    void on_buttonReconnect_clicked();
+
+    void on_rejected();
 
 private:
 
@@ -62,6 +63,7 @@ private:
     unsigned int m_connectionAttempt;
 
     void resolveConnectionIssue(QString userName = QString());
+    void resolveDisconnectionIssue();
     void getParameter();
 
     Ui::ConnectionDialog *ui;

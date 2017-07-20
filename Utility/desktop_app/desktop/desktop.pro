@@ -27,12 +27,29 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     connectiondialog.cpp \
     SerialDevice.cpp \
-    DeviceData.cpp
+    DeviceData.cpp \
+    PasswordTabView.cpp \
+    Password.cpp \
+    Aes.cpp \
+    RandomGenerator.cpp \
+    KeyDialog.cpp \
+    Ascii85.cpp \
+    AddPwdDialog.cpp
 
 HEADERS  += mainwindow.h \
     connectiondialog.h \
     SerialDevice.h \
-    DeviceData.h
+    DeviceData.h \
+    PasswordTabView.h \
+    Password.h \
+    Aes.h \
+    RandomGenerator.h \
+    KeyDialog.h \
+    Ascii85.h \
+    AddPwdDialog.h
 
 FORMS    += mainwindow.ui \
-    connectiondialog.ui
+    connectiondialog.ui \
+    PasswordTabView.ui \
+    KeyDialog.ui \
+    AddPwdDialog.ui
