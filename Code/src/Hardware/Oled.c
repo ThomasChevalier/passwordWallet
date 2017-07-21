@@ -2,21 +2,14 @@
 
 #include <util/delay.h>
 #include <string.h>
+#include <avr/pgmspace.h>
+
 
 #include "Spi.h"
 
 #include "../Globals.h"
 #include "PinDefinition.h"
 #include "Fram.h"
-
-/*
-	MOSI : 	11 	PB3
-	MISO :	There is no need of Miso for the oled
-	CLOCK :	13 	PB5
-	SS :	10 	PB2
-	RESET:	9	PB1
-	DC : 	8	PB0
-*/
 
 #define WIDTH 128
 #define HEIGHT 64
@@ -140,6 +133,37 @@ void oled_setup_spi()
 }
 
 // Software
+
+static const uint8_t oled_init_cmd[] PROGMEM =
+{
+	SSD1306_DISPLAYOFF,
+	SSD1306_SETDISPLAYCLOCKDIV,
+	0x80,
+	SSD1306_SETMULTIPLEX,
+	SSD1306_LCDHEIGHT - 1,
+	SSD1306_SETDISPLAYOFFSET,
+	0x0,
+	SSD1306_SETSTARTLINE | 0x0,
+	SSD1306_CHARGEPUMP,
+	0x14,
+	SSD1306_MEMORYMODE,
+	0x00,
+	SSD1306_SEGREMAP | 0x1,
+	SSD1306_COMSCANDEC,
+	SSD1306_SETCOMPINS,
+	0x12,
+	SSD1306_SETCONTRAST,
+	0xCF,
+	SSD1306_SETPRECHARGE,
+	0xF1,
+	SSD1306_SETVCOMDETECT,
+	0x40,
+	SSD1306_DISPLAYALLON_RESUME,
+	SSD1306_NORMALDISPLAY,
+	SSD1306_DEACTIVATE_SCROLL,
+	SSD1306_DISPLAYON
+};
+
 void oled_init()
 {
 	oled_reset_high();
@@ -153,43 +177,10 @@ void oled_init()
 	oled_reset_high();
 
 	// Init sequence
-
-	oled_command(SSD1306_DISPLAYOFF);                    // 0xAE
-	oled_command(SSD1306_SETDISPLAYCLOCKDIV);            // 0xD5
-	oled_command(0x80);                                  // the suggested ratio 0x80
-
-	oled_command(SSD1306_SETMULTIPLEX);                  // 0xA8
-	oled_command(SSD1306_LCDHEIGHT - 1);
-
-	oled_command(SSD1306_SETDISPLAYOFFSET);              // 0xD3
-	oled_command(0x0);                                   // no offset
-	oled_command(SSD1306_SETSTARTLINE | 0x0);            // line #0
-	oled_command(SSD1306_CHARGEPUMP);                    // 0x8D
-
-	oled_command(0x14);
-
-	oled_command(SSD1306_MEMORYMODE);                    // 0x20
-	oled_command(0x00);                                  // 0x0 act like ks0108
-	oled_command(SSD1306_SEGREMAP | 0x1);
-	oled_command(SSD1306_COMSCANDEC);
-
-	oled_command(SSD1306_SETCOMPINS);                    // 0xDA
-	oled_command(0x12);
-	oled_command(SSD1306_SETCONTRAST);                   // 0x81
-	oled_command(0xCF);
-
-	oled_command(SSD1306_SETPRECHARGE);                  // 0xd9
-
-	oled_command(0xF1);
-
-	oled_command(SSD1306_SETVCOMDETECT);                 // 0xDB
-	oled_command(0x40);
-	oled_command(SSD1306_DISPLAYALLON_RESUME);           // 0xA4
-	oled_command(SSD1306_NORMALDISPLAY);                 // 0xA6
-
-	oled_command(SSD1306_DEACTIVATE_SCROLL);
-
-	oled_command(SSD1306_DISPLAYON);//--turn on oled panel
+	for(uint8_t i = 0; i < 26; ++i)
+	{
+		oled_command(pgm_read_byte_near(oled_init_cmd + i));
+	}
 }
 
 // the most basic function, set a single pixel
