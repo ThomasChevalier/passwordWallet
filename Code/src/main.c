@@ -23,10 +23,10 @@
  */
 ISR(BADISR_vect)
 {
-    for (;;)
-    {
+	for (;;)
+	{
 		led_blink(1);
-    }
+	}
 }
 
 int main(void)

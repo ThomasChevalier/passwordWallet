@@ -75,7 +75,6 @@ static void isr_hardware_neutral(uint8_t val)
         random_dword += (random_dword << 3);
         random_dword ^= (random_dword >> 11);
         random_dword += (random_dword << 15);
-        random_dword = random_dword;
         gWDT_buffer_position = 0; // Start collecting the next 32 bytes of Timer 1 counts
         random_transfer = 1;
     }
@@ -145,7 +144,7 @@ uint8_t random_request_byte(void)
 uint8_t random_request_printable(void)
 {
     // 126 is '~'
-    uint8_t max = 126 - ' ';
+    uint8_t max = 127 - ' ';
     uint32_t slice;
     uint32_t retVal = WDT_MAX_32INT;
 
