@@ -63,41 +63,6 @@
  */
 void oled_setup_hardware	(void);
 
-/**
- * @brief Pull the reset pin high.
- */
-void oled_reset_high		(void);
-
-/**
- * @brief Pull the reset pin low.
- */
-void oled_reset_low			(void);
-
-/**
- * @brief Pull the CS pin high.
- */
-void oled_deselect			(void);
-
-/**
- * @brief Pull the CS pin low.
- */
-void oled_select			(void);
-
-/**
- * @brief Pull the data/command pin high.
- */
-void oled_dc_high			(void);
-
-/**
- * @brief Pull the data/command pin low.
- */
-void oled_dc_low			(void);
-
-/**
- * @brief Setup spi register for the oled.
- */
-void oled_setup_spi			(void);
-
 // Software
 /**
  * @brief Setup the oled software, send command to the screen.
@@ -114,14 +79,6 @@ void oled_init				(void);
  * @param color The color of the pixel (BLACK, WHITE or INVERSE)
  */
 void oled_draw_pixel		(uint8_t x, uint8_t y, uint8_t color);
-
-/**
- * @brief Send a command to the oled display.
- * @details Use it if you really know what you are doing.
- * 
- * @param c The byte to send as a command.
- */
-void oled_command			(uint8_t c);
 
 /**
  * @brief Invert all the color of the display.

@@ -1,15 +1,16 @@
 #include "Oled.h"
 
+#include <avr/pgmspace.h>
 #include <util/delay.h>
 #include <string.h>
-#include <avr/pgmspace.h>
 
-
+#include "PinDefinition.h"
+#include "../Globals.h"
 #include "Spi.h"
 
-#include "../Globals.h"
-#include "PinDefinition.h"
+#if defined(STORE_SCREEN_BUFFER_IN_FRAM)
 #include "Fram.h"
+#endif
 
 #define WIDTH 128
 #define HEIGHT 64
@@ -85,54 +86,96 @@ static uint8_t buffer[SSD1306_LCDHEIGHT * SSD1306_LCDWIDTH / 8] =
 #endif
 
 // Hardware
+
+/**
+ * @brief Pull the data/command pin high.
+ */
+static void oled_dc_high(void)
+{
+	OLED_DC_PORT |= (1 << OLED_DC_PIN_NUM);
+}
+
+/**
+ * @brief Pull the data/command pin low.
+ */
+static void oled_dc_low(void)
+{
+	OLED_DC_PORT &= ~(1 << OLED_DC_PIN_NUM);
+}
+
+
+/**
+ * @brief Pull the reset pin high.
+ */
+static void oled_reset_high(void)
+{
+	OLED_RES_PORT |= (1 << OLED_RES_PIN_NUM);
+}
+
+/**
+ * @brief Pull the reset pin low.
+ */
+static void oled_reset_low(void)
+{
+	OLED_RES_PORT &= ~(1 << OLED_RES_PIN_NUM);
+}
+
+/**
+ * @brief Pull the CS pin high.
+ */
+static void oled_deselect(void)
+{
+	OLED_CS_PORT |= (1 << OLED_CS_PIN_NUM);
+}
+
+/**
+ * @brief Pull the CS pin low.
+ */
+static void oled_select(void)
+{
+	OLED_CS_PORT &= ~(1 << OLED_CS_PIN_NUM);
+}
+
+/**
+ * @brief Setup spi register for the oled.
+ */
+static void oled_setup_spi(void)
+{
+	// SPIE=0 SPE=1 DORD=0 MSTR=1 CPOL=1 CPHA=0 SPR1=0 SPR0=0
+	SPCR = SPI_MASTER | SPI_ENABLE | (1<<3);
+	SPSR &= ~(1 << SPI2X);  // DeActive 2x speed mode
+	// SPSR |= (1<<SPI2X);  // Active 2x speed mode
+}
+
 void oled_setup_hardware()
 {
-	OLED_CS_DDR |= (1<<OLED_CS_PIN_NUM);
-	OLED_DC_DDR |= (1<<OLED_DC_PIN_NUM);
-	OLED_RES_DDR |= (1<<OLED_RES_PIN_NUM);
+	OLED_CS_DDR |= (1 << OLED_CS_PIN_NUM);
+	OLED_DC_DDR |= (1 << OLED_DC_PIN_NUM);
+	OLED_RES_DDR |= (1 << OLED_RES_PIN_NUM);
 
 	oled_reset_low();
 	oled_deselect();
 	oled_dc_low();
-
-}
-
-void oled_reset_high()
-{
-	OLED_RES_PORT |= (1<<OLED_RES_PIN_NUM);
-}
-void oled_reset_low()
-{
-	OLED_RES_PORT &= ~(1<<OLED_RES_PIN_NUM);
-}
-
-void oled_deselect()
-{
-	OLED_CS_PORT |= (1<<OLED_CS_PIN_NUM);
-}
-void oled_select()
-{
-	OLED_CS_PORT &= ~(1<<OLED_CS_PIN_NUM);
-}
-
-void oled_dc_high()
-{
-	OLED_DC_PORT |= (1<<OLED_DC_PIN_NUM);
-}
-void oled_dc_low()
-{
-	OLED_DC_PORT &= ~(1<<OLED_DC_PIN_NUM);
-}
-
-void oled_setup_spi()
-{
-	// SPIE=0 SPE=1 DORD=0 MSTR=1 CPOL=1 CPHA=0 SPR1=0 SPR0=0
-	SPCR = SPI_MASTER | SPI_ENABLE | (1<<3);
-	SPSR &= ~(1<<SPI2X); // DeActive 2x speed mode
-	//SPSR |= (1<<SPI2X); // Active 2x speed mode
 }
 
 // Software
+
+/**
+ * @brief Send a command to the oled display.
+ * @details Use it if you really know what you are doing.
+ * 
+ * @param c The byte to send as a command.
+ */
+static void oled_command(uint8_t c)
+{
+	// SPI
+	oled_setup_spi();
+	oled_deselect();
+	oled_dc_low();
+	oled_select();
+	spi_send_8(c);
+	oled_deselect();
+}
 
 static const uint8_t oled_init_cmd[] PROGMEM =
 {
@@ -189,7 +232,7 @@ void oled_draw_pixel(uint8_t x, uint8_t y, uint8_t color)
 	if( x & 0x80 || y & 0x40)
 		return;
 	// check rotation, move pixel around if necessary
-	if(OPTIONS_FLAG & (1<<OPTIONS_FLAG_OFFSET_ORIENTATION))
+	if(OPTIONS_FLAG & (1 << OPTIONS_FLAG_OFFSET_ORIENTATION))
 	{
 		x = 127 - x;
 		y = 63 - y;
@@ -234,20 +277,9 @@ void oled_draw_pixel(uint8_t x, uint8_t y, uint8_t color)
 	#endif
 }
 
-void oled_command(uint8_t c)
-{
-	// SPI
-	oled_setup_spi();
-	oled_deselect();
-	oled_dc_low();
-	oled_select();
-	spi_send_8(c);
-	oled_deselect();
-}
-
 void oled_invert_display(uint8_t i)
 {
-	oled_command( i ? SSD1306_INVERTDISPLAY : SSD1306_NORMALDISPLAY );
+	oled_command(i ? SSD1306_INVERTDISPLAY : SSD1306_NORMALDISPLAY);
 }
 
 // Dim the display
@@ -265,12 +297,12 @@ void oled_display(void)
 {
 	oled_command(SSD1306_COLUMNADDR);
 	oled_command(0);   // Column start address (0 = reset)
-	oled_command(SSD1306_LCDWIDTH-1); // Column end address (127 = reset)
+	oled_command(SSD1306_LCDWIDTH-1);  // Column end address (127 = reset)
 
 	oled_command(SSD1306_PAGEADDR);
-	oled_command(0); // Page start address (0 = reset)
+	oled_command(0);  // Page start address (0 = reset)
 
-	oled_command(7); // Page end address
+	oled_command(7);  // Page end address
 
 	oled_deselect();
 	oled_dc_high();
@@ -278,7 +310,7 @@ void oled_display(void)
 
 	#ifdef STORE_SCREEN_BUFFER_IN_FRAM
 	uint8_t pixBuff[64];
-	
+
 	uint8_t i = 0;
 	uint8_t j = 0;
 	for(; i < ((HEIGHT * WIDTH / 8) / 64); ++i)
@@ -291,12 +323,11 @@ void oled_display(void)
 		{
 			spi_send_8(pixBuff[j]);
 		}
-
 	}
 	#else
 
-	uint16_t i=0;
-	for (; i<(HEIGHT * WIDTH / 8); ++i)
+	uint16_t i = 0;
+	for (; i < (HEIGHT * WIDTH / 8); ++i)
 	{
 		spi_send_8(buffer[i]);
 	}
@@ -308,14 +339,15 @@ void oled_display(void)
 // clear everything
 void oled_clear_display(void)
 {
-	uint16_t i=0;
 	#ifdef STORE_SCREEN_BUFFER_IN_FRAM
+	uint8_t i = 0;
 	for(; i < ((HEIGHT * WIDTH / 8) / 128); ++i)
 	{
 		fram_set(i*128, 0, 128);
 	}
 	#else
-	for (; i<(HEIGHT * WIDTH / 8); ++i)
+	uint16_t i = 0;
+	for (; i < (HEIGHT * WIDTH / 8); ++i)
 	{
 		buffer[i] = 0;
 	}
