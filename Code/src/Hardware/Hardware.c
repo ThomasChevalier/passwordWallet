@@ -17,5 +17,7 @@ void hardware_init(void)
 	led_setup_harware();
 
 	oled_init();
-	rfid_init();
+	
+	// Note : the rfid module don't need to be initialized
+	// The module is initialized when necessary and then power down
 }
