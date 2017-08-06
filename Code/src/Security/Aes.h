@@ -1,10 +1,9 @@
 #ifndef AES_HEADER_THOMAS_CHEVALIER
 #define AES_HEADER_THOMAS_CHEVALIER
 
-
-
 #include <stdint.h>
 
+// From http://dominik.cc/projekty/avr-aes/
 
 /*
 *	Encryption and decryption library for 8-bit Atmel AVR
