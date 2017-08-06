@@ -109,7 +109,7 @@ DEFINE_STRING(str_option_advanced_disableEncryption,    "Desactiver cryptage",  
 DEFINE_STRING(str_option_advanced_enableEncryption,     "Activer cryptage",         15  );
 DEFINE_STRING(str_option_advanced_showKey,              "Montrer clef maitre",      16  );
 DEFINE_STRING(str_option_advanced_keyboardDisposition,  "Changer langue clavier",   17  );
-DEFINE_STRING(str_option_advanced_selfTest,             "Auto test",                18  );
+DEFINE_STRING(str_option_advanced_selfTest,             "Diagnostic",               18  );
 DEFINE_STRING(str_option_advanced_doFullReset,          "FORMATER",                 19  );
 
 
