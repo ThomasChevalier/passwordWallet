@@ -44,16 +44,15 @@ uint8_t encryption_check_key(void)
 	eeprom_read_block(randSeq, (void*)EEPROM_OFFSET_RANDSEQ, EEPROM_RANDSEQ_SIZE);
 
 	// Encrypt the random sequence with the KEY
-	uint8_t output[EEPROM_VALIDATION_SIZE];
-	const uint8_t zeroIv[16]  =
+	uint8_t zeroIv[16]  =
 	{0x00, 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 };
-	AES128_CBC_encrypt_buffer(output, randSeq, EEPROM_VALIDATION_SIZE, KEY, zeroIv);
+	AES128_CBC_encrypt_buffer(randSeq, EEPROM_VALIDATION_SIZE, KEY, zeroIv);
 
 	// And check if it match with the already encrypted data (address [16;31])
 	uint8_t* eeprom_addr = (uint8_t*)EEPROM_VALIDATION_SIZE;
 	for(uint8_t verifCounter = 0; verifCounter < EEPROM_VALIDATION_SIZE; ++verifCounter)
 	{
-		if(output[verifCounter] != eeprom_read_byte(eeprom_addr))
+		if(randSeq[verifCounter] != eeprom_read_byte(eeprom_addr))
 		{
 			return RETURN_ERROR;
 		}

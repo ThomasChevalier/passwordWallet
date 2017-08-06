@@ -15,10 +15,9 @@
 static void read_and_decrypt(uint8_t *output, uint16_t addr_iv, uint16_t addr_aes, uint8_t lenght_aes, uint8_t* key)
 {
 	uint8_t iv[16];
-	uint8_t aes[64]; // Maximum size
 	fram_read_bytes(addr_iv, iv, 16);
-	fram_read_bytes(addr_aes, aes, lenght_aes);
-	AES128_CBC_decrypt_buffer(output, aes, lenght_aes, key, iv);
+	fram_read_bytes(addr_aes, output, lenght_aes);
+	AES128_CBC_decrypt_buffer(output, lenght_aes, key, iv);
 	// Remove padding
 	uint8_t i = 0;
 	uint8_t j = 0;
@@ -35,7 +34,6 @@ static void read_and_decrypt(uint8_t *output, uint16_t addr_iv, uint16_t addr_ae
 static void encrypt_and_write(uint8_t *input, uint8_t len, uint16_t addr_iv, uint16_t addr_aes, uint8_t lenght_aes, uint8_t *key)
 {
 	uint8_t iv[16];
-	uint8_t aes[64];
 
 	// padding
 	if(len < lenght_aes)
@@ -55,12 +53,12 @@ static void encrypt_and_write(uint8_t *input, uint8_t len, uint16_t addr_iv, uin
 		progress_add(1);
 	}
 
-	AES128_CBC_encrypt_buffer(aes, input, lenght_aes, key, iv);
+	AES128_CBC_encrypt_buffer(input, lenght_aes, key, iv);
 
 	progress_add(5);
 
 	fram_write_bytes(addr_iv, iv, 16);
-	fram_write_bytes(addr_aes, aes, lenght_aes);
+	fram_write_bytes(addr_aes, input, lenght_aes);
 }
 
 void password_read_data(uint8_t pwd_id, uint8_t* dst, uint8_t* key)

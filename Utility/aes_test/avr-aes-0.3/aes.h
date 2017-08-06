@@ -1,11 +1,3 @@
-#ifndef AES_HEADER_THOMAS_CHEVALIER
-#define AES_HEADER_THOMAS_CHEVALIER
-
-
-
-#include <stdint.h>
-
-
 /*
 *	Encryption and decryption library for 8-bit Atmel AVR
 *	Copyright (C) 2011-2012  D. Kilian
@@ -34,6 +26,25 @@
 *	B. Poettering: avraes AT point-at-infinity.org
 */
 
+#ifndef aes_h
+#define aes_h
+
+
+/************************************************************************/
+/*   COMFIGURATION                                                      */
+/*                                                                      */
+/*  Change following definitions to suit your needs.                    */
+/************************************************************************/
+
+/*
+*	Select implementation:
+*	0 - SMALL by D. Kiliam
+*	1 - FANTASTIC by B. Poettering
+*	2 - FURIOUS by B. Poettering
+*	3 - FAST by B. Poettering
+*	4 - MINI by D. Kilian
+*/
+#define AES_IMPLEMENTATION 0
 
 /*
 *	Add aesCipher to the library.
@@ -64,19 +75,19 @@
 *	Use short array instead of SBOX.
 *	Only significant in SMALL implementation.
 */
-#define AES_SHORTSBOX 1
+#define AES_SHORTSBOX 0
 
 /*
 *	Use short array instead of inverse of SBOX.
 *	Only significant in SMALL implementation and when AES_INVCIPHER != 0.
 */
-#define AES_SHORTINVSBOX 1
+#define AES_SHORTINVSBOX 0
 
 /*
 *	Use faster function for ShiftRows and InvShiftRows transformations.
 *	Only significant in SMALL implementation.
 */
-#define AES_FASTSHROWS 0
+#define AES_FASTSHROWS 1
 
 /*
 *	Use faster function for MixColumns and InvMixColumns transformations.
@@ -95,9 +106,79 @@
 *	Allow inline assembler.
 *	Only significant in SMALL implementation.
 */
-#define AES_USEASM 1
+#undef AES_USEASM
 
-void AES128_CBC_encrypt_buffer(uint8_t* input, uint8_t length, uint8_t* key, uint8_t* iv);
-void AES128_CBC_decrypt_buffer(uint8_t* input, uint8_t length, uint8_t* key, uint8_t* iv);
 
-#endif // AES_HEADER_THOMAS_CHEVALIER
+
+
+/************************************************************************/
+/*   LIBRARY INTERFACE                                                  */
+/*                                                                      */
+/*  See documentation for details.                                      */
+/************************************************************************/
+
+
+#if AES_IMPLEMENTATION == 0 || AES_IMPLEMENTATION == 1
+
+// Fantastic and Small
+
+#if AES_CIPHER
+void aesCipher(unsigned char* key, unsigned char* data);
+#endif
+
+#if AES_INVCIPHER
+void aesInvCipher(unsigned char* patched, unsigned char* data);
+#endif
+
+#if AES_KEYREWIND
+void aesKeyRewind(unsigned char* patched);
+#endif
+
+#if AES_KEYPATCH
+void aesKeyPatch(unsigned char* key);
+#endif
+
+#elif AES_IMPLEMENTATION == 2 || AES_IMPLEMENTATION == 3
+
+// Fast and Furious
+
+#if AES_CIPHER
+void aesCipher(const unsigned char* expanded, unsigned char* data);
+#endif
+
+#if AES_KEYEXPAND
+void aesKeyExpand(const unsigned char* key, unsigned char* expanded);
+#endif
+
+#if AES_IMPLEMENTATION == 2
+
+#if AES_INVCIPHER
+void aesInvCipher(const unsigned char* expanded, unsigned char* data);
+#endif
+
+#else
+
+#if AES_KEYPATCH
+void aesKeyPatch(unsigned char* expanded);
+#endif
+
+#if AES_INVCIPHER
+void aesInvCipher(const unsigned char* patched, unsigned char* data);
+#endif
+
+#endif
+
+#elif AES_IMPLEMENTATION == 4
+
+// Mini
+
+#if AES_CIPHER
+extern char aesTempBuffer[21];
+void aesCipher(const unsigned char* key, unsigned char* data);
+#endif
+
+
+#endif
+
+
+#endif

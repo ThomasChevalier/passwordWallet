@@ -153,9 +153,8 @@ void change_master_key(void)
 	}
 
 	// Encrypt that sequence
-	uint8_t encryptionValidation[EEPROM_RANDSEQ_SIZE];
-	const uint8_t zeroIv[16]  = {0x00, 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 };
-	AES128_CBC_encrypt_buffer(encryptionValidation, randomSequence, EEPROM_RANDSEQ_SIZE, KEY, zeroIv);
+	uint8_t zeroIv[16]  = {0x00, 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 };
+	AES128_CBC_encrypt_buffer(randomSequence, EEPROM_RANDSEQ_SIZE, KEY, zeroIv);
 	progress_add(2);
 
 	// Write it to the eeprom
@@ -163,7 +162,7 @@ void change_master_key(void)
 	for(uint8_t i = 0; i < EEPROM_RANDSEQ_SIZE; ++i)
 	{
 		
-		eeprom_update_byte(eeprom_addr, encryptionValidation[i]);
+		eeprom_update_byte(eeprom_addr, randomSequence[i]);
 		++eeprom_addr;
 	}
 	progress_add(2);
