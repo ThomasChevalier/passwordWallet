@@ -5,6 +5,8 @@
 
 #include "../../Graphics/Drawing.h"
 
+#include "../../Options/Options.h"
+
 static char letter = '@';
 
 void state_browse_begin (void)
@@ -39,7 +41,7 @@ uint8_t state_browse_transition (uint8_t event)
 	}
 	else if(event & EVENT_BUTTON_4)
 	{
-		return STATE_OPTION;
+		options_display(OPT_PWD);
 	}
 	return STATE_BROWSE;
 }

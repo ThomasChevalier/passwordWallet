@@ -234,5 +234,11 @@ extern uint8_t NUM_PWD;
 #define RETURN_ERROR (0)
 
 
+/* ***** */
+/* LOGIC */
+/* ***** */
+
+#define FALSE (0)
+#define TRUE (1)
 
 #endif // GLOBALS_HEADER_THOMAS_CHEVALIER

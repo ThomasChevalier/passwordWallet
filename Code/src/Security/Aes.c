@@ -5,14 +5,6 @@
 #include <avr/pgmspace.h>
 #include "Aes.h"
 
-static void aesCipher(unsigned char* key, unsigned char* data);
-
-static void aesInvCipher(unsigned char* patched, unsigned char* data);
-
-static void aesKeyRewind(unsigned char* patched);
-
-static void aesKeyPatch(unsigned char* key);
-
 #define SBOX_DATA_INIT \
 	0x63,0x7c,0x77,0x7b,0xf2,0x6b,0x6f,0xc5,0x30,0x01,0x67,0x2b,0xfe,0xd7,0xab,0x76, \
 	0xca,0x82,0xc9,0x7d,0xfa,0x59,0x47,0xf0,0xad,0xd4,0xa2,0xaf,0x9c,0xa4,0x72,0xc0, \
@@ -673,7 +665,7 @@ static void aesMixColumns(byte* state)
 
 
 #if AES_INVCIPHER
-void aesInvMixColumns(byte* state)
+static void aesInvMixColumns(byte* state)
 {
 	byte c0x1b = 0x1b;
 	byte i, a0, a1, a2, a3, sum, b, c, d, e;
@@ -707,7 +699,7 @@ void aesInvMixColumns(byte* state)
 #define aesMixColumns(state) aesMixColumns_B(state, 0)
 #define aesInvMixColumns(state) aesMixColumns_B(state, 1)
 
-void aesMixColumns_B(byte* state, byte inv) 
+static void aesMixColumns_B(byte* state, byte inv) 
 {
 	byte c0x1b = 0x1b;
 	byte i, a0, a1, a2, a3, sum, b, c, d, e;
@@ -744,7 +736,7 @@ void aesMixColumns_B(byte* state, byte inv)
 
 
 #if AES_CIPHER
-void aesCipher(unsigned char* key, unsigned char* state)
+static void aesCipher(unsigned char* key, unsigned char* state)
 {
 	byte r;
 
@@ -764,7 +756,7 @@ void aesCipher(unsigned char* key, unsigned char* state)
 
 
 #if AES_INVCIPHER
-void aesInvCipher(unsigned char* patched, unsigned char* state)
+static void aesInvCipher(unsigned char* patched, unsigned char* state)
 {
 	byte r;
 
@@ -784,7 +776,7 @@ void aesInvCipher(unsigned char* patched, unsigned char* state)
 
 
 #if AES_KEYREWIND
-void aesKeyRewind(unsigned char* patched)
+static void aesKeyRewind(unsigned char* patched)
 {
 	byte r;
 	Rcon = 0xD8;
@@ -796,7 +788,7 @@ void aesKeyRewind(unsigned char* patched)
 
 
 #if AES_KEYPATCH
-void aesKeyPatch(unsigned char* key)
+static void aesKeyPatch(unsigned char* key)
 {
 	byte r;
 	Rcon = 1;
