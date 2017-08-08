@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <avr/pgmspace.h>
 
-#define OPTIONS_LIST_NUM_OPTIONS (18)
+#define OPTIONS_LIST_NUM_OPTIONS (21)
 #define OPTIONS_LIST_NONE OPTIONS_LIST_NUM_OPTIONS
 
 #ifdef NONE
@@ -32,6 +32,7 @@ typedef struct _Option_Node
 } Option_Node;
 
 #define OPTIONS_LIST_NORMAL (0)
+#define OPTIONS_LIST_RECOVERY (18)
 
 // #define DEFINE_NODE(name, callback, child, neighbour, strIndex) extern const __flash Option_Node name
 // #define DECLARE_NODE(name, callback, child, neighbour, strIndex) const __flash Option_Node name = {callback, child, neighbour, strIndex}
@@ -60,7 +61,7 @@ typedef struct _Option_Node
 
 // extern const Option_Node* const  __flash list_options [];
 
-static const Option_Node list_options []  = 
+static const Option_Node list_options [OPTIONS_LIST_NUM_OPTIONS]  = 
 {
 	/*
 	{callback, child, neighbour, strIndex}
@@ -84,6 +85,10 @@ static const Option_Node list_options []  =
 /*15*/		{opt_callback_self_test,       NONE,   16, 49},
 /*16*/		{opt_callback_full_reset,      NONE, NONE, 50},
 /*17*/  {opt_callback_add_pwd, NONE, NONE, 36},
+
+/*18*/	{NULL, NONE, 19, 15},
+/*19*/	{opt_callback_full_reset, NONE, 20, 16},
+/*20*/	{opt_callback_enter_key, NONE, NONE, 17},
 };
 
 

@@ -24,8 +24,8 @@ DEFINE_STRING(str_order_typeUsrName,        "ENTREZ NOM UTILISATEUR",       13  
 		
 DEFINE_STRING(str_recovery_eraseMem,        "FORMATAGE MEMOIRE",            14  );
 DEFINE_STRING(str_recovery_title,           "MODE DE RECUPERATION",         15  );
-DEFINE_STRING(str_recovery_choice1,         "1 - FORMATAGE COMPLET",        16  );
-DEFINE_STRING(str_recovery_choice2,         "2 - ENTREZ LA CLEF",           17  );
+DEFINE_STRING(str_recovery_choice1,         "FORMATAGE COMPLET",            16  );
+DEFINE_STRING(str_recovery_choice2,         "ENTREZ LA CLEF",               17  );
 	
 DEFINE_STRING(str_self_test_fram_ok,        "MEMOIRE OK",                   18  );
 DEFINE_STRING(str_self_test_fram_fail,      "MEMOIRE HS",                   19  );

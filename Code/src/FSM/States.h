@@ -4,7 +4,6 @@
 #include "StatesDefine.h"
 
 #include "States/State_Wait_Card.h"
-#include "States/State_Recovery.h"
 #include "States/State_Main.h"
 #include "States/State_Browse.h"
 #include "States/State_Communication.h"

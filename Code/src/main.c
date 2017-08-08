@@ -18,6 +18,8 @@
 #include "FSM/States.h"
 #include "FSM/Events.h"
 
+#include "Options/Options_Callback_Advanced.h"
+
 /**
  * @brief Freeze the controller in case of a wrong interrupt
  */
@@ -58,13 +60,12 @@ int main(void)
 	const uint8_t optFlag = fram_read_byte(OFFSET_OPTIONS_FLAG);
 	if( (optFlag & (1 << OPTIONS_FLAG_OFFSET_INITIALIZED)) == 0)
 	{
-		state_recovery_do_full_reset();
+		opt_callback_full_reset();
 	}
 
 	const State states[NUM_STATES] =
 	{
 		{state_wait_card_transition,        state_wait_card_begin,        state_wait_card_end},        // STATE_WAIT_CARD
-		{state_recovery_transition,         state_recovery_begin,         state_recovery_end},         // STATE_RECOVERY
 		{state_main_transition,             state_main_begin,             state_main_end},             // STATE_MAIN
 		{state_browse_transition,           state_browse_begin,           state_browse_end},           // STATE_BROWSE
 		{state_communication_transition,    state_communication_begin,    state_communication_end}     // STATE_COMMUNICATION

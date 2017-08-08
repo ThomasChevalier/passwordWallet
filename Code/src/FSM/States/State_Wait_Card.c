@@ -18,6 +18,7 @@
 #include "../../Graphics/String.h"
 #include "../../Graphics/Drawing.h"
 
+#include "../../Options/Options.h"
 
 void state_wait_card_begin(void)
 {
@@ -80,7 +81,11 @@ uint8_t state_wait_card_transition (uint8_t event)
 	// Check for the recovery sequence
 	else if((event & EVENT_ALL_BUTTONS) == EVENT_ALL_BUTTONS)
 	{
-		return STATE_RECOVERY;
+		do
+		{
+			options_display(OPTIONS_LIST_RECOVERY);
+		}while(encryption_check_key() != RETURN_SUCCESS);
+		return STATE_MAIN;
 	}
 
 	// No rfid tag or wrong rfid tag, try again ...
