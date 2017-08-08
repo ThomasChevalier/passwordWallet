@@ -16,6 +16,7 @@
 #include "../../Hardware/Buttons.h"
 
 #include "../../Security/Encryption.h"
+#include "../../Security/Random.h"
 #include "../../Security/Authentification.h"
 
 #include "../../Program/Program.h"
@@ -42,6 +43,7 @@ void state_recovery_do_full_reset(void)
 
 	// Clear variables
 	CURRENT_PASSWORD_ID = GLOBALS_EVENTS = NUM_PWD = OPTIONS_FLAG = 0;
+	random_reset();
 
 	// Get a master key
 	change_master_key();

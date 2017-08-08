@@ -34,4 +34,9 @@ uint8_t	random_request_byte			(void);
  */
 uint8_t	random_request_printable	(void);
 
+/**
+ * @brief Reset the random generator
+ */
+void random_reset(void);
+
 #endif // RANDOM_HEADER_THOMAS_CHEVALIER

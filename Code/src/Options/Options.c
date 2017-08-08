@@ -37,6 +37,12 @@ static uint8_t draw_nodes(const Option_Node* node)
 	return numOpt;
 }
 
+/**
+ * @brief Draw the selection rectangle
+ * 
+ * @param current The current position
+ * @param max The maximum value that current can be + 1
+ */
 static void draw_selection(uint8_t current, uint8_t max)
 {
 	uint8_t l_table[3] = {0, 20, 43};

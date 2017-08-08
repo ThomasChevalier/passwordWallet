@@ -27,9 +27,7 @@ void program_init(void)
 	OPTIONS_FLAG = fram_read_byte(OFFSET_OPTIONS_FLAG);
 	NUM_PWD = fram_read_byte(OFFSET_NUM_PWD);
 
-	// Delete all entropy pool, because it cannot be trusted (someone may have corrupt the data)
-	uint16_t entropyPoolSize = 0;
-	fram_write_bytes(OFFSET_ENTROPY_SIZE, (uint8_t*)(&entropyPoolSize), 2);
+	random_reset();
 }
 
 void program_update(void)
