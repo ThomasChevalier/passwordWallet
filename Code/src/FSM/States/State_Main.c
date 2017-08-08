@@ -56,8 +56,6 @@ uint8_t state_main_transition (uint8_t event)
 	}
 	else if(event & EVENT_BUTTON_4)
 	{
-		draw_browse_dock(0,1);
-		draw_update();
 		return STATE_BROWSE;
 	}
 
