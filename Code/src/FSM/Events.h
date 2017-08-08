@@ -12,11 +12,12 @@
 #define EVENT_ALL_BUTTONS		(EVENT_BUTTON_1 | EVENT_BUTTON_2 | EVENT_BUTTON_3 | EVENT_BUTTON_4)
 
 #define EVENT_INIT_COMMUNICATION	(1<<4)
-#define EVENT_END_COMMUNICATION		(1<<5)
+
+#define EVENT_STOP (1<<5)
 
 #define EVENT_WHENEVER (0xFF)
 
-void events_happen(uint8_t event);
+#define events_happen(event) GLOBALS_EVENTS |= event
 uint8_t events_get(void);
 
 #endif // EVENTS_HEADER_THOMAS_CHEVALIER

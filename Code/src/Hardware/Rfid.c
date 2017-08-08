@@ -3,6 +3,8 @@
 #include "Spi.h"
 #include "PinDefinition.h"
 
+#include "../Globals.h"
+
 // Version 2.0 (0x92)
 // NXP Semiconductors; Rev. 3.8 - 17 September 2014; 16.1.1 self-test
 static const uint8_t MFRC522_firmware_referenceV2_0[] PROGMEM = {
@@ -323,12 +325,12 @@ uint8_t rfid_pcd_perform_self_test(void)
 	// Verify that the results match up to our expectations
 	for (uint8_t i = 0; i < 64; i++) {
 		if (result[i] != pgm_read_byte(&(reference[i]))) {
-			return 0;
+			return RETURN_ERROR;
 		}
 	}
 	
 	// Test passed; all is good.
-	return 1;
+	return RETURN_SUCCESS;
 }
 /**
  * Executes the Transceive command.

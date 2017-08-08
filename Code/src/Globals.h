@@ -2,6 +2,9 @@
 #define GLOBALS_HEADER_THOMAS_CHEVALIER
 
 #include <stdint.h>
+#include <avr/io.h>
+
+// This file contain the global variables used in this project
 
 // ///////// //
 // PARAMETER //
@@ -36,47 +39,10 @@
 // #define FRAM_BYTE_SIZE (8192) //< Size of the fram in byte
 #define FRAM_BYTE_SIZE (32768)  //< Size of the fram in byte
 
-// This file should contain the global variables used in this project
-
-// /// //
-// LED //
-// /// //
-
 /**
  * @brief This define holds the duration of the delay between the led on and the led off, in milliseconds.
  */
 #define LED_BLINK_DELAY (150)
-
-// /////////////////// //
-// Option Menu Section //
-// /////////////////// //
-
-#define OPTION_MENU_MIN_STR_INDEX (0)
-#define OPTION_MENU_MAX_CHOICE (5)
-
-#define OPTION_PASSWORD_MENU_MIN_STR_INDEX (OPTION_MENU_MAX_CHOICE + OPTION_MENU_MIN_STR_INDEX)
-#define OPTION_PASSWORD_MENU_MAX_CHOICE (5)
-
-#define OPTION_SORT_MENU_MIN_STR_INDEX (OPTION_PASSWORD_MENU_MAX_CHOICE + OPTION_PASSWORD_MENU_MIN_STR_INDEX)
-#define OPTION_SORT_MENU_MAX_CHOICE (3)
-
-#define OPTION_ADVANCED_MENU_MIN_STR_INDEX (OPTION_SORT_MENU_MAX_CHOICE + OPTION_SORT_MENU_MIN_STR_INDEX)
-#define OPTION_ADVANCED_MENU_MAX_CHOICE (7)
-
-
-// /////////////////////////////////////// //
-//  Finite state machine related variables //
-// /////////////////////////////////////// //
-
-/**
- * @brief If the programm is running then this variable equal 1, 0 otherwise.
- */
-extern volatile uint8_t RUNNING;
-
-/**
- * @brief Current events. Should not be accessed in an interrupt.
- */
-extern uint8_t GLOBALS_EVENTS;
 
 // ///////////// //
 // Fram Section  //
@@ -186,18 +152,19 @@ extern uint8_t GLOBALS_EVENTS;
 extern uint8_t KEY[KEY_SIZE];
 
 /**
- * @brief The current password id, start to 0, it is in the order of the memory
+ * @brief Current events. Can be accessed within interrupts.
  */
-extern uint8_t CURRENT_PASSWORD_ID;
-
-// ////////////////////// //
-// Options stored in FRAM //
-// ////////////////////// //
+#define GLOBALS_EVENTS GPIOR0
 
 /**
  * @brief The options flag stored in fram
  */
-extern uint8_t OPTIONS_FLAG;
+#define OPTIONS_FLAG GPIOR1
+
+/**
+ * @brief The current password id, start to 0, it is in the order of the memory
+ */
+#define CURRENT_PASSWORD_ID GPIOR2
 
 /**
  * @brief Write to OPTIONS_FLAG and send it to FRAM.
@@ -213,9 +180,9 @@ void update_opt_flags(uint8_t opt_flag);
  */
 extern uint8_t NUM_PWD;
 
-// ////////////////////// //
-// Options stored in FRAM //
-// ////////////////////// //
+// ////// //
+// EEPROM //
+// ////// //
 
 #define EEPROM_OFFSET_RANDSEQ (0)
 #define EEPROM_RANDSEQ_SIZE (16)

@@ -84,7 +84,7 @@ int main(void)
 
 	currentState->begin();
 
-	while(RUNNING)
+	while(!(GLOBALS_EVENTS & EVENT_STOP))
 	{
 		program_update();
 		uint8_t event = events_get();  // Mask of events

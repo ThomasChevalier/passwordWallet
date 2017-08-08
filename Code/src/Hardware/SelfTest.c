@@ -59,7 +59,7 @@ static void test_rfid(void)
 	rfid_init();
 	uint8_t ret = rfid_pcd_perform_self_test();
 	rfid_power_down();
-	if(ret == 0)
+	if(ret == RETURN_ERROR)
 	{
 		draw_text_index(0, 10, str_self_test_rfid_fail_index);
 		draw_update();

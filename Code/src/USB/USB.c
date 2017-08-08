@@ -10,6 +10,8 @@
 
 #include "../Security/Security.h"
 
+#include "../FSM/Events.h"
+
 void USB_init (void)
 {
 	#ifdef USB_ENABLE
@@ -42,7 +44,7 @@ void EVENT_USB_Device_Disconnect (void)
 {
 	// Erase key as fast as possible
 	security_erase_data(KEY, 16);
-	RUNNING = 0;
+	events_happen(EVENT_STOP);
 	keyboard_on_device_disconnect();
 	serial_on_device_disconnect();
 }
