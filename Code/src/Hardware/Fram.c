@@ -18,15 +18,6 @@ All rights reserved
 #include "PinDefinition.h"
 
 #if defined(SPI_FRAM)
-/**
- * @brief Setup spi mode and clock speed.
- */
-static void fram_setup_spi(void)
-{
-	// SPIE=0 SPE=1 DORD=0 MSTR=1 CPOL=0 CPHA=0 SPR1=0 SPR0=0
-	SPCR = SPI_ENABLE | SPI_MASTER | SPI_CLOCK_DIV4;
-	SPSR |= (1<<SPI2X); // Active 2x speed mode
-}
 
 /**
  * @brief Select the memory for spi operation.
@@ -52,7 +43,7 @@ static void fram_deselect (void)
  */
 // static uint8_t fram_read_register(void)
 // {
-// 	fram_setup_spi();
+//
 // 	fram_select();
 // 	spi_send_8(F_RDSR);
 // 	uint8_t result = spi_read_8();
@@ -68,7 +59,7 @@ static void fram_deselect (void)
  */
 // static void fram_write_register(uint8_t reg)
 // {
-// 	fram_setup_spi();
+//
 // 	fram_select();
 // 	spi_send_8(F_WREN);
 // 	fram_deselect();
@@ -95,8 +86,6 @@ void fram_setup_hardware()
 uint8_t fram_read_byte(uint16_t addr)
 {
 	#if defined(SPI_FRAM)
-
-	fram_setup_spi();
 	fram_select();
 	spi_send_8(F_READ);
 	spi_send_8(addr >> 8);
@@ -120,7 +109,6 @@ uint8_t fram_read_byte(uint16_t addr)
 void fram_read_bytes(uint16_t addr, uint8_t* buffer, uint8_t size)
 {
 	#if defined(SPI_FRAM)
-	fram_setup_spi();
 	fram_select();
 	spi_send_8(F_READ);
 	spi_send_8(addr >> 8);
@@ -140,7 +128,6 @@ void fram_read_bytes(uint16_t addr, uint8_t* buffer, uint8_t size)
 void fram_write_byte(uint16_t addr, uint8_t byte)
 {
 	#if defined(SPI_FRAM)
-	fram_setup_spi();
 	fram_select();
 	spi_send_8(F_WREN); // Enable write to memory
 	fram_deselect();
@@ -165,7 +152,6 @@ void fram_write_byte(uint16_t addr, uint8_t byte)
 void fram_write_bytes(uint16_t addr, uint8_t* buffer, uint8_t size)
 {
 	#if defined(SPI_FRAM)
-	fram_setup_spi();
 	fram_select();
 	spi_send_8(F_WREN); // Enable write to memory
 	fram_deselect();
@@ -188,7 +174,6 @@ void fram_write_bytes(uint16_t addr, uint8_t* buffer, uint8_t size)
 void fram_set (uint16_t addr, uint8_t val, uint8_t num)
 {
 	#if defined(SPI_FRAM)
-	fram_setup_spi();
 	fram_select();
 	spi_send_8(F_WREN); // Enable write to memory
 	fram_deselect();
@@ -210,7 +195,6 @@ void fram_set (uint16_t addr, uint8_t val, uint8_t num)
 Fram_id fram_read_id()
 {
 	#if defined(SPI_FRAM)
-	fram_setup_spi();
 	fram_select();
 	spi_send_8(F_RDID);
 	Fram_id id;

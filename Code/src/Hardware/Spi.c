@@ -16,6 +16,11 @@ void spi_setup_hardware (void)
 
 	// Set up MISO as input
 	SPI_MISO_DDR &= ~(1<<SPI_MISO_PIN_NUM);
+
+	// Setup spi configuration
+	// This config is the same for all the devices at 8 MHz
+	SPCR = SPI_ENABLE | SPI_MASTER;
+	SPSR |= (1<<SPI2X); // Active 2x speed mode
 }
 
 uint8_t spi_transfer_8(uint8_t data)

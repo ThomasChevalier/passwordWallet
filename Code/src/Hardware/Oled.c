@@ -136,17 +136,6 @@ static void oled_select(void)
 	OLED_CS_PORT &= ~(1 << OLED_CS_PIN_NUM);
 }
 
-/**
- * @brief Setup spi register for the oled.
- */
-static void oled_setup_spi(void)
-{
-	// SPIE=0 SPE=1 DORD=0 MSTR=1 CPOL=1 CPHA=0 SPR1=0 SPR0=0
-	SPCR = SPI_MASTER | SPI_ENABLE | (1<<3);
-	SPSR &= ~(1 << SPI2X);  // DeActive 2x speed mode
-	// SPSR |= (1<<SPI2X);  // Active 2x speed mode
-}
-
 void oled_setup_hardware()
 {
 	OLED_CS_DDR |= (1 << OLED_CS_PIN_NUM);
@@ -168,8 +157,6 @@ void oled_setup_hardware()
  */
 static void oled_command(uint8_t c)
 {
-	// SPI
-	oled_setup_spi();
 	oled_deselect();
 	oled_dc_low();
 	oled_select();
@@ -317,7 +304,6 @@ void oled_display(void)
 	{
 		oled_deselect();
 		fram_read_bytes(OFFSET_OLED_BUFFER + i*64, pixBuff, 64);
-		oled_setup_spi();
 		oled_select();
 		for(j = 0; j < 64; ++j)
 		{

@@ -21,6 +21,24 @@ static const uint8_t MFRC522_firmware_referenceV2_0[] PROGMEM = {
 
 // Hardware
 
+static void rfid_select(void)
+{
+	RFID_CS_PORT &= ~(1<<RFID_CS_PIN_NUM);
+}
+static void rfid_deselect(void)
+{
+	RFID_CS_PORT |= (1<<RFID_CS_PIN_NUM);
+}
+
+static void rfid_reset_high(void)
+{
+	RFID_RES_PORT |= (1<<RFID_RES_PIN_NUM);
+}
+static void rfid_reset_low(void)
+{
+	RFID_RES_PORT &= ~(1<<RFID_RES_PIN_NUM);
+}
+
 void rfid_setup_hardware(void)
 {
 	RFID_CS_DDR |= (1<<RFID_CS_PIN_NUM);
@@ -30,41 +48,12 @@ void rfid_setup_hardware(void)
 	rfid_reset_high();
 }
 
-void rfid_select(void)
-{
-	RFID_CS_PORT &= ~(1<<RFID_CS_PIN_NUM);
-}
-void rfid_deselect(void)
-{
-	RFID_CS_PORT |= (1<<RFID_CS_PIN_NUM);
-}
-
-void rfid_reset_high(void)
-{
-	RFID_RES_PORT |= (1<<RFID_RES_PIN_NUM);
-}
-void rfid_reset_low(void)
-{
-	RFID_RES_PORT &= ~(1<<RFID_RES_PIN_NUM);
-}
-
-
-// Software
-
-void rfid_setup_spi(void)
-{
-	// SPIE=0 SPE=1 DORD=0 MSTR=1 CPOL=0 CPHA=0 SPR1=0 SPR0=0
-	SPCR = 0x50;
-	SPSR &= ~(1<<SPI2X);
-}
-
 // *****************************************************************
 //                    Basic interface functions
 // *****************************************************************
 
 void rfid_pcd_write_register(uint8_t reg, uint8_t value)
 {
-	rfid_setup_spi();	// Set the settings to work with SPI bus
 	rfid_select(); // Select slave
 	spi_send_8(reg & 0x7E);
 	spi_send_8(value);
@@ -73,7 +62,6 @@ void rfid_pcd_write_register(uint8_t reg, uint8_t value)
 
 void rfid_pcd_write_register_multiple(uint8_t reg, uint8_t count, uint8_t* values)
 {
-	rfid_setup_spi();	// Set the settings to work with SPI bus
 	rfid_select(); // Select slave
 	spi_send_8(reg & 0x7E);
 	spi_send(values, count);
@@ -83,7 +71,6 @@ void rfid_pcd_write_register_multiple(uint8_t reg, uint8_t count, uint8_t* value
 uint8_t rfid_pcd_read_register(	uint8_t reg	/*! The register to read from. One of the PCD_Register enums. */ )
 {
 	uint8_t value;
-	rfid_setup_spi();
 	rfid_select(); // Select slave
 
 	spi_send_8(0x80 | (reg & 0x7E));	// MSB == 1 is for reading. LSB is not used in address. Datasheet section 8.1.2.3.
@@ -111,7 +98,6 @@ void rfid_pcd_read_register_multiple(	uint8_t reg,		///< The register to read fr
 
 	uint8_t address = 0x80 | (reg & 0x7E);		// MSB == 1 is for reading. LSB is not used in address. Datasheet section 8.1.2.3.
 	uint8_t index = 0;							// Index in values array.
-	rfid_setup_spi();
 	rfid_select(); // Select slave
 	count--;								// One read is performed outside of the loop
 	spi_send_8(address);					// Tell MFRC522 which address we want to read

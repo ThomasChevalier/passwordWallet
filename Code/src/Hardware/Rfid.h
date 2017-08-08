@@ -208,26 +208,6 @@ typedef struct
 
 // Hardware
 void rfid_setup_hardware(void);
-void rfid_select(void);
-void rfid_deselect(void);
-
-/*
-8.6 Power reduction modes
-
-8.6.1 Hard power-down
-
-Hard power-down is enabled when pin NRSTPD (aka reset pin) is LOW. This turns off all internal current
-sinks including the oscillator. All digital input buffers are separated from the input pins and
-clamped internally (except pin NRSTPD). The output pins are frozen at either a HIGH or
-LOW level.
-*/
-void rfid_reset_high(void);
-void rfid_reset_low(void);
-
-
-// Software
-
-void rfid_setup_spi(void);
 
 // Basic interface functions
 void rfid_pcd_write_register(uint8_t reg, uint8_t value);
@@ -240,6 +220,17 @@ StatusCode rfid_pcd_calculate_crc(uint8_t *data, uint8_t length, uint8_t *result
 
 // Functions for manipulating the MFRC522
 void rfid_init(void);
+
+/*
+8.6 Power reduction modes
+
+8.6.1 Hard power-down
+
+Hard power-down is enabled when pin NRSTPD (aka reset pin) is LOW. This turns off all internal current
+sinks including the oscillator. All digital input buffers are separated from the input pins and
+clamped internally (except pin NRSTPD). The output pins are frozen at either a HIGH or
+LOW level.
+*/
 void rfid_power_down(void);
 void rfid_pcd_reset(void);
 void rfid_pcd_antenna_on(void);
