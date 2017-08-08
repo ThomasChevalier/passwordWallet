@@ -112,14 +112,9 @@ static void test_keyboard(void)
 // Assume that all is initialized
 uint8_t self_test_check (void)
 {
-	// Check fram and rfid
-	// If the fram respond and that no encryption flag is set, there is no need for rfid to work
-	if(fram_test() != 0 && fram_read_byte(OFFSET_OPTIONS_FLAG) & (1<<OPTIONS_FLAG_OFFSET_NO_ENCRYPTION))
-	{
-		return RETURN_SUCCESS;
-	}
-	// Else there is someting wrong, that prevent the device to work normally
-	if(fram_test() == 0 || rfid_pcd_perform_self_test() == 0)
+
+	// There is someting wrong, that prevent the device to work normally
+	if(fram_test() == RETURN_ERROR || rfid_pcd_perform_self_test() == RETURN_ERROR)
 	{
 		draw_clear();
 		draw_text_index(0, 0, str_self_test_fail_index);

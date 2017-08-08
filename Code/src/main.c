@@ -63,7 +63,7 @@ int main(void)
 		opt_callback_full_reset();
 	}
 
-	const State states[NUM_STATES] =
+	static const  State states[NUM_STATES] =
 	{
 		{state_wait_card_transition,        state_wait_card_begin,        state_wait_card_end},        // STATE_WAIT_CARD
 		{state_main_transition,             state_main_begin,             state_main_end},             // STATE_MAIN
@@ -73,15 +73,6 @@ int main(void)
 
 	State const * currentState = &states[STATE_WAIT_CARD];
 	uint8_t currentStateNum = STATE_WAIT_CARD;
-
-	// If the device is not encrypted, skip WAIT_CARD state
-	if(OPTIONS_FLAG & (1 << OPTIONS_FLAG_OFFSET_NO_ENCRYPTION))
-	{
-		currentState->end();  // Do initialization of some stuff
-		currentState = &states[STATE_MAIN];
-		currentStateNum = STATE_MAIN;
-		encryption_copy_key_from_eeprom();
-	}
 
 	currentState->begin();
 

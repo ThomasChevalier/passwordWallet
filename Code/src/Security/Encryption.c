@@ -14,29 +14,6 @@
 
 #include "../Graphics/ProgressBar.h"
 
-void encryption_copy_key_from_eeprom(void)
-{
-	eeprom_read_block(KEY, (void*)EEPROM_OFFSET_KEY, EEPROM_KEY_SIZE);
-}
-
-void encryption_disable(void)
-{
-	// Store key in eeprom
-	eeprom_update_block(KEY, (void*)EEPROM_OFFSET_KEY, EEPROM_KEY_SIZE);
-
-	// Update flags
-	update_opt_flags(OPTIONS_FLAG | (1<<OPTIONS_FLAG_OFFSET_NO_ENCRYPTION));
-}
-
-void encryption_enable(void)
-{
-	// Remove key from eeprom
-	eeprom_update_block(0, (void*)EEPROM_OFFSET_KEY, EEPROM_KEY_SIZE);
-	
-	// Update flags
-	update_opt_flags(OPTIONS_FLAG & ~(1<<OPTIONS_FLAG_OFFSET_NO_ENCRYPTION));
-}
-
 uint8_t encryption_check_key(void)
 {
 	// Read the random sequence from eeprom (address [0;15])
