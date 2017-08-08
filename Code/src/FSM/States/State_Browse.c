@@ -41,7 +41,8 @@ uint8_t state_browse_transition (uint8_t event)
 	}
 	else if(event & EVENT_BUTTON_4)
 	{
-		options_display(OPT_PWD);
+		options_display(OPTIONS_LIST_NORMAL);
+		return STATE_MAIN;
 	}
 	return STATE_BROWSE;
 }

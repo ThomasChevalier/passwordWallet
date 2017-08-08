@@ -52,8 +52,6 @@ DECLARE_STRING(str_reset_brownout);
 DECLARE_STRING(str_reset_watchdog);
 DECLARE_STRING(str_reset_jtag);
 
-extern PGM_P const string_table[] PROGMEM;
-
 DECLARE_STRING(str_option_password);
 DECLARE_STRING(str_option_sort);
 DECLARE_STRING(str_option_advanced);
@@ -78,11 +76,10 @@ DECLARE_STRING(str_option_advanced_keyboardDisposition);
 DECLARE_STRING(str_option_advanced_selfTest);
 DECLARE_STRING(str_option_advanced_doFullReset);
 
-extern PGM_P const string_options_table[] PROGMEM;
+extern PGM_P const string_table[] PROGMEM;
 
 extern char str_buffer[26];
 
-void str_option_to_buffer(uint8_t index);
 void str_to_buffer(uint8_t index);
 
 

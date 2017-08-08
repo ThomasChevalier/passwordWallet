@@ -41,9 +41,32 @@ DEFINE_STRING(str_communication_end,        "Transfert fini",               27  
 DEFINE_STRING(str_communication_unplug,     "Debranchez puis branchez",     28  );
 
 DEFINE_STRING(str_reset_external,           "External reset",               29  );
-DEFINE_STRING(str_reset_brownout,           "Brown out reset",               30  );
+DEFINE_STRING(str_reset_brownout,           "Brown out reset",              30  );
 DEFINE_STRING(str_reset_watchdog,           "Watchdog reset",               31  );
 DEFINE_STRING(str_reset_jtag,               "JTAG reset"    ,               32  );
+
+
+DEFINE_STRING(str_option_password,                      "Mot de passe ...",         33   );
+DEFINE_STRING(str_option_sort,                          "Tri ...",                  34   );
+DEFINE_STRING(str_option_advanced,                      "Parametres ...",           35   );
+DEFINE_STRING(str_option_addPwd,                        "Nouveau mot de passe",     36   );
+
+DEFINE_STRING(str_option_pwd_changePwd,                 "Changer mot de passe",     37   );
+DEFINE_STRING(str_option_pwd_changeUsrName,             "Changer identifiant",      38   );
+DEFINE_STRING(str_option_pwd_changePwdName,             "Changer nom",              39   );
+DEFINE_STRING(str_option_pwd_regenerate,                "Regenerer",                40   );
+DEFINE_STRING(str_option_pwd_delete,                    "Supprimer",                41   );
+
+DEFINE_STRING(str_option_sort_noSorting,                "Pas de tri",               42  );
+DEFINE_STRING(str_option_sort_byUsage,                  "Par utilisation",          43  );
+DEFINE_STRING(str_option_sort_alphabetical,             "Alphabetique",             44  );
+
+DEFINE_STRING(str_option_advanced_changeKey,            "Changer clef maitre",      45  );
+DEFINE_STRING(str_option_advanced_showKey,              "Montrer clef maitre",      46  );
+DEFINE_STRING(str_option_changeOrientation,             "Retourner l'affichage",    47  );
+DEFINE_STRING(str_option_advanced_keyboardDisposition,  "Changer langue clavier",   48  );
+DEFINE_STRING(str_option_advanced_selfTest,             "Diagnostic",               49  );
+DEFINE_STRING(str_option_advanced_doFullReset,          "FORMATER",                 50  );
 
 PGM_P const string_table[] PROGMEM = 
 {
@@ -85,46 +108,17 @@ PGM_P const string_table[] PROGMEM =
 	str_reset_external,
 	str_reset_brownout,
 	str_reset_watchdog,
-	str_reset_jtag
-};
+	str_reset_jtag,
 
-DEFINE_STRING(str_option_password,                      "Mot de passe ...",         0   );
-DEFINE_STRING(str_option_sort,                          "Tri ...",                  1   );
-DEFINE_STRING(str_option_advanced,                      "Plus d'options ...",       2   );
-DEFINE_STRING(str_option_addPwd,                        "Nouveau mot de passe",     3   );
-DEFINE_STRING(str_option_changeOrientation,             "Retourner l'affichage",    4   );
-
-DEFINE_STRING(str_option_pwd_regenerate,                "Regenerer",                5   );
-DEFINE_STRING(str_option_pwd_changePwd,                 "Changer mot de passe",     6   );
-DEFINE_STRING(str_option_pwd_changeUsrName,             "Changer identifiant",      7   );
-DEFINE_STRING(str_option_pwd_changePwdName,             "Changer nom",              8   );
-DEFINE_STRING(str_option_pwd_delete,                    "Supprimer",                9   );
-
-DEFINE_STRING(str_option_sort_noSorting,                "Pas de tri",               10  );
-DEFINE_STRING(str_option_sort_byUsage,                  "Par utilisation",          11  );
-DEFINE_STRING(str_option_sort_alphabetical,             "Alphabetique",             12  );
-
-DEFINE_STRING(str_option_advanced_changeKey,            "Changer clef maitre",      13  );
-DEFINE_STRING(str_option_advanced_disableEncryption,    "Desactiver cryptage",      14  );
-DEFINE_STRING(str_option_advanced_enableEncryption,     "Activer cryptage",         15  );
-DEFINE_STRING(str_option_advanced_showKey,              "Montrer clef maitre",      16  );
-DEFINE_STRING(str_option_advanced_keyboardDisposition,  "Changer langue clavier",   17  );
-DEFINE_STRING(str_option_advanced_selfTest,             "Diagnostic",               18  );
-DEFINE_STRING(str_option_advanced_doFullReset,          "FORMATER",                 19  );
-
-
-PGM_P const string_options_table[] PROGMEM = 
-{
 	str_option_password,
 	str_option_sort,
 	str_option_advanced,
 	str_option_addPwd,
-	str_option_changeOrientation,
 
-	str_option_pwd_regenerate,
 	str_option_pwd_changePwd,
 	str_option_pwd_changeUsrName,
 	str_option_pwd_changePwdName,
+	str_option_pwd_regenerate,
 	str_option_pwd_delete,
 
 	str_option_sort_noSorting,
@@ -132,18 +126,12 @@ PGM_P const string_options_table[] PROGMEM =
 	str_option_sort_alphabetical,
 
 	str_option_advanced_changeKey,
-	str_option_advanced_disableEncryption,
-	str_option_advanced_enableEncryption,
 	str_option_advanced_showKey,
+	str_option_changeOrientation,
 	str_option_advanced_keyboardDisposition,
 	str_option_advanced_selfTest,
 	str_option_advanced_doFullReset
 };
-
-void str_option_to_buffer(uint8_t index)
-{
-	strcpy_P(str_buffer, (PGM_P)pgm_read_word(&(string_options_table[index]))); // See http://www.nongnu.org/avr-libc/user-manual/pgmspace.html
-}
 
 void str_to_buffer(uint8_t index)
 {

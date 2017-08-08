@@ -77,8 +77,6 @@ void draw_v_line(uint8_t x, uint8_t y, uint8_t h, uint8_t color);
 void draw_main_menu(void);
 void draw_browse_dock(char letter, uint8_t highlight);
 
-void draw_list(uint8_t index, uint8_t minIndex, uint8_t maxIndex);
-
 // Return 1 if the string has been modified and 0 if nothing changed
 uint8_t type_string(char* string_typed, uint8_t maxLen);
 

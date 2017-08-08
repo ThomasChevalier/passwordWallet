@@ -7,28 +7,6 @@
 #include "../Program/Program.h"
 #include "../FSM/Events.h"
 
-#define NUM_OPTIONS (9)
-#define NONE NUM_OPTIONS
-#define NULL ((void*)0)
-#define MAX_INTRICATION (1)
-
-static const Option_Node list_options [] = 
-{
-	/*
-	{callback, child, neighbour, strIndex}
-	*/
-
-/*0*/	{NULL, 1, 6, 0},
-/*1*/		{NULL, NONE,    2, 5},
-/*2*/		{NULL, NONE,    3, 6},
-/*3*/		{NULL, NONE,    4, 7},
-/*4*/		{NULL, NONE,    5, 8},
-/*5*/		{NULL, NONE, NONE, 9},
-/*6*/	{NULL, NONE, 7, 1},
-/*7*/	{NULL, NONE, 8, 2},
-/*8*/	{NULL, NONE, NONE, 3},
-};
-
 /**
  * @brief Draw a maximum of 3 neighbour and return the number of node
  * 
@@ -44,13 +22,13 @@ static uint8_t draw_nodes(const Option_Node* node)
 	{
 		if(numOpt < 3)
 		{
-			str_option_to_buffer(node->str);
+			str_to_buffer(node->str);
 			draw_text(2, numOpt*23+2, str_buffer, 0);
 		}
 		
 		++numOpt;
 
-		if(node->neighbour == NONE)
+		if(node->neighbour == OPTIONS_LIST_NONE)
 		{
 			break;
 		}
@@ -92,7 +70,7 @@ static void draw_selection(uint8_t current, uint8_t max)
  */
 static const Option_Node* node_at(const Option_Node* base, uint8_t pos)
 {
-	while(base->neighbour != NONE && pos)
+	while(base->neighbour != OPTIONS_LIST_NONE && pos)
 	{
 		--pos;
 		base = &list_options[base->neighbour];
@@ -109,8 +87,11 @@ void options_display(uint8_t opt)
 	draw_selection(current_choice, maxChoice);
 	draw_update();
 
-	const Option_Node* nodeStack[MAX_INTRICATION];
+	const Option_Node* nodeStack[OPTIONS_LIST_MAX_INTRICATION];
 	uint8_t nodeStackPos = 0;
+
+	// Wait for the user to release the buttons
+	program_wait();
 
 	for(;;)
 	{
@@ -132,7 +113,7 @@ void options_display(uint8_t opt)
 				nd->callback();
 				return;
 			}
-			else if(nd->child != NONE)
+			else if(nd->child != OPTIONS_LIST_NONE)
 			{
 				current_choice = 0;
 				nodeStack[nodeStackPos++] = base;

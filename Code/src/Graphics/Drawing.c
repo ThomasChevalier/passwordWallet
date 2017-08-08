@@ -166,50 +166,6 @@ void draw_browse_dock(char letter, uint8_t highlight)
 	draw_v_line(7, 0, 64, WHITE);
 }
 
-// Index is in the range [minIndex; maxIndex]
-// Draw a list of string from str_option_table
-void draw_list(uint8_t index, uint8_t minIndex, uint8_t maxIndex)
-{
-	draw_clear();
-
-	// The position of the selected text (0 is the top, 1 the middle, 2 the bottom)
-	uint8_t pos = 1;
-	if(index == minIndex)
-	{
-		pos = 0;
-	}
-	else if(index == maxIndex)
-	{
-		pos = 2;
-		--index;
-	}
-
-	if(index != minIndex)
-	{
-		--index;
-	}
-
-	uint8_t i = 0;
-	for(; i < 3; ++i)
-	{
-		str_option_to_buffer(index + i);
-		draw_text(2, i*23+2, str_buffer, 0);
-	}
-
-	uint8_t l_table[3] = {0, 20, 43};
-
-	for(i = 0; i < 21; ++i)
-	{
-		draw_h_line(0, l_table[pos] + i, 128, INVERSE);
-	}
-	if(pos == 1)
-	{
-		draw_h_line(0, 41, 128, INVERSE);
-		draw_h_line(0, 42, 128, INVERSE);
-	}
-	draw_update();
-}
-
 uint8_t type_string(char* string_typed, uint8_t maxLen)
 {
 	uint8_t pos = 0;
