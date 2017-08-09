@@ -7,7 +7,7 @@
 // MDB is set to 1 if modifier is needed and to 0 otherwhise
 // Modifier == (1<<7) means that the left shift is pressed
 // Modifier == (1<<6) means that the right alt is pressed
-static const uint8_t qwerty_to_keycode_map[] PROGMEM =
+static const __flash uint8_t qwerty_to_keycode_map[] =
 {
 /*
 *   |                   KEYCODE                         | MODIF |   ASCII   |
@@ -107,11 +107,12 @@ static const uint8_t qwerty_to_keycode_map[] PROGMEM =
 	HID_KEYBOARD_SC_OPENING_BRACKET_AND_OPENING_BRACE   | SHIFT ,   /* { */
 	HID_KEYBOARD_SC_BACKSLASH_AND_PIPE                  | SHIFT ,   /*  | */
 	HID_KEYBOARD_SC_CLOSING_BRACKET_AND_CLOSING_BRACE   | SHIFT ,   /* } */
-	HID_KEYBOARD_SC_NON_US_HASHMARK_AND_TILDE           | SHIFT     /* ~ */
+	HID_KEYBOARD_SC_NON_US_HASHMARK_AND_TILDE           | SHIFT ,   /* ~ */
+	0
 
 };
 
-static const uint8_t azerty_to_keycode_map[] PROGMEM =
+static const __flash uint8_t azerty_to_keycode_map[] =
 {
 /*
 *   |                   KEYCODE                         | MODIF |   ASCII   |
@@ -122,9 +123,9 @@ static const uint8_t azerty_to_keycode_map[] PROGMEM =
 	HID_KEYBOARD_SC_3_AND_HASHMARK                              ,   /* " */
 	HID_KEYBOARD_SC_3_AND_HASHMARK                      | ALTGR ,   /* # */
 	HID_KEYBOARD_SC_CLOSING_BRACKET_AND_CLOSING_BRACE           ,   /* $ */
-	HID_KEYBOARD_SC_APOSTROPHE_AND_QUOTE                        ,   /* % */
+	HID_KEYBOARD_SC_APOSTROPHE_AND_QUOTE                | SHIFT ,   /* % */
 	HID_KEYBOARD_SC_1_AND_EXCLAMATION                           ,   /* & */
-	HID_KEYBOARD_SC_APOSTROPHE_AND_QUOTE                        ,   /* ' */
+	HID_KEYBOARD_SC_4_AND_DOLLAR                                ,   /* ' */
 	HID_KEYBOARD_SC_5_AND_PERCENTAGE                            ,   /* ( */
 	HID_KEYBOARD_SC_MINUS_AND_UNDERSCORE                        ,   /* ) */
 	HID_KEYBOARD_SC_BACKSLASH_AND_PIPE                          ,   /* * */
@@ -211,7 +212,8 @@ static const uint8_t azerty_to_keycode_map[] PROGMEM =
 	HID_KEYBOARD_SC_4_AND_DOLLAR                        | ALTGR ,   /* { */
 	HID_KEYBOARD_SC_6_AND_CARET                         | ALTGR ,   /* | */
 	HID_KEYBOARD_SC_EQUAL_AND_PLUS                      | ALTGR ,   /* } */
-	HID_KEYBOARD_SC_2_AND_AT                            | ALTGR     /* ~ */
+	HID_KEYBOARD_SC_2_AND_AT                            | ALTGR ,   /* ~ */
+	0
 
 };
 
@@ -219,11 +221,13 @@ uint8_t ascii_to_keycode(char c)
 {
 	if(OPTIONS_FLAG & (1<<OPTIONS_FLAG_OFFSET_QWERTY))
 	{
-		return qwerty_to_keycode_map[c - ' '];
+		return qwerty_to_keycode_map[c-' '];
+		//return pgm_read_byte_near(qwerty_to_keycode_map + c - ' ');
 	}
 	else
 	{
-		return azerty_to_keycode_map[c - ' '];
+		return azerty_to_keycode_map[c-' '];
+		//return pgm_read_byte_near(azerty_to_keycode_map + c - ' ');
 	}
 }
 

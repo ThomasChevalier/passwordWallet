@@ -182,6 +182,6 @@ void change_master_key(void)
 	EXIT:
 	rfid_power_down();
 	program_pause_until_event(EVENT_ALL_BUTTONS);
-	
+
 	ENABLE_SLEEP();
 }

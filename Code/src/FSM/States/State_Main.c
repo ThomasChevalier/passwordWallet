@@ -2,6 +2,8 @@
 
 #include <string.h>
 
+#include "../../Globals.h"
+
 #include "../StatesDefine.h"
 #include "../Events.h"
 
@@ -42,7 +44,7 @@ uint8_t state_main_transition (uint8_t event)
 		uint8_t pwd_data[32] = {0};
 		password_read_data(CURRENT_PASSWORD_ID, pwd_data, KEY);
 
-		keyboard_send((char*)pwd_data, strlen((char*)pwd_data));
+		keyboard_send((char*)pwd_data, strlen_bound((char*)pwd_data, 32));
 
 		security_erase_data(pwd_data, 32);
 		

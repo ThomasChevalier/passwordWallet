@@ -27,7 +27,7 @@ void keyboard_init  (void);
 /**
  * @brief Send a string to the computer as if it was typed.
  * 
- * @param data The string to send to the computer.
+ * @param data The string to send to the computer. May be modified by the function ('^' and '`' replaced by space).
  * @param dataLen The lenght of the string.
  */
 void keyboard_send  (char* data, uint8_t dataLen);

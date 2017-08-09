@@ -212,4 +212,10 @@ extern volatile uint16_t ACTIVITY_TIMER;
 #define FALSE (0)
 #define TRUE (1)
 
+/* ******* */
+/* UTILITY */
+/* ******* */
+
+uint8_t strlen_bound(char* str, uint8_t max);
+
 #endif // GLOBALS_HEADER_THOMAS_CHEVALIER

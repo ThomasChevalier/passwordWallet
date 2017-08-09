@@ -30,22 +30,28 @@ static void read_and_decrypt(uint8_t *output, uint16_t addr_iv, uint16_t addr_ae
 	}
 }
 
-// Progress complexity = 21 + (lenghtAes-len);
+// Progress complexity = 21
 static void encrypt_and_write(uint8_t *input, uint8_t len, uint16_t addr_iv, uint16_t addr_aes, uint8_t lenght_aes, uint8_t *key)
 {
 	uint8_t iv[16];
 
-	// padding
-	if(len < lenght_aes)
-	{
-		const uint8_t randByteLessThan32 = random_request_byte() >> 3;
-		input[len] = randByteLessThan32;
-		for(uint8_t i = len + 1; i < lenght_aes; ++i)
-		{
-			input[i] = random_request_byte();
-			progress_add(1);
-		}
-	}
+	// Random padding
+	// if(len < lenght_aes)
+	// {
+	// 	const uint8_t randByteLessThan32 = 0;
+	// 	input[len] = randByteLessThan32;
+	// 	for(uint8_t i = len + 1; i < lenght_aes; ++i)
+	// 	{
+	// 		input[i] = random_request_byte();
+	// 		progress_add(1);
+	// 	}
+	// }
+
+	// Zero padding
+	// for(; len < lenght_aes; ++len)
+	// {
+	// 	input[len] = 0;
+	// }
 
 	for(uint8_t i = 0; i < 16; ++i)
 	{
@@ -105,22 +111,21 @@ uint16_t password_read_counter(uint8_t pwd_id)
 	return count;
 }
 
-// Progress complexity = 21 + (32-lenght);
-void password_set_data(uint8_t pwd_id, uint8_t* pwd, uint8_t lenght, uint8_t* key)
+// Progress complexity = 21
+void password_set_data(uint8_t pwd_id, uint8_t* pwd, uint8_t* key)
 {
-	encrypt_and_write(pwd, lenght, PWD_ADDR(pwd_id, PWD_OFFSET_PWD_IV), PWD_ADDR(pwd_id, PWD_OFFSET_PWD_DATA), 32, key);
+	encrypt_and_write(pwd, 32, PWD_ADDR(pwd_id, PWD_OFFSET_PWD_IV), PWD_ADDR(pwd_id, PWD_OFFSET_PWD_DATA), 32, key);
 }
 
-// Progress complexity = 21 + (64-lenght);
-void password_set_usr_name(uint8_t pwd_id, uint8_t* usr, uint8_t lenght, uint8_t* key)
+// Progress complexity = 21
+void password_set_usr_name(uint8_t pwd_id, uint8_t* usr, uint8_t* key)
 {
-	encrypt_and_write(usr, lenght, PWD_ADDR(pwd_id, PWD_OFFSET_USR_IV), PWD_ADDR(pwd_id, PWD_OFFSET_USR_NAME), 64, key);
+	encrypt_and_write(usr, 64, PWD_ADDR(pwd_id, PWD_OFFSET_USR_IV), PWD_ADDR(pwd_id, PWD_OFFSET_USR_NAME), 64, key);
 }
 	
-void password_set_name(uint8_t pwd_id, uint8_t* name, uint8_t lenght)
+void password_set_name(uint8_t pwd_id, uint8_t* name)
 {
-	fram_write_bytes(PWD_ADDR(pwd_id, PWD_OFFSET_PWD_NAME), (uint8_t*)name, lenght);
-	fram_set(PWD_ADDR(pwd_id, PWD_OFFSET_PWD_NAME) + lenght, 0, 32-lenght);
+	fram_write_bytes(PWD_ADDR(pwd_id, PWD_OFFSET_PWD_NAME), (uint8_t*)name, 32);
 }
 
 void password_set_prev_pwd_use(uint8_t pwd_id, uint8_t val)
@@ -164,5 +169,5 @@ void password_regenerate(uint8_t pwd_id)
 		progress_add(1);
 	}
 	newPwd[31] = 0;
-	password_set_data(pwd_id, newPwd, 32, KEY);
+	password_set_data(pwd_id, newPwd, KEY);
 }

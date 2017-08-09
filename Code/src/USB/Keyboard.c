@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include "Ascii2Keycode.h"
+#include "../Hardware/PinDefinition.h"
 
 #ifdef KEYBOARD_ENABLE
 
@@ -27,6 +28,7 @@ static uint16_t IdleMSRemaining = 0;
 
 static char letterToSend;
 static uint8_t needToSend;
+static uint8_t capsEnabled;
 
 #endif // KEYBOARD_ENABLE
 
@@ -35,7 +37,8 @@ void keyboard_init(void)
 	#ifdef KEYBOARD_ENABLE
 	//memset(keyboard_text_buffer, 0, 6);
 	letterToSend = 0;
-	needToSend = 0;
+	needToSend = FALSE;
+	capsEnabled = FALSE;
 	#endif // KEYBOARD_ENABLE
 }
 
@@ -43,32 +46,31 @@ void keyboard_init(void)
 void keyboard_send(char* data, uint8_t dataLen)
 {
 	#ifdef KEYBOARD_ENABLE
-	// { (dataLen + 5)/ 6 } is used to around the result of (dataLen/6) to the upper integer
-	// We divide data in slice of 6 character because the maximum number of character that the keyboard can send at one time is 6.
-	/*for(uint8_t slice = 0; slice < (dataLen + 5)/ 6; ++slice)
-	{
-		// Clear buffer (previous text may be present)
-		memset(keyboard_text_buffer, 0, 6);
-		// Handle a slice of 6 characters
-		uint8_t i = 0;
-		for(i = 0; i < dataLen - slice * 6; ++i)
+		uint8_t sendSpace = FALSE;
+		for(uint8_t i = 0; i < dataLen*2; ++i)
 		{
-			//const uint8_t keycode = pgm_read_byte_near(ascii_to_keycode_map + (data[i+ (slice*6)]-' '));
-			keyboard_text_buffer[i] = data[i+ (slice*6)];
-		}
-		keyboard_buffer_lenght = i;
+			if(i%2 == 0)
+			{
+				letterToSend = data[i/2];
+				// Handle special ascii character
+				if(letterToSend == '^' || letterToSend == '`')
+				{
+					sendSpace = TRUE;
+					data[i/2] = ' ';
+				}
+			}
+			else
+			{
+				letterToSend = '~'+1;
 
-		// Until all the characters have been sent, we retry to send them.
-		while(keyboard_buffer_lenght != 0)
-		{
-			keyboard_loop();
-			USB_USBTask(); // Needed here
-		}*/
+				if(sendSpace)
+				{
+					i -= 2;
+					sendSpace = FALSE;
+				}
+			}
 
-		for(uint8_t i = 0; i < dataLen; ++i)
-		{
-			letterToSend = data[i];
-			needToSend = 1;
+			needToSend = TRUE;
 			do
 			{
 				keyboard_loop();
@@ -76,8 +78,6 @@ void keyboard_send(char* data, uint8_t dataLen)
 				_delay_ms(5); // A delay is needed
 			}while(needToSend);
 		}
-		
-	//}
 	#endif // KEYBOARD_ENABLE
 }
 
@@ -242,49 +242,16 @@ void CreateKeyboardReport(USB_KeyboardReport_Data_t* const ReportData)
 	/* Clear the report contents */
 	memset(ReportData, 0, sizeof(USB_KeyboardReport_Data_t));
 
-	// Loop through the buffer of keycode
-	/*
-	uint8_t i = 0;
-	for(i = 0; i < keyboard_buffer_lenght; ++i)
-	{
-		// Read key and get the right keycode
-		const char key = keyboard_text_buffer[i];
-		uint8_t keycode = pgm_read_byte_near(ascii_to_keycode_map + (key-' '));
-		const uint8_t modifier = keycode & (1<<7); // Read MSB
-		keycode &= 0x7F; // Clear MSB
-		// If there is no modifier we can send multiple key
-		if(!modifier)
-		{
-			ReportData->KeyCode[UsedKeyCodes++] = keycode;
-		}
-		else // There is a modifier to enable
-		{
-			// If this is the first key
-			if(i == 0)
-			{
-				// Send it and set modifier
-				ReportData->KeyCode[UsedKeyCodes++] = keycode;
-				ReportData->Modifier = HID_KEYBOARD_MODIFIER_LEFTSHIFT;
-			}
-			else
-			{
-				// Keep data for an other report
-				memmove(keyboard_text_buffer, keyboard_text_buffer + i, keyboard_buffer_lenght - i);
-				break;
-			}
-		}
-	}
-	keyboard_buffer_lenght -= i;*/
-
 	if(needToSend)
 	{
-		uint8_t keycode = pgm_read_byte_near(ascii_to_keycode(letterToSend));
-		const uint8_t modifier = keycode & 0XC0; // Read modifiers
-		keycode &= 0XC0; // Clear modifiers
+		uint8_t keycode = ascii_to_keycode(letterToSend);
+		const uint8_t modifier = keycode & (KEYCODE_MODIFIER_SHIFT | KEYCODE_MODIFIER_ALTGR); // Read modifiers
+		keycode &= ~(KEYCODE_MODIFIER_SHIFT | KEYCODE_MODIFIER_ALTGR); // Clear modifiers
 		ReportData->KeyCode[0] = keycode;
 
 		ReportData->Modifier = 0;
-		if(modifier & KEYCODE_MODIFIER_SHIFT)
+		if( ((!capsEnabled) && (modifier & KEYCODE_MODIFIER_SHIFT)) ||
+			(capsEnabled && !(modifier & KEYCODE_MODIFIER_SHIFT)) )
 		{
 			ReportData->Modifier |= HID_KEYBOARD_MODIFIER_LEFTSHIFT;
 		}
@@ -293,7 +260,7 @@ void CreateKeyboardReport(USB_KeyboardReport_Data_t* const ReportData)
 			ReportData->Modifier |= HID_KEYBOARD_MODIFIER_RIGHTALT;
 		}
 
-		needToSend = 0;
+		needToSend = FALSE;
 	}
 
 }
@@ -352,11 +319,19 @@ void ReceiveNextReport(void)
 		/* Check to see if the packet contains data */
 		if (Endpoint_IsReadWriteAllowed())
 		{
-			// /* Read in the LED report from the host */
-			// uint8_t LEDReport = Endpoint_Read_8();
+			/* Read in the LED report from the host */
+			uint8_t LEDReport = Endpoint_Read_8();
 
-			// /* Process the read LED report from the host */
-			// ProcessLEDReport(LEDReport);
+			/* Process the read LED report from the host */
+			capsEnabled = (LEDReport & HID_KEYBOARD_LED_CAPSLOCK)? TRUE : FALSE;
+			if(capsEnabled)
+			{
+				LED_PORT |= (1<<LED_PIN_NUM);
+			}
+			else
+			{
+				LED_PORT &= ~(1<<LED_PIN_NUM);
+			}
 		}
 
 		/* Handshake the OUT Endpoint - clear endpoint and ready for next report */

@@ -169,8 +169,8 @@ void draw_browse_dock(char letter, uint8_t highlight)
 uint8_t type_string(char* string_typed, uint8_t maxLen)
 {
 	uint8_t pos = 0;
-	uint8_t running = 1;
-	uint8_t modified = 0;
+	uint8_t running = TRUE;
+	uint8_t modified = FALSE;
 	string_typed[strlen(string_typed)] = 127;
 	draw_typing_screen(string_typed, pos);
 
@@ -179,8 +179,8 @@ uint8_t type_string(char* string_typed, uint8_t maxLen)
 	while(running)
 	{
 		program_update();
-
 		uint8_t event = events_get();  // Mask of events
+
 		if(event & EVENT_BUTTON_1)
 		{
 			char c = string_typed[pos];
@@ -192,7 +192,7 @@ uint8_t type_string(char* string_typed, uint8_t maxLen)
 			{
 				string_typed[pos] = c - 1;
 			}
-			modified = 1;
+			modified = TRUE;
 		}
 		else if(event & EVENT_BUTTON_2)
 		{
@@ -207,10 +207,13 @@ uint8_t type_string(char* string_typed, uint8_t maxLen)
 				if(string_typed[pos] == 127)
 				{
 					// If there is nothing to erase, then quit
+					// Access to pos+1 is safe because we have checked before
+					// that the maximum size has not been reached.
 					if(string_typed[pos+1] == 0)
 					{
 						running = 0;
 					}
+					// If there is something to erase then erase it
 					else
 					{
 						for(uint8_t i = pos+1; i < maxLen; ++i)
@@ -240,7 +243,7 @@ uint8_t type_string(char* string_typed, uint8_t maxLen)
 			{
 				string_typed[pos] = c + 1;
 			}
-			modified = 1;
+			modified = TRUE;
 		}
 		else if(event & EVENT_BUTTON_4)
 		{
@@ -252,9 +255,9 @@ uint8_t type_string(char* string_typed, uint8_t maxLen)
 				}
 			}
 
-			if(pos >= 1)
+			if(pos > 0)
 			{
-				pos--;
+				--pos;
 			}
 			else
 			{
@@ -270,6 +273,7 @@ uint8_t type_string(char* string_typed, uint8_t maxLen)
 			program_wait();
 		}
 	}
+
 	for(uint8_t i = 0; i < maxLen; ++i)
 	{
 		if(string_typed[i] == 127)

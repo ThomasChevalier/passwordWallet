@@ -53,10 +53,8 @@ if(NUM_PWD == MAXIMUM_NUMBER_OF_PWD-1)
 	draw_clear();
 	str_to_buffer(str_option_addPwd_index);
 	draw_text(12, 40, str_buffer, 0);
-	uint8_t strLen = strlen(pwdData);
-	uint8_t cpx = 21 + (32-strLen);
-	cpx += 21 +(64-strlen(usrName));
-	progress_begin(cpx);
+
+	progress_begin(42);
 
 	uint8_t result = pwd_list_add_pwd((uint8_t*)pwdName, (uint8_t*)pwdData, (uint8_t*)usrName);
 	progress_end();
@@ -99,7 +97,7 @@ void opt_callback_change_pwd(void)
 
 	password_read_data(CURRENT_PASSWORD_ID, tempPwd, KEY);
 
-	if(!type_string((char*)tempPwd, 31))
+	if(!type_string((char*)tempPwd, 32))
 	{
 		// If nothing changed
 		return;
@@ -110,10 +108,9 @@ void opt_callback_change_pwd(void)
 	draw_clear();
 	str_to_buffer(str_option_pwd_changePwd_index);
 	draw_text(14, 40, str_buffer, 0);
-	const uint8_t strLen = strlen((char*)tempPwd);
-	progress_begin(21 + 32 - strLen);	
+	progress_begin(21);	
 
-	password_set_data(CURRENT_PASSWORD_ID, tempPwd, strLen, KEY);
+	password_set_data(CURRENT_PASSWORD_ID, tempPwd, KEY);
 
 	security_erase_data(tempPwd, 32);
 
@@ -139,10 +136,9 @@ void opt_callback_change_usr_name(void)
 	draw_clear();
 	str_to_buffer(str_option_pwd_changeUsrName_index);
 	draw_text(17, 40, str_buffer, 0);
-	const uint8_t strLen = strlen((char*)tempStr);
-	progress_begin(21 + 64 - strLen);
+	progress_begin(21);
 
-	password_set_usr_name(CURRENT_PASSWORD_ID, tempStr, strLen, KEY);
+	password_set_usr_name(CURRENT_PASSWORD_ID, tempStr, KEY);
 	security_erase_data(tempStr, 64);
 
 	progress_end();
@@ -161,7 +157,7 @@ void opt_callback_change_name(void)
 		return;
 	}
 
-	password_set_name(CURRENT_PASSWORD_ID, (uint8_t*)name, 32);
+	password_set_name(CURRENT_PASSWORD_ID, (uint8_t*)name);
 	// Get the list sorted
 	pwd_list_sort_alpha();
 }

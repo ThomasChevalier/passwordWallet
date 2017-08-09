@@ -57,10 +57,10 @@ void encryption_update_key(uint8_t *new_key)
 					
 					// ... Change the key
 					password_read_data(i*8+j, buffer, KEY);
-					password_set_data(i*8+j,buffer, strlen((char*)(buffer)), new_key);
+					password_set_data (i*8+j, buffer, new_key);
 
 					password_read_usr_name(i*8+j, buffer, KEY);
-					password_set_usr_name(i*8+j, buffer, strlen((char*)(buffer)), new_key);
+					password_set_usr_name (i*8+j, buffer, new_key);
 
 					progress_continue();
 					progress_add(1);

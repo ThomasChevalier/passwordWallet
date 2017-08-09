@@ -7,6 +7,8 @@
 #include "../Graphics/String.h"
 #include "../Graphics/Drawing.h"
 
+#include "../System/Sleep.h"
+
 #include "Oled.h"
 #include "Buttons.h"
 #include "Rfid.h"
@@ -105,7 +107,8 @@ static void test_keyboard(void)
 {
 	for(char c = ' '; c < '~'+1; ++c)
 	{
-		keyboard_send(&c, 1);
+		char d = c;
+		keyboard_send(&d, 1);
 	}
 }
 
@@ -116,6 +119,7 @@ uint8_t self_test_check (void)
 	// There is someting wrong, that prevent the device to work normally
 	if(fram_test() == RETURN_ERROR || rfid_pcd_perform_self_test() == RETURN_ERROR)
 	{
+		DISABLE_SLEEP();
 		draw_clear();
 		draw_text_index(0, 0, str_self_test_fail_index);
 		draw_update();
@@ -128,6 +132,7 @@ uint8_t self_test_check (void)
 
 void self_test_execute(void)
 {
+	DISABLE_SLEEP();
 	led_blink(5);
 	test_oled();
 	test_fram();
@@ -135,4 +140,5 @@ void self_test_execute(void)
 	test_buttons();
 	test_keyboard();
 	led_blink(5);
+	ENABLE_SLEEP();
 }

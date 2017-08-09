@@ -15,3 +15,10 @@ void update_opt_flags(uint8_t opt_flag)
 	OPTIONS_FLAG = opt_flag;
 	fram_write_byte(OFFSET_OPTIONS_FLAG, OPTIONS_FLAG);
 }
+
+uint8_t strlen_bound(char* str, uint8_t max)
+{
+	uint8_t len = 0;
+	while(*str++ && len < max) ++len;
+	return len; 
+}

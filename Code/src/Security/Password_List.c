@@ -370,9 +370,9 @@ uint8_t pwd_list_add_pwd (uint8_t* name, uint8_t* data, uint8_t* usrName)
 	password_set_counter(pwd_id, 0);
 
 	// Set name, data and user name
-	password_set_name		(pwd_id, name,		strlen((char*)name)			);
-	password_set_data		(pwd_id, data,		strlen((char*)data),	KEY	);
-	password_set_usr_name	(pwd_id, usrName,	strlen((char*)usrName),	KEY	);
+	password_set_name		(pwd_id, name        );
+	password_set_data		(pwd_id, data,    KEY);
+	password_set_usr_name	(pwd_id, usrName, KEY);
 
 	// The password has been added, increment counter
 	++NUM_PWD;
