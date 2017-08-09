@@ -1,7 +1,5 @@
 #include "Authentification.h"
 
-#include <string.h>
-
 #include <avr/eeprom.h>
 #include <util/delay.h>
 
@@ -14,7 +12,6 @@
 
 #include "../Hardware/Rfid.h"
 #include "../Hardware/Buttons.h"
-#include "../Hardware/Oled.h"
 
 #include "../Graphics/Ascii85.h"
 #include "../Graphics/ProgressBar.h"
@@ -24,6 +21,8 @@
 #include "../FSM/Events.h"
 
 #include "../Program/Program.h"
+
+#include "../System/Sleep.h"
 
 /**
  * @brief Wait until a new RFID tag is present. This is a blockant function.
@@ -78,6 +77,7 @@ uint8_t authenticate_on_card(void)
 
 void change_master_key(void)
 {
+	DISABLE_SLEEP();
 	// rfid may be power down
 	rfid_init();
 
@@ -151,7 +151,7 @@ void change_master_key(void)
 		++eeprom_addr;
 		progress_add(1);
 	}
-
+	
 	// Encrypt that sequence
 	uint8_t zeroIv[16]  = {0x00, 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 };
 	AES128_CBC_encrypt_buffer(randomSequence, EEPROM_RANDSEQ_SIZE, KEY, zeroIv);
@@ -182,4 +182,6 @@ void change_master_key(void)
 	EXIT:
 	rfid_power_down();
 	program_pause_until_event(EVENT_ALL_BUTTONS);
+	
+	ENABLE_SLEEP();
 }

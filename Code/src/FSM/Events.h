@@ -15,9 +15,15 @@
 
 #define EVENT_STOP (1<<5)
 
+#define EVENT_SLEEP_SHUTDOWN (1<<6)
+
+#define EVENT_NO_SLEEP (1<<7)
+
 #define EVENT_WHENEVER (0xFF)
 
-#define events_happen(event) GLOBALS_EVENTS |= event
+void events_happen(uint8_t event);
+
 uint8_t events_get(void);
+
 
 #endif // EVENTS_HEADER_THOMAS_CHEVALIER

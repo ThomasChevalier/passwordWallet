@@ -106,5 +106,12 @@ void oled_display			(void);
  */
 void oled_clear_display		(void);
 
+/**
+ * @brief Active or not the display
+ * 
+ * @param active Display is active if true, switch off if false
+ */
+void oled_active_display(uint8_t active);
+
 
 #endif // OLED_HEADER_THOMAS_CHEVALIER

@@ -339,3 +339,15 @@ void oled_clear_display(void)
 	}
 	#endif
 }
+
+void oled_active_display(uint8_t active)
+{
+	if(active)
+	{
+		oled_command(SSD1306_DISPLAYON);
+	}
+	else
+	{
+		oled_command(SSD1306_DISPLAYOFF);
+	}
+}

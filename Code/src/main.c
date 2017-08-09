@@ -63,7 +63,7 @@ int main(void)
 		opt_callback_full_reset();
 	}
 
-	static const  State states[NUM_STATES] =
+	static const State states[NUM_STATES] =
 	{
 		{state_wait_card_transition,        state_wait_card_begin,        state_wait_card_end},        // STATE_WAIT_CARD
 		{state_main_transition,             state_main_begin,             state_main_end},             // STATE_MAIN

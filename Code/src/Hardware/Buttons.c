@@ -26,7 +26,10 @@ uint8_t buttons_update_event(void)
 	static uint8_t last_butts = 0;
 
 	uint8_t butts = buttons_pressed();
-	events_happen(butts);
+	if(butts)
+	{
+		events_happen(butts);
+	}
 	if(butts != last_butts)
 	{
 		last_butts = butts;

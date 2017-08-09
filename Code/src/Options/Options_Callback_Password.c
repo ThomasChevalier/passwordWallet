@@ -13,6 +13,8 @@
 #include "../Security/Password.h"
 #include "../Security/Password_List.h"
 
+#include "../System/Sleep.h"
+
 void opt_callback_add_pwd(void)
 {
 if(NUM_PWD == MAXIMUM_NUMBER_OF_PWD-1)
@@ -46,6 +48,8 @@ if(NUM_PWD == MAXIMUM_NUMBER_OF_PWD-1)
 	_delay_ms(1000);
 	type_string(usrName,63); // usr name
 
+	DISABLE_SLEEP();
+
 	draw_clear();
 	str_to_buffer(str_option_addPwd_index);
 	draw_text(12, 40, str_buffer, 0);
@@ -60,7 +64,7 @@ if(NUM_PWD == MAXIMUM_NUMBER_OF_PWD-1)
 	security_erase_data(pwdData, 32);
 	security_erase_data(usrName, 64);
 
-	if(!result)
+	if(result == RETURN_ERROR)
 	{
 		draw_clear();
 		draw_text_index(0, 10, str_error_not_enough_memory_index);
@@ -68,10 +72,14 @@ if(NUM_PWD == MAXIMUM_NUMBER_OF_PWD-1)
 		draw_update();
 		_delay_ms(2000);
 	}
+
+	ENABLE_SLEEP();
 }
 
 void opt_callback_regenerate_pwd(void)
 {
+	DISABLE_SLEEP();
+
 	draw_clear();
 	str_to_buffer(str_option_pwd_regenerate_index);
 	draw_text(40, 40, str_buffer, 0);
@@ -80,6 +88,8 @@ void opt_callback_regenerate_pwd(void)
 	password_regenerate(CURRENT_PASSWORD_ID);
 
 	progress_end();
+
+	ENABLE_SLEEP();
 }
 
 
@@ -95,6 +105,8 @@ void opt_callback_change_pwd(void)
 		return;
 	}
 
+	DISABLE_SLEEP();
+
 	draw_clear();
 	str_to_buffer(str_option_pwd_changePwd_index);
 	draw_text(14, 40, str_buffer, 0);
@@ -106,6 +118,8 @@ void opt_callback_change_pwd(void)
 	security_erase_data(tempPwd, 32);
 
 	progress_end();
+
+	ENABLE_SLEEP();
 }
 
 
@@ -120,6 +134,8 @@ void opt_callback_change_usr_name(void)
 		return;
 	}
 
+	DISABLE_SLEEP();
+
 	draw_clear();
 	str_to_buffer(str_option_pwd_changeUsrName_index);
 	draw_text(17, 40, str_buffer, 0);
@@ -130,6 +146,8 @@ void opt_callback_change_usr_name(void)
 	security_erase_data(tempStr, 64);
 
 	progress_end();
+
+	ENABLE_SLEEP();
 }
 
 

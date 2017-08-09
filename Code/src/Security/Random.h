@@ -35,7 +35,7 @@ uint8_t	random_request_byte			(void);
 uint8_t	random_request_printable	(void);
 
 /**
- * @brief Reset the random generator
+ * @brief Reset the random generator.
  */
 void random_reset(void);
 

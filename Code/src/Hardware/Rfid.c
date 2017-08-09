@@ -212,6 +212,11 @@ void rfid_power_down(void)
 	rfid_reset_low();
 }
 
+uint8_t rfid_is_power_down(void)
+{
+	return (RFID_RES_PORT & (1<<RFID_RES_PIN_NUM)) ? FALSE : TRUE;
+}
+
 void rfid_pcd_reset(void)
 {
 	rfid_pcd_write_register(CommandReg, PCD_SoftReset);	// Issue the SoftReset command.

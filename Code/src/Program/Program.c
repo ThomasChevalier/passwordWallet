@@ -15,6 +15,8 @@
 
 #include "../FSM/Events.h"
 
+#include "../System/Sleep.h"
+
 static uint8_t first_press;
 
 void program_init(void)
@@ -36,6 +38,12 @@ void program_update(void)
 	random_save_entropy();
 
 	first_press = buttons_update_event();
+
+	if(GLOBALS_EVENTS & EVENT_SLEEP_SHUTDOWN)
+	{
+		GLOBALS_EVENTS &= ~(EVENT_SLEEP_SHUTDOWN);
+		sleep_device(SLEEP_MODE_PWR_DOWN);
+	}
 }
 
 void program_wait(void)

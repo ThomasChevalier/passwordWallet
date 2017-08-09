@@ -44,6 +44,12 @@
  */
 #define LED_BLINK_DELAY (150)
 
+/**
+ * @brief How many milliseconds without activity the device is active before shutdown.
+ * The value must not exceed the maximum value of uint16_t.
+ */
+#define SHUTDOWN_DELAY (15000)
+
 // ///////////// //
 // Fram Section  //
 // ///////////// //
@@ -175,6 +181,11 @@ void update_opt_flags(uint8_t opt_flag);
  * @brief The number of password stored in memory now.
  */
 extern uint8_t NUM_PWD;
+
+/**
+ * @brief The number of milliseconds since an event happen
+ */
+extern volatile uint16_t ACTIVITY_TIMER;
 
 // ////// //
 // EEPROM //

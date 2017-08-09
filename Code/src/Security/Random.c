@@ -129,8 +129,8 @@ uint8_t random_request_printable(void)
 {
 	// 126 is '~'
 	uint8_t max = 127 - ' ';
-	uint32_t slice;
-	uint32_t retVal = WDT_MAX_32INT;
+	uint8_t slice;
+	uint8_t retVal = WDT_MAX_8INT;
 
 	slice = WDT_MAX_8INT / max;
 	while (retVal >= max)

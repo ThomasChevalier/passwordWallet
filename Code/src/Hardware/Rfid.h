@@ -232,6 +232,8 @@ clamped internally (except pin NRSTPD). The output pins are frozen at either a H
 LOW level.
 */
 void rfid_power_down(void);
+uint8_t rfid_is_power_down(void);
+
 void rfid_pcd_reset(void);
 void rfid_pcd_antenna_on(void);
 void rfid_pcd_antenna_off(void);

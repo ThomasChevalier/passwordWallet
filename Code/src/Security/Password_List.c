@@ -327,7 +327,7 @@ uint8_t pwd_list_add_pwd (uint8_t* name, uint8_t* data, uint8_t* usrName)
 	}
 	if(!chunk_free)
 	{
-		return 0; // Not enough memory
+		return RETURN_ERROR; // Not enough memory
 	}
 
 	// Initial value if there is no password
@@ -382,7 +382,7 @@ uint8_t pwd_list_add_pwd (uint8_t* name, uint8_t* data, uint8_t* usrName)
 	// We must sort them.
 	pwd_list_sort_use();
 	pwd_list_sort_alpha();
-	return 1; // Success
+	return RETURN_SUCCESS; // Success
 }
 
 

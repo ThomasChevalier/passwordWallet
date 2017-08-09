@@ -1,8 +1,5 @@
 #include "USB.h"
 
-
-#include <avr/power.h>
-
 #include "../Globals.h"
 
 #include "Keyboard.h"
@@ -15,8 +12,6 @@
 void USB_init (void)
 {
 	#ifdef USB_ENABLE
-	/* Disable clock division */
-	clock_prescale_set(clock_div_1);
 	USB_Init();
 	#endif
 

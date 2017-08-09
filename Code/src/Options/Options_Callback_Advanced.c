@@ -11,9 +11,12 @@
 #include "../Security/Random.h"
 
 #include "../Hardware/Fram.h"
+#include "../Hardware/Buttons.h"
 
 #include "../FSM/Events.h"
 #include "../Program/Program.h"
+
+#include "../System/Sleep.h"
 
 void opt_callback_show_key(void)
 {
@@ -30,7 +33,10 @@ void opt_callback_show_key(void)
 
 	draw_update();
 
+	DISABLE_SLEEP();
+	while(buttons_pressed());
 	program_pause_until_event(EVENT_ALL_BUTTONS);
+	ENABLE_SLEEP();
 }
 
 void opt_callback_inverse_screen(void)
@@ -45,6 +51,8 @@ void opt_callback_change_keyboard(void)
 
 void opt_callback_full_reset(void)
 {
+	DISABLE_SLEEP();
+
 	// Erase all fram memory
 	draw_clear();
 	draw_text_index(17, 40, str_recovery_eraseMem_index);
@@ -67,6 +75,7 @@ void opt_callback_full_reset(void)
 	CURRENT_PASSWORD_ID = GLOBALS_EVENTS = NUM_PWD = OPTIONS_FLAG = 0;
 	random_reset();
 
+	// change_master_key will enable sleep when it return
 	// Get a master key
 	change_master_key();
 
