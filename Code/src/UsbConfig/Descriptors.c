@@ -147,9 +147,9 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor =
 			.ConfigurationNumber    = 1,
 			.ConfigurationStrIndex  = NO_DESCRIPTOR,
 
-			.ConfigAttributes       = (USB_CONFIG_ATTR_RESERVED | USB_CONFIG_ATTR_SELFPOWERED),
+			.ConfigAttributes       = (USB_CONFIG_ATTR_RESERVED),
 
-			.MaxPowerConsumption    = USB_CONFIG_POWER_MA(100)
+			.MaxPowerConsumption    = USB_CONFIG_POWER_MA(30)
 		},
 #if defined(SERIAL_ENABLE) && defined(KEYBOARD_ENABLE)
 		.CDC_IAD =
@@ -253,10 +253,7 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor =
 			.Attributes             = (EP_TYPE_BULK | ENDPOINT_ATTR_NO_SYNC | ENDPOINT_USAGE_DATA),
 			.EndpointSize           = CDC_TXRX_EPSIZE,
 			.PollingIntervalMS      = 0x05
-		}
-		#if defined(SERIAL_ENABLE) && defined(KEYBOARD_ENABLE)
-		,
-		#endif
+		},
 #endif
 #if defined(KEYBOARD_ENABLE)
 		.HID_Interface =
