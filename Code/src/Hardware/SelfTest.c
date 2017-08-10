@@ -30,13 +30,8 @@ static void test_oled(void)
 	oled_display();
 	_delay_ms(2000);
 
-	oled_dim(1);
-	_delay_ms(2000);
-
-	oled_dim(0);
 	oled_clear_display();
 	oled_display();
-	_delay_ms(2000);
 }
 
 static void test_fram(void)
@@ -53,7 +48,7 @@ static void test_fram(void)
 		draw_update();
 		led_blink(2);
 	}
-	_delay_ms(2000);
+	_delay_ms(500);
 }
 
 static void test_rfid(void)
@@ -73,7 +68,7 @@ static void test_rfid(void)
 		draw_update();
 		led_blink(2);
 	}
-	_delay_ms(2000);
+	_delay_ms(500);
 }
 
 static void test_buttons(void)
