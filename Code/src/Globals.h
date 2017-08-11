@@ -166,7 +166,8 @@ extern uint8_t KEY[KEY_SIZE];
 /**
  * @brief The current password id, start to 0, it is in the order of the memory
  */
-#define CURRENT_PASSWORD_ID GPIOR2
+//#define CURRENT_PASSWORD_ID GPIOR2
+extern uint8_t CURRENT_PASSWORD_ID;
 
 /**
  * @brief Write to OPTIONS_FLAG and send it to FRAM.

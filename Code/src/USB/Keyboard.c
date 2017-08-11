@@ -32,6 +32,19 @@ static uint8_t capsEnabled;
 
 #endif // KEYBOARD_ENABLE
 
+static void process_led(const uint8_t leds)
+{
+		//capsEnabled = (LEDReport & HID_KEYBOARD_LED_CAPSLOCK)? TRUE : FALSE;
+		if(leds)
+		{
+			LED_PORT |= (1<<LED_PIN_NUM);
+		}
+		else
+		{
+			LED_PORT &= ~(1<<LED_PIN_NUM);
+		}
+}
+
 void keyboard_init(void)
 {
 	#ifdef KEYBOARD_ENABLE
@@ -156,13 +169,13 @@ void keyboard_on_control_request(void)
 				}
 
 				/* Read in the LED report from the host */
-				//uint8_t LEDStatus = Endpoint_Read_8();
+				uint8_t LEDStatus = Endpoint_Read_8();
 
 				Endpoint_ClearOUT();
 				Endpoint_ClearStatusStage();
 
 				/* Process the incoming LED report */
-				//ProcessLEDReport(LEDStatus);
+				process_led(LEDStatus);
 			}
 
 			break;
@@ -323,15 +336,7 @@ void ReceiveNextReport(void)
 			uint8_t LEDReport = Endpoint_Read_8();
 
 			/* Process the read LED report from the host */
-			capsEnabled = (LEDReport & HID_KEYBOARD_LED_CAPSLOCK)? TRUE : FALSE;
-			if(capsEnabled)
-			{
-				LED_PORT |= (1<<LED_PIN_NUM);
-			}
-			else
-			{
-				LED_PORT &= ~(1<<LED_PIN_NUM);
-			}
+			process_led(LEDReport);
 		}
 
 		/* Handshake the OUT Endpoint - clear endpoint and ready for next report */
