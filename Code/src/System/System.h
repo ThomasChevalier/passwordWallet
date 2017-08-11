@@ -5,7 +5,7 @@
 
 /**
  * @brief Init the microcontroller. Should be called once at the beginning of the main function.
- * @details Init the timers and the ADC converter. Code taken from Arduino sources.
+ * @details Init the timers and active interrupts.
  */
 void system_init(void);
 

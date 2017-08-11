@@ -1,9 +1,18 @@
 #ifndef USB_HEADER_THOMAS_CHEVALIER
 #define USB_HEADER_THOMAS_CHEVALIER
 
-#include "../Globals.h" // For KEYBOARD_ENABLE define
+#include "../Globals.h" // For USB_ENABLE define
 
+/**
+ * @brief Init the USB LUFA library
+ * @details Init lufa library and the keyboard and the serial
+ */
 void USB_init								(void);
+
+/**
+ * @brief Update the USB code.
+ * @details Must be called regularly.
+ */
 void USB_loop								(void);
 
 #ifdef USB_ENABLE

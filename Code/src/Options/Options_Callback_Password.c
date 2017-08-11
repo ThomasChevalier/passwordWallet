@@ -51,8 +51,7 @@ if(NUM_PWD == MAXIMUM_NUMBER_OF_PWD-1)
 	DISABLE_SLEEP();
 
 	draw_clear();
-	str_to_buffer(str_option_addPwd_index);
-	draw_text(12, 40, str_buffer, 0);
+	draw_text_index(12, 40, str_option_addPwd_index);
 
 	progress_begin(42);
 
@@ -79,8 +78,7 @@ void opt_callback_regenerate_pwd(void)
 	DISABLE_SLEEP();
 
 	draw_clear();
-	str_to_buffer(str_option_pwd_regenerate_index);
-	draw_text(40, 40, str_buffer, 0);
+	draw_text_index(40, 40, str_option_pwd_regenerate_index);
 	progress_begin(52);		
 
 	password_regenerate(CURRENT_PASSWORD_ID);

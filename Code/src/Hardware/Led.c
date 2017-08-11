@@ -6,12 +6,6 @@
 #include "../Globals.h"
 #include "PinDefinition.h"
 
-void led_setup_harware(void)
-{
-	LED_DDR |= (1<<LED_PIN_NUM);
-	LED_PORT &= ~(1<<LED_PIN_NUM);
-}
-
 void led_blink(uint8_t times)
 {
 	do

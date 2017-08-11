@@ -205,10 +205,6 @@ typedef struct
 	uint8_t		keyByte[MF_KEY_SIZE];
 } MIFARE_Key;
 
-
-// Hardware
-void rfid_setup_hardware(void);
-
 // Basic interface functions
 void rfid_pcd_write_register(uint8_t reg, uint8_t value);
 void rfid_pcd_write_register_multiple(uint8_t reg, uint8_t count, uint8_t* values);

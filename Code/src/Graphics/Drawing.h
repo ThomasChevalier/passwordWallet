@@ -28,6 +28,9 @@ void draw_update(void);
  */
 uint8_t draw_char(uint8_t x, uint8_t y, uint8_t c);
 
+/**
+ * @brief Same as draw_text but load the str_index in the str_buffer before.
+ */
 void draw_text_index(uint8_t x, uint8_t y, uint8_t str_index);
 //#define draw_text_index(x,y,s) str_to_buffer(s); draw_text(x, y, str_buffer, 0);
 

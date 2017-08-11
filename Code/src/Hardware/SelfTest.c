@@ -102,6 +102,7 @@ static void test_keyboard(void)
 {
 	for(char c = ' '; c < '~'+1; ++c)
 	{
+		// This copy is needed since keyboard_send can change the parameter value.
 		char d = c;
 		keyboard_send(&d, 1);
 	}

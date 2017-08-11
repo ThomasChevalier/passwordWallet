@@ -28,9 +28,8 @@
 
 /**
  * @brief Setup register for SPI.
- * @details Setup pin direction for MISO, SCK, SS and MOSI.
  */
-void	spi_setup_hardware	(void);
+void	spi_init	(void);
 
 /**
  * @brief Send a byte via the spi port and read one.

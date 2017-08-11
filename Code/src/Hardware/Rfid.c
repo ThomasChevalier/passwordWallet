@@ -39,15 +39,6 @@ static void rfid_reset_low(void)
 	RFID_RES_PORT &= ~(1<<RFID_RES_PIN_NUM);
 }
 
-void rfid_setup_hardware(void)
-{
-	RFID_CS_DDR |= (1<<RFID_CS_PIN_NUM);
-	RFID_RES_DDR |= (1<<RFID_RES_PIN_NUM);
-
-	rfid_deselect();
-	rfid_reset_high();
-}
-
 // *****************************************************************
 //                    Basic interface functions
 // *****************************************************************
@@ -183,7 +174,7 @@ void rfid_init(void)
 	rfid_deselect(); // No select the slave yet
 
 	// Check if the MFRC522 is in power down mode
-	if((RFID_RES_PIN & (1<<RFID_RES_PIN_NUM)) == 0) // yes
+	if((RFID_RES_PORT & (1<<RFID_RES_PIN_NUM)) == 0) // yes
 	{
 		rfid_reset_high();
 		_delay_ms(50);

@@ -15,7 +15,7 @@ void program_init(void);
 void program_update(void);
 
 /**
- * @brief Do a some pause in the program, in order to slow down the interface.
+ * @brief Do a pause in the program, in order to slow down the interface.
  * @details Wait for 150 ms if there is no long press, 50 ms otherwise.
  */
 void program_wait(void);

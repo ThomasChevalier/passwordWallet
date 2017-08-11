@@ -74,12 +74,7 @@ static void fram_deselect (void)
 
 void fram_setup_hardware()
 {
-	#if defined(SPI_FRAM)
-
-	FRAM_CS_DDR |= (1<<FRAM_CS_PIN_NUM);
-	fram_deselect();
-
-	#elif defined(I2C_FRAM)
+	#if defined(I2C_FRAM)
 	i2c_init();
 	#endif
 }

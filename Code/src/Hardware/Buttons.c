@@ -6,21 +6,6 @@
 #include "../FSM/Events.h"
 #include "PinDefinition.h"
 
-void buttons_setup_hardware(void)
-{
-	// Buttons' pins defined as input
-	BUTTON_1_DDR &= ~(1 << BUTTON_1_PIN_NUM);
-	BUTTON_2_DDR &= ~(1 << BUTTON_2_PIN_NUM);
-	BUTTON_3_DDR &= ~(1 << BUTTON_3_PIN_NUM);
-	BUTTON_4_DDR &= ~(1 << BUTTON_4_PIN_NUM);
-
-	// Active pull-up resistors
-	BUTTON_1_PORT |= (1 << BUTTON_1_PIN_NUM);
-	BUTTON_2_PORT |= (1 << BUTTON_2_PIN_NUM);
-	BUTTON_3_PORT |= (1 << BUTTON_3_PIN_NUM);
-	BUTTON_4_PORT |= (1 << BUTTON_4_PIN_NUM);
-}
-
 uint8_t buttons_update_event(void)
 {
 	static uint8_t last_butts = 0;

@@ -7,14 +7,17 @@
 #include "Spi.h"
 #include "Led.h"
 
+#include "PinDefinition.h"
+
 void hardware_init(void)
 {
-	spi_setup_hardware();
+	// For i2c
 	fram_setup_hardware();
-	oled_setup_hardware();
-	rfid_setup_hardware();
-	buttons_setup_hardware();
-	led_setup_harware();
+
+	INIT_ALL_DDR
+	INIT_ALL_PORT
+
+	spi_init();
 
 	oled_init();
 	

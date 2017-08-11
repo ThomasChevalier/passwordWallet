@@ -11,7 +11,6 @@ static char letter = '@';
 
 void state_browse_begin (void)
 {
-	draw_main_menu();
 	draw_browse_dock(letter,1);
 	draw_update();	
 }

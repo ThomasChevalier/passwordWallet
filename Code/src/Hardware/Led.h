@@ -4,11 +4,6 @@
 #include <stdint.h>
 
 /**
- * @brief Setup pin direction for led.
- */
-void led_setup_harware(void);
-
-/**
  * @brief Blink the the led for a defined number of times.
  * @details Delay duration is managed by LED_BLINK_DELAY global define.
  * 

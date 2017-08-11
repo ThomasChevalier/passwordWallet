@@ -149,7 +149,7 @@ void        password_increment_counter      (uint8_t pwd_id);
 
 /**
  * @brief Generate an array of 31 random bytes and set it as the password data of pwd_id.
- * @details Add 53 progress points.
+ * @details Add 52 progress points.
  * 
  * @param pwd_id The id of the password.
  */

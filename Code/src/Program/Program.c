@@ -42,7 +42,7 @@ void program_update(void)
 	if(GLOBALS_EVENTS & EVENT_SLEEP_SHUTDOWN)
 	{
 		GLOBALS_EVENTS &= ~(EVENT_SLEEP_SHUTDOWN);
-		sleep_device(SLEEP_MODE_PWR_DOWN);
+		sleep_device();
 	}
 }
 

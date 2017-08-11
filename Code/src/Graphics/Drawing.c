@@ -118,7 +118,6 @@ void draw_v_line(uint8_t x, uint8_t y, uint8_t h, uint8_t color)
 }
 
 
-
 void draw_main_menu(void)
 {
 	draw_clear();

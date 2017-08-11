@@ -57,11 +57,6 @@
 #define SSD1306_VERTICAL_AND_RIGHT_HORIZONTAL_SCROLL 0x29
 #define SSD1306_VERTICAL_AND_LEFT_HORIZONTAL_SCROLL 0x2A
 
-// Hardware
-/**
- * @brief Setup pin direction and level for the oled screen.
- */
-void oled_setup_hardware	(void);
 
 // Software
 /**

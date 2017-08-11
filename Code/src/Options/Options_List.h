@@ -75,7 +75,7 @@ static const Option_Node list_options [OPTIONS_LIST_NUM_OPTIONS]  =
 /* 5*/      {opt_callback_delete_pwd,      NONE, NONE, 41},
 /* 6*/  {NULL, 7, 10, 34},
 /* 7*/      {opt_callback_no_sort,         NONE,    8, 42},
-/* 8*/      {opt_callback_sort_usage,      NONE,    9, 43},
+/* 8*/      {opt_callback_sort_use,        NONE,    9, 43},
 /* 9*/      {opt_callback_sort_alpha,      NONE, NONE, 44},
 /*10*/  {NULL, 11, 17, 35},
 /*11*/		{opt_callback_change_key,      NONE,   12, 45},

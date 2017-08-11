@@ -136,17 +136,6 @@ static void oled_select(void)
 	OLED_CS_PORT &= ~(1 << OLED_CS_PIN_NUM);
 }
 
-void oled_setup_hardware()
-{
-	OLED_CS_DDR |= (1 << OLED_CS_PIN_NUM);
-	OLED_DC_DDR |= (1 << OLED_DC_PIN_NUM);
-	OLED_RES_DDR |= (1 << OLED_RES_PIN_NUM);
-
-	oled_reset_low();
-	oled_deselect();
-	oled_dc_low();
-}
-
 // Software
 
 /**

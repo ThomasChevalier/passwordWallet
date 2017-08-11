@@ -96,7 +96,32 @@
 */
 #define AES_USEASM 1
 
-void AES128_CBC_encrypt_buffer(uint8_t* input, uint8_t length, uint8_t* key, uint8_t* iv);
+/**
+ * @brief Encrypt a buffer with AES 128 bit in CBC mode.
+ * @details String length must be evenly divisible by 16 bytes (str_len % 16 == 0)
+ * You must pad the end of the string if this is not the case.
+ *
+ * @param input Must be an allocated array of [lenght] bytes. The plain text to be encrypted.
+ * After the encryption process [input] contains the result of the encryption.
+ * @param length The size in bytes of input, must be a multiple of 16.
+ * @param key An array of bytes that contains the key used to encrypt the data. Must be 16 bytes long.
+ * @param iv The initial vector. Must be 16 bytes long.
+ */
+
+void AES128_CBC_encrypt_buffer(uint8_t* input, uint8_t length, uint8_t* key, uint8_t* iv);	
+
+/**
+ * @brief Decrypt a buffer with AES 128 bit in CBC mode.
+ * @details String length must be evenly divisible by 16 bytes (str_len % 16 == 0)
+ * You must pad the end of the string if this is not the case.
+ *
+ * @param input Must be an allocated array of [lenght] bytes. The plain text to be encrypted.
+ * After the encryption process [input] contains the result of the decryption.
+ * @param length The size in bytes of input, must be a multiple of 16.
+ * @param key An array of bytes that contains the key used to encrypt the data. Must be 16 bytes long.
+ * @param iv The initial vector. Must be 16 bytes long.
+ */
+
 void AES128_CBC_decrypt_buffer(uint8_t* input, uint8_t length, uint8_t* key, uint8_t* iv);
 
 #endif // AES_HEADER_THOMAS_CHEVALIER

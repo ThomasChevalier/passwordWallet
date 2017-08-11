@@ -4,14 +4,15 @@
 
 void opt_callback_no_sort(void)
 {
-	update_opt_flags(OPTIONS_FLAG & 0xF9);
+	update_opt_flags((OPTIONS_FLAG & ~( (1<<OPTIONS_FLAG_OFFSET_SORTING_METHOD_L) | (1<<OPTIONS_FLAG_OFFSET_SORTING_METHOD_H)) ) | PWD_SORTING_NONE);
 }
 
-void opt_callback_sort_usage(void)
+void opt_callback_sort_use(void)
 {
-	update_opt_flags((OPTIONS_FLAG&0xF9)|0x02);
+	update_opt_flags((OPTIONS_FLAG & ~( (1<<OPTIONS_FLAG_OFFSET_SORTING_METHOD_L) | (1<<OPTIONS_FLAG_OFFSET_SORTING_METHOD_H)) ) | PWD_SORTING_USE);
 }
+
 void opt_callback_sort_alpha(void)
 {
-	update_opt_flags((OPTIONS_FLAG&0xF9)|0x04);
+	update_opt_flags((OPTIONS_FLAG & ~( (1<<OPTIONS_FLAG_OFFSET_SORTING_METHOD_L) | (1<<OPTIONS_FLAG_OFFSET_SORTING_METHOD_H)) ) | PWD_SORTING_ALPHA);
 }

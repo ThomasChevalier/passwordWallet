@@ -3,10 +3,6 @@
 
 #include <stdint.h>
 
-/**
- * @brief Setup pin direction and pullup for buttons
- */
-void 	buttons_setup_hardware	(void);
 
 /**
  * @brief Update event flag for buttons, should be call regularly.

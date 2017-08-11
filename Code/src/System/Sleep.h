@@ -6,7 +6,10 @@
 
 #include "../FSM/Events.h"
 
-void sleep_device(uint8_t sleepMode);
+/**
+ * @brief Sleep device until a button is pressed.
+ */
+void sleep_device(void);
 
 
 #define DISABLE_SLEEP() (GLOBALS_EVENTS |=  EVENT_NO_SLEEP)

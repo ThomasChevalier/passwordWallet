@@ -21,8 +21,18 @@
 
 #define EVENT_WHENEVER (0xFF)
 
+/**
+ * @brief Add the event to the global event variable.
+ * 
+ * @param event One of EVENT_* define.
+ */
 void events_happen(uint8_t event);
 
+/**
+ * @brief Get the events that occur since the last call of this function.
+ * @details Reset some event of the GLOBALS_EVENTS variable (Buttons and communication).
+ * @return The events.
+ */
 uint8_t events_get(void);
 
 

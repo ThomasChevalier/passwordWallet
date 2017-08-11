@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<module name="SPI">
+		<pin name="SS"   register="B" num="0" dir="OUTPUT" default="LOW"/>
+		<pin name="SCK"  register="B" num="1" dir="OUTPUT" default="LOW"/>
+		<pin name="MOSI" register="B" num="2" dir="OUTPUT" default="LOW"/>
+		<pin name="MISO" register="B" num="3" dir="INPUT"  default="LOW"/>
+	</module>
+	<module name="BUTTON">
+		<pin name="1" register="B" num="7" dir="INPUT" pinChangeInt="true" default="HIGH"/>
+		<pin name="2" register="B" num="5" dir="INPUT" pinChangeInt="true" default="HIGH"/>
+		<pin name="3" register="B" num="6" dir="INPUT" pinChangeInt="true" default="HIGH"/>
+		<pin name="4" register="B" num="4" dir="INPUT" pinChangeInt="true" default="HIGH"/>
+	</module>
+	<module name="FRAM">
+		<pin name="CS" register="F" num="7" dir="OUTPUT" default="HIGH"/>
+	</module>
+	<module name="OLED">
+		<pin name="CS"  register="F" num="0" dir="OUTPUT" default="HIGH"/>
+		<pin name="DC"  register="D" num="3" dir="OUTPUT" default="LOW"/>
+		<pin name="RES" register="D" num="2" dir="OUTPUT" default="LOW"/>
+	</module>
+	<module name="RFID">
+		<pin name="CS"  register="D" num="7" dir="OUTPUT" default="HIGH"/>
+		<pin name="RES" register="C" num="6" dir="OUTPUT" default="HIGH"/>
+	</module>
+	<module name="LED">
+		<pin name="" register="D" num="5" dir="OUTPUT" default="LOW"/>
+	</module>
+</root>
+<!-- File created by Thomas Chevalier - Copyright - 2017 / thomasom.chevalier@gmail.com -->
+<!-- Because spi is master mode, PB0 (aka Slave Select pin) should be an output, or, if it is an input, should be in high state -->

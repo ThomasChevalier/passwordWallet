@@ -3,6 +3,12 @@
 
 #include <stdint.h>
 
+/**
+ * @brief Process the data that the pc sent.
+ * 
+ * @param buffer The array of bytes that the pc sent.
+ * @param lenght The lenght of buffer, in byte.
+ */
 void state_communication_process_data(uint8_t* buffer, uint8_t lenght);
 
 void state_communication_begin (void);

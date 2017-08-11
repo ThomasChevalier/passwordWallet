@@ -460,6 +460,7 @@ void pwd_list_sort_use (void)
 		current = password_read_next_pwd_use(sorting_position);
 	}
 }
+
 /**
  * @brief Converts each character of str to its uppercase equivalent if the character is a lowercase letter and has an uppercase equivalent.
  * If no such conversion is possible, the value stay to the character unchanged.

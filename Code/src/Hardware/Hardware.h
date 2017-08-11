@@ -2,7 +2,7 @@
 #define HARDWARE_HEADER_THOMAS_CHEVALIER
  
 /**
- * @brief Init all the hardware related modules.
+ * @brief Init all the hardware io and call the initialization function of oled and spi.
  */
 void hardware_init(void);
 
