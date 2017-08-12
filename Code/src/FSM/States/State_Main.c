@@ -51,6 +51,7 @@ uint8_t state_main_transition (uint8_t event)
 			// Send tab
 			keyboard_send_key_next();
 		}
+
 		password_read_data(CURRENT_PASSWORD_ID, pwd_data, KEY);
 
 		keyboard_send((char*)pwd_data, strlen_bound((char*)pwd_data, 32));

@@ -11,6 +11,7 @@
 
 #include "../Security/Password.h"
 #include "../Security/Password_List.h"
+#include "../Security/Security.h"
 
 // For type string
 #include "../FSM/Events.h"
@@ -26,7 +27,7 @@ void draw_update(void)
 	oled_display();
 }
 
-// Le caractère nulle doit être transformé en 127
+// Le caractère nulle doit être transformé en INVALID_CHARACTER
 // Retourne la longueur non écrite
 uint8_t draw_char(uint8_t x, uint8_t y, uint8_t c)
 {
@@ -72,8 +73,7 @@ void draw_flash_string(uint8_t x, uint8_t y, uint16_t str_index)
 		x += FONT_WIDTH + 1 - s;
 		if(x > 128-FONT_WIDTH+1)
 		{
-			x = 0;
-			y += FONT_HEIGHT+3;
+			return;
 		}
 		++i;
 	}	
@@ -93,8 +93,7 @@ void draw_text(uint8_t x, uint8_t y, char *str, uint8_t str_len)
 		x += FONT_WIDTH + 1 - s;
 		if(x > 128-FONT_WIDTH+1)
 		{
-			x = 0;
-			y += FONT_HEIGHT+3;
+			return;
 		}
 	}
 }
@@ -138,24 +137,38 @@ void draw_main_menu(void)
 	draw_clear();
 	draw_browse_dock(0, 0);
 
-	draw_h_line(8, 20, 120, WHITE);
-	draw_h_line(8, 43, 120, WHITE);
+	draw_h_line(8, 16, 120, WHITE);
+	draw_h_line(8, 48, 120, WHITE);
 
 	if(NUM_PWD != 0)
 	{
-		char pwdName[32];
+		char data[64];
 
 		uint8_t pwd_id = pwd_list_get_prev_pwd_id(CURRENT_PASSWORD_ID);
-		password_read_name(pwd_id, (uint8_t*)pwdName);
-		draw_text(10, 2 , pwdName, 0);
+		password_read_name(pwd_id, (uint8_t*)data);
+		draw_text(10, 2 , data, 0);
 
 		pwd_id = CURRENT_PASSWORD_ID;
-		password_read_name(pwd_id, (uint8_t*)pwdName);
-		draw_text(10, 23, pwdName, 0);
+
+		password_read_usr_name(pwd_id, (uint8_t*)data, KEY);
+		if(data[0] != 0) // If an username is defined
+		{
+			draw_text(10, 35, data, strlen_bound((char*)data, 64));
+
+			password_read_name(pwd_id, (uint8_t*)data);
+			draw_text(10, 20, data, 0);
+		}
+		else
+		{
+			password_read_name(pwd_id, (uint8_t*)data);
+			draw_text(10, 28, data, 0);
+		}
 
 		pwd_id = pwd_list_get_next_pwd_id(CURRENT_PASSWORD_ID);
-		password_read_name(pwd_id, (uint8_t*)pwdName);
-		draw_text(10, 46, pwdName, 0);
+		password_read_name(pwd_id, (uint8_t*)data);
+		draw_text(10, 52, data, 0);
+
+		security_erase_data(data, 64);
 	}
 
 	draw_update();
@@ -305,7 +318,7 @@ void draw_typing_screen(char* str, uint8_t column)
 		len -= column - 15;
 		column = 15;
 	}
-	
+
 	draw_clear();
 	for(uint8_t i = 0; i < len && (i * 7 + 1) < 128; ++i)
 	{
