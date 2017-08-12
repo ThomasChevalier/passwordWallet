@@ -1,8 +1,5 @@
 #include "Keyboard.h"
 
-#include <avr/io.h>
-#include <string.h>
-
 #include "Ascii2Keycode.h"
 #include "../Hardware/PinDefinition.h"
 

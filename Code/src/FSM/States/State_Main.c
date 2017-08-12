@@ -1,7 +1,5 @@
 #include "State_Main.h"
 
-#include <string.h>
-
 #include "../../Globals.h"
 
 #include "../StatesDefine.h"

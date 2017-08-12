@@ -46,9 +46,9 @@ void draw_flash_string(uint8_t x, uint8_t y, uint16_t str_index);
  * @param x The x top left corner of the first character of the string.
  * @param y The y top left corner of the first character of the string.
  * @param str The string of character.
- * @param str_len The lenght of the string.
+ * @param max The maximum number of character to display. The function stops displaying char as soon as it see a '\0'
  */
-void draw_text(uint8_t x, uint8_t y, char *str, uint8_t str_len);
+void draw_text(uint8_t x, uint8_t y, char *str, uint8_t max);
 
 /**
  * @brief Retrieive a table of byte on screen.

@@ -1,6 +1,5 @@
 #include "Options_Callback_Password.h"
 
-#include <string.h>
 #include <util/delay.h>
 
 #include "../Globals.h"
@@ -147,7 +146,7 @@ void opt_callback_change_name(void)
 {
 	char name[32];
 	password_read_name(CURRENT_PASSWORD_ID, (uint8_t*)name);
-	if(!type_string(name, 31))
+	if(!type_string(name, 32))
 	{
 		// If nothing changed
 		return;

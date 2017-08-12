@@ -3,7 +3,6 @@
 
 #include <stdint.h>
 
-
 /**
  * @brief Update event flag for buttons, should be call regularly.
  * @return Return 1 if this is the first press on the button, 0 otherwise.

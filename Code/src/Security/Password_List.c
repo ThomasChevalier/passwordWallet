@@ -1,6 +1,6 @@
 #include "Password_List.h"
 
-#include <string.h>
+#include <string.h> // For strcmp()
 
 #include "../Globals.h"
 

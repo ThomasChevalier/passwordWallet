@@ -35,6 +35,11 @@ uint8_t draw_char(uint8_t x, uint8_t y, uint8_t c)
 	{
 		return FONT_WIDTH;
 	}
+	// Special case for space character.
+	if(c == ' ')
+	{
+		return FONT_WIDTH-2;
+	}
 
 	uint8_t i;
 	uint8_t space = 0;
@@ -79,16 +84,16 @@ void draw_flash_string(uint8_t x, uint8_t y, uint16_t str_index)
 	}	
 }
 
-void draw_text(uint8_t x, uint8_t y, char *str, uint8_t str_len)
+void draw_text(uint8_t x, uint8_t y, char *str, uint8_t max)
 {
-	if(str_len == 0)
-	{
-		str_len = strlen(str);
-	}
-
 	uint8_t i = 0;
-	for(i = 0; i < str_len; ++i)
+	for(i = 0; i < max; ++i)
 	{
+		char c = str[i];
+		if(c == 0)
+		{
+			return;
+		}
 		uint8_t s = draw_char(x, y, str[i]);
 		x += FONT_WIDTH + 1 - s;
 		if(x > 128-FONT_WIDTH+1)
@@ -146,27 +151,27 @@ void draw_main_menu(void)
 
 		uint8_t pwd_id = pwd_list_get_prev_pwd_id(CURRENT_PASSWORD_ID);
 		password_read_name(pwd_id, (uint8_t*)data);
-		draw_text(10, 2 , data, 0);
+		draw_text(10, 2 , data, 32);
 
 		pwd_id = CURRENT_PASSWORD_ID;
 
 		password_read_usr_name(pwd_id, (uint8_t*)data, KEY);
 		if(data[0] != 0) // If an username is defined
 		{
-			draw_text(10, 35, data, strlen_bound((char*)data, 64));
+			draw_text(10, 35, data, 64);
 
 			password_read_name(pwd_id, (uint8_t*)data);
-			draw_text(10, 20, data, 0);
+			draw_text(10, 20, data, 32);
 		}
 		else
 		{
 			password_read_name(pwd_id, (uint8_t*)data);
-			draw_text(10, 28, data, 0);
+			draw_text(10, 28, data, 32);
 		}
 
 		pwd_id = pwd_list_get_next_pwd_id(CURRENT_PASSWORD_ID);
 		password_read_name(pwd_id, (uint8_t*)data);
-		draw_text(10, 52, data, 0);
+		draw_text(10, 52, data, 32);
 
 		security_erase_data(data, 64);
 	}

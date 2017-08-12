@@ -1,8 +1,6 @@
 #include "Oled.h"
 
-#include <avr/pgmspace.h>
 #include <util/delay.h>
-#include <string.h>
 
 #include "PinDefinition.h"
 #include "../Globals.h"
@@ -153,7 +151,7 @@ static void oled_command(uint8_t c)
 	oled_deselect();
 }
 
-static const uint8_t oled_init_cmd[] PROGMEM =
+static const __flash uint8_t oled_init_cmd[] =
 {
 	SSD1306_DISPLAYOFF,
 	SSD1306_SETDISPLAYCLOCKDIV,
@@ -198,7 +196,7 @@ void oled_init()
 	// Init sequence
 	for(uint8_t i = 0; i < 26; ++i)
 	{
-		oled_command(pgm_read_byte_near(oled_init_cmd + i));
+		oled_command(oled_init_cmd[i]);
 	}
 }
 
