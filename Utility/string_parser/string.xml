@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root language="fr">
+	<module name="error">
+		<str name="card">ERREUR : carte inconnue</str>
+		<str name="auth">ERREUR d'authentification</str>
+		<str name="read">Erreur de lecture</str>
+		<str name="pwd" >Mauvais mot de passe</str>
+		<str name="not_enough_mem">Memoire insuffisante</str>
+		<str name="cannot_add">Ajout impossible</str>
+	</module>
+
+	<module name="comm">
+		<str name="what">Transfert en cours</str>
+		<str name="no_unplug">NE PAS DEBRANCHER</str>
+	</module>
+
+	<module name="reset">
+		<str name="external">Reset externe</str>
+		<str name="brownout">Reset basse tension</str>
+		<str name="watchdog">Reset watchdog</str>
+		<str name="jtag">Reset JTAG</str>
+		<str name="usb">Reset USB</str>
+	</module>
+
+	<module name="option">
+		<str name="pwd">Mot de passe ...</str>
+		<str name="sort">Tri ...</str>
+		<str name="param">Parametres ...</str>
+		<str name="add">Nouveau mot de passe</str>
+
+		<str name="change_pwd">Changer mot de passe</str>
+		<str name="change_usr">Changer identifiant</str>
+		<str name="change_name">Changer nom</str>
+		<str name="regen">Regenerer</str>
+		<str name="delete">Supprimer</str>
+
+		<str name="sort_no">Pas de tri</str>
+		<str name="sort_use">Par utilisation</str>
+		<str name="sort_alpha">Par nom</str>
+
+		<str name="change_key">Changer clef maitre</str>
+		<str name="show_key">Afficher clef maitre</str>
+		<str name="orientation">Retourner l'affichage</str>
+		<str name="keyboard_layout">Changer langue clavier</str>
+		<str name="self_test">Diagnostic</str>
+		<str name="full_reset">FORMATER</str> 
+	</module>
+
+	<module name="self_test">
+		<str name="fram_fail">Memoire defectueuse</str>
+		<str name="rfid_fail">Module rfid defectueux</str>
+		<str name="button_fail">Bouton defectueux : </str>
+		<str name="good">Appareil en bon etat</str>
+		<str name="fail">Appareil defectueux</str>
+	</module>
+
+	<module name="order">
+		<str name="approach">Approchez votre carte</str>
+		<str name="type_pwd_name">Entrez le nom du mdp</str>
+		<str name="type_pwd_data">Entrez le mot de passe</str>
+		<str name="type_usr_name">Entrez nom d'utilisateur</str>
+	</module>
+
+	<module name="recovery">
+		<str name="eraseMem">Formatage memoire</str>
+		<str name="title">MODE DE RECUPERATION</str>
+		<str name="full">FORMATAGE COMPLET</str>
+		<str name="key">ENTRER LA CLEF</str>
+	</module>
+
+	<module name="change_key">
+		<str name="what">M.a.j. de la clef</str>
+		<str name="update_pwd">M.a.j. des mots de passe</str>
+		<str name="here">Voici votre clef</str>
+	</module>
+</root>
+<!-- File created by Thomas Chevalier - Copyright - 2017 / thomasom.chevalier@gmail.com -->

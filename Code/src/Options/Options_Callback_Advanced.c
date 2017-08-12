@@ -23,7 +23,7 @@ void opt_callback_show_key(void)
 	// Display key
 	draw_clear();
 	
-	draw_text_index(17, 10, str_misc_hereIsKey_index);
+	draw_flash_str(17, 10, str_change_key_here);
 
 	char outputText[20];
 	encode_16B(KEY, outputText);
@@ -55,7 +55,7 @@ void opt_callback_full_reset(void)
 
 	// Erase all fram memory
 	draw_clear();
-	draw_text_index(17, 40, str_recovery_eraseMem_index);
+	draw_flash_str(17, 40, str_recovery_eraseMem);
 	draw_update();
 
 	progress_begin(FRAM_BYTE_SIZE/256);

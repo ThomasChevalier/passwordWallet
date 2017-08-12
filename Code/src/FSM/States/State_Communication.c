@@ -14,7 +14,9 @@
 
 #include "../../Program/Program.h"
 #include "../../Security/Encryption.h"
-#include "../Security/Password_List.h"
+#include "../../Security/Password_List.h"
+
+#include "../../System/Sleep.h"
 
 // Flag for communication state
 #define FLAG_INITED (1<<0)
@@ -174,8 +176,8 @@ void state_communication_begin(void)
 	communication_flag = FLAG_INITED;
 
 	draw_clear();
-	draw_text_index(5, 0, str_communication_what_index);
-	draw_text_index(10, 10, str_communication_dont_unplug_index);
+	draw_flash_str(5, 0, str_comm_what);
+	draw_flash_str(10, 10, str_comm_no_unplug);
 	draw_update();
 }
 

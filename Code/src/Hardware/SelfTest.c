@@ -16,6 +16,8 @@
 #include "../USB/Keyboard.h"
 #include "Led.h"
 
+static uint8_t failOccured;
+
 static void test_oled(void)
 {
 	oled_init();
@@ -38,14 +40,13 @@ static void test_fram(void)
 {
 	if(fram_test() == RETURN_ERROR)
 	{
-		draw_text_index(0, 0, str_self_test_fram_fail_index);
+		draw_flash_str(0, 0, str_self_test_fram_fail);
+		failOccured = TRUE;
 		draw_update();
 		led_blink(3);
 	}
 	else
 	{
-		draw_text_index(0, 0, str_self_test_fram_ok_index);
-		draw_update();
 		led_blink(2);
 	}
 	_delay_ms(500);
@@ -58,44 +59,19 @@ static void test_rfid(void)
 	rfid_power_down();
 	if(ret == RETURN_ERROR)
 	{
-		draw_text_index(0, 10, str_self_test_rfid_fail_index);
+		uint8_t y = 0;
+		if(failOccured)
+			y = 10;
+		draw_flash_str(0, y, str_self_test_rfid_fail);
+		failOccured = TRUE;
 		draw_update();
 		led_blink(3);
 	}
 	else
 	{
-		draw_text_index(0, 10, str_self_test_rfid_ok_index);
-		draw_update();
 		led_blink(2);
 	}
 	_delay_ms(500);
-}
-
-static void test_buttons(void)
-{
-	led_blink(1);
-	for(uint8_t j = 0; j < 4; ++j)
-	{
-		uint8_t ok = 0;
-		for(uint8_t i = 0; i < 100; ++i)
-		{
-			if(buttons_pressed() & (1<<j))
-			{
-				draw_text_index(0, 20 + 8 * j, str_self_test_button_ok_index);
-				draw_update();
-				led_blink(2);
-				ok = 1;
-				break;
-			}
-			_delay_ms(50);
-		}
-		if(ok == 0)
-		{
-			draw_text_index(0, 20 + 8 * j, str_self_test_button_fail_index);
-			draw_update();
-			led_blink(3);
-		}
-	}
 }
 
 static void test_keyboard(void)
@@ -111,13 +87,12 @@ static void test_keyboard(void)
 // Assume that all is initialized
 uint8_t self_test_check (void)
 {
-
 	// There is someting wrong, that prevent the device to work normally
 	if(fram_test() == RETURN_ERROR || rfid_pcd_perform_self_test() == RETURN_ERROR)
 	{
 		DISABLE_SLEEP();
 		draw_clear();
-		draw_text_index(0, 0, str_self_test_fail_index);
+		draw_flash_str(0, 0, str_self_test_fail);
 		draw_update();
 		_delay_ms(3000);
 		self_test_execute();
@@ -128,12 +103,22 @@ uint8_t self_test_check (void)
 
 void self_test_execute(void)
 {
+	failOccured = FALSE;
+
 	DISABLE_SLEEP();
 	led_blink(5);
 	test_oled();
 	test_fram();
 	test_rfid();
-	test_buttons();
+	if(failOccured)
+	{
+		draw_flash_str(0, 40, str_self_test_fail);
+	}
+	else
+	{
+		draw_flash_str(0, 0, str_self_test_good);
+	}
+	draw_update();
 	test_keyboard();
 	led_blink(5);
 	ENABLE_SLEEP();

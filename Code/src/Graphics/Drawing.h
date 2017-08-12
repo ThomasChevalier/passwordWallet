@@ -31,7 +31,12 @@ uint8_t draw_char(uint8_t x, uint8_t y, uint8_t c);
 /**
  * @brief Same as draw_text but load the str_index in the str_buffer before.
  */
-void draw_text_index(uint8_t x, uint8_t y, uint8_t str_index);
+#define draw_flash_str(x, y, str) draw_flash_string(x, y, str##_index)
+void draw_flash_string(uint8_t x, uint8_t y, uint16_t str_index);
+
+
+//void draw_text_index(uint8_t x, uint8_t y, uint8_t str_index);
+
 //#define draw_text_index(x,y,s) str_to_buffer(s); draw_text(x, y, str_buffer, 0);
 
 /**

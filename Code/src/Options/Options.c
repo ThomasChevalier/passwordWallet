@@ -24,7 +24,7 @@ static uint8_t draw_nodes(const Option_Node* node)
 	{
 		if(numOpt < 3)
 		{
-			draw_text_index(2, numOpt*23+2, node->str);
+			draw_flash_string(2, numOpt*23+2, node->str);
 		}
 		
 		++numOpt;

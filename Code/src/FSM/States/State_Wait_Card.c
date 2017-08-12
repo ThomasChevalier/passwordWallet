@@ -47,7 +47,7 @@ uint8_t state_wait_card_transition (uint8_t event)
 			{
 				// .. Failure
 				draw_clear();
-				draw_text_index(19, 20, str_error_read_index);
+				draw_flash_str(19, 20, str_error_read);
 				draw_update();
 			}
 			else
@@ -64,7 +64,7 @@ uint8_t state_wait_card_transition (uint8_t event)
 				else
 				{
 					draw_clear();
-					draw_text_index(15, 20, str_error_pwd_index);
+					draw_flash_str(15, 20, str_error_pwd);
 					draw_update();
 				}
 			}

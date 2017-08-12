@@ -22,8 +22,7 @@ void system_init(void)
 // Read the reset source and display it
 void system_read_reset_source(uint8_t mcusr)
 {
-	uint8_t str_index = 0;
-
+	uint16_t str_index = 0;
 	// Ignore power on reset
 	if((mcusr & (1<<PORF )) || (mcusr == 0)) {return;}
 
@@ -33,7 +32,7 @@ void system_read_reset_source(uint8_t mcusr)
 	if(mcusr & (1<<JTRF )) {str_index = str_reset_jtag_index;}
 
 	draw_clear();
-	draw_text_index(0, 0, str_index);
+	draw_flash_string(0, 0, str_index);
 	draw_update();
 
 	// Wait for anything

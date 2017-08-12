@@ -58,10 +58,25 @@ uint8_t draw_char(uint8_t x, uint8_t y, uint8_t c)
 	return space;
 }
 
-void draw_text_index(uint8_t x, uint8_t y, uint8_t str_index)
+void draw_flash_string(uint8_t x, uint8_t y, uint16_t str_index)
 {
-	str_to_buffer(str_index);
-	draw_text(x, y, str_buffer, 0);
+	uint8_t i = 0;
+	while(1)
+	{
+		char c = pgm_read_byte(stringData + str_index + i);
+		if(c == 0)
+		{
+			break;
+		}
+		uint8_t s = draw_char(x, y, c);
+		x += FONT_WIDTH + 1 - s;
+		if(x > 128-FONT_WIDTH+1)
+		{
+			x = 0;
+			y += FONT_HEIGHT+3;
+		}
+		++i;
+	}	
 }
 
 void draw_text(uint8_t x, uint8_t y, char *str, uint8_t str_len)
@@ -133,17 +148,14 @@ void draw_main_menu(void)
 		uint8_t pwd_id = pwd_list_get_prev_pwd_id(CURRENT_PASSWORD_ID);
 		password_read_name(pwd_id, (uint8_t*)pwdName);
 		draw_text(10, 2 , pwdName, 0);
-		draw_hex(50, 2, &pwd_id, 1);
 
 		pwd_id = CURRENT_PASSWORD_ID;
 		password_read_name(pwd_id, (uint8_t*)pwdName);
 		draw_text(10, 23, pwdName, 0);
-		draw_hex(50, 23, &pwd_id, 1);
 
 		pwd_id = pwd_list_get_next_pwd_id(CURRENT_PASSWORD_ID);
 		password_read_name(pwd_id, (uint8_t*)pwdName);
 		draw_text(10, 46, pwdName, 0);
-		draw_hex(50, 46, &pwd_id, 1);
 	}
 
 	draw_update();

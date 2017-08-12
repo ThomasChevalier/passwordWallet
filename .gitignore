@@ -18,3 +18,4 @@ kicad/password_wallet-cache.lib
 kicad/password_wallet.bak
 Utility/aes_test/aes_tiny/main
 Utility/aes_test/avr-aes-0.3/main
+tinyxml2
