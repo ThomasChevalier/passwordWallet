@@ -431,7 +431,7 @@ void pwd_list_sort_use (void)
 	uint8_t current = password_read_next_pwd_use(first);
 	uint8_t prev = 0;
 	uint8_t sorting_position = 0;
-
+	
 	while(current != MAXIMUM_NUMBER_OF_PWD)
 	{
 		sorting_position = current;
@@ -440,7 +440,7 @@ void pwd_list_sort_use (void)
 		uint16_t current_count = password_read_counter(current);
 		uint16_t prev_count = password_read_counter(prev);
 
-		while(prev != MAXIMUM_NUMBER_OF_PWD && current_count < prev_count)
+		while(prev != MAXIMUM_NUMBER_OF_PWD && current_count > prev_count)
 		{
 			// If we swap with the first pwd, be sure that we update the first pwd id
 			if(prev == first)
