@@ -2,12 +2,11 @@
 
 static quint16  OFFSET_OPTIONS_FLAG = 0;
 static quint16  SIZE_OPTION_FLAG = 1;
-static quint16  OPTIONS_FLAG_OFFSET_NO_ENCRYPTION =0;
-static quint16  OPTIONS_FLAG_OFFSET_SORTING_METHOD_L =1;
-static quint16  OPTIONS_FLAG_OFFSET_SORTING_METHOD_H =2;
-static quint16  OPTIONS_FLAG_OFFSET_ORIENTATION =3;
-static quint16  OPTIONS_FLAG_OFFSET_INITIALIZED =4;
-static quint16  OPTIONS_FLAG_OFFSET_QWERTY =5;
+static quint16  OPTIONS_FLAG_OFFSET_SORTING_METHOD_L =0;
+static quint16  OPTIONS_FLAG_OFFSET_SORTING_METHOD_H =1;
+static quint16  OPTIONS_FLAG_OFFSET_ORIENTATION =2;
+static quint16  OPTIONS_FLAG_OFFSET_INITIALIZED =3;
+static quint16  OPTIONS_FLAG_OFFSET_QWERTY =4;
 
 static quint16  OFFSET_FIRST_PWD_USE =OFFSET_OPTIONS_FLAG + SIZE_OPTION_FLAG; /* 1 */
 static quint16  SIZE_FIRST_PWD_USE =1;
@@ -56,11 +55,6 @@ quint32 DeviceData::memorySize() const
         density = m_framId.i2c.product_id >> 8;
     }
     return byteSize[density];
-}
-
-bool DeviceData::encryption() const
-{
-    return !(m_memory[OFFSET_OPTIONS_FLAG] & (1 << OPTIONS_FLAG_OFFSET_NO_ENCRYPTION));
 }
 
 DeviceData::SortingAlgo DeviceData::sorting() const
@@ -112,7 +106,7 @@ quint8 DeviceData::passwordNum() const
 
 QByteArray DeviceData::memoryMap() const
 {
-    quint16 offset = 262 + (storeScreenBufferInFram() ? 1024 : 0);
+    quint16 offset = 260 + (storeScreenBufferInFram() ? 1024 : 0);
     quint16 size = 0;
     switch (memorySize()) {
     case 8192:  size=6;  break;
@@ -195,7 +189,7 @@ quint16 DeviceData::productIdentifier()
 quint16 DeviceData::firstPwdOffset() const
 {
     quint16 firstPwd = OFFSET_NUM_PWD+SIZE_NUM_PWD;
-    firstPwd+=258; // Entropy pool size (2bytes) + data (256)
+    firstPwd+=256; // Entropy pool (256 bytes)
     if(storeScreenBufferInFram())
     {
         firstPwd+=1024;

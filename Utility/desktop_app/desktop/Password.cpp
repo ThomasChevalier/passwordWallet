@@ -67,7 +67,7 @@ quint8 Password::nextPwdAlpha() const
 quint16 Password::count() const
 {
     // Avr is little endian
-    return (static_cast<quint16>(m_data[PWD_OFFSET_PWD_COUNT])<<8) + m_data[PWD_OFFSET_PWD_COUNT+1];
+    return (static_cast<quint16>(m_data[PWD_OFFSET_PWD_COUNT]) + (m_data[PWD_OFFSET_PWD_COUNT+1]<<8));
 }
 
 QString Password::name() const

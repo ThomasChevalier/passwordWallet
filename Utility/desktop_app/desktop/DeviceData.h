@@ -69,7 +69,6 @@ public:
     QByteArray memory()  const;
     quint32 memorySize() const;
 
-    bool encryption() const;
     SortingAlgo sorting() const;
     Orientation orientation() const;
     bool initialized() const;

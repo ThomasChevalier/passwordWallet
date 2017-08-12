@@ -101,10 +101,6 @@ void ConnectionDialog::on_disconnected()
 void ConnectionDialog::on_framReceived(const QByteArray &fram)
 {
     m_currentState = Complete;
-    QFile f("fram.hex");
-    f.open(QFile::WriteOnly);
-    f.write(fram);
-    f.close();
 
     m_data.setMemory(fram);
     ui->img_content->setPixmap(QPixmap(RESULT_OK_IMG));
@@ -131,12 +127,6 @@ void ConnectionDialog::on_keyReceived(const QByteArray &key)
 void ConnectionDialog::on_paramReceived(const QByteArray &param)
 {
     m_currentState = WaitingKey;
-
-    addMessage(tr("Paramètres reçues"));
-    QFile f("param.hex");
-    f.open(QFile::WriteOnly);
-    f.write(param);
-    f.close();
 
     ui->img_param->setPixmap(QPixmap(RESULT_OK_IMG));
     m_data.setParameter(param);
