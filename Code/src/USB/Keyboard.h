@@ -33,8 +33,13 @@ void keyboard_init  (void);
 void keyboard_send  (char* data, uint8_t dataLen);
 
 /**
+ * @brief Send the key to go to the next form (generally the tab key)
+ */
+void keyboard_send_key_next(void);
+
+/**
  * @brief Update the keyboard related stuff.
- * @details Should be called regularly.
+ * @details Must be called regularly.
  */
 void keyboard_loop  (void);
 

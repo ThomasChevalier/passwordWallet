@@ -15,6 +15,8 @@
 #include "../../Security/Password.h"
 #include "../../Security/Password_List.h"
 
+#include "../../Hardware/Oled.h"
+
 void state_main_begin (void)
 {
 	draw_main_menu();
@@ -41,15 +43,25 @@ uint8_t state_main_transition (uint8_t event)
 	}
 	else if(event & EVENT_BUTTON_2)
 	{
-		uint8_t pwd_data[32] = {0};
+		uint8_t* pwd_data = oled_data; // Use the oled buffer
+
+		password_read_usr_name(CURRENT_PASSWORD_ID, pwd_data, KEY);
+		if(pwd_data[0] != 0){ // If the user name is not empty
+			keyboard_send((char*)pwd_data, strlen_bound((char*)pwd_data, 64));
+			// Send tab
+			keyboard_send_key_next();
+		}
 		password_read_data(CURRENT_PASSWORD_ID, pwd_data, KEY);
 
 		keyboard_send((char*)pwd_data, strlen_bound((char*)pwd_data, 32));
 
-		security_erase_data(pwd_data, 32);
+		security_erase_data(pwd_data, 64);
 		
 		password_increment_counter(CURRENT_PASSWORD_ID);
 		pwd_list_sort_use();
+
+		// The menu can have changed (with pwd_list_sort_use())
+		draw_main_menu();
 	}
 	else if(event & EVENT_BUTTON_3)
 	{

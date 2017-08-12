@@ -34,19 +34,19 @@ if(NUM_PWD == MAXIMUM_NUMBER_OF_PWD-1)
 	draw_flash_str(0, 10, str_order_type_pwd_name);
 	draw_update();
 	_delay_ms(1000);
-	type_string(pwdName,31);
+	type_string(pwdName,32);
 
 	draw_clear();
 	draw_flash_str(0, 10, str_order_type_pwd_data);
 	draw_update();
 	_delay_ms(1000);
-	type_string(pwdData,31);
+	type_string(pwdData,32);
 
 	draw_clear();
 	draw_flash_str(0, 10, str_order_type_usr_name);
 	draw_update();
 	_delay_ms(1000);
-	type_string(usrName,63); // usr name
+	type_string(usrName,64); // usr name
 
 	DISABLE_SLEEP();
 

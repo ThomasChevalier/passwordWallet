@@ -5,7 +5,6 @@
 #include <util/atomic.h>
 #include <util/delay.h>
 
-
 #include "../Globals.h"
 #include "../Hardware/Fram.h"
 
@@ -128,7 +127,7 @@ uint8_t random_request_byte(void)
 uint8_t random_request_printable(void)
 {
 	// 126 is '~'
-	uint8_t max = 127 - ' ';
+	uint8_t max = '~' - ' ';
 	uint8_t slice;
 	uint8_t retVal = WDT_MAX_8INT;
 

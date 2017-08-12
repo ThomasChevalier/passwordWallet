@@ -26,7 +26,7 @@ static uint16_t IdleCount = 500;
 static uint16_t IdleMSRemaining = 0;
 
 
-static char letterToSend;
+static char keycodeToSend;
 static uint8_t needToSend;
 static uint8_t capsEnabled;
 
@@ -49,12 +49,25 @@ void keyboard_init(void)
 {
 	#ifdef KEYBOARD_ENABLE
 	//memset(keyboard_text_buffer, 0, 6);
-	letterToSend = 0;
+	keycodeToSend = 0;
 	needToSend = FALSE;
 	capsEnabled = FALSE;
 	#endif // KEYBOARD_ENABLE
 }
 
+/**
+ * @brief Wait until the keycode is sent
+ */
+static void wait_for_sent(void)
+{
+	needToSend = TRUE;
+	do
+	{
+		keyboard_loop();
+		USB_USBTask();
+		_delay_ms(5); // A delay is needed
+	}while(needToSend);
+}
 
 void keyboard_send(char* data, uint8_t dataLen)
 {
@@ -64,9 +77,9 @@ void keyboard_send(char* data, uint8_t dataLen)
 		{
 			if(i%2 == 0)
 			{
-				letterToSend = data[i/2];
+				keycodeToSend = data[i/2];
 				// Handle special ascii character
-				if(letterToSend == '^' || letterToSend == '`')
+				if(keycodeToSend == '^' || keycodeToSend == '`')
 				{
 					sendSpace = TRUE;
 					data[i/2] = ' ';
@@ -74,7 +87,7 @@ void keyboard_send(char* data, uint8_t dataLen)
 			}
 			else
 			{
-				letterToSend = '~'+1;
+				keycodeToSend = '~'+1;
 
 				if(sendSpace)
 				{
@@ -83,15 +96,16 @@ void keyboard_send(char* data, uint8_t dataLen)
 				}
 			}
 
-			needToSend = TRUE;
-			do
-			{
-				keyboard_loop();
-				USB_USBTask();
-				_delay_ms(5); // A delay is needed
-			}while(needToSend);
+			keycodeToSend = ascii_to_keycode(keycodeToSend);
+			wait_for_sent();
 		}
 	#endif // KEYBOARD_ENABLE
+}
+
+void keyboard_send_key_next(void)
+{
+	keycodeToSend = HID_KEYBOARD_SC_TAB;
+	wait_for_sent();
 }
 
 void keyboard_loop(void)
@@ -257,10 +271,9 @@ void CreateKeyboardReport(USB_KeyboardReport_Data_t* const ReportData)
 
 	if(needToSend)
 	{
-		uint8_t keycode = ascii_to_keycode(letterToSend);
-		const uint8_t modifier = keycode & (KEYCODE_MODIFIER_SHIFT | KEYCODE_MODIFIER_ALTGR); // Read modifiers
-		keycode &= ~(KEYCODE_MODIFIER_SHIFT | KEYCODE_MODIFIER_ALTGR); // Clear modifiers
-		ReportData->KeyCode[0] = keycode;
+		const uint8_t modifier = keycodeToSend & (KEYCODE_MODIFIER_SHIFT | KEYCODE_MODIFIER_ALTGR); // Read modifiers
+		keycodeToSend &= ~(KEYCODE_MODIFIER_SHIFT | KEYCODE_MODIFIER_ALTGR); // Clear modifiers
+		ReportData->KeyCode[0] = keycodeToSend;
 
 		ReportData->Modifier = 0;
 		if( ((!capsEnabled) && (modifier & KEYCODE_MODIFIER_SHIFT)) ||

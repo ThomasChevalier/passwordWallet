@@ -76,7 +76,7 @@ static void test_rfid(void)
 
 static void test_keyboard(void)
 {
-	for(char c = ' '; c < '~'+1; ++c)
+	for(char c = ' '; c < '~'; ++c)
 	{
 		// This copy is needed since keyboard_send can change the parameter value.
 		char d = c;

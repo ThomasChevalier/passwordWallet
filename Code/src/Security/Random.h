@@ -30,7 +30,7 @@ uint8_t	random_request_byte			(void);
 /**
  * @brief Return an ascii printable byte.
  * @details This function use random_request_byte so may be blockant.
- * @return Return a character in [' '; '~'] range
+ * @return Return a character in [' '; '~'[ range
  */
 uint8_t	random_request_printable	(void);
 

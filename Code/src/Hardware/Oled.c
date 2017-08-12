@@ -16,7 +16,7 @@
 #define HEIGHT 64
 
 #ifndef STORE_SCREEN_BUFFER_IN_FRAM
-static uint8_t buffer[SSD1306_LCDHEIGHT * SSD1306_LCDWIDTH / 8] =
+uint8_t oled_data[SSD1306_LCDHEIGHT * SSD1306_LCDWIDTH / 8] =
 {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x00, 0x00, 0x00, 0x80, 0xC0, 0xC0, 0xE0, 0x70, 0x70, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -235,7 +235,7 @@ void oled_draw_pixel(uint8_t x, uint8_t y, uint8_t color)
 
 	#else
 
-	uint8_t* buf = &buffer[x+ (y/8)*WIDTH];
+	uint8_t* buf = &oled_data[x+ (y/8)*WIDTH];
 	uint8_t val = (1 << (y&7));
 	switch (color)
 	{
@@ -304,7 +304,7 @@ void oled_display(void)
 	uint16_t i = 0;
 	for (; i < (HEIGHT * WIDTH / 8); ++i)
 	{
-		spi_send_8(buffer[i]);
+		spi_send_8(oled_data[i]);
 	}
 	#endif
 
@@ -324,7 +324,7 @@ void oled_clear_display(void)
 	uint16_t i = 0;
 	for (; i < (HEIGHT * WIDTH / 8); ++i)
 	{
-		buffer[i] = 0;
+		oled_data[i] = 0;
 	}
 	#endif
 }

@@ -182,7 +182,7 @@ uint8_t type_string(char* string_typed, uint8_t maxLen)
 	uint8_t pos = 0;
 	uint8_t running = TRUE;
 	uint8_t modified = FALSE;
-	string_typed[strlen(string_typed)] = 127;
+	string_typed[strlen(string_typed)] = INVALID_CHARACTER;
 	draw_typing_screen(string_typed, pos);
 
 	program_wait();
@@ -197,7 +197,7 @@ uint8_t type_string(char* string_typed, uint8_t maxLen)
 			char c = string_typed[pos];
 			if(c == ' ')
 			{
-				string_typed[pos] = 127;
+				string_typed[pos] = INVALID_CHARACTER;
 			}
 			else
 			{
@@ -215,7 +215,7 @@ uint8_t type_string(char* string_typed, uint8_t maxLen)
 			else
 			{
 				// Erase functionnality
-				if(string_typed[pos] == 127)
+				if(string_typed[pos] == INVALID_CHARACTER)
 				{
 					// If there is nothing to erase, then quit
 					// Access to pos+1 is safe because we have checked before
@@ -238,7 +238,7 @@ uint8_t type_string(char* string_typed, uint8_t maxLen)
 					++pos;
 					if(string_typed[pos] == 0)
 					{
-						string_typed[pos] = 127;
+						string_typed[pos] = INVALID_CHARACTER;
 					}
 				}
 			}
@@ -246,7 +246,7 @@ uint8_t type_string(char* string_typed, uint8_t maxLen)
 		else if(event & EVENT_BUTTON_3)
 		{
 			char c = string_typed[pos];
-			if(c == 127)
+			if(c == INVALID_CHARACTER)
 			{
 				string_typed[pos] = ' ';
 			}
@@ -258,7 +258,7 @@ uint8_t type_string(char* string_typed, uint8_t maxLen)
 		}
 		else if(event & EVENT_BUTTON_4)
 		{
-			if(string_typed[pos] == 127)
+			if(string_typed[pos] == INVALID_CHARACTER)
 			{
 				for(uint8_t i = pos+1; i < maxLen; ++i)
 				{
@@ -287,7 +287,7 @@ uint8_t type_string(char* string_typed, uint8_t maxLen)
 
 	for(uint8_t i = 0; i < maxLen; ++i)
 	{
-		if(string_typed[i] == 127)
+		if(string_typed[i] == INVALID_CHARACTER)
 		{
 			string_typed[i] = 0;
 		}
@@ -305,7 +305,7 @@ void draw_typing_screen(char* str, uint8_t column)
 		len -= column - 15;
 		column = 15;
 	}
-
+	
 	draw_clear();
 	for(uint8_t i = 0; i < len && (i * 7 + 1) < 128; ++i)
 	{
@@ -362,16 +362,16 @@ void draw_char_column(uint8_t column_and_flags, char letter)
 				c-= 27;
 			}
 		}
-		// Full mode draw [' '-'~']
+		// Full mode draw [' '-'~'[
 		else
 		{
 			if(x < ' ')
 			{
-				c += 96;
+				c += INVALID_CHARACTER - ' ' + 1;
 			}
-			else if(x > '~'+1)
+			else if(x > INVALID_CHARACTER)
 			{
-				c-= 96;
+				c-= INVALID_CHARACTER - ' ' + 1;
 			}
 		}
 
