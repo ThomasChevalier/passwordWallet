@@ -90,7 +90,16 @@
 #error Not standart size
 #endif
 
-#define OFFSET_FIRST_PWD (OFFSET_MEMORY_MAP + SIZE_MEMORY_MAP) /* 266 or 285*/
+#define OFFSET_BACKUP_STATUS (OFFSET_MEMORY_MAP + SIZE_MEMORY_MAP)
+#define SIZE_BACKUP_STATUS (1)
+
+#define OFFSET_BACKUP_ID (OFFSET_BACKUP_STATUS + SIZE_BACKUP_STATUS)
+#define SIZE_BACKUP_ID (1)
+
+#define OFFSET_BACKUP_DATA (OFFSET_BACKUP_ID + SIZE_BACKUP_ID)
+#define SIZE_BACKUP_DATA SIZE_OF_PWD_BLOCK
+
+#define OFFSET_FIRST_PWD (OFFSET_BACKUP_DATA + SIZE_BACKUP_DATA) /* 434 or 453*/
 
 // //////////////// //
 // Password Section //
@@ -198,25 +207,38 @@ extern volatile uint16_t ACTIVITY_TIMER;
 #define EEPROM_OFFSET_VALIDATION (EEPROM_OFFSET_RANDSEQ + EEPROM_RANDSEQ_SIZE)
 #define EEPROM_VALIDATION_SIZE (16)
 
-/* *********** */
-/* RETURN CODE */
-/* *********** */
+// /////////// //
+// RETURN CODE //
+// /////////// //
 
 #define RETURN_SUCCESS (1)
 #define RETURN_ERROR (0)
 
 
-/* ***** */
-/* LOGIC */
-/* ***** */
+// ///// //
+// LOGIC //
+// ///// //
 
 #define FALSE (0)
 #define TRUE (1)
 
-/* ******* */
-/* UTILITY */
-/* ******* */
+// /////// //
+// UTILITY //
+// /////// //
 
 uint8_t strlen_bound(char* str, uint8_t max);
+
+// ////// //
+// MIFARE //
+// ////// //
+
+#define MIFARE_BLOCK_KEY (4)
+#define MIFARE_BLOCK_TEMP_KEY (5)
+#define MIFARE_BLOCK_STATUS (6)
+
+#define MIFARE_AUTH_TRAILER_BLOCK (7)
+
+#define MIFARE_STATUS_NORMAL_KEY (0)
+#define MIFARE_STATUS_CHANGE_KEY (1)
 
 #endif // GLOBALS_HEADER_THOMAS_CHEVALIER

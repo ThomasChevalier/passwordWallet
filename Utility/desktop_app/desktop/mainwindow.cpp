@@ -3,6 +3,7 @@
 
 #include <QSerialPortInfo>
 #include <QMessageBox>
+#include <QFileDialog>
 
 #include "SerialDevice.h"
 #include "PasswordTabView.h"
@@ -115,4 +116,15 @@ void MainWindow::connectDevice()
         }
     }
     m_pwdView->parseData();
+}
+
+void MainWindow::on_buttonSave_clicked()
+{
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Sauvegarder la mémoire"));
+    QFile framFile(fileName);
+    if(!framFile.open(QIODevice::WriteOnly)){
+        QMessageBox::critical(this, tr("Erreur de fichier"), tr("Impossible d'ouvrir le fichier %1 en écriture. Disque plein ?").arg(fileName));
+        return;
+    }
+    framFile.write(m_data.memory());
 }

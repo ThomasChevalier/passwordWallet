@@ -40,17 +40,9 @@ uint8_t state_wait_card_transition (uint8_t event)
 		if(authenticate_on_card())
 		{
 			uint8_t buffer[18];
-			uint8_t size = 18;
 
 			// Trying to read master key ...
-			if(rfid_MIFARE_read(4, buffer, &size) != STATUS_OK && size != 16)
-			{
-				// .. Failure
-				draw_clear();
-				draw_flash_str(19, 20, str_error_read);
-				draw_update();
-			}
-			else
+			if(read_key_from_card(buffer, MIFARE_BLOCK_KEY) == RETURN_SUCCESS)
 			{
 				// .. Success
 				memcpy(KEY, buffer, 16);
@@ -64,7 +56,7 @@ uint8_t state_wait_card_transition (uint8_t event)
 				else
 				{
 					draw_clear();
-					draw_flash_str(15, 20, str_error_pwd);
+					draw_flash_str(12, 20, str_error_pwd);
 					draw_update();
 				}
 			}

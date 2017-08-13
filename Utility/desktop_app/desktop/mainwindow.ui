@@ -357,7 +357,7 @@ color:orange;
              </layout>
             </item>
             <item>
-             <widget class="QPushButton" name="pushButton_11">
+             <widget class="QPushButton" name="buttonSave">
               <property name="text">
                <string>Sauvegarder</string>
               </property>

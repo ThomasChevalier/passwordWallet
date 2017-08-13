@@ -9,6 +9,7 @@
 #include "Random.h"
 #include "Encryption.h"
 #include "Security.h"
+#include "Backup.h"
 
 #include "../Hardware/Rfid.h"
 #include "../Hardware/Buttons.h"
@@ -24,11 +25,13 @@
 
 #include "../System/Sleep.h"
 
-/**
- * @brief Wait until a new RFID tag is present. This is a blockant function.
- */
-static void waitRfidTag(void)
+void wait_rfid_tag(void)
 {
+	// Ask for card
+	draw_clear();
+	draw_flash_str(5, 30, str_order_approach);
+	draw_update();
+
 	while(1)
 	{
 		if(!rfid_PICC_IsNewCardPresent())
@@ -59,7 +62,8 @@ uint8_t authenticate_on_card(void)
 			key.keyByte[i] = 0xFF;
 		}
 
-		status = rfid_pcd_authenticate(PICC_CMD_MF_AUTH_KEY_A, 7, &key, &rfid_uid);
+		// 7 is the trailer block of sector 1
+		status = rfid_pcd_authenticate(PICC_CMD_MF_AUTH_KEY_A, MIFARE_AUTH_TRAILER_BLOCK, &key, &rfid_uid);
 		if(status != STATUS_OK)
 		{
 			draw_clear();
@@ -74,20 +78,19 @@ uint8_t authenticate_on_card(void)
 	return RETURN_ERROR;
 }
 
-
 void change_master_key(void)
 {
 	DISABLE_SLEEP();
 	// rfid may be power down
 	rfid_init();
 
-	// Ask for card
-	draw_clear();
-	draw_flash_str(8, 30, str_order_approach);
-	draw_update();
-
 	// Waiting for the user to present his card
-	waitRfidTag();
+	wait_rfid_tag();
+
+	if(authenticate_on_card() != RETURN_SUCCESS)
+	{
+		goto EXIT;
+	}
 
 	// Generate new key
 	uint8_t newKey[16];
@@ -102,26 +105,13 @@ void change_master_key(void)
 	progress_end();
 
 	// Write it to the rfid tag ...
-	if(authenticate_on_card())
+	if(write_key_to_card(newKey, MIFARE_BLOCK_TEMP_KEY) != RETURN_SUCCESS)
 	{
-		// Trying to write on tag
-		if(rfid_MIFARE_write(4, newKey, 16) != STATUS_OK)
-		{
-			// .. Failure
-			draw_clear();
-			draw_flash_str(0, 20, str_error_read);
-			draw_update();
-			goto EXIT;
-		}
-	}
-	else
-	{
-		// If we cannot authenticate, abort operation
 		goto EXIT;
 	}
 
-	// From here, the code must be error free, otherwise the key will be lost
-	// The device must not be disconnected too
+	// From here if a reset happen the backup system must be able to 
+	// recover information and finish the work
 
 	draw_clear();
 	draw_flash_str(15, 3, str_comm_no_unplug);
@@ -129,54 +119,43 @@ void change_master_key(void)
 	progress_begin(NUM_PWD);
 
 	// Update encryption key
-	encryption_update_key(newKey);
+	encryption_update_key(newKey, 0);
+	// Now KEY contains the value of newKey
 
 	progress_end();
+
+	// Change the status to update card state
+	backup_set_status(BACKUP_STATUS_CHANGE_KEY_UPDATE_CARD);
+
+	// Update rfid data
+	// Write the new key to the normal key block
+	if(write_key_to_card(KEY, MIFARE_BLOCK_KEY) != RETURN_SUCCESS)
+	{
+		// Crash the device. The user is forced to restart it and
+		// the backup system will be able to recover data.
+		while(1);
+	}
+	// Erasing the new key block is not needed
+
+	// Change the status to eeprom validation state
+	backup_set_status(BACKUP_STATUS_CHANGE_KEY_VALIDATION);
 
 	// Update encryption validation
 
-	// Generate random sequence
 	draw_clear();
-	progress_begin(EEPROM_RANDSEQ_SIZE + 4);
 	draw_flash_str(15, 3, str_comm_no_unplug);
 	draw_flash_str(10, 40, str_change_key_what);
+	progress_begin(EEPROM_RANDSEQ_SIZE + 4);
 
-	uint8_t randomSequence[EEPROM_RANDSEQ_SIZE];
-	uint8_t* eeprom_addr = EEPROM_OFFSET_RANDSEQ;
-	for(uint8_t i = 0; i < EEPROM_RANDSEQ_SIZE; ++i)
-	{
-		randomSequence[i] = random_request_byte();
-		
-		eeprom_update_byte(eeprom_addr, randomSequence[i]);
-		++eeprom_addr;
-		progress_add(1);
-	}
-	
-	// Encrypt that sequence
-	uint8_t zeroIv[16]  = {0x00, 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 };
-	AES128_CBC_encrypt_buffer(randomSequence, EEPROM_RANDSEQ_SIZE, KEY, zeroIv);
-	progress_add(2);
+	encryption_update_validation();
 
-	// Write it to the eeprom
-	eeprom_addr = (uint8_t*)EEPROM_OFFSET_VALIDATION;
-	for(uint8_t i = 0; i < EEPROM_RANDSEQ_SIZE; ++i)
-	{
-		
-		eeprom_update_byte(eeprom_addr, randomSequence[i]);
-		++eeprom_addr;
-	}
-	progress_add(2);
 	progress_end();
 
+	// We are done !!!
+	backup_free();
 
 	// Display new key
-	draw_clear();
-	draw_flash_str(17, 10, str_change_key_here);
-	char outputText[20];
-	encode_16B(KEY, outputText);
-	draw_text(0, 30, outputText, 20);
-	security_erase_data(outputText, 20);
-	draw_update();
+	display_master_key();
 
 	// Wait for the user to press a button
 	EXIT:
@@ -184,4 +163,42 @@ void change_master_key(void)
 	program_pause_until_event(EVENT_ALL_BUTTONS);
 
 	ENABLE_SLEEP();
+}
+
+uint8_t read_key_from_card(uint8_t* keyOut, uint8_t keyBlock)
+{
+	uint8_t size = 18;
+	if(rfid_MIFARE_read(keyBlock, keyOut, &size) != STATUS_OK && size != 16)
+	{
+		// .. Failure
+		draw_clear();
+		draw_flash_str(19, 20, str_error_read);
+		draw_update();
+		return RETURN_ERROR;
+	}
+	return RETURN_SUCCESS;
+}
+
+uint8_t write_key_to_card(uint8_t* keyIn, uint8_t keyBlock)
+{
+	if(rfid_MIFARE_write(keyBlock, keyIn, 16) != STATUS_OK)
+	{
+		// .. Failure
+		draw_clear();
+		draw_flash_str(0, 20, str_error_write);
+		draw_update();
+		return RETURN_ERROR;
+	}
+	return RETURN_SUCCESS;
+}
+
+void display_master_key(void)
+{
+	draw_clear();
+	draw_flash_str(17, 10, str_change_key_here);
+	char outputText[20];
+	encode_16B(KEY, outputText);
+	draw_text(0, 30, outputText, 20);
+	security_erase_data(outputText, 20);
+	draw_update();
 }

@@ -4,6 +4,7 @@
 		<str name="card">ERREUR : carte inconnue</str>
 		<str name="auth">ERREUR d'authentification</str>
 		<str name="read">Erreur de lecture</str>
+		<str name="write">Erreur d'ecriture</str>
 		<str name="pwd" >Mauvais mot de passe</str>
 		<str name="not_enough_mem">Memoire insuffisante</str>
 		<str name="cannot_add">Ajout impossible</str>
@@ -71,7 +72,13 @@
 	<module name="change_key">
 		<str name="what">M.a.j. de la clef</str>
 		<str name="update_pwd">M.a.j. des mots de passe</str>
+		<str name="update_validation">M.a.j. de la validation</str>
+		<str name="update_card">M.a.j. de la carte</str>
 		<str name="here">Voici votre clef</str>
+	</module>
+
+	<module name="backup">
+		<str name="what">Reparation des erreurs</str>
 	</module>
 </root>
 <!-- File created by Thomas Chevalier - Copyright - 2017 / thomasom.chevalier@gmail.com -->

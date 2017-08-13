@@ -4,6 +4,11 @@
 #include <stdint.h>
 
 /**
+ * @brief Wait until a new RFID tag is present. This is a blockant function.
+ */
+void wait_rfid_tag(void);
+
+/**
  * @brief Try to authenticate on the rfid tag.
  * @details It use the key 0xFFFFFFFFFFFF to authenticate.
  * This function may draw on screen (str_error_card or str_error_auth).
@@ -18,5 +23,33 @@ uint8_t	authenticate_on_card	(void);
  * This function always draw on screen.
  */
 void	change_master_key		(void);
+
+/**
+ * @brief Read a key from the card.
+ * @details This function assumes that the card is authenticate.
+ * 
+ * @param keyOut The output of the read. Must be 18 bytes long.
+ * @param keyBlock Where to read the key.
+ * 
+ * @return RETURN_SUCCESS if success, RETURN_ERROR otherwise.
+ */
+uint8_t read_key_from_card(uint8_t* keyOut, uint8_t keyBlock);
+
+/**
+ * @brief Write a key to the card.
+ * @details This function assumes that the card is authenticate.
+ * 
+ * @param keyOut The key to write. Must be 16 bytes long.
+ * @param keyBlock Where to write the key.
+ * 
+ * @return RETURN_SUCCESS if success, RETURN_ERROR otherwise.
+ */
+uint8_t write_key_to_card(uint8_t* keyIn, uint8_t keyBlock);
+
+/**
+ * @brief Display the master key on the screen.
+ * @details Displayed key is encoded with Ascii85.
+ */
+void display_master_key(void);
 
 #endif // AUTHENTIFICATION_HEADER_THOMAS_CHEVALIER

@@ -9,6 +9,7 @@
 
 #include "../Security/Security.h"
 #include "../Security/Random.h"
+#include "../Security/Authentification.h"
 
 #include "../Hardware/Fram.h"
 #include "../Hardware/Buttons.h"
@@ -21,17 +22,7 @@
 void opt_callback_show_key(void)
 {
 	// Display key
-	draw_clear();
-	
-	draw_flash_str(17, 10, str_change_key_here);
-
-	char outputText[20];
-	encode_16B(KEY, outputText);
-	draw_text(0, 30, outputText, 20);
-
-	security_erase_data(outputText, 20);
-
-	draw_update();
+	display_master_key();
 
 	DISABLE_SLEEP();
 	while(buttons_pressed());
@@ -55,7 +46,7 @@ void opt_callback_full_reset(void)
 
 	// Erase all fram memory
 	draw_clear();
-	draw_flash_str(17, 40, str_recovery_eraseMem);
+	draw_flash_str(15, 40, str_recovery_eraseMem);
 	draw_update();
 
 	progress_begin(FRAM_BYTE_SIZE/256);

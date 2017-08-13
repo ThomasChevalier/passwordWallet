@@ -8,6 +8,7 @@
 #include "Program/Program.h"
 
 #include "Security/Encryption.h"
+#include "Security/Backup.h"
 
 #include "Hardware/Fram.h"
 #include "Hardware/SelfTest.h"
@@ -62,6 +63,10 @@ int main(void)
 	{
 		opt_callback_full_reset();
 	}
+
+	// In case of something goes wrong at the last session,
+	// recover broken data.
+	backup_recover();
 
 	static const State states[NUM_STATES] =
 	{

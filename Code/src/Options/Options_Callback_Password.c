@@ -11,12 +11,13 @@
 #include "../Security/Security.h"
 #include "../Security/Password.h"
 #include "../Security/Password_List.h"
+#include "../Security/Backup.h"
 
 #include "../System/Sleep.h"
 
 void opt_callback_add_pwd(void)
 {
-if(NUM_PWD == MAXIMUM_NUMBER_OF_PWD-1)
+	if(NUM_PWD == MAXIMUM_NUMBER_OF_PWD-1)
 	{
 		draw_clear();
 		draw_flash_str(0, 10, str_error_not_enough_mem);
@@ -78,9 +79,13 @@ void opt_callback_regenerate_pwd(void)
 
 	draw_clear();
 	draw_flash_str(40, 40, str_option_regen);
-	progress_begin(52);		
+	progress_begin(52);
+
+	backup_save(CURRENT_PASSWORD_ID, BACKUP_STATUS_UPDATE);
 
 	password_regenerate(CURRENT_PASSWORD_ID);
+
+	backup_free();
 
 	progress_end();
 
@@ -103,10 +108,14 @@ void opt_callback_change_pwd(void)
 	DISABLE_SLEEP();
 
 	draw_clear();
-	draw_flash_str(14, 40, str_option_change_pwd);
+	draw_flash_str(8, 40, str_option_change_pwd);
 	progress_begin(21);	
 
+	backup_save(CURRENT_PASSWORD_ID, BACKUP_STATUS_UPDATE);
+
 	password_set_data(CURRENT_PASSWORD_ID, tempPwd, KEY);
+
+	backup_free();
 
 	security_erase_data(tempPwd, 32);
 
@@ -130,11 +139,15 @@ void opt_callback_change_usr_name(void)
 	DISABLE_SLEEP();
 
 	draw_clear();
-	draw_flash_str(17, 40, str_option_change_usr);
+	draw_flash_str(5, 40, str_option_change_usr);
 	progress_begin(21);
+
+	backup_save(CURRENT_PASSWORD_ID, BACKUP_STATUS_UPDATE);
 
 	password_set_usr_name(CURRENT_PASSWORD_ID, tempStr, KEY);
 	security_erase_data(tempStr, 64);
+
+	backup_free();
 
 	progress_end();
 

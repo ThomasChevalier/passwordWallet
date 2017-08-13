@@ -192,7 +192,7 @@ void draw_browse_dock(char letter, uint8_t highlight)
 	}
 
 	draw_char_column((highlight << 4) | (1 << 5), letter);
-	draw_v_line(7, 0, 64, WHITE);
+	draw_v_line(8, 0, 64, WHITE);
 }
 
 uint8_t type_string(char* string_typed, uint8_t maxLen)

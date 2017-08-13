@@ -1,5 +1,7 @@
 #include "State_Communication.h"
 
+#include <string.h>
+
 #include "../StatesDefine.h"
 #include "../Events.h"
 

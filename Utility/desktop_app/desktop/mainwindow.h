@@ -35,6 +35,8 @@ private slots:
 
     void connectDevice();
 
+    void on_buttonSave_clicked();
+
 private:
 
     Ui::MainWindow *ui;
