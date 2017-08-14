@@ -103,6 +103,24 @@ void draw_text(uint8_t x, uint8_t y, char *str, uint8_t max)
 	}
 }
 
+void draw_num(uint8_t x, uint8_t y, uint16_t num)
+{
+	char strNum[5] = {0};
+	char* ptr = strNum;
+
+	uint16_t shifter = num;
+	do{ //Move to where representation ends
+		++ptr;
+		shifter = shifter/10;
+	}while(shifter);
+	do{ //Move back, inserting digits as u go
+		*--ptr = num%10 + '0';
+		num = num/10;
+	}while(num);
+
+	draw_text(x, y, strNum, 5);
+}
+
 
 void draw_hex(uint8_t x, uint8_t y, uint8_t* hexBuffer, uint8_t hexBufferSize)
 {

@@ -111,3 +111,74 @@ void opt_callback_force_key(void)
 	EXIT:
 	rfid_power_down();
 }
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wreturn-local-addr"
+
+uint16_t freeRam (void) {
+	extern uint16_t __heap_start, *__brkval; 
+	uint16_t v; 
+	return (uint16_t) &v - (__brkval == 0 ? (uint16_t) &__heap_start : (uint16_t) __brkval); 
+}
+
+#pragma GCC diagnostic pop
+
+uint16_t readVcc(void) {
+	// Read 1.1V reference against AVcc
+	// set the reference to Vcc and the measurement to the internal 1.1V reference
+	ADMUX = (1<<REFS0) | (1<<MUX4) | (1<<MUX3) | (1<<MUX2) | (1<<MUX1);
+
+	_delay_ms(2); // Wait for Vref to settle
+
+	ADCSRA |= _BV(ADSC); // Start conversion
+	while (ADCSRA & (1<<ADSC)); // measuring
+
+	uint8_t low  = ADCL; // must read ADCL first - it then locks ADCH  
+	uint8_t high = ADCH; // unlocks both
+
+	uint16_t result = (high<<8) | low;
+
+	result = 1125300L / result; // Calculate Vcc (in mV); 1125300 = 1.1*1023*1000
+	return result; // Vcc in millivolts
+}
+
+
+void opt_callback_system_info(void)
+{
+	DISABLE_SLEEP();
+
+	program_wait();
+
+	// Enable adc
+	ADCSRA = (1<<ADEN);
+	while(!(events_get() & EVENT_ALL_BUTTONS))
+	{
+		program_update();
+
+		draw_clear();
+		draw_flash_str_cx(0, str_system_info);
+
+		draw_flash_str(0, 10, str_system_ram);
+		draw_num(str_system_ram_pixLen + 3, 10, freeRam());
+
+		draw_flash_str(0, 20, str_system_pwd);
+		draw_num(str_system_pwd_pixLen + 3, 20, NUM_PWD);
+
+		draw_flash_str(0, 30, str_system_volt);
+
+		// Wait for the conversion to complete
+		draw_num(str_system_volt_pixLen + 3, 30, readVcc());
+
+
+		draw_flash_str(0, 40, str_system_entropy);
+		draw_num(str_system_entropy_pixLen + 3, 40, entropy_pool_size);
+		draw_update();
+
+		program_wait();
+	}
+
+	ADMUX = 0;
+	ADCSRA = 0;
+
+	ENABLE_SLEEP();
+}

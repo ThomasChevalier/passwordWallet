@@ -31,7 +31,7 @@ static volatile uint32_t random_dword;
  */
 static volatile uint8_t random_transfer;
 
-static uint16_t entropy_pool_size;
+uint16_t entropy_pool_size;
 
 void random_init(void)
 {

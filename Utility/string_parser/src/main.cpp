@@ -372,7 +372,10 @@ int main(int argc, char* argv[])
 			outFile << "#define " << strName << "_len (" << s.content.size() << ")\n";
 
 			unsigned centerX = SCREEN_WIDTH;
-			unsigned widthStr = get_width(s.content);
+			const unsigned widthStr = get_width(s.content);
+
+			outFile << "#define " << strName << "_pixLen (" << widthStr << ")\n";
+			
 			if(widthStr > centerX){
 				centerX = 0;
 			}

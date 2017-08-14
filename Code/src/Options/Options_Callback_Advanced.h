@@ -45,4 +45,6 @@ void opt_callback_enter_key(void);
 
 void opt_callback_force_key(void);
 
+void opt_callback_system_info(void);
+
 #endif // OPTIONS_CALLBACK_ADVANCED_HEADER_THOMAS_CHEVALIER

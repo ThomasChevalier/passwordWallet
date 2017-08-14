@@ -82,5 +82,13 @@
 	<module name="backup">
 		<str name="what">Reparation des erreurs</str>
 	</module>
+
+	<module name="system">
+		<str name="info">Info systeme</str>
+		<str name="ram">RAM :</str>
+		<str name="pwd">MDP :</str>
+		<str name="volt">Tension :</str>
+		<str name="entropy">Entropie :</str>
+	</module>
 </root>
 <!-- File created by Thomas Chevalier - Copyright - 2017 / thomasom.chevalier@gmail.com -->

@@ -6,7 +6,7 @@
 
 #include "../Graphics/String.h"
 
-#define OPTIONS_LIST_NUM_OPTIONS (23)
+#define OPTIONS_LIST_NUM_OPTIONS (24)
 #define OPTIONS_LIST_NONE OPTIONS_LIST_NUM_OPTIONS
 
 #ifdef NONE
@@ -83,7 +83,7 @@ static const Option_Node list_options [OPTIONS_LIST_NUM_OPTIONS]  =
 /* 8*/      {opt_callback_sort_use,        NONE,    9, STR(str_option_sort_use)},
 /* 9*/      {opt_callback_sort_alpha,      NONE, NONE, STR(str_option_sort_alpha)},
 
-/*10*/  {NULL, 11, 19, STR(str_option_param)},
+/*10*/  {NULL, 11, 20, STR(str_option_param)},
 
 /*11*/		{NULL, 12, 15, STR(str_option_key)},
 /*12*/			{opt_callback_change_key,      NONE,   13, STR(str_option_change_key)},
@@ -94,7 +94,8 @@ static const Option_Node list_options [OPTIONS_LIST_NUM_OPTIONS]  =
 /*16*/		{opt_callback_inverse_screen,  NONE,   17, STR(str_option_orientation)},
 
 /*17*/		{opt_callback_self_test,       NONE,   18, STR(str_option_self_test)},
-/*18*/		{opt_callback_full_reset,      NONE, NONE, STR(str_option_full_reset)},
+/*18*/		{opt_callback_system_info,     NONE,   19, STR(str_system_info)},
+/*19*/		{opt_callback_full_reset,      NONE, NONE, STR(str_option_full_reset)},
 
 /*19*/  {opt_callback_add_pwd, NONE, NONE, STR(str_option_add)},
 

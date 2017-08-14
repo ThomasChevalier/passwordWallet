@@ -35,6 +35,8 @@ void draw_flash_string(uint8_t x, uint8_t y, uint16_t str_index);
 #define draw_flash_str_cx(y, str) draw_flash_string(str##_centerX, y, str##_index)
 #define draw_flash_str(x, y, str) draw_flash_string(x, y, str##_index)
 
+void draw_num(uint8_t x, uint8_t y, uint16_t num);
+
 //void draw_text_index(uint8_t x, uint8_t y, uint8_t str_index);
 
 //#define draw_text_index(x,y,s) str_to_buffer(s); draw_text(x, y, str_buffer, 0);

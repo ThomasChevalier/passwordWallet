@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 
+extern uint16_t entropy_pool_size;
 
 /**
  * @brief Should be called once at the beggining of the program.
