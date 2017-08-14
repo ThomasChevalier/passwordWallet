@@ -1,5 +1,7 @@
 #include "Options_Callback_Advanced.h"
 
+#include <string.h>
+
 #include "../Globals.h"
 
 #include "../Graphics/Drawing.h"
@@ -9,8 +11,10 @@
 
 #include "../Security/Security.h"
 #include "../Security/Random.h"
+#include "../Security/Backup.h"
 #include "../Security/Authentification.h"
 
+#include "../Hardware/Rfid.h"
 #include "../Hardware/Fram.h"
 #include "../Hardware/Buttons.h"
 
@@ -79,4 +83,31 @@ void opt_callback_enter_key(void)
 	char usrKey[21] = {0};
 	type_string(usrKey, 20);
 	decode_16B(usrKey, KEY);
+}
+
+void opt_callback_force_key(void)
+{
+	rfid_init();
+	wait_rfid_tag();
+	if(authenticate_on_card() != RETURN_SUCCESS)
+	{
+		goto EXIT;
+	}
+
+	uint8_t buffer[18];
+
+	// Trying to read master key ...
+	if(read_key_from_card(buffer, MIFARE_BLOCK_KEY) == RETURN_SUCCESS)
+	{
+		// .. Success
+		memcpy(KEY, buffer, 16);
+		security_erase_data(buffer, 18);
+
+		user_update_validation();
+
+		backup_free();
+	}
+
+	EXIT:
+	rfid_power_down();
 }

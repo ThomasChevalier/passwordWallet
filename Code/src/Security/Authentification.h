@@ -18,6 +18,12 @@ void wait_rfid_tag(void);
 uint8_t	authenticate_on_card	(void);
 
 /**
+ * @brief Display a message and a progress bar and update encryption validation
+ * backup_free() must be called after this function.
+ */
+void user_update_validation (void);
+
+/**
  * @brief Change the key used to encrypt the fram memory.
  * @details Execution time of this function is proportionnal to the number of passwords stored in memory.
  * This function always draw on screen.

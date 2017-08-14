@@ -29,7 +29,7 @@ void wait_rfid_tag(void)
 {
 	// Ask for card
 	draw_clear();
-	draw_flash_str(5, 30, str_order_approach);
+	draw_flash_str(3, 30, str_order_approach);
 	draw_update();
 
 	while(1)
@@ -76,6 +76,24 @@ uint8_t authenticate_on_card(void)
 		}
 	}
 	return RETURN_ERROR;
+}
+
+void user_update_validation (void)
+{
+	// Change the status to eeprom validation state
+	backup_set_status(BACKUP_STATUS_CHANGE_KEY_VALIDATION);
+
+	// Update encryption validation
+
+	draw_clear();
+	draw_flash_str(15, 3, str_comm_no_unplug);
+	draw_flash_str(10, 40, str_change_key_what);
+	progress_begin(EEPROM_RANDSEQ_SIZE + 4);
+
+	encryption_update_validation();
+
+	progress_end();
+
 }
 
 void change_master_key(void)
@@ -137,19 +155,7 @@ void change_master_key(void)
 	}
 	// Erasing the new key block is not needed
 
-	// Change the status to eeprom validation state
-	backup_set_status(BACKUP_STATUS_CHANGE_KEY_VALIDATION);
-
-	// Update encryption validation
-
-	draw_clear();
-	draw_flash_str(15, 3, str_comm_no_unplug);
-	draw_flash_str(10, 40, str_change_key_what);
-	progress_begin(EEPROM_RANDSEQ_SIZE + 4);
-
-	encryption_update_validation();
-
-	progress_end();
+	user_update_validation();
 
 	// We are done !!!
 	backup_free();

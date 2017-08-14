@@ -143,7 +143,19 @@ void backup_recover(void)
 			// We can decrypt with "last key" the passwords not updated with "new key"
 
 			// Copy "last key" to the master key
-			memcpy(KEY, lastKey, 16);			
+			memcpy(KEY, lastKey, 16);
+
+			// If we have still the lastKey, then check the card
+			if(backupStatus >= BACKUP_STATUS_CHANGE_KEY && backupStatus < BACKUP_STATUS_CHANGE_KEY_VALIDATION)
+			{
+				if(encryption_check_key() != RETURN_SUCCESS)
+				{
+					draw_clear();
+					draw_flash_str(12, 20, str_error_pwd);
+					draw_update();
+					goto EXIT;
+				}
+			}
 		}
 
 		if(backupStatus == BACKUP_STATUS_CHANGE_KEY || backupStatus == BACKUP_STATUS_CHANGE_KEY_CHUNK_OK)

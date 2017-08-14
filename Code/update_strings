@@ -1,0 +1,5 @@
+#!/bin/bash
+
+echo "Update strings ... "
+../Utility/string_parser/string_parser --file strings.xml
+mv String.h src/Graphics/String.h

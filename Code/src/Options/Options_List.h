@@ -6,7 +6,7 @@
 
 #include "../Graphics/String.h"
 
-#define OPTIONS_LIST_NUM_OPTIONS (21)
+#define OPTIONS_LIST_NUM_OPTIONS (23)
 #define OPTIONS_LIST_NONE OPTIONS_LIST_NUM_OPTIONS
 
 #ifdef NONE
@@ -19,7 +19,7 @@
 #define NULL ((void*)0)
 #endif
 
-#define OPTIONS_LIST_MAX_INTRICATION (1)
+#define OPTIONS_LIST_MAX_INTRICATION (2)
 
 #include "Options_Callback_Password.h"
 #include "Options_Callback_Sort.h"
@@ -77,22 +77,30 @@ static const Option_Node list_options [OPTIONS_LIST_NUM_OPTIONS]  =
 /* 3*/      {opt_callback_change_name,     NONE,    4, STR(str_option_change_name)},
 /* 4*/      {opt_callback_regenerate_pwd,  NONE,    5, STR(str_option_regen)},
 /* 5*/      {opt_callback_delete_pwd,      NONE, NONE, STR(str_option_delete)},
+
 /* 6*/  {NULL, 7, 10, STR(str_option_sort)},
 /* 7*/      {opt_callback_no_sort,         NONE,    8, STR(str_option_sort_no)},
 /* 8*/      {opt_callback_sort_use,        NONE,    9, STR(str_option_sort_use)},
 /* 9*/      {opt_callback_sort_alpha,      NONE, NONE, STR(str_option_sort_alpha)},
-/*10*/  {NULL, 11, 17, STR(str_option_param)},
-/*11*/		{opt_callback_change_key,      NONE,   12, STR(str_option_change_key)},
-/*12*/		{opt_callback_show_key,        NONE,   13, STR(str_option_show_key)},
-/*13*/		{opt_callback_inverse_screen,  NONE,   14, STR(str_option_orientation)},
-/*14*/		{opt_callback_change_keyboard, NONE,   15, STR(str_option_keyboard_layout)},
-/*15*/		{opt_callback_self_test,       NONE,   16, STR(str_option_self_test)},
-/*16*/		{opt_callback_full_reset,      NONE, NONE, STR(str_option_full_reset)},
-/*17*/  {opt_callback_add_pwd, NONE, NONE, STR(str_option_add)},
 
-/*18*/	{NULL, NONE, 19, STR(str_recovery_title)},
-/*19*/	{opt_callback_full_reset, NONE, 20, STR(str_recovery_full)},
-/*20*/	{opt_callback_enter_key, NONE, NONE, STR(str_recovery_key)},
+/*10*/  {NULL, 11, 19, STR(str_option_param)},
+
+/*11*/		{NULL, 12, 15, STR(str_option_key)},
+/*12*/			{opt_callback_change_key,      NONE,   13, STR(str_option_change_key)},
+/*13*/			{opt_callback_show_key,        NONE,   14, STR(str_option_show_key)},
+/*14*/			{opt_callback_force_key,       NONE,   NONE, STR(str_option_force_key)},
+
+/*15*/		{opt_callback_change_keyboard, NONE,   16, STR(str_option_keyboard_layout)},
+/*16*/		{opt_callback_inverse_screen,  NONE,   17, STR(str_option_orientation)},
+
+/*17*/		{opt_callback_self_test,       NONE,   18, STR(str_option_self_test)},
+/*18*/		{opt_callback_full_reset,      NONE, NONE, STR(str_option_full_reset)},
+
+/*19*/  {opt_callback_add_pwd, NONE, NONE, STR(str_option_add)},
+
+/*20*/	{NULL, NONE, 19, STR(str_recovery_title)},
+/*21*/	{opt_callback_full_reset, NONE, 20, STR(str_recovery_full)},
+/*22*/	{opt_callback_enter_key, NONE, NONE, STR(str_recovery_key)},
 };
 
 
