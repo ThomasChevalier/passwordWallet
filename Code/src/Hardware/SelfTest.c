@@ -60,8 +60,9 @@ static void test_rfid(void)
 	if(ret == RETURN_ERROR)
 	{
 		uint8_t y = 0;
-		if(failOccured)
+		if(failOccured){
 			y = 10;
+		}
 		draw_flash_str(0, y, str_self_test_rfid_fail);
 		failOccured = TRUE;
 		draw_update();

@@ -370,7 +370,18 @@ int main(int argc, char* argv[])
 			outFile << "#define " << strName << "_index (" << index << ")\n";
 			index+=s.content.size()+1;
 			outFile << "#define " << strName << "_len (" << s.content.size() << ")\n";
-			outFile << "#define " << strName << "_centerX (" << (SCREEN_WIDTH - get_width(s.content)) / 2 << ")\n";
+
+			unsigned centerX = SCREEN_WIDTH;
+			unsigned widthStr = get_width(s.content);
+			if(widthStr > centerX){
+				centerX = 0;
+			}
+			else{
+				centerX -= widthStr;
+				centerX /= 2;
+			}
+
+			outFile << "#define " << strName << "_centerX (" << centerX << ")\n";
 			for(char c : s.content)
 			{
 				allData.push_back(c);

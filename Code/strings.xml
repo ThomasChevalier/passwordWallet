@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root language="fr">
 	<module name="error">
-		<str name="card">ERREUR : carte inconnue</str>
-		<str name="auth">ERREUR d'authentification</str>
+		<str name="card">Erreur carte inconnue</str>
+		<str name="auth">Erreur authentification</str>
 		<str name="read">Erreur de lecture</str>
 		<str name="write">Erreur d'ecriture</str>
 		<str name="pwd" >Mauvais mot de passe</str>
