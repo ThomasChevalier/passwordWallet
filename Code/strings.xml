@@ -16,11 +16,11 @@
 	</module>
 
 	<module name="reset">
-		<str name="external">Reset externe</str>
-		<str name="brownout">Reset basse tension</str>
-		<str name="watchdog">Reset watchdog</str>
-		<str name="jtag">Reset JTAG</str>
-		<str name="usb">Reset USB</str>
+		<str name="external">Externe</str>
+		<str name="brownout">Basse tension</str>
+		<str name="watchdog">Watchdog</str>
+		<str name="jtag">JTAG</str>
+		<str name="usb">USB</str>
 	</module>
 
 	<module name="option">

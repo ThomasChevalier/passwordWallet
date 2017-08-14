@@ -159,15 +159,14 @@ void password_increment_counter(uint8_t pwd_id)
 	password_set_counter(pwd_id, counter + 1);
 }
 
-// Progress complexity = 31
+// Progress complexity = 32 + 21 = 53
 void password_regenerate(uint8_t pwd_id)
 {
 	uint8_t newPwd[32];
-	for(uint8_t i = 0; i < 31; ++i)
+	for(uint8_t i = 0; i < 32; ++i)
 	{
 		newPwd[i] = random_request_printable();
 		progress_add(1);
 	}
-	newPwd[31] = 0;
 	password_set_data(pwd_id, newPwd, KEY);
 }

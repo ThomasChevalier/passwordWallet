@@ -25,10 +25,10 @@ void opt_callback_add_pwd(void)
 		_delay_ms(2000);
 		return;
 	}
-	char usrName[64] = {0};
+	char usrName[64];
 	
-	char pwdName[32] = {0};
-	char pwdData[32] = {0};
+	char pwdName[32];
+	char pwdData[32];
 
 	draw_clear();
 	draw_flash_str(0, 10, str_order_type_pwd_name);
@@ -79,7 +79,7 @@ void opt_callback_regenerate_pwd(void)
 
 	draw_clear();
 	draw_flash_str(40, 40, str_option_regen);
-	progress_begin(52);
+	progress_begin(53);
 
 	backup_save(CURRENT_PASSWORD_ID, BACKUP_STATUS_UPDATE);
 
@@ -95,7 +95,7 @@ void opt_callback_regenerate_pwd(void)
 
 void opt_callback_change_pwd(void)
 {
-	uint8_t tempPwd[32] = {0};
+	uint8_t tempPwd[32];
 
 	password_read_data(CURRENT_PASSWORD_ID, tempPwd, KEY);
 
@@ -127,10 +127,10 @@ void opt_callback_change_pwd(void)
 
 void opt_callback_change_usr_name(void)
 {
-	uint8_t tempStr[64] = {0};
+	uint8_t tempStr[64];
 	password_read_usr_name(CURRENT_PASSWORD_ID, tempStr, KEY);
 	
-	if(!type_string((char*)tempStr, 63))
+	if(!type_string((char*)tempStr, 64))
 	{
 		// If nothing changed
 		return;

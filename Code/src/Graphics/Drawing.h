@@ -31,9 +31,9 @@ uint8_t draw_char(uint8_t x, uint8_t y, uint8_t c);
 /**
  * @brief Same as draw_text but load the str_index in the str_buffer before.
  */
-#define draw_flash_str(x, y, str) draw_flash_string(x, y, str##_index)
 void draw_flash_string(uint8_t x, uint8_t y, uint16_t str_index);
-
+#define draw_flash_str_cx(y, str) draw_flash_string(str##_centerX, y, str##_index)
+#define draw_flash_str(x, y, str) draw_flash_string(x, y, str##_index)
 
 //void draw_text_index(uint8_t x, uint8_t y, uint8_t str_index);
 
@@ -88,7 +88,7 @@ void draw_browse_dock(char letter, uint8_t highlight);
 // Return 1 if the string has been modified and 0 if nothing changed
 uint8_t type_string(char* string_typed, uint8_t maxLen);
 
-void draw_typing_screen(char* str, uint8_t column);
+void draw_typing_screen(char* str, uint8_t column, uint8_t max);
 
 // There is no more than 10 column
 // So lower nibble of column_and_flags is for the column

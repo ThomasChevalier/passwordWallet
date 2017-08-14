@@ -18,12 +18,49 @@
 
 #include "tinyxml2.h"
 
+#define PROGMEM
+#include "../font.h"
+
+#define SCREEN_WIDTH (128)
+
 struct String
 {
 	std::string modName;
 	std::string name;
 	std::string content;
 };
+
+unsigned get_width_char(char c)
+{
+	if(c == ' ')
+	{
+		return 2;
+	}
+	unsigned size = 0;
+	bool searchSpace = true;
+	for(int i = FONT_WIDTH; i > 0; --i)
+	{
+		uint8_t font_byte = font[(c-' ')*FONT_WIDTH+(i-1)];
+
+		// Skip space in the end of the character
+		if(font_byte != 0 || !searchSpace)
+		{
+			searchSpace = false;
+			++size;
+		}
+	}
+	return size;
+}
+
+unsigned get_width(std::string str)
+{
+	unsigned size = 0;
+	for(char c : str)
+	{
+		size += get_width_char(c) + 1;
+	}
+	return size;
+}
 
 struct Command
 {
@@ -333,6 +370,7 @@ int main(int argc, char* argv[])
 			outFile << "#define " << strName << "_index (" << index << ")\n";
 			index+=s.content.size()+1;
 			outFile << "#define " << strName << "_len (" << s.content.size() << ")\n";
+			outFile << "#define " << strName << "_centerX (" << (SCREEN_WIDTH - get_width(s.content)) / 2 << ")\n";
 			for(char c : s.content)
 			{
 				allData.push_back(c);

@@ -201,7 +201,7 @@ uint8_t type_string(char* string_typed, uint8_t maxLen)
 	uint8_t running = TRUE;
 	uint8_t modified = FALSE;
 	string_typed[strlen(string_typed)] = INVALID_CHARACTER;
-	draw_typing_screen(string_typed, pos);
+	draw_typing_screen(string_typed, pos, maxLen);
 
 	program_wait();
 
@@ -295,7 +295,7 @@ uint8_t type_string(char* string_typed, uint8_t maxLen)
 		}
 		if(event)
 		{
-			draw_typing_screen(string_typed, pos);
+			draw_typing_screen(string_typed, pos, maxLen);
 		}
 		if(running)
 		{
@@ -313,9 +313,9 @@ uint8_t type_string(char* string_typed, uint8_t maxLen)
 	return modified;
 }
 
-void draw_typing_screen(char* str, uint8_t column)
+void draw_typing_screen(char* str, uint8_t column, uint8_t max)
 {
-	uint8_t len = strlen(str);
+	uint8_t len = strlen_bound(str, max);
 	// Scrolling
 	if(column > 15)
 	{
@@ -327,13 +327,7 @@ void draw_typing_screen(char* str, uint8_t column)
 	draw_clear();
 	for(uint8_t i = 0; i < len && (i * 7 + 1) < 128; ++i)
 	{
-		draw_char(i * 7 + 1,
-		#if defined(BIG_FONT)
-			2*12,
-		#elif defined(SMALL_FONT)
-			3*9,
-		#endif
-		str[i]);
+		draw_char(i * 7 + 1, 2*12, str[i]);
 	}
 	draw_char_column(column | (1<<4), str[column]);
 	draw_update();
@@ -350,20 +344,10 @@ void draw_char_column(uint8_t column_and_flags, char letter)
 			oled_draw_pixel(x, y, BLACK);
 		}
 	}
-	#if defined(BIG_FONT)
-		x = letter - 2;
-	#elif defined(SMALL_FONT)
-		x = letter - 3;
-	#endif
+	x = letter - 2;
 
 	y = 0;
-	for(;
-		#if defined(BIG_FONT)
-			x <= letter + 2;
-		#elif defined(SMALL_FONT)
-			x <= letter + 3;
-		#endif
-		++x )
+	for(; x <= letter + 2; ++x )
 	{
 		char c = x;
 
@@ -393,32 +377,14 @@ void draw_char_column(uint8_t column_and_flags, char letter)
 			}
 		}
 
-		draw_char(((column_and_flags&0xF)*7)+1,
-			#if defined(BIG_FONT)
-				y*12,
-			#elif defined(SMALL_FONT)
-				y*9,
-			#endif
-			 c);
+		draw_char(((column_and_flags&0xF)*7)+1, y*12, c);
 		++y;
 	}
 	if((column_and_flags>>4) & 0x01)
 	{
-		for(y = 0; y <
-				#if defined(BIG_FONT)
-					11;
-				#elif defined(SMALL_FONT)
-					 7;
-				#endif
-			++y)
+		for(y = 0; y < 11; ++y)
 		{
-			draw_h_line((column_and_flags&0xF)*7,
-				#if defined(BIG_FONT)
-					23+y, 7,
-				#elif defined(SMALL_FONT)
-					 26+y, 6,
-				#endif
-				INVERSE);
+			draw_h_line((column_and_flags&0xF)*7, 23+y, 7, INVERSE);
 		}
 	}
 }

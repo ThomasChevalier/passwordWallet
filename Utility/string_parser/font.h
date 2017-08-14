@@ -1,7 +1,6 @@
 #ifndef FONT_HEADER_THOMAS_CHEVALIER
 #define FONT_HEADER_THOMAS_CHEVALIER
 
-#include <avr/pgmspace.h>
 
 #define INVALID_CHARACTER '~'
 

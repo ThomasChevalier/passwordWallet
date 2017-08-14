@@ -44,6 +44,9 @@ int main(void)
 	USB_init();
 	security_init();
 
+	// Check the reset reason and display it
+	system_read_reset_source(mcusr);
+
 	// Check the device
 	if(!self_test_check())
 	{
@@ -53,9 +56,6 @@ int main(void)
 
 	// Read and initialize various variable
 	program_init();
-
-	// Check the reset reason and display it
-	system_read_reset_source(mcusr);
 
 	// If the device has not been initialized yet
 	const uint8_t optFlag = fram_read_byte(OFFSET_OPTIONS_FLAG);
