@@ -50,7 +50,7 @@ void opt_callback_full_reset(void)
 
 	// Erase all fram memory
 	draw_clear();
-	draw_flash_str(15, 40, str_recovery_eraseMem);
+	draw_flash_str_cx(40, str_recovery_eraseMem);
 	draw_update();
 
 	progress_begin(FRAM_BYTE_SIZE/256);

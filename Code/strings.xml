@@ -16,9 +16,9 @@
 	</module>
 
 	<module name="reset">
-		<str name="external">Externe</str>
-		<str name="brownout">Basse tension</str>
-		<str name="watchdog">Watchdog</str>
+		<str name="external">Ext.</str>
+		<str name="brownout">Volt</str>
+		<str name="watchdog">Wdr.</str>
 		<str name="jtag">JTAG</str>
 		<str name="usb">USB</str>
 	</module>
@@ -53,7 +53,6 @@
 	<module name="self_test">
 		<str name="fram_fail">Memoire defectueuse</str>
 		<str name="rfid_fail">Module rfid defectueux</str>
-		<str name="button_fail">Bouton defectueux : </str>
 		<str name="good">Appareil en bon etat</str>
 		<str name="fail">Appareil defectueux</str>
 	</module>

@@ -176,8 +176,8 @@ void state_communication_begin(void)
 	communication_flag = FLAG_INITED;
 
 	draw_clear();
-	draw_flash_str(5, 0, str_comm_what);
-	draw_flash_str(10, 10, str_comm_no_unplug);
+	draw_flash_str_cx(0, str_comm_what);
+	draw_flash_str_cx(10, str_comm_no_unplug);
 	draw_update();
 }
 

@@ -29,7 +29,7 @@ void wait_rfid_tag(void)
 {
 	// Ask for card
 	draw_clear();
-	draw_flash_str(3, 30, str_order_approach);
+	draw_flash_str_cx(30, str_order_approach);
 	draw_update();
 
 	while(1)
@@ -50,7 +50,7 @@ uint8_t authenticate_on_card(void)
 	if(rfid_uid.sak != 0x08)
 	{
 		draw_clear();
-		draw_flash_str(0, 20, str_error_card);
+		draw_flash_str_cx(20, str_error_card);
 		draw_update();
 	}
 	else
@@ -67,7 +67,7 @@ uint8_t authenticate_on_card(void)
 		if(status != STATUS_OK)
 		{
 			draw_clear();
-			draw_flash_str(0, 20, str_error_auth);
+			draw_flash_str_cx(20, str_error_auth);
 			draw_update();
 		}
 		else
@@ -86,8 +86,8 @@ void user_update_validation (void)
 	// Update encryption validation
 
 	draw_clear();
-	draw_flash_str(15, 3, str_comm_no_unplug);
-	draw_flash_str(10, 40, str_change_key_what);
+	draw_flash_str_cx(3, str_comm_no_unplug);
+	draw_flash_str_cx(40, str_change_key_what);
 	progress_begin(EEPROM_RANDSEQ_SIZE + 4);
 
 	encryption_update_validation();
@@ -113,7 +113,7 @@ void change_master_key(void)
 	// Generate new key
 	uint8_t newKey[16];
 	draw_clear();
-	draw_flash_str(10, 40, str_change_key_what);
+	draw_flash_str_cx(40, str_change_key_what);
 	progress_begin(16);
 	for(uint8_t i = 0; i < 16; ++i)
 	{
@@ -132,8 +132,8 @@ void change_master_key(void)
 	// recover information and finish the work
 
 	draw_clear();
-	draw_flash_str(15, 3, str_comm_no_unplug);
-	draw_flash_str(5, 40, str_change_key_update_pwd);
+	draw_flash_str_cx(3, str_comm_no_unplug);
+	draw_flash_str_cx(40, str_change_key_update_pwd);
 	progress_begin(NUM_PWD);
 
 	// Update encryption key
@@ -178,7 +178,7 @@ uint8_t read_key_from_card(uint8_t* keyOut, uint8_t keyBlock)
 	{
 		// .. Failure
 		draw_clear();
-		draw_flash_str(19, 20, str_error_read);
+		draw_flash_str_cx(20, str_error_read);
 		draw_update();
 		return RETURN_ERROR;
 	}
@@ -191,7 +191,7 @@ uint8_t write_key_to_card(uint8_t* keyIn, uint8_t keyBlock)
 	{
 		// .. Failure
 		draw_clear();
-		draw_flash_str(0, 20, str_error_write);
+		draw_flash_str_cx(20, str_error_write);
 		draw_update();
 		return RETURN_ERROR;
 	}

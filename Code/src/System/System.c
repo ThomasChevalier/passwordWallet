@@ -33,7 +33,4 @@ void system_read_reset_source(uint8_t mcusr)
 
 	draw_flash_string(0, 55, str_index);
 	draw_update();
-
-	// Wait for anything
-	program_pause_until_event(EVENT_WHENEVER);
 }

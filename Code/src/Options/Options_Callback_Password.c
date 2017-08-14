@@ -20,15 +20,15 @@ void opt_callback_add_pwd(void)
 	if(NUM_PWD == MAXIMUM_NUMBER_OF_PWD-1)
 	{
 		draw_clear();
-		draw_flash_str(0, 10, str_error_not_enough_mem);
+		draw_flash_str_cx(10, str_error_not_enough_mem);
 		draw_update();
 		_delay_ms(2000);
 		return;
 	}
-	char usrName[64];
+	char usrName[64] = {0};
 	
-	char pwdName[32];
-	char pwdData[32];
+	char pwdName[32] = {0};
+	char pwdData[32] = {0};
 
 	draw_clear();
 	draw_flash_str(0, 10, str_order_type_pwd_name);
@@ -51,7 +51,7 @@ void opt_callback_add_pwd(void)
 	DISABLE_SLEEP();
 
 	draw_clear();
-	draw_flash_str(12, 40, str_option_add);
+	draw_flash_str_cx(40, str_option_add);
 
 	progress_begin(42);
 
@@ -64,8 +64,8 @@ void opt_callback_add_pwd(void)
 	if(result == RETURN_ERROR)
 	{
 		draw_clear();
-		draw_flash_str(0, 10, str_error_not_enough_mem);
-		draw_flash_str(0, 22, str_error_cannot_add);
+		draw_flash_str_cx(10, str_error_not_enough_mem);
+		draw_flash_str_cx(22, str_error_cannot_add);
 		draw_update();
 		_delay_ms(2000);
 	}
@@ -78,7 +78,7 @@ void opt_callback_regenerate_pwd(void)
 	DISABLE_SLEEP();
 
 	draw_clear();
-	draw_flash_str(40, 40, str_option_regen);
+	draw_flash_str_cx(40, str_option_regen);
 	progress_begin(53);
 
 	backup_save(CURRENT_PASSWORD_ID, BACKUP_STATUS_UPDATE);
@@ -108,7 +108,7 @@ void opt_callback_change_pwd(void)
 	DISABLE_SLEEP();
 
 	draw_clear();
-	draw_flash_str(8, 40, str_option_change_pwd);
+	draw_flash_str_cx(40, str_option_change_pwd);
 	progress_begin(21);	
 
 	backup_save(CURRENT_PASSWORD_ID, BACKUP_STATUS_UPDATE);
@@ -139,7 +139,7 @@ void opt_callback_change_usr_name(void)
 	DISABLE_SLEEP();
 
 	draw_clear();
-	draw_flash_str(15, 40, str_option_change_usr);
+	draw_flash_str_cx(40, str_option_change_usr);
 	progress_begin(21);
 
 	backup_save(CURRENT_PASSWORD_ID, BACKUP_STATUS_UPDATE);
