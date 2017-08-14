@@ -139,7 +139,7 @@ void opt_callback_change_usr_name(void)
 	DISABLE_SLEEP();
 
 	draw_clear();
-	draw_flash_str(5, 40, str_option_change_usr);
+	draw_flash_str(15, 40, str_option_change_usr);
 	progress_begin(21);
 
 	backup_save(CURRENT_PASSWORD_ID, BACKUP_STATUS_UPDATE);

@@ -851,8 +851,18 @@ void AES128_CBC_decrypt_buffer(uint8_t* input, uint8_t sz, uint8_t* key, uint8_t
 
 		aesKeyPatch(key);  // Patch the original key
 		aesInvCipher(key, input);  // Decrypt data with a patched key. It return the original key.
-
 		mem_xor(input, xorWith);
+
+		// If an element of the input contains a zero, and because only strings are encrypted
+		// it means that the string is over. So return the result now because the others functions
+		// in the programs will ignore the value of the byte after a 0 in a string.
+		for(uint8_t j = 0; j < 16; ++j)
+		{
+			if(input[j] == 0)
+			{
+				return;
+			}
+		}
 
 		xorWith = (pos == 1) ? tempCipher : iv;
 		input+=16;
