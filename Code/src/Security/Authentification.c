@@ -25,7 +25,7 @@
 
 #include "../System/Sleep.h"
 
-void wait_rfid_tag(void)
+void user_wait_card(void)
 {
 	// Ask for card
 	draw_clear();
@@ -44,7 +44,7 @@ void wait_rfid_tag(void)
 	}
 }
 
-uint8_t authenticate_on_card(void)
+uint8_t user_authenticate_card(void)
 {
 	// sak == 0x08 <=> MIFARE 1K
 	if(rfid_uid.sak != 0x08)
@@ -96,16 +96,16 @@ void user_update_validation (void)
 
 }
 
-void change_master_key(void)
+void user_change_key(void)
 {
 	DISABLE_SLEEP();
 	// rfid may be power down
 	rfid_init();
 
 	// Waiting for the user to present his card
-	wait_rfid_tag();
+	user_wait_card();
 
-	if(authenticate_on_card() != RETURN_SUCCESS)
+	if(user_authenticate_card() != RETURN_SUCCESS)
 	{
 		goto EXIT;
 	}
@@ -123,7 +123,7 @@ void change_master_key(void)
 	progress_end();
 
 	// Write it to the rfid tag ...
-	if(write_key_to_card(newKey, MIFARE_BLOCK_TEMP_KEY) != RETURN_SUCCESS)
+	if(user_write_key_to_card(newKey, MIFARE_BLOCK_TEMP_KEY) != RETURN_SUCCESS)
 	{
 		goto EXIT;
 	}
@@ -147,7 +147,7 @@ void change_master_key(void)
 
 	// Update rfid data
 	// Write the new key to the normal key block
-	if(write_key_to_card(KEY, MIFARE_BLOCK_KEY) != RETURN_SUCCESS)
+	if(user_write_key_to_card(KEY, MIFARE_BLOCK_KEY) != RETURN_SUCCESS)
 	{
 		// Crash the device. The user is forced to restart it and
 		// the backup system will be able to recover data.
@@ -161,7 +161,7 @@ void change_master_key(void)
 	backup_free();
 
 	// Display new key
-	display_master_key();
+	user_display_key();
 
 	// Wait for the user to press a button
 	EXIT:
@@ -171,7 +171,7 @@ void change_master_key(void)
 	ENABLE_SLEEP();
 }
 
-uint8_t read_key_from_card(uint8_t* keyOut, uint8_t keyBlock)
+uint8_t user_read_key_from_card(uint8_t* keyOut, uint8_t keyBlock)
 {
 	uint8_t size = 18;
 	if(rfid_MIFARE_read(keyBlock, keyOut, &size) != STATUS_OK && size != 16)
@@ -185,7 +185,7 @@ uint8_t read_key_from_card(uint8_t* keyOut, uint8_t keyBlock)
 	return RETURN_SUCCESS;
 }
 
-uint8_t write_key_to_card(uint8_t* keyIn, uint8_t keyBlock)
+uint8_t user_write_key_to_card(uint8_t* keyIn, uint8_t keyBlock)
 {
 	if(rfid_MIFARE_write(keyBlock, keyIn, 16) != STATUS_OK)
 	{
@@ -198,7 +198,7 @@ uint8_t write_key_to_card(uint8_t* keyIn, uint8_t keyBlock)
 	return RETURN_SUCCESS;
 }
 
-void display_master_key(void)
+void user_display_key(void)
 {
 	draw_clear();
 	draw_flash_str(17, 10, str_change_key_here);

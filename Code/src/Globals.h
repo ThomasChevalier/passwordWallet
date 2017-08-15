@@ -228,6 +228,8 @@ extern volatile uint16_t ACTIVITY_TIMER;
 
 uint8_t strlen_bound(char* str, uint8_t max);
 
+#define STRINGFY_EXPANDED(s) #s
+#define STRINGFY(s) STRINGFY_EXPANDED(s)
 // ////// //
 // MIFARE //
 // ////// //

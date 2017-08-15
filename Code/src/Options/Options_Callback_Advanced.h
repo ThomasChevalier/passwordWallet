@@ -9,7 +9,7 @@
 /**
  * @brief Change the master key.
  */
-#define opt_callback_change_key change_master_key
+#define opt_callback_change_key user_change_key
 
 /**
  * @brief Show the master key, encoded in ascii85.

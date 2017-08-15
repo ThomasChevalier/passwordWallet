@@ -109,9 +109,9 @@ void backup_recover(void)
 			rfid_init();
 
 			// Waiting for the user to present his card
-			wait_rfid_tag();
+			user_wait_card();
 
-			if(!authenticate_on_card())
+			if(!user_authenticate_card())
 			{
 				// If we cannot authenticate on the card abort the operation.
 				// The user can retry to restore his data by rebooting the device.
@@ -127,13 +127,13 @@ void backup_recover(void)
 			// Read the keys
 
 			// Trying to read the "new key"
-			if(read_key_from_card(newKey, MIFARE_BLOCK_TEMP_KEY) != RETURN_SUCCESS)
+			if(user_read_key_from_card(newKey, MIFARE_BLOCK_TEMP_KEY) != RETURN_SUCCESS)
 			{
 				goto EXIT;
 			}
 			
 			// Trying to read the "last key"
-			if(read_key_from_card(lastKey, MIFARE_BLOCK_KEY) != RETURN_SUCCESS)
+			if(user_read_key_from_card(lastKey, MIFARE_BLOCK_KEY) != RETURN_SUCCESS)
 			{
 				goto EXIT;
 			}
@@ -199,7 +199,7 @@ void backup_recover(void)
 			draw_flash_str(0, textY, str_change_key_update_card);
 			textY += 10;
 			draw_update();
-			if(write_key_to_card(KEY, MIFARE_BLOCK_KEY) != RETURN_SUCCESS)
+			if(user_write_key_to_card(KEY, MIFARE_BLOCK_KEY) != RETURN_SUCCESS)
 			{
 				goto EXIT;
 			}

@@ -37,12 +37,12 @@ uint8_t state_wait_card_transition (uint8_t event)
 	// There is a new card to read
 	if(rfid_PICC_IsNewCardPresent() && rfid_PICC_ReadCardSerial())
 	{
-		if(authenticate_on_card())
+		if(user_authenticate_card())
 		{
 			uint8_t buffer[18];
 
 			// Trying to read master key ...
-			if(read_key_from_card(buffer, MIFARE_BLOCK_KEY) == RETURN_SUCCESS)
+			if(user_read_key_from_card(buffer, MIFARE_BLOCK_KEY) == RETURN_SUCCESS)
 			{
 				// .. Success
 				memcpy(KEY, buffer, 16);

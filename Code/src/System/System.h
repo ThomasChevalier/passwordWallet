@@ -14,4 +14,17 @@ void system_init(void);
  */
 void system_read_reset_source(uint8_t mcusr);
 
+/**
+ * @brief Read the current vcc value, against 1.1V voltage.
+ * @details Take at least 4 ms.
+ * @return The vcc value in millivolts
+ */
+uint16_t system_read_vcc(void);
+
+/**
+ * @brief Calculate the amount of free ram.
+ * @return The amount in byte of free ram.
+ */
+uint16_t system_free_ram (void);
+
 #endif // SYSTEM_HEADER_THOMAS_CHEVALIER

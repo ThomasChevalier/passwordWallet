@@ -6,7 +6,7 @@
 /**
  * @brief Wait until a new RFID tag is present. This is a blockant function.
  */
-void wait_rfid_tag(void);
+void user_wait_card(void);
 
 /**
  * @brief Try to authenticate on the rfid tag.
@@ -15,7 +15,7 @@ void wait_rfid_tag(void);
  * 
  * @return Return RETURN_SUCCESS if success, RETURN_ERROR otherwise.
  */
-uint8_t	authenticate_on_card	(void);
+uint8_t	user_authenticate_card	(void);
 
 /**
  * @brief Display a message and a progress bar and update encryption validation
@@ -28,7 +28,7 @@ void user_update_validation (void);
  * @details Execution time of this function is proportionnal to the number of passwords stored in memory.
  * This function always draw on screen.
  */
-void	change_master_key		(void);
+void	user_change_key		(void);
 
 /**
  * @brief Read a key from the card.
@@ -39,7 +39,7 @@ void	change_master_key		(void);
  * 
  * @return RETURN_SUCCESS if success, RETURN_ERROR otherwise.
  */
-uint8_t read_key_from_card(uint8_t* keyOut, uint8_t keyBlock);
+uint8_t user_read_key_from_card(uint8_t* keyOut, uint8_t keyBlock);
 
 /**
  * @brief Write a key to the card.
@@ -50,12 +50,12 @@ uint8_t read_key_from_card(uint8_t* keyOut, uint8_t keyBlock);
  * 
  * @return RETURN_SUCCESS if success, RETURN_ERROR otherwise.
  */
-uint8_t write_key_to_card(uint8_t* keyIn, uint8_t keyBlock);
+uint8_t user_write_key_to_card(uint8_t* keyIn, uint8_t keyBlock);
 
 /**
  * @brief Display the master key on the screen.
  * @details Displayed key is encoded with Ascii85.
  */
-void display_master_key(void);
+void user_display_key(void);
 
 #endif // AUTHENTIFICATION_HEADER_THOMAS_CHEVALIER
