@@ -7,7 +7,7 @@
 #include "../Program/Program.h"
 #include "../FSM/Events.h"
 
-#include "../Hardware/Led.h"
+#include "../Hardware/Buttons.h"
 
 /**
  * @brief Draw a maximum of 3 neighbour and return the number of node
@@ -95,6 +95,9 @@ void options_display(uint8_t opt)
 	draw_selection(current_choice, maxChoice);
 
 	draw_update();
+
+
+	while(buttons_pressed());
 
 	const Option_Node* nodeStack[OPTIONS_LIST_MAX_INTRICATION];
 	uint8_t nodeStackPos = 0;

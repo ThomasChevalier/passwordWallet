@@ -48,6 +48,11 @@
 		<str name="keyboard_layout">Changer langue clavier</str>
 		<str name="self_test">Diagnostic</str>
 		<str name="full_reset">FORMATER</str> 
+
+		<str name="send_pwd">Envoyer mot de passe</str>
+		<str name="send_usr">Envoyer nom d'util.</str>
+		<str name="send_both">Envoyer les deux</str>
+		
 	</module>
 
 	<module name="self_test">

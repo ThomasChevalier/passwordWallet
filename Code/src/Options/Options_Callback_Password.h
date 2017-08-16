@@ -35,5 +35,19 @@ void opt_callback_change_name(void);
  */
 void opt_callback_delete_pwd(void);
 
+/**
+ * @brief Send the password of CURRENT_PASSWORD_ID
+ */
+void opt_callback_send_pwd(void);
+
+/**
+ * @brief Send the user name of CURRENT_PASSWORD_ID
+ */
+void opt_callback_send_usr(void);
+
+/**
+ * @brief Send the password and the user name of CURRENT_PASSWORD_ID
+ */
+void opt_callback_send_both(void);
 
 #endif // OPTIONS_CALLBACK_PASSWORD_HEADER_THOMAS_CHEVALIER
