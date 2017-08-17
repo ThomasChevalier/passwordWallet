@@ -203,25 +203,13 @@ void opt_callback_send_usr(void)
 	uint8_t pwd_data [64];
 
 	password_read_usr_name(CURRENT_PASSWORD_ID, pwd_data, KEY);
-	if(pwd_data[0] != 0){ // If the user name is not empty
-		keyboard_send((char*)pwd_data, strlen_bound((char*)pwd_data, 64));
-	}
+	keyboard_send((char*)pwd_data, strlen_bound((char*)pwd_data, 64));
 	security_erase_data(pwd_data, 64);
 }
 
 void opt_callback_send_both(void)
 {
-	{
-		uint8_t pwd_data [64];
-
-		password_read_usr_name(CURRENT_PASSWORD_ID, pwd_data, KEY);
-		if(pwd_data[0] != 0){ // If the user name is not empty
-			keyboard_send((char*)pwd_data, strlen_bound((char*)pwd_data, 64));
-			// Send tab
-			keyboard_send_key_next();
-		}
-		security_erase_data(pwd_data, 64);
-	}
-
+	opt_callback_send_usr();
+	keyboard_send_key_next();
 	opt_callback_send_pwd();
 }

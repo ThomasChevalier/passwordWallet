@@ -167,29 +167,44 @@ void draw_main_menu(void)
 	{
 		char data[64];
 
+		// Draw the previous password
 		uint8_t pwd_id = pwd_list_get_prev_pwd_id(CURRENT_PASSWORD_ID);
 		password_read_name(pwd_id, (uint8_t*)data);
-		draw_text(10, 2 , data, 32);
+		draw_text(12, 2 , data, 32);
 
 		pwd_id = CURRENT_PASSWORD_ID;
 
 		password_read_usr_name(pwd_id, (uint8_t*)data, KEY);
 		if(data[0] != 0) // If an username is defined
 		{
-			draw_text(10, 35, data, 64);
+			draw_text(12, 35, data, 64);
 
 			password_read_name(pwd_id, (uint8_t*)data);
-			draw_text(10, 20, data, 32);
+			draw_text(12, 20, data, 32);
 		}
 		else
 		{
 			password_read_name(pwd_id, (uint8_t*)data);
-			draw_text(10, 28, data, 32);
+			draw_text(12, 28, data, 32);
 		}
 
+		if(pwd_list_get_sorting_method() == PWD_SORTING_USE)
+		{
+			draw_h_line(99, 28, 28, WHITE);
+			draw_v_line(99, 16, 12, WHITE);
+			for(uint8_t i = 0; i < 10; ++i)
+			{
+				draw_h_line(100, 17+i, 27, BLACK);
+			}
+
+			uint16_t count = password_read_counter(pwd_id);
+			draw_num(102, 18, count);
+		}
+
+		// Draw the next password
 		pwd_id = pwd_list_get_next_pwd_id(CURRENT_PASSWORD_ID);
 		password_read_name(pwd_id, (uint8_t*)data);
-		draw_text(10, 52, data, 32);
+		draw_text(12, 52, data, 32);
 
 		security_erase_data(data, 64);
 	}

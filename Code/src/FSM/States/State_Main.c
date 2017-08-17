@@ -9,12 +9,12 @@
 
 #include "../../Graphics/Drawing.h"
 
-#include "../../Security/Security.h"
 #include "../../Security/Password.h"
 #include "../../Security/Password_List.h"
 
 #include "../../Options/Options.h"
 
+#include "../../Hardware/Oled.h"
 #include "../../Hardware/Buttons.h"
 
 void state_main_begin (void)
@@ -24,8 +24,6 @@ void state_main_begin (void)
 
 uint8_t state_main_transition (uint8_t event)
 {
-	//static uint8_t but2Pressed = FALSE;
-
 	if(event & EVENT_INIT_COMMUNICATION)
 	{
 		return STATE_COMMUNICATION;
@@ -45,7 +43,15 @@ uint8_t state_main_transition (uint8_t event)
 	}
 	else if(event & EVENT_BUTTON_2)
 	{
-		options_display(OPTIONS_LIST_SEND);
+		uint8_t *data = oled_data;
+		password_read_usr_name(CURRENT_PASSWORD_ID, data, KEY);
+		if(data[0] != '\0'){
+			options_display(OPTIONS_LIST_SEND);
+		}
+		else
+		{
+			opt_callback_send_pwd();
+		}
 		draw_main_menu();
 	}
 	else if(event & EVENT_BUTTON_3)
