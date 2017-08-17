@@ -5,6 +5,8 @@
 #include <QMessageBox>
 #include <QFileDialog>
 
+#include <QDebug>
+
 #include "SerialDevice.h"
 #include "PasswordTabView.h"
 #include "KeyDialog.h"
@@ -45,12 +47,12 @@ void MainWindow::on_disconnected()
 
 void MainWindow::on_sendFinished()
 {
-
+    qDebug() << "Send finished";
 }
 
 void MainWindow::on_sendProgress(qint64 written, qint64 total)
 {
-
+    qDebug() << written << " / " << total;
 }
 
 void MainWindow::on_framReceived(const QByteArray &fram)
@@ -121,10 +123,30 @@ void MainWindow::connectDevice()
 void MainWindow::on_buttonSave_clicked()
 {
     QString fileName = QFileDialog::getSaveFileName(this, tr("Sauvegarder la mémoire"));
+    if(fileName.isEmpty()) {
+        return;
+    }
+
     QFile framFile(fileName);
     if(!framFile.open(QIODevice::WriteOnly)){
         QMessageBox::critical(this, tr("Erreur de fichier"), tr("Impossible d'ouvrir le fichier %1 en écriture. Disque plein ?").arg(fileName));
         return;
     }
     framFile.write(m_data.memory());
+}
+
+void MainWindow::on_buttonRestore_clicked()
+{
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Restaurer la mémoire"));
+    if(fileName.isEmpty()) {
+        return;
+    }
+
+    QFile framFile(fileName);
+    if(!framFile.open(QIODevice::ReadOnly)){
+        QMessageBox::critical(this, tr("Erreur de fichier"), tr("Impossible d'ouvrir le fichier %1 en lecture. Permission ?").arg(fileName));
+        return;
+    }
+
+    m_serial->setFram(framFile.readAll());
 }

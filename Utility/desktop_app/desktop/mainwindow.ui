@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="tabPwd">
        <attribute name="title">
@@ -329,7 +329,7 @@ color:red;
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_7">
               <item>
-               <widget class="QPushButton" name="pushButton_9">
+               <widget class="QPushButton" name="buttonRestore">
                 <property name="styleSheet">
                  <string notr="true">QPushButton {
 font-weight: bold;

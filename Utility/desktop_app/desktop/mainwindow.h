@@ -36,6 +36,7 @@ private slots:
     void connectDevice();
 
     void on_buttonSave_clicked();
+    void on_buttonRestore_clicked();
 
 private:
 

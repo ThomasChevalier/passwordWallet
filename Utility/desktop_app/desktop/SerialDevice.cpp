@@ -246,6 +246,7 @@ void SerialDevice::sendData(const QByteArray &data)
         m_currentData.written = 0;
         m_currentData.sending = true;
         m_serial.write(data);
+        m_serial.flush();
     }
 
 }

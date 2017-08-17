@@ -34,7 +34,7 @@ typedef struct _Option_Node
 } Option_Node;
 
 #define OPTIONS_LIST_NORMAL (0)
-#define OPTIONS_LIST_RECOVERY (18)
+#define OPTIONS_LIST_RECOVERY (21)
 #define OPTIONS_LIST_SEND (24)
 
 #define STR(str) str##_index
@@ -100,8 +100,8 @@ static const Option_Node list_options [OPTIONS_LIST_NUM_OPTIONS]  =
 
 /*20*/  {opt_callback_add_pwd, NONE, NONE, STR(str_option_add)},
 
-/*21*/	{NULL, NONE, 19, STR(str_recovery_title)},
-/*22*/	{opt_callback_full_reset, NONE, 20, STR(str_recovery_full)},
+/*21*/	{NULL, NONE, 22, STR(str_recovery_title)},
+/*22*/	{opt_callback_full_reset, NONE, 23, STR(str_recovery_full)},
 /*23*/	{opt_callback_enter_key, NONE, NONE, STR(str_recovery_key)},
 
 /*24*/	{opt_callback_send_both, NONE,   25, STR(str_option_send_both)},

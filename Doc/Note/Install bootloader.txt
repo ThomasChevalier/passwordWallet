@@ -1,0 +1,29 @@
+=========================================
+             PASSWORD WALLET             
+          UPLOADING BOOTLOADER           
+
+By Thomas Chevalier (c) 2017
+All rights reserved.
+=========================================
+
+Introduction
+------------
+
+This note shows how to upload a dfu bootloader on the device.
+
+Procedure
+---------
+
+* Go to your lufa directory / Bootloaders / Dfu
+* Set up the makefile :
+	-MCU          = atmega32u4
+	-ARCH         = AVR8
+	-BOARD        = NONE
+	-F_CPU        = 8000000
+
+	- FLASH_SIZE_KB         = 32
+	- BOOT_SECTION_SIZE_KB  = 4
+* Make the bootloader
+* Connect the device via the isp (Arduino as isp)
+* Upload it with the command : avrdude -v {program.verify} -patmega32u4 -cstk500v1 -P/dev/ttyACM0 -b19200 -Uflash:w:"BootloaderDFU.hex":i
+* Now you can upload code by typing 'make dfu'
