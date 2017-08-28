@@ -34,7 +34,9 @@ SOURCES += main.cpp\
     RandomGenerator.cpp \
     KeyDialog.cpp \
     Ascii85.cpp \
-    AddPwdDialog.cpp
+    AddPwdDialog.cpp \
+    OptionTabView.cpp \
+    RestoreTabView.cpp
 
 HEADERS  += mainwindow.h \
     connectiondialog.h \
@@ -46,10 +48,14 @@ HEADERS  += mainwindow.h \
     RandomGenerator.h \
     KeyDialog.h \
     Ascii85.h \
-    AddPwdDialog.h
+    AddPwdDialog.h \
+    OptionTabView.h \
+    RestoreTabView.h
 
 FORMS    += mainwindow.ui \
     connectiondialog.ui \
     PasswordTabView.ui \
     KeyDialog.ui \
-    AddPwdDialog.ui
+    AddPwdDialog.ui \
+    OptionTabView.ui \
+    RestoreTabView.ui

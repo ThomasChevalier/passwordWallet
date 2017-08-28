@@ -95,7 +95,7 @@ int main(void)
 			currentState->begin();
 		}
 		// Don't wait in communication state, it slow down the transmission
-		if(currentStateNum != STATE_COMMUNICATION)
+		if(currentStateNum != STATE_COMMUNICATION && currentStateNum != STATE_MAIN)
 		{
 			program_wait();
 		}

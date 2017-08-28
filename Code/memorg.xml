@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root version="0.1" storage="fram">
+	<section name="header">
+		<byte name="option">
+			<bit pos="0" name="sorting_method_l">
+				<doc>
+					Low part of the sorting method value.
+					Specify the sorting algorithm.
+					0 : no sorting (oldest first newest last)
+					1 : sort by number of Use.
+					2 : Alphabetical
+					3 : undefined
+				</doc>
+			</bit>
+			<bit pos="1" name="sorting_method_h">
+				<doc>
+					High part of the sorting method value.
+					See sorting_method_l for more info.
+				</doc>
+			</bit>
+			<bit pos="3" name="orientation">
+				<doc>
+					The orientation of the device.
+					0 : 0° rotation
+					1 : 180° rotation
+				</doc>
+			</bit>
+			<bit pos="4" name="initialized">
+				<doc>
+					Initialized : whether or not the device is initialized.
+					0 : Not initialized.
+					1 : Initialized.
+				</doc>
+			</bit>
+			<bit pos="5" name="qwerty">
+				<doc>
+					The current keyboard layout.
+					0 : Azerty
+					1 : Qwerty
+				</doc>
+			</bit>
+		</byte>
+
+		<byte name="first_pwd_use">
+			<doc>
+				The address of the first password, sorting by use.
+				This is the address of the password that has been used the most.
+			</doc>
+		</byte>
+
+		<byte name="first_pwd_alpha">
+			<doc>
+				The address of the first password, sorting by name.
+			</doc>
+		</byte>
+
+		<byte name="num_pwd">
+			<doc>
+				The number of password stored in the memory.
+			</doc>
+		</byte>
+
+		<block size="256" name="entropy_pool">
+			<doc>
+				Array of random byte, used to generate password and initial vectors for AES.
+				Used byte must be written to 0.
+			</doc>
+		</block>
+
+		<block size="25" name="memory_map">
+			<doc>
+				Each bit of the map represent one chunk of password.
+				A bit set to 1 means that the chunk is used.
+				A bit set to 0 means that the chunk is free.
+				The first bit of the LSB is for the first chunk.
+				This map must always be up to date.
+			</doc>
+		</block>
+
+		<byte name="backup_status">
+			<doc>
+				The status of the backup.
+				OK : 0
+				UPDATE : 1
+				CHANGE_KEY : 2
+				CHANGE_KEY_CHUNK_OK : 3
+				CHANGE_KEY_UPDATE_CARD : 4
+				CHANGE_KEY_VALIDATION : 5
+			</doc>
+		</byte>
+
+		<byte name="backup_id">
+			<doc>
+				The id of the chunk stored in the backup data.
+			</doc>
+		</byte>
+
+		<block name="backup_data" size="166">
+			<doc>
+				This section is used to make a temporary backup of a password chunk being updated. When a password is updated, a reset may occur.
+				The password data must not in any case be lost, therefore a backup of the password chunk is made. When the password has been updated,
+				the application copies the content of this section to the password chunk, then marks the operation as complete and erases this chunk.
+			</doc>
+		</block>
+	</section>
+
+	<section name="password">
+		<byte name="prev_pwd_use">
+			<doc>
+				Address of the previous password (e.g. the password wich is more used than this one).
+				A password address is the number of the password. For example address 54 is at byte 54*PasswordChunkSize+PasswordStartAddr. It point to the first byte of "Prev Pwd" field of the chunk.
+				If the password are not sorted by use, the address must still be valid.
+			</doc>
+		</byte>
+		<byte name="next_pwd_use">
+			<doc>
+					Address of the next password (e.g. the password which is less used than this one).
+			</doc>
+		</byte>
+
+		<byte name="prev_pwd_alpha">
+			<doc>
+				Address of the previous password (e.g. the password whose name is before this password name in the alphabet).
+			</doc>
+		</byte>
+		<byte name="next_pwd_alpha">
+			<doc>
+				Address of the next password (e.g. the password whose name is after this password name in the alphabet).
+			</doc>
+		</byte>
+
+		<block size="2" name="counter">
+			<doc>
+				The number of time the password has been used. Start from 0.
+				It is very unlikely that a user use a password more than 2^16-1 times. If we take a user who use the password 10 times a day, he will overflow the counter in about 18 years ...
+			</doc>
+		</block>
+
+		<block size="32" name="name">
+			<doc>
+				The name of the password ("Zeste de savoir" for example).
+				It's used to display the password on the screen and to sort by alphabet the passwords.
+			</doc>
+		</block>
+		
+		<block size="16" name="iv_data">
+			<doc>
+				The initial vector (IV) required by AES to encrypt the password.
+				The IV must be randomy created each time the password is reencrypted.
+			</doc>
+		</block>
+
+		<block size="32" name="data">
+			<doc>
+				The password. It is encrypted with aes 128 using the IV store just before. The key is the master key located on the rfid card.
+				The password is long up to 32 characters (32 bytes is two blocks for aes 128).
+				If the password is less than 32 characters long, then it is padded with 0.
+			</doc>
+		</block>
+
+		<block size="16" name="iv_usr">
+			<doc>
+				The initial vector (IV) required by AES to encrypt the password.
+				The IV must be randomy created each time the user name is reencrypted.
+			</doc>
+		</block>
+
+		<block size="64" name="usr_name">
+			<doc>
+				The user name. It is encrypted with aes 128 using the IV store just before. The key is the master key located on the rfid card.
+				The user name is long up to 64 characters (64 bytes is four blocks for aes 128).
+				If the user name is less than 64 characters long, then it is padded with 0.
+			</doc>
+		</block>
+	</section>
+</root>
+<!-- File created by Thomas Chevalier - Copyright - 2017 / thomasom.chevalier@gmail.com -->

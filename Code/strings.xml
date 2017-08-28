@@ -42,7 +42,8 @@
 		<str name="key">Clef maitre ...</str>
 		<str name="change_key">Changer clef maitre</str>
 		<str name="show_key">Afficher clef maitre</str>
-		<str name="force_key">Forcer utilisation clef</str>
+		<str name="force_card">Forcer utili. carte</str>
+		<str name="force_enter">Forcer utili. clef</str>
 		
 		<str name="orientation">Retourner l'affichage</str>
 		<str name="keyboard_layout">Changer langue clavier</str>

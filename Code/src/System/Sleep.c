@@ -33,6 +33,10 @@ void sleep_device(void)
 		rfid_was_init = TRUE;
 	}
 
+	// Disable led
+	uint8_t old_led_port = LED_PORT;
+	LED_PORT &= ~(1<<LED_PIN_NUM);
+
 	// Disable USB
 	USB_Disable();
 
@@ -72,8 +76,6 @@ void sleep_device(void)
 
 	sleep_disable();
 
-	while(buttons_pressed());
-
 	// Disable pin change interrupt
 	//PCICR = 0;
 
@@ -87,12 +89,18 @@ void sleep_device(void)
 		rfid_init();
 	}
 
+	// Active led
+	LED_PORT = old_led_port;
+
 	USB_init();
 	random_init();
 
 	ACTIVITY_TIMER = 0;
 
 	SREG = sreg;
+
+	
+	while(buttons_pressed());
 }
 
 // Nothing, wake up the device

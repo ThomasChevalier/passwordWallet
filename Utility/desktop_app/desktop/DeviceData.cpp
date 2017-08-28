@@ -20,8 +20,9 @@ static quint16  SIZE_NUM_PWD =1;
 FRAM_Id::FRAM_Id():
     i2c(){}
 
-DeviceData::DeviceData():
-    m_storeScreenBufferInFram(false)
+DeviceData::DeviceData(QObject *parent):
+   QObject(parent),
+   m_storeScreenBufferInFram(false)
 {
 
 }
@@ -106,7 +107,7 @@ quint8 DeviceData::passwordNum() const
 
 QByteArray DeviceData::memoryMap() const
 {
-    quint16 offset = 260 + (storeScreenBufferInFram() ? 1024 : 0);
+    const quint16 offset = memoryMapOffset();
     quint16 size = 0;
     switch (memorySize()) {
     case 8192:  size=6;  break;
@@ -114,6 +115,11 @@ QByteArray DeviceData::memoryMap() const
     default:    size=0;  break;
     }
     return m_memory.mid(offset, size);
+}
+
+unsigned DeviceData::memoryMapOffset() const
+{
+    return 260 + (storeScreenBufferInFram() ? 1024 : 0);
 }
 
 QList<Password> DeviceData::allPassword() const
@@ -151,19 +157,107 @@ quint8 DeviceData::maxNumPwd() const
     return (memorySize() - firstPwdOffset()) / 166;
 }
 
-void DeviceData::addPassword(QString name, QString pwd, QString usrName) const
+bool DeviceData::addPassword(QString name, QString pwd, QString usrName)
 {
+    // First check if there is a chunk free
+    bool chunk_free = false;
+    int pwd_id = 0;
+    for(int i = 0; i < memoryMap().size() && (!chunk_free); ++i)
+    {
+        // Loop in all the bit of the bytes
+        const quint8 memory_byte = memoryMap()[i];
+        for(int j = 0; j < 8 && (!chunk_free); ++j)
+        {
+            if(i * 8 + j >= maxNumPwd())
+                break;
 
+            if( (memory_byte & (1<<j))== 0) // the bit is not set, there is a free chunk
+            {
+                chunk_free = true;
+                pwd_id = i * 8 + j;
+            }
+        }
+    }
+    if(!chunk_free)
+    {
+        return false;
+    }
+
+    // Initial value if there is no password
+    quint8 prev_use	= maxNumPwd();
+    quint8 next_use	= maxNumPwd();
+    quint8 prev_alpha = maxNumPwd();
+    quint8 next_alpha = maxNumPwd();
+
+    Password newPwd(pwd_id, QByteArray());
+
+    // If this is not the first password
+    if(passwordNum() != 0)
+    {
+        // The new password became the last of the list
+        // The previous element is the last of the list
+        // The next element is nothing
+
+        // Take the last element of the list
+        quint8 last_pwd_use = getPrevUse(firstPwdUse());
+        quint8 last_pwd_alpha = getPrevAlpha(firstPwdAlpha());
+
+        // Point to the last of the list (before insertion)
+        prev_use = last_pwd_use;
+        prev_alpha = last_pwd_alpha;
+
+        // Point to an invalid id to point out that this is the end of the list
+        next_use = maxNumPwd();
+        next_alpha = maxNumPwd();
+
+        // Set the last of the list to point to this new pwd
+        Password prev_use_pwd = password(prev_use);
+        prev_use_pwd.setNextPwdUse(pwd_id);
+        updatePassword(prev_use_pwd);
+
+        Password prev_alpha_pwd = password(prev_alpha);
+        prev_alpha_pwd.setNextPwdAlpha(prev_alpha);
+        updatePassword(prev_alpha_pwd);
+    }
+
+    // Set up list
+    newPwd.setPrevPwdUse(prev_use);
+    newPwd.setNextPwdUse(next_use);
+    newPwd.setPrevPwdAlpha(prev_alpha);
+    newPwd.setNextPwdAlpha(next_alpha);
+    // Set counter to 0
+    newPwd.setCount(0);
+    if(!newPwd.setName(name)){
+        return false;
+    }
+    if(!newPwd.setPassword(pwd, key())){
+        return false;
+    }
+    if(!newPwd.setUserName(usrName, key())){
+        return false;
+    }
+
+    // The password has been added, increment counter
+    m_memory[OFFSET_NUM_PWD] = m_memory[OFFSET_NUM_PWD] + 1;
+
+
+    // Set the bit, this chunk is now used
+    // Update the byte that has changed
+    m_memory[memoryMapOffset() + pwd_id/8] = m_memory[memoryMapOffset() + pwd_id/8] | (1<<pwd_id%8);
+
+    return true; // Success
 }
 
 void DeviceData::setMemory(const QByteArray &data)
 {
     m_memory = data;
+    emit memoryChanged();
 }
 
 void DeviceData::setKey(const QByteArray &key)
 {
     m_key = key;
+    emit keyChanged();
 }
 
 void DeviceData::setParameter(const QByteArray &parameter)
@@ -186,6 +280,44 @@ quint16 DeviceData::productIdentifier()
     return 0x2044;
 }
 
+void DeviceData::updatePassword(const Password &pass)
+{
+    const QByteArray& pwdData = pass.data();
+    for(QByteArray::size_type i(0); i < 166; ++i){
+        m_memory[firstPwdOffset()+pass.id()*166+i] = pwdData[i];
+    }
+}
+
+quint8 DeviceData::getPrevUse(quint8 id)
+{
+    Password p = password(id);
+    quint8 id_prev = p.prevPwdUse();
+    if(id_prev == maxNumPwd()){
+        while(id != maxNumPwd())
+        {
+            id_prev = id;
+            Password pcurrent = password (id);
+            id = pcurrent.nextPwdUse();
+        }
+    }
+    return id_prev;
+}
+
+quint8 DeviceData::getPrevAlpha(quint8 id)
+{
+    Password p = password(id);
+    quint8 id_prev = p.prevPwdAlpha();
+    if(id_prev == maxNumPwd()){
+        while(id != maxNumPwd())
+        {
+            id_prev = id;
+            Password pcurrent = password (id);
+            id = pcurrent.nextPwdAlpha();
+        }
+    }
+    return id_prev;
+}
+
 quint16 DeviceData::firstPwdOffset() const
 {
     quint16 firstPwd = OFFSET_NUM_PWD+SIZE_NUM_PWD;
@@ -200,6 +332,7 @@ quint16 DeviceData::firstPwdOffset() const
     case 32768: firstPwd+=25; break;
     default: break;
     }
+    firstPwd += 168; // Backup section
     return firstPwd;
 }
 

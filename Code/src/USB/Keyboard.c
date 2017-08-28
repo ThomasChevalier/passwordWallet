@@ -249,7 +249,7 @@ void keyboard_on_start_of_frame(void)
 	/* One millisecond has elapsed, decrement the idle time remaining counter if it has not already elapsed */
 	if (IdleMSRemaining)
 	{
-	  IdleMSRemaining--;
+		IdleMSRemaining--;
 	}
 	#endif
 }

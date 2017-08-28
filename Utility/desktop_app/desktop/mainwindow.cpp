@@ -7,8 +7,12 @@
 
 #include <QDebug>
 
-#include "SerialDevice.h"
+
 #include "PasswordTabView.h"
+#include "OptionTabView.h"
+#include "RestoreTabView.h"
+
+#include "SerialDevice.h"
 #include "KeyDialog.h"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -22,12 +26,19 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(m_serial, &SerialDevice::disconnected, this, &MainWindow::on_disconnected);
     connect(m_serial, &SerialDevice::paramReceived, this, &MainWindow::on_paramReceived);
     connect(m_serial, &SerialDevice::sendProgress, this, &MainWindow::on_sendProgress);
+    connect(m_serial, &SerialDevice::sendFinished, this, &MainWindow::on_sendFinished);
     connect(m_serial, &SerialDevice::framReceived, this, &MainWindow::on_framReceived);
     connect(m_serial, &SerialDevice::keyReceived, this, &MainWindow::on_keyReceived);
     connect(m_serial, &SerialDevice::framReceiveProgress, this, &MainWindow::on_framReceiveProgress);
 
     m_pwdView = new PasswordTabView(m_data,this);
     ui->tabPwd->layout()->addWidget(m_pwdView);
+
+    m_optView = new OptionTabView(m_data, this);
+    ui->tabOption->layout()->addWidget(m_optView);
+
+    m_restoreView = new RestoreTabView(m_data, *m_serial, this);
+    ui->tabRestore->layout()->addWidget(m_restoreView);
 
     // On startup auto connect
     QTimer::singleShot(0, this, SLOT(connectDevice()));
@@ -117,36 +128,9 @@ void MainWindow::connectDevice()
             }
         }
     }
-    m_pwdView->parseData();
 }
 
-void MainWindow::on_buttonSave_clicked()
+void MainWindow::on_buttonSync_clicked()
 {
-    QString fileName = QFileDialog::getSaveFileName(this, tr("Sauvegarder la mémoire"));
-    if(fileName.isEmpty()) {
-        return;
-    }
-
-    QFile framFile(fileName);
-    if(!framFile.open(QIODevice::WriteOnly)){
-        QMessageBox::critical(this, tr("Erreur de fichier"), tr("Impossible d'ouvrir le fichier %1 en écriture. Disque plein ?").arg(fileName));
-        return;
-    }
-    framFile.write(m_data.memory());
-}
-
-void MainWindow::on_buttonRestore_clicked()
-{
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Restaurer la mémoire"));
-    if(fileName.isEmpty()) {
-        return;
-    }
-
-    QFile framFile(fileName);
-    if(!framFile.open(QIODevice::ReadOnly)){
-        QMessageBox::critical(this, tr("Erreur de fichier"), tr("Impossible d'ouvrir le fichier %1 en lecture. Permission ?").arg(fileName));
-        return;
-    }
-
-    m_serial->setFram(framFile.readAll());
+    m_serial->setFram(m_data.memory());
 }

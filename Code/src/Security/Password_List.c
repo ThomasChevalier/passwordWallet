@@ -331,10 +331,10 @@ uint8_t pwd_list_add_pwd (uint8_t* name, uint8_t* data, uint8_t* usrName)
 	}
 
 	// Initial value if there is no password
-	uint8_t prev_use	= MAXIMUM_NUMBER_OF_PWD;
-	uint8_t next_use	= MAXIMUM_NUMBER_OF_PWD;
-	uint8_t prev_alpha	= MAXIMUM_NUMBER_OF_PWD;
-	uint8_t next_alpha	= MAXIMUM_NUMBER_OF_PWD;
+	uint8_t prev_use   = MAXIMUM_NUMBER_OF_PWD;
+	uint8_t next_use   = MAXIMUM_NUMBER_OF_PWD;
+	uint8_t prev_alpha = MAXIMUM_NUMBER_OF_PWD;
+	uint8_t next_alpha = MAXIMUM_NUMBER_OF_PWD;
 
 	// If this is not the first password
 	if(NUM_PWD != 0)
@@ -376,7 +376,7 @@ uint8_t pwd_list_add_pwd (uint8_t* name, uint8_t* data, uint8_t* usrName)
 
 	// The password has been added, increment counter
 	++NUM_PWD;
-    fram_write_byte(OFFSET_NUM_PWD, NUM_PWD);
+	fram_write_byte(OFFSET_NUM_PWD, NUM_PWD);
 
 	// We have inserted the password at the end of each list (alpha and use) but it is not sorted.
 	// We must sort them.

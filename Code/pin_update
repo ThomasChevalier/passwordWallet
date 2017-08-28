@@ -1,0 +1,5 @@
+#!/bin/bash
+
+echo "Update pins' definition ... "
+../Utility/pindef_parser/pindef_parser --file pindef.xml
+mv PinDefinition.h src/Hardware/PinDefinition.h

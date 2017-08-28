@@ -50,7 +50,8 @@ uint8_t state_wait_card_transition (uint8_t event)
 
 				if(encryption_check_key()) // If the key of the rfid is the good one.
 				{
-					// Then go to the main state
+					// Then go to the main state and reset activity timer
+					ACTIVITY_TIMER = 0;
 					return STATE_MAIN;
 				}
 				else

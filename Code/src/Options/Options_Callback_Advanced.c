@@ -86,7 +86,7 @@ void opt_callback_enter_key(void)
 	decode_16B(usrKey, KEY);
 }
 
-void opt_callback_force_key(void)
+void opt_callback_force_card(void)
 {
 	rfid_init();
 	user_wait_card();
@@ -111,6 +111,13 @@ void opt_callback_force_key(void)
 
 	EXIT:
 	rfid_power_down();
+}
+
+void opt_callback_force_enter(void)
+{
+	opt_callback_enter_key();
+	user_update_validation();
+	backup_free();
 }
 
 void opt_callback_system_info(void)

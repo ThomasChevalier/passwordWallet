@@ -1,6 +1,7 @@
 #ifndef DEVICEDATA_H
 #define DEVICEDATA_H
 
+#include <QObject>
 #include <QtGlobal>
 #include <QByteArray>
 #include <QList>
@@ -37,8 +38,10 @@ struct FRAM_Id
     };
 };
 
-class DeviceData
+class DeviceData : public QObject
 {
+    Q_OBJECT
+
 public:
 
     enum Fram_Connection
@@ -62,7 +65,7 @@ public:
     };
 
 
-    DeviceData();
+    DeviceData(QObject* parent = nullptr);
 
     FRAM_Id    framId()  const;
     QByteArray key()     const;
@@ -77,12 +80,13 @@ public:
     quint8 firstPwdAlpha() const;
     quint8 passwordNum() const;
     QByteArray memoryMap() const;
+    unsigned memoryMapOffset() const;
 
     QList<Password> allPassword() const;
     Password password(quint8 id) const;
     quint8 maxNumPwd() const;
 
-    void addPassword(QString name, QString pwd, QString usrName) const;
+    bool addPassword(QString name, QString pwd, QString usrName);
 
     void setMemory(const QByteArray& data);
     void setKey(const QByteArray& key);
@@ -91,6 +95,14 @@ public:
     static quint16 vendorIdentifier();
     static quint16 productIdentifier();
 
+    void updatePassword(const Password& pass);
+
+    quint8 getPrevUse(quint8 id);
+    quint8 getPrevAlpha(quint8 id);
+
+signals:
+    void memoryChanged();
+    void keyChanged();
 
 private:
 

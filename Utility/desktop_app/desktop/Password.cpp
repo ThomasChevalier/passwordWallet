@@ -103,7 +103,7 @@ quint8 Password::id() const
     return m_id;
 }
 
-QByteArray Password::data() const
+const QByteArray& Password::data() const
 {
     return m_data;
 }
@@ -158,20 +158,16 @@ bool Password::setName(const QString &name)
 
 bool Password::setPassword(QString pwd, QByteArray key)
 {
-    if(pwd.size()>PWD_SIZE_PWD_DATA||pwd.isEmpty())
+    if(pwd.size()>PWD_SIZE_PWD_DATA)
     {
         return false;
     }
 
-    if(pwd.size()<PWD_SIZE_PWD_DATA)
+    for(uint8_t i = pwd.size(); i < PWD_SIZE_PWD_DATA; ++i)
     {
-        const uint8_t randByteLessThan32 = RandomGenerator::get()->byte() >> 3;
-        pwd.append(static_cast<char>(randByteLessThan32));
-        for(uint8_t i = pwd.size(); i < PWD_SIZE_PWD_DATA; ++i)
-        {
-            pwd.append(static_cast<char>(RandomGenerator::get()->byte()));
-        }
+        pwd.append(0);
     }
+
     QByteArray iv(16, 0);
     for(uint8_t i = 0; i < 16; ++i)
     {
@@ -180,7 +176,12 @@ bool Password::setPassword(QString pwd, QByteArray key)
     }
 
     uint8_t out[PWD_SIZE_PWD_DATA];
-    AES128_CBC_encrypt_buffer(out, reinterpret_cast<uint8_t*>(pwd.toLocal8Bit().data()), PWD_SIZE_PWD_DATA,
+    uint8_t input[PWD_SIZE_PWD_DATA];
+    for(QByteArray::size_type i(0); i < pwd.toLocal8Bit().size(); ++i){
+        input[i] = pwd.toLocal8Bit().at(i);
+    }
+
+    AES128_CBC_encrypt_buffer(out, input, PWD_SIZE_PWD_DATA,
                               reinterpret_cast<const uint8_t*>(key.constData()),
                               reinterpret_cast<const uint8_t*>(iv.constData()));
 
@@ -194,20 +195,17 @@ bool Password::setPassword(QString pwd, QByteArray key)
 
 bool Password::setUserName(QString usr, QByteArray key)
 {
-    if(usr.size()>PWD_SIZE_USR_NAME||usr.isEmpty())
+    if(usr.size()>PWD_SIZE_USR_NAME)
     {
         return false;
     }
 
-    if(usr.size()<PWD_SIZE_USR_NAME)
+    QByteArray usrData = usr.toLocal8Bit();
+    for(uint8_t i = usrData.size(); i < PWD_SIZE_USR_NAME; ++i)
     {
-        const uint8_t randByteLessThan32 = RandomGenerator::get()->byte() >> 3;
-        usr.append(static_cast<char>(randByteLessThan32));
-        for(uint8_t i = usr.size(); i < PWD_SIZE_USR_NAME; ++i)
-        {
-            usr.append(static_cast<char>(RandomGenerator::get()->byte()));
-        }
+        usrData.append(static_cast<char>(0));
     }
+
     QByteArray iv(16, 0);
     for(uint8_t i = 0; i < 16; ++i)
     {
@@ -216,7 +214,11 @@ bool Password::setUserName(QString usr, QByteArray key)
     }
 
     uint8_t out[PWD_SIZE_USR_NAME];
-    AES128_CBC_encrypt_buffer(out, reinterpret_cast<uint8_t*>(usr.toLocal8Bit().data()), PWD_SIZE_USR_NAME,
+    uint8_t input[PWD_SIZE_USR_NAME];
+    for(QByteArray::size_type i(0); i < usrData.size(); ++i){
+        input[i] = usrData.at(i);
+    }
+    AES128_CBC_encrypt_buffer(out, input, PWD_SIZE_USR_NAME,
                               reinterpret_cast<const uint8_t*>(key.constData()),
                               reinterpret_cast<const uint8_t*>(iv.constData()));
 
@@ -226,4 +228,24 @@ bool Password::setUserName(QString usr, QByteArray key)
     }
 
     return true;
+}
+
+void Password::setPrevPwdUse(uint8_t val)
+{
+    m_data[PWD_OFFSET_PREV_PWD_USE] = val;
+}
+
+void Password::setNextPwdUse(uint8_t val)
+{
+    m_data[PWD_OFFSET_NEXT_PWD_USE] = val;
+}
+
+void Password::setPrevPwdAlpha(uint8_t val)
+{
+    m_data[PWD_OFFSET_PREV_PWD_ALPHA] = val;
+}
+
+void Password::setNextPwdAlpha(uint8_t val)
+{
+    m_data[PWD_OFFSET_NEXT_PWD_ALPHA] = val;
 }

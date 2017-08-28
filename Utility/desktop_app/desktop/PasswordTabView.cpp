@@ -15,6 +15,9 @@ PasswordTabView::PasswordTabView(DeviceData& data, QWidget *parent) :
     m_model = new QStringListModel(this);
     ui->pwdView->setModel(m_model);
     ui->pwdBox->hide();
+
+    connect(&m_data, &DeviceData::memoryChanged, this, &PasswordTabView::parseData);
+    connect(&m_data, &DeviceData::keyChanged, this, &PasswordTabView::parseData);
 }
 
 PasswordTabView::~PasswordTabView()
@@ -48,7 +51,6 @@ void PasswordTabView::parseData()
         m_indexToId << pwd.id();
     }
     m_model->setStringList(nameList);
-
 }
 
 void PasswordTabView::on_pwdView_activated(const QModelIndex &index)
@@ -71,6 +73,7 @@ void PasswordTabView::on_buttonAddPwd_clicked()
     AddPwdDialog diag;
     if(diag.exec()==QDialog::Accepted)
     {
-        // Add password
+        m_data.addPassword(diag.name(), diag.password(), diag.userName());
+        parseData();
     }
 }

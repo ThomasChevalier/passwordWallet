@@ -16,10 +16,8 @@
 #define WDT_MAX_16INT (0xFFFF)
 #define WDT_MAX_32INT (0xFFFFFFFF)
 
-#define gWDT_buffer_SIZE 32
-static uint8_t gWDT_buffer[gWDT_buffer_SIZE];
-static uint8_t gWDT_buffer_position;
-static uint8_t gWDT_loop_counter;
+#define NUM_SAMPLE (32)
+static uint8_t sampleCount;
 
 /**
  * @brief 32 bits of pure random.
@@ -27,17 +25,40 @@ static uint8_t gWDT_loop_counter;
 static volatile uint32_t random_dword;
 
 /**
- * @brief If the variable equal 0 then nothing has to be written to fram, else if the variable equal 1, random_dword should be written to fram
+ * @brief If the variable equal FALSE then nothing has to be written to fram, else if the variable equal TRUE, random_dword should be written to fram
  */
 static volatile uint8_t random_transfer;
 
+/**
+ * @brief The current size of the entropy pool stored in FRAM
+ */
 uint16_t entropy_pool_size;
+
+
+// The following code is an implementation of Jenkin's one at a time hash
+// This hash function has had preliminary testing to verify that it
+// produces reasonably uniform random results when using WDT jitter
+// on a variety of Arduino platforms
+static void jenkin_one_at_a_time_step(volatile uint32_t* in, uint8_t val)
+{
+	(*in) += val;
+	(*in) += ((*in) << 10);
+	(*in) ^= ((*in) >> 6);
+}
+
+static void jenkin_one_at_a_time_final(volatile uint32_t* in)
+{
+	(*in) += ((*in) << 3);
+	(*in) ^= ((*in) >> 11);
+	(*in) += ((*in) << 15);
+}
 
 void random_init(void)
 {
-	random_transfer = 0;
-	gWDT_buffer_position = 0;
+	random_transfer = TRUE;
+	sampleCount = 0;
 	entropy_pool_size = 0;
+	random_dword = 0;
 
 	cli();                         // Temporarily turn off interrupts, until WDT configured
 	MCUSR = 0;                     // Use the MCU status register to reset flags for WDR, BOR, EXTR, and POWR
@@ -48,7 +69,6 @@ void random_init(void)
 }
 
 
-//  
 /**
  * @brief [This interrupt service routine is called every time the WDT interrupt is triggered.
  * With the default configuration that is approximately once every 16ms, producing 
@@ -58,27 +78,18 @@ void random_init(void)
  */
 static void isr_hardware_neutral(uint8_t val)
 {
-	gWDT_buffer[gWDT_buffer_position] = val;
-	gWDT_buffer_position++;                     // every time the WDT interrupt is triggered
-	if (gWDT_buffer_position >= gWDT_buffer_SIZE)
-	{
-		random_dword = 0;
+	if(random_transfer){
+		return;
+	}
 
-		// The following code is an implementation of Jenkin's one at a time hash
-		// This hash function has had preliminary testing to verify that it
-		// produces reasonably uniform random results when using WDT jitter
-		// on a variety of Arduino platforms
-		for(gWDT_loop_counter = 0; gWDT_loop_counter < gWDT_buffer_SIZE; ++gWDT_loop_counter)
-		{
-			random_dword += gWDT_buffer[gWDT_loop_counter];
-			random_dword += (random_dword << 10);
-			random_dword ^= (random_dword >> 6);
-		}
-		random_dword += (random_dword << 3);
-		random_dword ^= (random_dword >> 11);
-		random_dword += (random_dword << 15);
-		gWDT_buffer_position = 0; // Start collecting the next 32 bytes of Timer 1 counts
-		random_transfer = 1;
+	jenkin_one_at_a_time_step(&random_dword, val);
+	++sampleCount;
+
+	if (sampleCount >= NUM_SAMPLE)
+	{
+		jenkin_one_at_a_time_final(&random_dword);
+		sampleCount = 0; // Start collecting the next 32 bytes of Timer 1 counts
+		random_transfer = TRUE;
 	}
 }
 
@@ -100,7 +111,8 @@ void random_save_entropy(void)
 			}
 			fram_write_bytes(OFFSET_ENTROPY_POOL + entropy_pool_size, (uint8_t*)(&random_dword), 4); // Write the random value in the pool
 			entropy_pool_size += 4; // Increase of 4 bytes the size of the entropy pool
-			random_transfer = 0; // random_dword has been transferred !
+			random_dword = 0;
+			random_transfer = FALSE; // random_dword has been transferred !
 		}
 	}
 }

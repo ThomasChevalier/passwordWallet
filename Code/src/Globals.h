@@ -29,7 +29,7 @@
 #if defined(SPI_FRAM) && defined(I2C_FRAM)
 #error Only one type of connection can be used.
 #elif !defined(SPI_FRAM) && !defined(I2C_FRAM)
-#error A connection should be choosen
+#error A connection must be choosen
 #endif
 
 #if defined(I2C_FRAM)

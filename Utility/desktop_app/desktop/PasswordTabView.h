@@ -19,11 +19,12 @@ public:
     explicit PasswordTabView(DeviceData& data, QWidget *parent = 0);
     ~PasswordTabView();
 
-    void parseData();
 
 private slots:
     void on_pwdView_activated(const QModelIndex &index);
     void on_buttonAddPwd_clicked();
+
+    void parseData();
 
 private:
 

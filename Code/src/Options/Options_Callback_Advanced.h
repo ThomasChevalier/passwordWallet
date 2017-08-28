@@ -43,7 +43,8 @@ void opt_callback_full_reset(void);
  */
 void opt_callback_enter_key(void);
 
-void opt_callback_force_key(void);
+void opt_callback_force_card(void);
+void opt_callback_force_enter(void);
 
 void opt_callback_system_info(void);
 

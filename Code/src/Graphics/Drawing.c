@@ -192,7 +192,7 @@ void draw_main_menu(void)
 		{
 			draw_h_line(99, 28, 28, WHITE);
 			draw_v_line(99, 16, 12, WHITE);
-			for(uint8_t i = 0; i < 10; ++i)
+			for(uint8_t i = 0; i < 11; ++i)
 			{
 				draw_h_line(100, 17+i, 27, BLACK);
 			}

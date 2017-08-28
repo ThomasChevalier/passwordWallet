@@ -7,10 +7,12 @@ All rights reserved
 
 #include "Ascii85.h"
 
+
+static const __flash uint32_t powers[5] = {52200625, 614125, 7225, 85, 1};
+
 void encode_16B(uint8_t *input, char *output)
 {
 	uint8_t i = 0;
-	uint32_t powers[5] = {52200625, 614125, 7225, 85, 1};
 	for(; i < 4; ++i)
 	{
 		uint32_t sum = ((uint32_t)input[0] << 24) + ((uint32_t)input[1] << 16) + ((uint32_t)input[2] << 8) + (uint32_t)input[3];
@@ -31,7 +33,6 @@ void encode_16B(uint8_t *input, char *output)
 void decode_16B(char *input, uint8_t *output)
 {
 	uint8_t i = 0;
-	uint32_t powers[5] = {52200625, 614125, 7225, 85, 1};
 	for(; i < 4; ++i)
 	{
 		uint32_t sum = 0;

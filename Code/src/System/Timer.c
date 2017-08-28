@@ -20,6 +20,9 @@ void timer_init(void)
 	TCNT0 = 0;
 }
 
+/**
+ * @brief This interrupt is called every millisecond
+ */
 ISR (TIMER0_COMPA_vect)
 {
 	if(!(GLOBALS_EVENTS & EVENT_NO_SLEEP))

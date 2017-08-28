@@ -11,6 +11,8 @@ class QSerialPortInfo;
 class SerialDevice;
 
 class PasswordTabView;
+class OptionTabView;
+class RestoreTabView;
 
 namespace Ui {
 class MainWindow;
@@ -34,14 +36,14 @@ private slots:
     void on_framReceiveProgress(qint64 received);
 
     void connectDevice();
-
-    void on_buttonSave_clicked();
-    void on_buttonRestore_clicked();
+    void on_buttonSync_clicked();
 
 private:
 
     Ui::MainWindow *ui;
     PasswordTabView *m_pwdView;
+    OptionTabView *m_optView;
+    RestoreTabView *m_restoreView;
 
     SerialDevice *m_serial;
     DeviceData m_data;
