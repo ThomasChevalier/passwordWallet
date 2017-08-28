@@ -4,6 +4,8 @@
 #include <QObject>
 #include <QByteArray>
 #include <QtSerialPort/QSerialPort>
+#include <QStack>
+#include <QEventLoop>
 
 struct DataSend
 {
@@ -68,6 +70,81 @@ private:
     QByteArray m_param;
 
     DataSend m_currentData;
+};
+
+struct SerialCommand
+{
+    enum Type
+    {
+        RequestId,
+        EndCommunication,
+        InitCommunication,
+
+        None
+    };
+    SerialCommand(Type type_ = None, const QByteArray& data_ = QByteArray()):
+        type(type_), data(data_)
+    {}
+    Type type;
+    QByteArray data;
+
+    unsigned bytesExcepted() const;
+};
+
+class CommandWaiter : public QObject
+{
+    Q_OBJECT
+public:
+    CommandWaiter (SerialCommand::Type condition);
+
+    void wait();
+
+public slots:
+    void scanSignal(SerialCommand::Type type);
+
+signals:
+    void finished();
+
+private:
+    SerialCommand::Type m_condition;
+    QEventLoop m_pause;
+    bool m_triggered;
+};
+
+class SerialDevice2 : public QObject
+{
+    Q_OBJECT
+public:
+    explicit SerialDevice2(QObject *parent = 0);
+    ~SerialDevice2();
+
+    bool connectSerial(QSerialPortInfo port);
+    bool isConnected();
+    void disconnectSerial();
+
+    void pushCommand(SerialCommand::Type type, const QByteArray& data = QByteArray());
+    void pushCommand(SerialCommand command);
+
+    void pushAndWait(SerialCommand::Type type, const QByteArray& data = QByteArray());
+    void pushAndWait(SerialCommand command);
+
+signals:
+    void commandSent(SerialCommand::Type type);
+    void commandReceive(SerialCommand command);
+
+    void disconnected();
+
+private slots:
+    void slot_ready_read();
+    void slot_bytes_written(qint64 bytes);
+    void slot_error_occured(QSerialPort::SerialPortError error);
+
+private:
+    void updateSerial();
+
+    QSerialPort m_serial;
+    QStack<SerialCommand> m_commandStack;
+    SerialCommand m_currentCommand;
 };
 
 #endif // SERIALDEVICE_H
