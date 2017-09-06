@@ -6,6 +6,7 @@
 #include <QtSerialPort/QSerialPort>
 #include <QStack>
 #include <QEventLoop>
+#include <QTimer>
 
 struct DataSend
 {
@@ -76,9 +77,13 @@ struct SerialCommand
 {
     enum Type
     {
-        RequestId,
-        EndCommunication,
         InitCommunication,
+        EndCommunication,
+        GetFram,
+        SetFram,
+        GetKey,
+        SetKey,
+        RequestParam,
 
         None
     };
@@ -89,26 +94,6 @@ struct SerialCommand
     QByteArray data;
 
     unsigned bytesExcepted() const;
-};
-
-class CommandWaiter : public QObject
-{
-    Q_OBJECT
-public:
-    CommandWaiter (SerialCommand::Type condition);
-
-    void wait();
-
-public slots:
-    void scanSignal(SerialCommand::Type type);
-
-signals:
-    void finished();
-
-private:
-    SerialCommand::Type m_condition;
-    QEventLoop m_pause;
-    bool m_triggered;
 };
 
 class SerialDevice2 : public QObject
@@ -145,6 +130,28 @@ private:
     QSerialPort m_serial;
     QStack<SerialCommand> m_commandStack;
     SerialCommand m_currentCommand;
+    QTimer m_updateTimer;
 };
+
+class CommandWaiter : public QObject
+{
+    Q_OBJECT
+public:
+    CommandWaiter (SerialCommand::Type condition, SerialDevice2* parent);
+
+    void wait();
+
+public slots:
+    void scanSignal(SerialCommand::Type type);
+
+signals:
+    void finished();
+
+private:
+    SerialCommand::Type m_condition;
+    QEventLoop m_pause;
+    bool m_triggered;
+};
+
 
 #endif // SERIALDEVICE_H

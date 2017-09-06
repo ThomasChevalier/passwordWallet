@@ -258,11 +258,16 @@ bool SerialDevice::WIP() const
 
 SerialDevice2::SerialDevice2(QObject *parent):
     m_serial(),
-    m_commandStack()
+    m_commandStack(),
+    m_currentCommand(),
+    m_updateTimer()
 {
     connect(&m_serial, &QSerialPort::readyRead, this, &SerialDevice2::slot_ready_read);
     connect(&m_serial, &QSerialPort::bytesWritten, this, &SerialDevice2::slot_bytes_written);
     connect(&m_serial, &QSerialPort::errorOccurred, this, &SerialDevice2::slot_error_occured);
+
+    connect(&m_updateTimer, &QTimer::timeout, this, &SerialDevice2::updateSerial);
+    m_updateTimer.start(100);
 }
 
 SerialDevice2::~SerialDevice2()
@@ -308,7 +313,7 @@ void SerialDevice2::pushCommand(SerialCommand command)
 
 void SerialDevice2::pushAndWait(SerialCommand::Type type, const QByteArray &data)
 {
-    CommandWaiter waiter(type);
+    CommandWaiter waiter(type, this);
     pushCommand(type, data);
     waiter.wait();
 }
@@ -329,6 +334,7 @@ void SerialDevice2::slot_ready_read()
         if(read.isEmpty()){
             // There is an error since ready read has been called.
             // Process the error
+            return;
         }
         m_currentCommand.data.append(read);
 
@@ -385,11 +391,13 @@ void SerialDevice2::updateSerial()
     }
 }
 
-CommandWaiter::CommandWaiter(SerialCommand::Type condition):
+CommandWaiter::CommandWaiter(SerialCommand::Type condition, SerialDevice2 *parent):
+    QObject(parent),
     m_condition(condition),
     m_pause(),
     m_triggered(false)
 {
+    connect(parent, &SerialDevice2::commandSent, this, &CommandWaiter::scanSignal);
     connect(this, &CommandWaiter::finished, &m_pause, &QEventLoop::quit);
 }
 
@@ -412,15 +420,14 @@ void CommandWaiter::scanSignal(SerialCommand::Type type)
 unsigned SerialCommand::bytesExcepted() const
 {
     switch (type) {
-    case RequestId:
-        return 5;
-        break;
     case EndCommunication:
     case InitCommunication:
+    case SetFram:
+    case SetKey:
     case None:
         return 0;
-        break;
-
+    case GetKey:
+        return 16;
     default:
         break;
     }
