@@ -33,3 +33,62 @@ Command
 |-------------------------------|---------|-----------------------------------------------------------------------------------------------------------------
 |        Request parameter      |  0x05   | Request the device to send the fram identifier followed by a byte set to 0 if STORE_SCREEN_BUFFER_IN_FRAM is not defined, or a byte set to anything else than 0 if STORE_SCREEN_BUFFER_IN_FRAM is defined
 |-------------------------------|---------|-----------------------------------------------------------------------------------------------------------------
+
+
+NEW PROTOCOL
+============
+
+Description
+-----------
+
+The pc is the master of the communication. The device send data only if the pc has sent a command.
+A command is constructed as the following :
+
+|--------|----------|--------------|
+|   ID   |   SIZE   |     DATA     |
+|--------|----------|--------------|
+| 1 Byte |  2 Bytes | [Size] bytes |
+
+When the pc send a command the device read the id and the size field and then can execute the command before all the data arrived.
+The device always respond to a command by another command. It can be a simple "OK" or a more complex message.
+
+
+Type of command
+---------------
+
+|-------------------------------|--------|-----------------------------------------------------------------------------------------------------------------
+|          Command              |   ID   |                                                  Description
+|-------------------------------|--------|-----------------------------------------------------------------------------------------------------------------
+|       Init communication      |  0x01  | When the device receive this byte and the communication is not inited, it switch to communication state
+|-------------------------------|--------|-----------------------------------------------------------------------------------------------------------------
+|       End communication       |  0x02  | When the device receive this byte and the communication is inited, it switch to main state and end all transfers
+|-------------------------------|--------|-----------------------------------------------------------------------------------------------------------------
+|           Get Fram            |  0x10  | Request the device to send all the content of the fram
+|-------------------------------|--------|-----------------------------------------------------------------------------------------------------------------
+|           Set Fram            |  0x20  | The pc send an array of byte and the device must write it to the fram, from address 0 to the end
+|-------------------------------|--------|-----------------------------------------------------------------------------------------------------------------
+|            Get Key            |  0x11  | Request the device to send the main KEY
+|-------------------------------|--------|-----------------------------------------------------------------------------------------------------------------
+|            Set Key            |  0x21  | The pc send 16 byte and the device interpret those byte as the main key (and check the key against the hash)
+|-------------------------------|--------|-----------------------------------------------------------------------------------------------------------------
+|        Request parameter      |  0x12  | Request the device to send the fram identifier followed by a byte set to 0 if STORE_SCREEN_BUFFER_IN_FRAM is not defined, or a byte set to anything else than 0 if STORE_SCREEN_BUFFER_IN_FRAM is defined
+|-------------------------------|--------|-----------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

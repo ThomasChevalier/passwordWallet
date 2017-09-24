@@ -8,7 +8,7 @@
 
 #include <QSerialPort>
 
-#include "SerialDevice.h"
+#include "SerialDevice.h.old"
 #include "DeviceData.h"
 
 class QLabel;

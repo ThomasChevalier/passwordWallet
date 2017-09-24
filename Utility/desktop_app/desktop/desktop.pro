@@ -26,7 +26,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += main.cpp\
         mainwindow.cpp \
     connectiondialog.cpp \
-    SerialDevice.cpp \
     DeviceData.cpp \
     PasswordTabView.cpp \
     Password.cpp \
@@ -36,11 +35,13 @@ SOURCES += main.cpp\
     Ascii85.cpp \
     AddPwdDialog.cpp \
     OptionTabView.cpp \
-    RestoreTabView.cpp
+    RestoreTabView.cpp \
+    SerialInterface.cpp \
+    SerialDevice.cpp \
+    SerialCommand.cpp
 
 HEADERS  += mainwindow.h \
     connectiondialog.h \
-    SerialDevice.h \
     DeviceData.h \
     PasswordTabView.h \
     Password.h \
@@ -50,7 +51,10 @@ HEADERS  += mainwindow.h \
     Ascii85.h \
     AddPwdDialog.h \
     OptionTabView.h \
-    RestoreTabView.h
+    RestoreTabView.h \
+    SerialInterface.h \
+    SerialDevice.h \
+    SerialCommand.h
 
 FORMS    += mainwindow.ui \
     connectiondialog.ui \
@@ -59,3 +63,7 @@ FORMS    += mainwindow.ui \
     AddPwdDialog.ui \
     OptionTabView.ui \
     RestoreTabView.ui
+
+DISTFILES += \
+    SerialDevice.h.old \
+    SerialDevice.cpp.old

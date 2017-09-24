@@ -4,7 +4,7 @@
 #include <QWidget>
 
 #include "DeviceData.h"
-#include "SerialDevice.h"
+#include "SerialDevice.h.old"
 
 namespace Ui {
 class RestoreTabView;

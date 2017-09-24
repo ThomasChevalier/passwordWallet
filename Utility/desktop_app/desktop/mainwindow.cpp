@@ -12,7 +12,7 @@
 #include "OptionTabView.h"
 #include "RestoreTabView.h"
 
-#include "SerialDevice.h"
+#include "SerialDevice.h.old"
 #include "KeyDialog.h"
 
 MainWindow::MainWindow(QWidget *parent) :
