@@ -1,6 +1,9 @@
 #include "Process.h"
 
+#include "../Globals.h"
+
 #include "Commands.h"
+
 
 #define COM_NONE  (0)             // 0
 #define COM_ID    (COM_NONE + 1)  // 1
@@ -22,6 +25,12 @@ static uint8_t pick(uint8_t **buffer, uint8_t* lenght)
 void com_process_data(uint8_t* buffer, uint8_t lenght)
 {
 	static uint16_t com_bytes_processed;
+
+	if(SERIAL_TIMEOUT_TIMER == SERIAL_TIMEOUT){
+		com_abort();
+		com_state = COM_NONE;
+		SERIAL_TIMEOUT_TIMER = 0;
+	}
 
 	do
 	{

@@ -73,7 +73,6 @@ int main(void)
 		{state_wait_card_transition,        state_wait_card_begin,        state_wait_card_end},        // STATE_WAIT_CARD
 		{state_main_transition,             state_main_begin,             state_main_end},             // STATE_MAIN
 		{state_browse_transition,           state_browse_begin,           state_browse_end},           // STATE_BROWSE
-		{state_communication_transition,    state_communication_begin,    state_communication_end}     // STATE_COMMUNICATION
 	};
 
 	State const * currentState = &states[STATE_WAIT_CARD];
@@ -94,11 +93,8 @@ int main(void)
 			currentStateNum = newState;
 			currentState->begin();
 		}
-		// Don't wait in communication state, it slow down the transmission
-		if(currentStateNum != STATE_COMMUNICATION && currentStateNum != STATE_MAIN)
-		{
-			program_wait();
-		}
+		
+		program_wait();
 	}
 
 	while(1){}

@@ -1,7 +1,8 @@
 #include "Serial.h"
 
 #include "../Globals.h"
-#include "../FSM/States/State_Communication.h"
+//#include "../FSM/States/State_Communication.h"
+#include "../Communication/Process.h"
 
 #ifdef SERIAL_ENABLE
 /** Contains the current baud rate and other settings of the virtual serial port. While this demo does not use
@@ -179,7 +180,8 @@ void CDC_Task(void)
 		/* Finalize the stream transfer to send the last packet */
 		Endpoint_ClearOUT();
 
-		state_communication_process_data(buffer, dataLength);
+		com_process_data(buffer, dataLength);
+		//state_communication_process_data(buffer, dataLength);
 	}
 }
 

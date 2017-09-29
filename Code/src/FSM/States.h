@@ -6,6 +6,5 @@
 #include "States/State_Wait_Card.h"
 #include "States/State_Main.h"
 #include "States/State_Browse.h"
-#include "States/State_Communication.h"
 
 #endif // STATES_HEADER_THOMAS_CHEVALIER

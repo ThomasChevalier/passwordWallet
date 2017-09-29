@@ -11,6 +11,8 @@ uint8_t NUM_PWD = 0;
 uint8_t CURRENT_PASSWORD_ID = 0;
 volatile uint16_t ACTIVITY_TIMER = 0;
 
+volatile uint8_t SERIAL_TIMEOUT_TIMER = 0;
+
 void update_opt_flags(uint8_t opt_flag)
 {
 	OPTIONS_FLAG = opt_flag;

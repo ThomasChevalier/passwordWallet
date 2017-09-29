@@ -8,7 +8,6 @@ typedef enum {
 	STATE_WAIT_CARD = 0,
 	STATE_MAIN,
 	STATE_BROWSE,
-	STATE_COMMUNICATION,
 	// ...
 	NUM_STATES
 } State_type;

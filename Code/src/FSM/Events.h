@@ -5,19 +5,16 @@
 
 #include "../Globals.h"
 
-#define EVENT_BUTTON_1 			(1<<0)
-#define EVENT_BUTTON_2			(1<<1)
-#define EVENT_BUTTON_3			(1<<2)
-#define EVENT_BUTTON_4			(1<<3)
-#define EVENT_ALL_BUTTONS		(EVENT_BUTTON_1 | EVENT_BUTTON_2 | EVENT_BUTTON_3 | EVENT_BUTTON_4)
+#define EVENT_BUTTON_1          (1<<0)
+#define EVENT_BUTTON_2          (1<<1)
+#define EVENT_BUTTON_3          (1<<2)
+#define EVENT_BUTTON_4          (1<<3)
+#define EVENT_ALL_BUTTONS       (EVENT_BUTTON_1 | EVENT_BUTTON_2 | EVENT_BUTTON_3 | EVENT_BUTTON_4)
 
-#define EVENT_INIT_COMMUNICATION	(1<<4)
-
-#define EVENT_STOP (1<<5)
-
-#define EVENT_SLEEP_SHUTDOWN (1<<6)
-
-#define EVENT_NO_SLEEP (1<<7)
+#define EVENT_COMMUNICATING     (1<<4)
+#define EVENT_STOP              (1<<5)
+#define EVENT_SLEEP_SHUTDOWN    (1<<6)
+#define EVENT_NO_SLEEP          (1<<7)
 
 #define EVENT_WHENEVER (0xFF)
 

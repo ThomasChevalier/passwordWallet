@@ -24,11 +24,6 @@ void state_main_begin (void)
 
 uint8_t state_main_transition (uint8_t event)
 {
-	if(event & EVENT_INIT_COMMUNICATION)
-	{
-		return STATE_COMMUNICATION;
-	}
-	
 	// If there is no password don't navigate in the list or send password
 	if( (event & (EVENT_BUTTON_1 | EVENT_BUTTON_2 | EVENT_BUTTON_3))
 		&& NUM_PWD == 0)

@@ -59,6 +59,13 @@ void com_exec(uint8_t id)
 	}
 }
 
+void com_abort(void)
+{
+	COM_FLAG = 0;
+	COM_POS = 0;
+	COM_PARAMETER = 0;
+}
+
 void command_init()
 {
 	COM_FLAG |= COM_FLAG_INITIALIZED;

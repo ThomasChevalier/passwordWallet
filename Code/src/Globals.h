@@ -197,6 +197,9 @@ extern uint8_t NUM_PWD;
  */
 extern volatile uint16_t ACTIVITY_TIMER;
 
+extern volatile uint8_t SERIAL_TIMEOUT_TIMER;
+#define SERIAL_TIMEOUT (0xFF) // In milliseconds
+
 // ////// //
 // EEPROM //
 // ////// //

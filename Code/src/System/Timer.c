@@ -25,6 +25,12 @@ void timer_init(void)
  */
 ISR (TIMER0_COMPA_vect)
 {
+	// Prevent overflow
+	if(SERIAL_TIMEOUT_TIMER != SERIAL_TIMEOUT){
+		++SERIAL_TIMEOUT_TIMER;
+	}
+	
+
 	if(!(GLOBALS_EVENTS & EVENT_NO_SLEEP))
 	{
 		++ACTIVITY_TIMER;

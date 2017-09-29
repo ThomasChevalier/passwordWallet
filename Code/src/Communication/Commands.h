@@ -30,6 +30,7 @@ typedef struct Command_
 extern Command CURRENT_COMMAND;
 
 void com_exec(uint8_t id);
+void com_abort(void);
 
 void command_init(void);
 void command_end(void);

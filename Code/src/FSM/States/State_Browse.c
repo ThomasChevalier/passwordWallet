@@ -62,11 +62,6 @@ static void select_pwd_from_letter(void)
 
 uint8_t state_browse_transition (uint8_t event)
 {
-	if(event & EVENT_INIT_COMMUNICATION)
-	{
-		return STATE_COMMUNICATION;
-	}
-	
 	if(event & EVENT_BUTTON_1)
 	{
 		letter = (letter == '@') ? 'Z' : letter - 1;
