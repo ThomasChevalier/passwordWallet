@@ -158,5 +158,4 @@ void i2c_stop(void)
 
 
 
-
 #endif // I2C_REQUIRED
