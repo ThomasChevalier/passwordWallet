@@ -136,7 +136,7 @@ void command_set_fram()
 		++COM_POS;
 	}
 	if(COM_POS == 1 && CURRENT_COMMAND.availableSize != 0){
-		COM_PARAMETER = CURRENT_COMMAND.data[0] << 8;
+		COM_PARAMETER |= CURRENT_COMMAND.data[0] << 8;
 		++CURRENT_COMMAND.data;
 		--CURRENT_COMMAND.availableSize;
 		++COM_POS;

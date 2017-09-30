@@ -62,8 +62,8 @@ void com_process_data(uint8_t* buffer, uint8_t lenght)
 			// Data available from serial belong completely to the current command :
 			if(lenght < CURRENT_COMMAND.totalSize - com_bytes_processed){
 				CURRENT_COMMAND.availableSize = lenght;
-				lenght = 0;
 				com_bytes_processed += lenght;
+				lenght = 0;
 			}
 			// A fraction of the data available from the serial belong to the current command :
 			else
