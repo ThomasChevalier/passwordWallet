@@ -5,11 +5,10 @@
 #include "Commands.h"
 
 
-#define COM_NONE  (0)             // 0
-#define COM_ID    (COM_NONE + 1)  // 1
-#define COM_SIZE1 (COM_ID + 1)    // 2
-#define COM_SIZE2 (COM_SIZE1 + 1) // 3
-#define COM_DATA  (COM_SIZE2 + 1) // 4
+#define COM_ID    (0)             // 0
+#define COM_SIZE1 (COM_ID + 1)    // 1
+#define COM_SIZE2 (COM_SIZE1 + 1) // 2
+#define COM_DATA  (COM_SIZE2 + 1) // 3
 
 static uint8_t com_state;
 
@@ -28,7 +27,7 @@ void com_process_data(uint8_t* buffer, uint8_t lenght)
 
 	if(SERIAL_TIMEOUT_TIMER == SERIAL_TIMEOUT){
 		com_abort();
-		com_state = COM_NONE;
+		com_state = COM_ID;
 		SERIAL_TIMEOUT_TIMER = 0;
 	}
 
