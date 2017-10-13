@@ -4,9 +4,10 @@
 #include "../Globals.h"
 #include "../Hardware/Fram.h"
 
-#define COM_FLAG_INITIALIZED (1<<0)
+#include "../System/Sleep.h"
 
-static uint8_t COM_FLAG = 0;
+#include "../Hardware/Oled.h"
+#include "../Graphics/Drawing.h"
 
 static uint16_t COM_POS = 0;
 static uint16_t COM_PARAMETER = 0;
@@ -24,58 +25,99 @@ static void send_command(uint8_t id, uint16_t size, uint8_t *data)
 		serial_send(data, size % 255);
 	}
 }
+ 
+#define COM_LOGO_X (120)
+#define COM_LOGO_Y (0)
+
+static uint8_t save_logo[8];
+
+// WARNING :
+// This function does not work as intented if the screen is reversed.
+static void show_com_logo(void)
+{
+	static const __flash uint8_t com_logo[] =
+	{
+		0x28, 0x2C, 0x2E, 0x28, 0x28, 0xE8, 0x68, 0x28
+	};
+
+	// The following lines save the column of pixel before update
+	// This works because COM_LOGO_Y % 8 == 0
+	uint8_t i = 0;
+	for(; i < 8; ++i)
+	{
+		--i;
+		save_logo[i] = oled_data[(COM_LOGO_X+i) + (COM_LOGO_Y/8)*SSD1306_LCDWIDTH];
+		oled_data[(COM_LOGO_X+i) + (COM_LOGO_Y/8)*SSD1306_LCDWIDTH] = com_logo[i];
+	}
+	oled_display();
+}
+
+static void hide_com_logo(void)
+{
+	uint8_t i = 0;
+	for(; i < 8; ++i)
+	{
+		oled_data[(COM_LOGO_X+i) + (COM_LOGO_Y/8)*SSD1306_LCDWIDTH] = save_logo[i];
+	}
+	oled_display();
+}
 
 void com_exec(uint8_t id)
 {
-	if( (!(COM_FLAG & COM_FLAG_INITIALIZED)) && (id != COM_INIT))
+	if( (!(GLOBALS_EVENTS & EVENT_FLAG_COM)) && (id != COM_INIT))
 	{
 		send_command(COM_ERR_NOT_INIT, 0, 0);
 		return;
 	} 
 
+	show_com_logo();
+
 	switch(id)
 	{
 	case COM_INIT:
 		command_init();
-		return;
+		break;
 	case COM_END:
 		command_end();
-		return;
+		break;
 	case COM_GET_FRAM :
 		command_get_fram();
-		return;
+		break;
 	case COM_GET_KEY :
 		command_get_key();
-		return;
+		break;
 	case COM_GET_PARAM :
 		command_get_param();
-		return;
+		break;
 	case COM_SET_FRAM :
 		command_set_fram();
-		return;
+		break;
 	case COM_SET_KEY :
 		command_set_key();
-		return;
+		break;
 	}
+
+	hide_com_logo();
 }
 
 void com_abort(void)
 {
-	COM_FLAG = 0;
+	GLOBALS_EVENTS &= ~EVENT_FLAG_COM;
 	COM_POS = 0;
 	COM_PARAMETER = 0;
 }
 
 void command_init()
 {
-	COM_FLAG |= COM_FLAG_INITIALIZED;
+	GLOBALS_EVENTS |= EVENT_FLAG_COM;
+
 	send_command(COM_OK, 0, 0);
 }
 
 void command_end()
 {
-	COM_FLAG &= ~COM_FLAG_INITIALIZED;
-	send_command(COM_OK, 0, 0);
+	GLOBALS_EVENTS &= ~EVENT_FLAG_COM;
+	send_command(COM_END, 0, 0);
 }
 
 void command_get_fram()

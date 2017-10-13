@@ -10,6 +10,8 @@
 #include <QDebug>
 #include <QFile>
 
+#include "SerialInterface.h"
+
 #define RESULT_OK_IMG QString("ok.png")
 #define RESULT_WARNING_IMG QString("warning.png")
 #define RESULT_ERROR_IMG QString("ko.png")
@@ -17,7 +19,7 @@
 
 #define MAX_CONNECTION_ATTEMPT_BEFORE_ERROR (10)
 
-ConnectionDialog::ConnectionDialog(SerialDevice &device, DeviceData &data, QWidget *parent) :
+ConnectionDialog::ConnectionDialog(DeviceData &data, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::ConnectionDialog),
     m_connectionAttempt(0),
@@ -41,12 +43,13 @@ ConnectionDialog::ConnectionDialog(SerialDevice &device, DeviceData &data, QWidg
     adjustSize();
 
     // Connection
-    m_deviceConnections << connect(&m_device, &SerialDevice::disconnected,        this, &ConnectionDialog::on_disconnected);
-    m_deviceConnections << connect(&m_device, &SerialDevice::paramReceived,       this, &ConnectionDialog::on_paramReceived);
-    m_deviceConnections << connect(&m_device, &SerialDevice::framReceived,        this, &ConnectionDialog::on_framReceived);
-    m_deviceConnections << connect(&m_device, &SerialDevice::keyReceived,         this, &ConnectionDialog::on_keyReceived);
-    m_deviceConnections << connect(&m_device, &SerialDevice::framReceiveProgress, this, &ConnectionDialog::on_framReceiveProgress);
-
+//    m_deviceConnections << connect(&m_device, &SerialDevice::disconnected,        this, &ConnectionDialog::on_disconnected);
+//    m_deviceConnections << connect(&m_device, &SerialDevice::paramReceived,       this, &ConnectionDialog::on_paramReceived);
+//    m_deviceConnections << connect(&m_device, &SerialDevice::framReceived,        this, &ConnectionDialog::on_framReceived);
+//    m_deviceConnections << connect(&m_device, &SerialDevice::keyReceived,         this, &ConnectionDialog::on_keyReceived);
+//    m_deviceConnections << connect(&m_device, &SerialDevice::framReceiveProgress, this, &ConnectionDialog::on_framReceiveProgress);
+    connect(&SerialInterface::get(), &SerialInterface::serialDisconnected, this, &ConnectionDialog::on_disconnected);
+    connect(&SerialInterface::get(), &SerialInterface::commandReceived, thisn &ConnectionDialog::on_data);
     m_exploreTimer = new QTimer(this);
     tryConnect();
 }
@@ -98,51 +101,56 @@ void ConnectionDialog::on_disconnected()
     resolveDisconnectionIssue();
 }
 
-void ConnectionDialog::on_framReceived(const QByteArray &fram)
+void ConnectionDialog::on_data(const SerialCommand &command)
 {
-    m_currentState = Complete;
-
-    m_data.setMemory(fram);
-    ui->img_content->setPixmap(QPixmap(RESULT_OK_IMG));
-    addMessage(tr("Mémoire reçue"));
-    ui->label_status->setText(tr("<strong>Connexion établie</strong>"));
-    ui->button_close->show();
-    ui->progressBar->hide();
+    qDebug() << command.type() << " / " << command.data();
 }
 
-void ConnectionDialog::on_keyReceived(const QByteArray &key)
-{
-    m_currentState = WaitingFram;
+//void ConnectionDialog::on_framReceived(const QByteArray &fram)
+//{
+//    m_currentState = Complete;
 
-    m_data.setKey(key);
-    ui->img_key->setPixmap(RESULT_OK_IMG);
-    addMessage(tr("Clef de chiffrement reçue"));
+//    m_data.setMemory(fram);
+//    ui->img_content->setPixmap(QPixmap(RESULT_OK_IMG));
+//    addMessage(tr("Mémoire reçue"));
+//    ui->label_status->setText(tr("<strong>Connexion établie</strong>"));
+//    ui->button_close->show();
+//    ui->progressBar->hide();
+//}
 
-    ui->img_content->setPixmap(RESULT_WAIT_IMG);
-    ui->img_content->setEnabled(true);
+//void ConnectionDialog::on_keyReceived(const QByteArray &key)
+//{
+//    m_currentState = WaitingFram;
 
-    m_device.requestFramDump(m_data.memorySize());
-}
+//    m_data.setKey(key);
+//    ui->img_key->setPixmap(RESULT_OK_IMG);
+//    addMessage(tr("Clef de chiffrement reçue"));
 
-void ConnectionDialog::on_paramReceived(const QByteArray &param)
-{
-    m_currentState = WaitingKey;
+//    ui->img_content->setPixmap(RESULT_WAIT_IMG);
+//    ui->img_content->setEnabled(true);
 
-    ui->img_param->setPixmap(QPixmap(RESULT_OK_IMG));
-    m_data.setParameter(param);
-    addMessage(tr("Taille de la mémoire : %1").arg(m_data.memorySize()));
+//    m_device.requestFramDump(m_data.memorySize());
+//}
 
-    ui->img_key->setPixmap(QPixmap(RESULT_WAIT_IMG));
-    ui->img_key->setEnabled(true);
-    while(m_device.busy()) { QCoreApplication::processEvents(); }
-    m_device.requestKey();
-}
+//void ConnectionDialog::on_paramReceived(const QByteArray &param)
+//{
+//    m_currentState = WaitingKey;
 
-void ConnectionDialog::on_framReceiveProgress(qint64 received)
-{
-    ui->progressBar->setMaximum(m_data.memorySize());
-    ui->progressBar->setValue(received);
-}
+//    ui->img_param->setPixmap(QPixmap(RESULT_OK_IMG));
+//    m_data.setParameter(param);
+//    addMessage(tr("Taille de la mémoire : %1").arg(m_data.memorySize()));
+
+//    ui->img_key->setPixmap(QPixmap(RESULT_WAIT_IMG));
+//    ui->img_key->setEnabled(true);
+//    while(m_device.busy()) { QCoreApplication::processEvents(); }
+//    m_device.requestKey();
+//}
+
+//void ConnectionDialog::on_framReceiveProgress(qint64 received)
+//{
+//    ui->progressBar->setMaximum(m_data.memorySize());
+//    ui->progressBar->setValue(received);
+//}
 
 void ConnectionDialog::on_issueLinuxEnterUsrName_clicked()
 {
@@ -178,27 +186,27 @@ void ConnectionDialog::connectDevice(QSerialPortInfo &info)
 {
     ++m_connectionAttempt;
 
-    if(m_device.connectSerial(info))
+    if(SerialInterface::get().connectSerial(info))
     {
         m_exploreTimer->stop();
         m_connectionAttempt = 0;
-        addMessage(tr("Connecté avec succés"));
+        addMessage(tr("Connection ... "));
         ui->img_search->setPixmap(QPixmap(RESULT_OK_IMG));
-        getParameter();
+        //getParameter();
     }
     else
     {
         if(m_connectionAttempt>=MAX_CONNECTION_ATTEMPT_BEFORE_ERROR)
         {
             m_exploreTimer->stop();
+            addMessage(tr("Connexion impossible (%1 tentatives ont échouées)").arg(m_connectionAttempt));
             m_connectionAttempt = 0;
-            addMessage(tr("Connexion impossible"));
             ui->img_search->setPixmap(RESULT_ERROR_IMG);
             resolveConnectionIssue();
         }
         else
         {
-            addMessage(tr("Connexion refusée. Nouvel essai..."));
+            addMessage(tr("Connexion refusée. Nouvel essai ..."));
         }
     }
 }

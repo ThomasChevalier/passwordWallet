@@ -12,7 +12,6 @@
 #include "OptionTabView.h"
 #include "RestoreTabView.h"
 
-#include "SerialDevice.h.old"
 #include "KeyDialog.h"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -133,4 +132,9 @@ void MainWindow::connectDevice()
 void MainWindow::on_buttonSync_clicked()
 {
     m_serial->setFram(m_data.memory());
+}
+
+void MainWindow::on_actionSerialConsole_triggered()
+{
+
 }

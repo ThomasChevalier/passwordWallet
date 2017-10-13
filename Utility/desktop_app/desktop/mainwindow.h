@@ -37,6 +37,7 @@ private slots:
 
     void connectDevice();
     void on_buttonSync_clicked();
+    void on_actionSerialConsole_triggered();
 
 private:
 

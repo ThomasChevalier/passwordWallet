@@ -25,11 +25,12 @@ void com_process_data(uint8_t* buffer, uint8_t lenght)
 {
 	static uint16_t com_bytes_processed;
 
-	if(SERIAL_TIMEOUT_TIMER == SERIAL_TIMEOUT){
+	// If we are waiting for a command we don't want to timeout
+	if(SERIAL_TIMEOUT_TIMER == SERIAL_TIMEOUT && com_state != COM_ID){
 		com_abort();
 		com_state = COM_ID;
-		SERIAL_TIMEOUT_TIMER = 0;
 	}
+	SERIAL_TIMEOUT_TIMER = 0;
 
 	do
 	{

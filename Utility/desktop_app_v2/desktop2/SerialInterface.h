@@ -11,7 +11,7 @@
 #include "SerialDevice.h"
 #include "SerialCommand.h"
 
-#define DEFAULT_TIMEOUT (1000)
+#define DEFAULT_TIMEOUT (100000000)
 
 class SerialInterface : public QObject
 {

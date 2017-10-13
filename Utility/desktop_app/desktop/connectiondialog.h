@@ -8,8 +8,8 @@
 
 #include <QSerialPort>
 
-#include "SerialDevice.h.old"
 #include "DeviceData.h"
+#include "SerialCommand.h"
 
 class QLabel;
 
@@ -22,7 +22,7 @@ class ConnectionDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit ConnectionDialog(SerialDevice& device, DeviceData& data, QWidget *parent = 0);
+    explicit ConnectionDialog(DeviceData& data, QWidget *parent = 0);
     ~ConnectionDialog();
 
     bool isConnectionComplete();
@@ -32,10 +32,7 @@ public slots:
 
 private slots:
     void on_disconnected();
-    void on_framReceived(const QByteArray& fram);
-    void on_keyReceived(const QByteArray& key);
-    void on_paramReceived(const QByteArray& param);
-    void on_framReceiveProgress(qint64 received);
+    void on_data(const SerialCommand& command);
 
     void on_issueLinuxEnterUsrName_clicked();
 
@@ -71,7 +68,6 @@ private:
     State m_currentState;
 
     QList<QMetaObject::Connection> m_deviceConnections;
-    SerialDevice& m_device;
     DeviceData& m_data;
 };
 

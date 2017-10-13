@@ -98,6 +98,7 @@ void SerialInterface::on_dataReceived(QByteArray data)
         // If the command is complete then notify
         if(inCommand.readFrom(data)){
             emit commandReceived(inCommand);
+            m_timeoutTimer.stop();
         }
     }
 }
@@ -108,7 +109,9 @@ void SerialInterface::on_error(QSerialPort::SerialPortError error)
         emit serialDisconnected();
         return;
     }
-    qDebug() << "Error : " << static_cast<int>(error);
+    if(error != QSerialPort::NoError){
+        qDebug() << "Error : " << static_cast<int>(error);
+    }
 }
 
 void SerialInterface::on_serial_disconnected()

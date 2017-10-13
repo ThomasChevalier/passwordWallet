@@ -15,6 +15,8 @@
 #define EVENT_SLEEP_SHUTDOWN    (1<<5)
 #define EVENT_NO_SLEEP          (1<<6)
 
+#define EVENT_FLAG_COM          (1<<7)
+
 #define EVENT_WHENEVER (0xFF)
 
 /**
