@@ -99,7 +99,7 @@
 /**
  * @brief The maximum number of password that the memory can handle.
  */
-#define MAXIMUM_NUMBER_OF_PWD ( (FRAM_BYTE_SIZE - OFFSET_FIRST_PWD) / SIZE_OF_PWD_BLOCK )
+#define MAXIMUM_NUMBER_OF_PWD ( ((FRAM_BYTE_SIZE - OFFSET_FIRST_PWD) / SIZE_OF_PWD_BLOCK) + 1 )
 
 // ////// //
 // MIFARE //

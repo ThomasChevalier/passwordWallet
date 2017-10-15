@@ -205,8 +205,7 @@ void draw_main_menu(void)
 		pwd_id = pwd_list_get_next_pwd_id(CURRENT_PASSWORD_ID);
 		password_read_name(pwd_id, (uint8_t*)data);
 		draw_text(12, 52, data, 32);
-
-		security_erase_data(data, 64);
+		
 	}
 
 	draw_update();

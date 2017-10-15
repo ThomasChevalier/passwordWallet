@@ -60,9 +60,6 @@ void opt_callback_add_pwd(void)
 	uint8_t result = pwd_list_add_pwd((uint8_t*)pwdName, (uint8_t*)pwdData, (uint8_t*)usrName);
 	progress_end();
 
-	security_erase_data(pwdData, 32);
-	security_erase_data(usrName, 64);
-
 	if(result == RETURN_ERROR)
 	{
 		draw_clear();
@@ -119,8 +116,6 @@ void opt_callback_change_pwd(void)
 
 	backup_free();
 
-	security_erase_data(tempPwd, 32);
-
 	progress_end();
 
 	ENABLE_SLEEP();
@@ -147,7 +142,6 @@ void opt_callback_change_usr_name(void)
 	backup_save(CURRENT_PASSWORD_ID, BACKUP_STATUS_UPDATE);
 
 	password_set_usr_name(CURRENT_PASSWORD_ID, tempStr, KEY);
-	security_erase_data(tempStr, 64);
 
 	backup_free();
 
@@ -194,8 +188,6 @@ void opt_callback_send_pwd(void)
 	keyboard_send((char*)pwd_data, strlen_bound((char*)pwd_data, 32));
 	password_increment_counter(CURRENT_PASSWORD_ID);
 	pwd_list_sort_use();
-
-	security_erase_data(pwd_data, 32);
 }
 
 void opt_callback_send_usr(void)
@@ -204,7 +196,6 @@ void opt_callback_send_usr(void)
 
 	password_read_usr_name(CURRENT_PASSWORD_ID, pwd_data, KEY);
 	keyboard_send((char*)pwd_data, strlen_bound((char*)pwd_data, 64));
-	security_erase_data(pwd_data, 64);
 }
 
 void opt_callback_send_both(void)

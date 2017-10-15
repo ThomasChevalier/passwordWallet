@@ -102,7 +102,6 @@ void opt_callback_force_card(void)
 	{
 		// .. Success
 		memcpy(KEY, buffer, 16);
-		security_erase_data(buffer, 18);
 
 		user_update_validation();
 

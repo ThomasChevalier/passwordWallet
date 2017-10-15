@@ -205,6 +205,5 @@ void user_display_key(void)
 	char outputText[20];
 	encode_16B(KEY, outputText);
 	draw_text(0, 30, outputText, 20);
-	security_erase_data(outputText, 20);
 	draw_update();
 }

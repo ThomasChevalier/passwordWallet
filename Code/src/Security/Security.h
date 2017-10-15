@@ -16,6 +16,6 @@ void security_init(void);
  * @param buffer The memory to erase.
  * @param lenght The lenght of the memory chunk.
  */
-void security_erase_data(void *buffer, uint8_t lenght);
+//void security_erase_data(void *buffer, uint8_t lenght);
 
 #endif // SECURITY_HEADER_THOMAS_CHEVALIER

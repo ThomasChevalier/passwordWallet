@@ -27,10 +27,10 @@ uint8_t encryption_check_key(void)
 	// Encrypt the random sequence with the KEY
 	uint8_t zeroIv[16]  =
 	{0x00, 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 };
-	AES128_CBC_encrypt_buffer(randSeq, sizeof(EEPROM_VARS.enc_validation), KEY, zeroIv);
+	AES128_CBC_encrypt_buffer(randSeq, sizeof(EEPROM_VARS.rand_seq), KEY, zeroIv);
 
 	// And check if it match with the already encrypted data (address [16;31])
-	for(uint8_t verifCounter = 0; verifCounter < sizeof(EEPROM_VARS.enc_validation); ++verifCounter)
+	for(uint8_t verifCounter = 0; verifCounter < sizeof(EEPROM_VARS.rand_seq); ++verifCounter)
 	{
 		if(randSeq[verifCounter] != eeprom_read_byte( &(EEPROM_VARS.enc_validation[verifCounter]) ) )
 		{
@@ -109,7 +109,4 @@ void encryption_update_key(uint8_t *new_key, uint8_t start_from)
 		}
 	}
 	memcpy(KEY, new_key, 16);
-
-	security_erase_data(new_key, 16);
-	security_erase_data(buffer, 64);
 }

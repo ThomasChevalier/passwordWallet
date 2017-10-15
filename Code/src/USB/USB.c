@@ -37,8 +37,6 @@ void EVENT_USB_Device_Connect (void)
 
 void EVENT_USB_Device_Disconnect (void)
 {
-	// Erase key as fast as possible
-	security_erase_data(KEY, 16);
 	events_happen(EVENT_STOP);
 	keyboard_on_device_disconnect();
 	serial_on_device_disconnect();

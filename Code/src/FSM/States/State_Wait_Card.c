@@ -18,6 +18,9 @@
 #include "../../Graphics/String.h"
 #include "../../Graphics/Drawing.h"
 
+
+#include "../Hardware/Led.h"
+
 #include "../../Options/Options.h"
 
 void state_wait_card_begin(void)
@@ -41,7 +44,6 @@ uint8_t state_wait_card_transition (uint8_t event)
 			{
 				// .. Success
 				memcpy(KEY, buffer, 16);
-				security_erase_data(buffer, 18);
 
 				if(encryption_check_key()) // If the key of the rfid is the good one.
 				{
