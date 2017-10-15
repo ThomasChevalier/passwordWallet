@@ -28,8 +28,13 @@ typedef struct Command_
 } Command;
 
 extern Command CURRENT_COMMAND;
+/**
+ * @brief Execute the current command
+ * @details Use the CURRENT_COMMAND struct to pass info
+ * 
+ */
+void com_exec(void);
 
-void com_exec(uint8_t id);
 void com_abort(void);
 
 void command_init(void);

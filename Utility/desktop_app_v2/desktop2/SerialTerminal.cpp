@@ -16,6 +16,12 @@ SerialTerminal::SerialTerminal(QWidget *parent) :
 
     connect(&SerialInterface::get(), &SerialInterface::commandReceived, this, &SerialTerminal::on_command);
     connect(&SerialInterface::get(), &SerialInterface::serialDisconnected, this, &SerialTerminal::on_disconnected);
+
+    scanPorts();
+
+    if(SerialInterface::get().isConnected()){
+        ui->portConnectedLabel->setText(SerialInterface::get().portInfo().portName());
+    }
 }
 
 SerialTerminal::~SerialTerminal()

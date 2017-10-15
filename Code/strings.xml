@@ -11,7 +11,6 @@
 	</module>
 
 	<module name="comm">
-		<str name="what">Transfert en cours</str>
 		<str name="no_unplug">NE PAS DEBRANCHER</str>
 	</module>
 

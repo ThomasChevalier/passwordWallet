@@ -2,6 +2,7 @@
 #include "ui_MainWindow.h"
 
 #include "SerialTerminal.h"
+#include "MemoryLayout.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -11,6 +12,8 @@ MainWindow::MainWindow(QWidget *parent) :
     m_terminal = new SerialTerminal(this);
     ui->centralWidget->layout()->addWidget(m_terminal);
     m_terminal->hide();
+
+    MemoryLayout::get();
 }
 
 MainWindow::~MainWindow()

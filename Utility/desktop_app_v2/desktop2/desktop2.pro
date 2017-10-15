@@ -29,14 +29,18 @@ SOURCES += \
     SerialTerminal.cpp \
     SerialCommand.cpp \
     SerialDevice.cpp \
-    SerialInterface.cpp
+    SerialInterface.cpp \
+    UtilityFunction.cpp \
+    MemoryLayout.cpp
 
 HEADERS += \
         MainWindow.h \
     SerialTerminal.h \
     SerialCommand.h \
     SerialDevice.h \
-    SerialInterface.h
+    SerialInterface.h \
+    UtilityFunction.h \
+    MemoryLayout.h
 
 FORMS += \
         MainWindow.ui \

@@ -21,6 +21,8 @@ public:
 
     void send(const QByteArray &data);
 
+    QSerialPortInfo portInfo() const;
+
 signals:
     void dataSent();
     void dataReceived(QByteArray data);

@@ -31,6 +31,8 @@ public:
 
     static SerialInterface &get();
 
+    QSerialPortInfo portInfo() const;
+
 signals:
     void connectionError();
     void serialConnected();

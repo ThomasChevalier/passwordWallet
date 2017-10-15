@@ -88,7 +88,7 @@ void user_update_validation (void)
 	draw_clear();
 	draw_flash_str_cx(3, str_comm_no_unplug);
 	draw_flash_str_cx(40, str_change_key_what);
-	progress_begin(EEPROM_RANDSEQ_SIZE + 4);
+	progress_begin(16 + 4);
 
 	encryption_update_validation();
 

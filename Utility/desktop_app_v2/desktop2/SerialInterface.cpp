@@ -73,6 +73,11 @@ SerialInterface &SerialInterface::get()
     return instance;
 }
 
+QSerialPortInfo SerialInterface::portInfo() const
+{
+    return m_device.portInfo();
+}
+
 void SerialInterface::on_timeout()
 {
     m_sending = false;

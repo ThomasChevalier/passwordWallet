@@ -77,7 +77,7 @@ void com_process_data(uint8_t* buffer, uint8_t lenght)
 				com_state = COM_ID; // Look for a new command
 			}
 
-			com_exec(CURRENT_COMMAND.id);
+			com_exec();
 		}
 	}while(lenght);
 }

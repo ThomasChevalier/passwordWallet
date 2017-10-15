@@ -16,26 +16,26 @@
 
 #include "../Graphics/ProgressBar.h"
 
+#include "../Memory/eeprom.h"
+
 uint8_t encryption_check_key(void)
 {
 	// Read the random sequence from eeprom (address [0;15])
-	uint8_t randSeq[EEPROM_RANDSEQ_SIZE];
-	eeprom_read_block(randSeq, (void*)EEPROM_OFFSET_RANDSEQ, EEPROM_RANDSEQ_SIZE);
+	uint8_t randSeq[sizeof(EEPROM_VARS.rand_seq)];
+	eeprom_read_block(randSeq, EEPROM_VARS.rand_seq, sizeof(EEPROM_VARS.rand_seq));
 
 	// Encrypt the random sequence with the KEY
 	uint8_t zeroIv[16]  =
 	{0x00, 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 };
-	AES128_CBC_encrypt_buffer(randSeq, EEPROM_VALIDATION_SIZE, KEY, zeroIv);
+	AES128_CBC_encrypt_buffer(randSeq, sizeof(EEPROM_VARS.enc_validation), KEY, zeroIv);
 
 	// And check if it match with the already encrypted data (address [16;31])
-	uint8_t* eeprom_addr = (uint8_t*)EEPROM_VALIDATION_SIZE;
-	for(uint8_t verifCounter = 0; verifCounter < EEPROM_VALIDATION_SIZE; ++verifCounter)
+	for(uint8_t verifCounter = 0; verifCounter < sizeof(EEPROM_VARS.enc_validation); ++verifCounter)
 	{
-		if(randSeq[verifCounter] != eeprom_read_byte(eeprom_addr))
+		if(randSeq[verifCounter] != eeprom_read_byte( &(EEPROM_VARS.enc_validation[verifCounter]) ) )
 		{
 			return RETURN_ERROR;
 		}
-		++eeprom_addr;
 	}
 	return RETURN_SUCCESS;
 }
@@ -44,28 +44,24 @@ uint8_t encryption_check_key(void)
 void encryption_update_validation(void)
 {
 	// Generate random sequence
-	uint8_t randomSequence[EEPROM_RANDSEQ_SIZE];
-	uint8_t* eeprom_addr = EEPROM_OFFSET_RANDSEQ;
-	for(uint8_t i = 0; i < EEPROM_RANDSEQ_SIZE; ++i)
+	uint8_t randomSequence[sizeof(EEPROM_VARS.rand_seq)];
+	for(uint8_t i = 0; i < sizeof(EEPROM_VARS.rand_seq); ++i)
 	{
 		randomSequence[i] = random_request_byte();
 		
-		eeprom_update_byte(eeprom_addr, randomSequence[i]);
-		++eeprom_addr;
+		eeprom_update_byte(&(EEPROM_VARS.rand_seq[i]), randomSequence[i]);
 		progress_add(1);
 	}
 	
 	// Encrypt that sequence
 	uint8_t zeroIv[16]  = {0x00, 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 };
-	AES128_CBC_encrypt_buffer(randomSequence, EEPROM_RANDSEQ_SIZE, KEY, zeroIv);
+	AES128_CBC_encrypt_buffer(randomSequence, sizeof(EEPROM_VARS.rand_seq), KEY, zeroIv);
 	progress_add(2);
 
 	// Write it to the eeprom
-	eeprom_addr = (uint8_t*)EEPROM_OFFSET_VALIDATION;
-	for(uint8_t i = 0; i < EEPROM_RANDSEQ_SIZE; ++i)
+	for(uint8_t i = 0; i < sizeof(EEPROM_VARS.rand_seq); ++i)
 	{
-		eeprom_update_byte(eeprom_addr, randomSequence[i]);
-		++eeprom_addr;
+		eeprom_update_byte(&(EEPROM_VARS.enc_validation[i]), randomSequence[i]);
 	}
 	progress_add(2);
 }

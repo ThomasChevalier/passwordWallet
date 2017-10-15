@@ -3,6 +3,7 @@
 #include "../USB/Serial.h"
 #include "../Globals.h"
 #include "../Hardware/Fram.h"
+#include "../Hardware/Led.h"
 
 #include "../System/Sleep.h"
 
@@ -45,7 +46,6 @@ static void show_com_logo(void)
 	uint8_t i = 0;
 	for(; i < 8; ++i)
 	{
-		--i;
 		save_logo[i] = oled_data[(COM_LOGO_X+i) + (COM_LOGO_Y/8)*SSD1306_LCDWIDTH];
 		oled_data[(COM_LOGO_X+i) + (COM_LOGO_Y/8)*SSD1306_LCDWIDTH] = com_logo[i];
 	}
@@ -62,13 +62,14 @@ static void hide_com_logo(void)
 	oled_display();
 }
 
-void com_exec(uint8_t id)
+void com_exec(void)
 {
+	const uint8_t id = CURRENT_COMMAND.id;
 	if( (!(GLOBALS_EVENTS & EVENT_FLAG_COM)) && (id != COM_INIT))
 	{
 		send_command(COM_ERR_NOT_INIT, 0, 0);
 		return;
-	} 
+	}
 
 	show_com_logo();
 
@@ -103,14 +104,13 @@ void com_exec(uint8_t id)
 void com_abort(void)
 {
 	GLOBALS_EVENTS &= ~EVENT_FLAG_COM;
-	COM_POS = 0;
+	COM_POS = 0; 
 	COM_PARAMETER = 0;
 }
 
 void command_init()
 {
-	GLOBALS_EVENTS |= EVENT_FLAG_COM;
-
+	events_happen(EVENT_FLAG_COM);
 	send_command(COM_OK, 0, 0);
 }
 

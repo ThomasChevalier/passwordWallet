@@ -6,14 +6,12 @@
 
 // This file contain the global variables used in this project
 
+
+#include "Memory/MemoryLayout.h"
+
 // ///////// //
 // PARAMETER //
 // ///////// //
-
-
-//< Wether or not the internal buffer of pixel for the oled
-//< should be stored in FRAM
-#undef STORE_SCREEN_BUFFER_IN_FRAM
 
 #define KEYBOARD_ENABLE  //< Enable or not the keyboard interface
 #define SERIAL_ENABLE    //< Enable or not the serial interface
@@ -36,9 +34,6 @@
 #define I2C_REQUIRED
 #endif
 
-// #define FRAM_BYTE_SIZE (8192) //< Size of the fram in byte
-#define FRAM_BYTE_SIZE (32768)  //< Size of the fram in byte
-
 /**
  * @brief This define holds the duration of the delay between the led on and the led off, in milliseconds.
  */
@@ -49,107 +44,6 @@
  * The value must not exceed the maximum value of uint16_t.
  */
 #define SHUTDOWN_DELAY (15000)
-
-// ///////////// //
-// Fram Section  //
-// ///////////// //
-
-#define OFFSET_OPTIONS_FLAG (0)
-#define SIZE_OPTION_FLAG (1)
-#define OPTIONS_FLAG_OFFSET_SORTING_METHOD_L (0)
-#define OPTIONS_FLAG_OFFSET_SORTING_METHOD_H (1)
-#define OPTIONS_FLAG_OFFSET_ORIENTATION (2)
-#define OPTIONS_FLAG_OFFSET_INITIALIZED (3)
-#define OPTIONS_FLAG_OFFSET_QWERTY (4)
-
-#define OFFSET_FIRST_PWD_USE (OFFSET_OPTIONS_FLAG + SIZE_OPTION_FLAG) /* 1 */
-#define SIZE_FIRST_PWD_USE (1)
-
-#define OFFSET_FIRST_PWD_ALPHA (OFFSET_FIRST_PWD_USE + SIZE_FIRST_PWD_USE) /* 2 */
-#define SIZE_FIRST_PWD_ALPHA (1)
-
-#define OFFSET_NUM_PWD (OFFSET_FIRST_PWD_ALPHA + SIZE_FIRST_PWD_ALPHA) /* 3 */
-#define SIZE_NUM_PWD (1)
-
-#define OFFSET_OLED_BUFFER (OFFSET_NUM_PWD + SIZE_NUM_PWD) /* 3 */
-#ifdef STORE_SCREEN_BUFFER_IN_FRAM
-#define SIZE_OLED_BUFFER (1024)
-#else
-#define SIZE_OLED_BUFFER (0)
-#endif
-
-#define OFFSET_ENTROPY_POOL (OFFSET_OLED_BUFFER + SIZE_OLED_BUFFER) /* 4 */
-#define SIZE_ENTROPY_POOL (256)
-
-#define OFFSET_MEMORY_MAP (OFFSET_ENTROPY_POOL + SIZE_ENTROPY_POOL) /* 260 */
-#if FRAM_BYTE_SIZE == 8192
-#define SIZE_MEMORY_MAP (6)
-#elif FRAM_BYTE_SIZE == 32768
-#define SIZE_MEMORY_MAP (25)
-#else
-#error Not standart size
-#endif
-
-#define OFFSET_BACKUP_STATUS (OFFSET_MEMORY_MAP + SIZE_MEMORY_MAP)
-#define SIZE_BACKUP_STATUS (1)
-
-#define OFFSET_BACKUP_ID (OFFSET_BACKUP_STATUS + SIZE_BACKUP_STATUS)
-#define SIZE_BACKUP_ID (1)
-
-#define OFFSET_BACKUP_DATA (OFFSET_BACKUP_ID + SIZE_BACKUP_ID)
-#define SIZE_BACKUP_DATA SIZE_OF_PWD_BLOCK
-
-#define OFFSET_FIRST_PWD (OFFSET_BACKUP_DATA + SIZE_BACKUP_DATA) /* 434 or 453*/
-
-// //////////////// //
-// Password Section //
-// //////////////// //
-
-/**
- * @brief The maximum number of password that the memory can handle.
- * For 8KB memory it is 47
- */
-#if FRAM_BYTE_SIZE == 8192
-#define MAXIMUM_NUMBER_OF_PWD (47)
-#elif FRAM_BYTE_SIZE == 32768
-#define MAXIMUM_NUMBER_OF_PWD (195)
-#else
-#error Not standart size
-#endif
-
-#define PWD_ADDR(pwdID, pwdField) (OFFSET_FIRST_PWD + SIZE_OF_PWD_BLOCK * pwdID + pwdField)
-
-#define PWD_OFFSET_PREV_PWD_USE (0)
-#define PWD_SIZE_PREV_PWD_USE (1)
-
-#define PWD_OFFSET_NEXT_PWD_USE (PWD_OFFSET_PREV_PWD_USE + PWD_SIZE_PREV_PWD_USE) /* 1 */
-#define PWD_SIZE_NEXT_PWD_USE (1)
-
-#define PWD_OFFSET_PREV_PWD_ALPHA (PWD_OFFSET_NEXT_PWD_USE + PWD_SIZE_NEXT_PWD_USE) /* 2 */
-#define PWD_SIZE_PREV_PWD_ALPHA (1)
-
-#define PWD_OFFSET_NEXT_PWD_ALPHA (PWD_OFFSET_PREV_PWD_ALPHA + PWD_SIZE_PREV_PWD_ALPHA) /* 3 */
-#define PWD_SIZE_NEXT_PWD_ALPHA (1)
-
-#define PWD_OFFSET_PWD_COUNT (PWD_OFFSET_NEXT_PWD_ALPHA + PWD_SIZE_NEXT_PWD_ALPHA) /* 4 */
-#define PWD_SIZE_PWD_COUNT (2)
-
-#define PWD_OFFSET_PWD_NAME (PWD_OFFSET_PWD_COUNT + PWD_SIZE_PWD_COUNT) /* 6 */
-#define PWD_SIZE_PWD_NAME (32)
-
-#define PWD_OFFSET_PWD_IV (PWD_OFFSET_PWD_NAME + PWD_SIZE_PWD_NAME) /* 38 */
-#define PWD_SIZE_PWD_IV (16)
-
-#define PWD_OFFSET_PWD_DATA (PWD_OFFSET_PWD_IV + PWD_SIZE_PWD_IV) /* 54 */
-#define PWD_SIZE_PWD_DATA (32)
-
-#define PWD_OFFSET_USR_IV (PWD_OFFSET_PWD_DATA + PWD_SIZE_PWD_DATA) /* 86 */
-#define PWD_SIZE_USR_IV (16)
-
-#define PWD_OFFSET_USR_NAME (PWD_OFFSET_USR_IV + PWD_SIZE_USR_IV) /* 102 */
-#define PWD_SIZE_USR_NAME (64)
-
-#define SIZE_OF_PWD_BLOCK (PWD_OFFSET_USR_NAME + PWD_SIZE_USR_NAME) /* 166 */
 
 
 #define PWD_SORTING_NONE (0)
@@ -175,7 +69,6 @@ extern uint8_t KEY[KEY_SIZE];
 /**
  * @brief The current password id, start to 0, it is in the order of the memory
  */
-//#define CURRENT_PASSWORD_ID GPIOR2
 extern uint8_t CURRENT_PASSWORD_ID;
 
 /**
@@ -200,15 +93,6 @@ extern volatile uint16_t ACTIVITY_TIMER;
 extern volatile uint8_t SERIAL_TIMEOUT_TIMER;
 #define SERIAL_TIMEOUT (0xFF) // In milliseconds. Must not exceed 255 ms
 
-// ////// //
-// EEPROM //
-// ////// //
-
-#define EEPROM_OFFSET_RANDSEQ (0)
-#define EEPROM_RANDSEQ_SIZE (16)
-
-#define EEPROM_OFFSET_VALIDATION (EEPROM_OFFSET_RANDSEQ + EEPROM_RANDSEQ_SIZE)
-#define EEPROM_VALIDATION_SIZE (16)
 
 // /////////// //
 // RETURN CODE //
@@ -233,17 +117,13 @@ uint8_t strlen_bound(char* str, uint8_t max);
 
 #define STRINGFY_EXPANDED(s) #s
 #define STRINGFY(s) STRINGFY_EXPANDED(s)
-// ////// //
-// MIFARE //
-// ////// //
 
-#define MIFARE_BLOCK_KEY (4)
-#define MIFARE_BLOCK_TEMP_KEY (5)
-#define MIFARE_BLOCK_STATUS (6)
+// /////// //
+// KEYCODE //
+// /////// //
 
-#define MIFARE_AUTH_TRAILER_BLOCK (7)
+#define KEYCODE_MODIFIER_SHIFT	(1<<7)
+#define KEYCODE_MODIFIER_ALTGR	(1<<6)
 
-#define MIFARE_STATUS_NORMAL_KEY (0)
-#define MIFARE_STATUS_CHANGE_KEY (1)
 
 #endif // GLOBALS_HEADER_THOMAS_CHEVALIER

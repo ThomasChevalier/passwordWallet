@@ -56,6 +56,18 @@ void SerialDevice::send(const QByteArray& data)
     m_outData.remove(0, written);
 }
 
+QSerialPortInfo SerialDevice::portInfo() const
+{
+    const QString portName = m_serial.portName();
+    for(const QSerialPortInfo& info : QSerialPortInfo::availablePorts())
+    {
+        if(info.portName() == portName){
+            return info;
+        }
+    }
+    return QSerialPortInfo();
+}
+
 void SerialDevice::on_bytesWritten(qint64 bytes)
 {
     if(!m_outData.isEmpty()){

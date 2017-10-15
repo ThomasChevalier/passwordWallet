@@ -6,7 +6,7 @@
 
 #include "../Graphics/String.h"
 
-#define OPTIONS_LIST_NUM_OPTIONS (28)
+#define OPTIONS_LIST_NUM_OPTIONS (29)
 #define OPTIONS_LIST_NONE OPTIONS_LIST_NUM_OPTIONS
 
 #ifdef NONE
@@ -35,7 +35,7 @@ typedef struct _Option_Node
 
 #define OPTIONS_LIST_NORMAL (0)
 #define OPTIONS_LIST_RECOVERY (22)
-#define OPTIONS_LIST_SEND (25)
+#define OPTIONS_LIST_SEND (26)
 
 #define STR(str) str##_index
 
@@ -103,11 +103,12 @@ static const Option_Node list_options [OPTIONS_LIST_NUM_OPTIONS]  =
 
 /*22*/	{NULL, NONE, 23, STR(str_recovery_title)},
 /*23*/	{opt_callback_full_reset, NONE, 24, STR(str_recovery_full)},
-/*24*/	{opt_callback_enter_key, NONE, NONE, STR(str_recovery_key)},
+/*24*/	{opt_callback_enter_key, NONE, 25, STR(str_recovery_key)},
+/*25*/	{opt_callback_force_card, NONE, NONE, STR(str_option_force_card)},
 
-/*25*/	{opt_callback_send_both, NONE,   26, STR(str_option_send_both)},
-/*26*/	{opt_callback_send_pwd,  NONE,   27,  STR(str_option_send_pwd)},
-/*27*/	{opt_callback_send_usr,  NONE, NONE,  STR(str_option_send_usr)},
+/*26*/	{opt_callback_send_both, NONE,   27, STR(str_option_send_both)},
+/*27*/	{opt_callback_send_pwd,  NONE,   28,  STR(str_option_send_pwd)},
+/*28*/	{opt_callback_send_usr,  NONE, NONE,  STR(str_option_send_usr)},
 };
 
 
