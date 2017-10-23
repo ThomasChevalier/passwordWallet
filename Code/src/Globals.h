@@ -16,6 +16,8 @@
 #define KEYBOARD_ENABLE  //< Enable or not the keyboard interface
 #define SERIAL_ENABLE    //< Enable or not the serial interface
 
+#undef VCC_GRAPH_ENABLE //< Optional feature, show the graph of vcc in function of the time. Just pretty. (200 bytes)
+
 #if defined(KEYBOARD_ENABLE) || defined(SERIAL_ENABLE)
 #define USB_ENABLE
 #endif

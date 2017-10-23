@@ -17,6 +17,7 @@
 #include "../Hardware/Rfid.h"
 #include "../Hardware/Fram.h"
 #include "../Hardware/Buttons.h"
+#include "../Hardware/Oled.h"
 
 #include "../FSM/Events.h"
 #include "../Program/Program.h"
@@ -119,12 +120,35 @@ void opt_callback_force_enter(void)
 	backup_free();
 }
 
+#ifdef VCC_GRAPH_ENABLE
+static uint8_t for_graph(uint16_t value)
+{
+	if(value > 3400){
+		return 15;
+	}
+	else if(value < 3100){
+		return 0;
+	}
+	return (value - 3100)/20;
+}
+
+#define graph_x (80)
+#define graph_y (32)
+#define graph_len (30)
+
+#endif
+
 void opt_callback_system_info(void)
 {
 	DISABLE_SLEEP();
 
 	program_wait();
 
+#ifdef VCC_GRAPH_ENABLE
+	uint8_t graph_pos = 0;
+
+	uint8_t graph[graph_len] = {0};
+#endif
 
 	const uint16_t ram = 2560 - system_free_ram();
 	
@@ -142,10 +166,31 @@ void opt_callback_system_info(void)
 
 		draw_flash_str(0, 20, str_system_pwd);
 		draw_num(str_system_pwd_pixLen + 3, 20, NUM_PWD);
-		//draw_text(str_system_pwd_pixLen + 20 + 3, 20, "/ " STRINGFY(MAXIMUM_NUMBER_OF_PWD), 7);
+
+		uint16_t volt = system_read_vcc();
+
+#ifdef VCC_GRAPH_ENABLE
+		if(graph_pos == graph_len)
+		{
+			for(uint8_t i = 0; i < graph_len-1; ++i)
+			{
+				graph[i] = graph[i+1];
+			}
+			graph[graph_len-1] = for_graph(volt);
+		}
+		else
+		{
+			graph[graph_pos]=for_graph(volt);
+			graph_pos++;
+		}
+		for(uint8_t i = 0; i < graph_pos; ++i)
+		{
+			oled_draw_pixel(graph_x + i, graph_y - graph[i]+7, WHITE);
+		}
+#endif
 
 		draw_flash_str(0, 30, str_system_volt);
-		draw_num(str_system_volt_pixLen + 3, 30, system_read_vcc());
+		draw_num(str_system_volt_pixLen + 3, 30, volt);
 
 		draw_flash_str(0, 40, str_system_entropy);
 		draw_num(str_system_entropy_pixLen + 3, 40, entropy_pool_size);
