@@ -338,3 +338,33 @@ void oled_active_display(uint8_t active)
 		oled_command(SSD1306_DISPLAYOFF);
 	}
 }
+
+static uint8_t reverse(uint8_t b) {
+   b = (b & 0xF0) >> 4 | (b & 0x0F) << 4;
+   b = (b & 0xCC) >> 2 | (b & 0x33) << 2;
+   b = (b & 0xAA) >> 1 | (b & 0x55) << 1;
+   return b;
+}
+
+void oled_reverse_screen(void)
+{
+	const uint16_t totalSize = SSD1306_LCDHEIGHT * SSD1306_LCDWIDTH / 8;
+
+#ifdef STORE_SCREEN_BUFFER_IN_FRAM
+	uint16_t i = 0;
+	for(; i < totalSize / 2; ++i)
+	{
+		uint8_t temp = fram_read_byte(OFFSET_OLED_BUFFER+i);
+		fram_write_byte(OFFSET_OLED_BUFFER+i, reverse(fram_read_byte(totalSize-i)) );
+		fram_write_byte(OFFSET_OLED_BUFFER+totalSize-i, reverse(temp));
+	}
+#else
+	uint16_t i = 0;
+	for(; i < totalSize / 2; ++i)
+	{
+		uint8_t temp = oled_data[i];
+		oled_data[i] = reverse(oled_data[totalSize-i]);
+		oled_data[totalSize-i] = reverse(temp);
+	}
+#endif // STORE_SCREEN_BUFFER_IN_FRAM
+}
