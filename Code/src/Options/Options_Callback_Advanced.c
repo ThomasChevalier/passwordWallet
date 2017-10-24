@@ -194,6 +194,9 @@ void opt_callback_system_info(void)
 
 		draw_flash_str(0, 40, str_system_entropy);
 		draw_num(str_system_entropy_pixLen + 3, 40, entropy_pool_size);
+		
+		draw_flash_str(0, 50, str_system_version);
+		
 		draw_update();
 
 		program_wait();

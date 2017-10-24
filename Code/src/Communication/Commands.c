@@ -173,11 +173,11 @@ void command_get_param()
 {
 	uint8_t id = COM_PARAM;
 	serial_send(&id, 1);
-	uint16_t size = 5;
+	uint16_t size = 6;
 	serial_send((uint8_t*)&size, 2);
 
 	Fram_id fid = fram_read_id();
-	uint8_t buffer[5];
+	uint8_t buffer[6];
 	#if defined(SPI_FRAM)
 	buffer[0] = fid.manufacturer_id;
 	buffer[1] = fid.continuation_code;
@@ -195,7 +195,10 @@ void command_get_param()
 	#else
 	buffer[4] = 0;
 	#endif
-	serial_send(buffer, 5);
+
+	buffer[5] = SOFTWARE_VERSION;
+	
+	serial_send(buffer, size);
 }
 
 void command_set_fram()

@@ -94,6 +94,7 @@
 		<str name="pwd">MDP :</str>
 		<str name="volt">Tension :</str>
 		<str name="entropy">Entropie :</str>
+		<str name="version">Version 1.0</str>
 	</module>
 </root>
 <!-- File created by Thomas Chevalier - Copyright - 2017 / thomasom.chevalier@gmail.com -->
