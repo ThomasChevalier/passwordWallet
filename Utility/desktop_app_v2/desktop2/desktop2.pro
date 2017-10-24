@@ -31,7 +31,8 @@ SOURCES += \
     SerialDevice.cpp \
     SerialInterface.cpp \
     UtilityFunction.cpp \
-    MemoryLayout.cpp
+    MemoryLayout.cpp \
+    SerialAbstractInterface.cpp
 
 HEADERS += \
         MainWindow.h \
@@ -40,7 +41,8 @@ HEADERS += \
     SerialDevice.h \
     SerialInterface.h \
     UtilityFunction.h \
-    MemoryLayout.h
+    MemoryLayout.h \
+    SerialAbstractInterface.h
 
 FORMS += \
         MainWindow.ui \

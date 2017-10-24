@@ -11,7 +11,7 @@
 #define EVENT_BUTTON_4          (1<<3)
 #define EVENT_ALL_BUTTONS       (EVENT_BUTTON_1 | EVENT_BUTTON_2 | EVENT_BUTTON_3 | EVENT_BUTTON_4)
 
-#define EVENT_STOP              (1<<4)
+#define EVENT_KEY_ENTERED       (1<<4)
 #define EVENT_SLEEP_SHUTDOWN    (1<<5)
 #define EVENT_NO_SLEEP          (1<<6)
 
@@ -28,7 +28,7 @@ void events_happen(uint8_t event);
 
 /**
  * @brief Get the events that occur since the last call of this function.
- * @details Reset some event of the GLOBALS_EVENTS variable (Buttons and communication).
+ * @details Reset some event of the GLOBALS_EVENTS variable (Buttons).
  * @return The events.
  */
 uint8_t events_get(void);

@@ -10,6 +10,8 @@
 #include "../Hardware/Oled.h"
 #include "../Graphics/Drawing.h"
 
+#include "../Security/Encryption.h"
+
 static uint16_t COM_POS = 0;
 static uint16_t COM_PARAMETER = 0;
 
@@ -94,6 +96,14 @@ static void hide_com_logo(void)
 void com_exec(void)
 {
 	const uint8_t id = CURRENT_COMMAND.id;
+
+	// Special priority
+	if(id == COM_GET_VERSION)
+	{
+		command_get_version();
+		return;
+	}
+
 	if( (!(GLOBALS_EVENTS & EVENT_FLAG_COM)) && (id != COM_INIT))
 	{
 		send_command(COM_ERR_NOT_INIT, 0, 0);
@@ -132,6 +142,7 @@ void com_exec(void)
 
 void com_abort(void)
 {
+	send_command(COM_TIMEOUT, 0, 0);
 	GLOBALS_EVENTS &= ~EVENT_FLAG_COM;
 	COM_POS = 0; 
 	COM_PARAMETER = 0;
@@ -166,7 +177,12 @@ void command_get_fram()
 
 void command_get_key()
 {
-	send_command(COM_KEY, 16, KEY);
+	if(GLOBALS_EVENTS & EVENT_KEY_ENTERED){
+		send_command(COM_KEY, 16, KEY);
+	}
+	else{
+		send_command(COM_ERR_UNAVAILABLE, 0, 0);
+	}
 }
 
 void command_get_param()
@@ -197,8 +213,14 @@ void command_get_param()
 	#endif
 
 	buffer[5] = SOFTWARE_VERSION;
-	
+
 	serial_send(buffer, size);
+}
+
+void command_get_version(void)
+{
+	uint8_t ver = SOFTWARE_VERSION;
+	send_command(COM_VERSION, 1, &ver);
 }
 
 void command_set_fram()
@@ -236,7 +258,14 @@ void command_set_key()
 	COM_POS += CURRENT_COMMAND.availableSize;
 	CURRENT_COMMAND.availableSize = 0;
 	if(COM_POS == CURRENT_COMMAND.totalSize){
+		led_blink(3);
 		COM_POS = 0;
-		send_command(COM_OK, 0, 0);
+		if(encryption_check_key() == RETURN_SUCCESS){
+			events_happen(EVENT_KEY_ENTERED);
+			send_command(COM_OK, 0, 0);
+		}
+		else{
+			send_command(COM_BAD_KEY, 0, 0);
+		}
 	}
 }

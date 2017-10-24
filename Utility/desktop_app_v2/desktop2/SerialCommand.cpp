@@ -89,7 +89,7 @@ QByteArray SerialCommand::toByteArray() const
     converted[2] = static_cast<quint8>(m_data.size() >> 8);
 
     for(int i(0); i < m_data.size(); ++i){
-        converted[2+i] = m_data[i];
+        converted[3+i] = m_data[i];
     }
 
     return converted;
@@ -109,32 +109,40 @@ QString SerialCommand::typeToString(SerialCommand::Type t)
 {
     switch (t) {
     case Ok:
-            return "Ok";
+        return "Ok";
     case Err_Not_Init:
-            return "Err_Not_Init";
+        return "Err_Not_Init";
     case InitCommunication:
-            return "InitCommunication";
+        return "InitCommunication";
     case EndCommunication:
-            return "EndCommunication";
+        return "EndCommunication";
+    case Unavailable:
+        return "Unavailable";
+    case BadKey:
+        return "BadKey";
+    case Timeout:
+        return "Timeout";
     case GetFram:
-            return "GetFram";
+        return "GetFram";
     case GetKey:
-            return "GetKey";
+        return "GetKey";
     case GetParam:
-            return "GetParam";
+        return "GetParam";
     case SetFram:
-            return "SetFram";
+        return "SetFram";
     case SetKey:
-            return "SetKey";
+        return "SetKey";
     case Fram:
-            return "Fram";
+        return "Fram";
     case Key:
-            return "Key";
+        return "Key";
     case Param:
-            return "Param";
+        return "Param";
+    case Version:
+        return "Version";
     case None:
-            return "None";
+        return "None";
     default:
-            return "Unknown";
+        return "Unknown";
     }
 }

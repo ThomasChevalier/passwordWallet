@@ -13,6 +13,9 @@ public:
         Err_Not_Init      = 1,
         InitCommunication = 2,
         EndCommunication  = 3,
+        Unavailable       = 4,
+        BadKey            = 5,
+        Timeout           = 6,
 
         GetFram           = 0x10,
         GetKey            = 0x11,
@@ -24,6 +27,7 @@ public:
         Fram              = 0x30,
         Key               = 0x31,
         Param             = 0x32,
+        Version           = 0x33,
 
         None
     };

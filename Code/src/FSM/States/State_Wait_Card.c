@@ -32,6 +32,10 @@ void state_wait_card_begin(void)
 
 uint8_t state_wait_card_transition (uint8_t event)
 {
+	if(event & EVENT_KEY_ENTERED){
+		return STATE_MAIN;
+	}
+
 	// There is a new card to read
 	if(rfid_PICC_IsNewCardPresent() && rfid_PICC_ReadCardSerial())
 	{
@@ -47,6 +51,7 @@ uint8_t state_wait_card_transition (uint8_t event)
 
 				if(encryption_check_key()) // If the key of the rfid is the good one.
 				{
+					events_happen(EVENT_KEY_ENTERED);
 					// Then go to the main state and reset activity timer
 					ACTIVITY_TIMER = 0;
 					return STATE_MAIN;
@@ -75,6 +80,7 @@ uint8_t state_wait_card_transition (uint8_t event)
 		{
 			options_display(OPTIONS_LIST_RECOVERY);
 		}while(encryption_check_key() != RETURN_SUCCESS);
+		events_happen(EVENT_KEY_ENTERED);
 		return STATE_MAIN;
 	}
 

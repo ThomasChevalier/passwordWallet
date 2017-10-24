@@ -37,7 +37,6 @@ void EVENT_USB_Device_Connect (void)
 
 void EVENT_USB_Device_Disconnect (void)
 {
-	events_happen(EVENT_STOP);
 	keyboard_on_device_disconnect();
 	serial_on_device_disconnect();
 }
