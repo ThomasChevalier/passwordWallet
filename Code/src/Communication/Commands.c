@@ -258,7 +258,6 @@ void command_set_key()
 	COM_POS += CURRENT_COMMAND.availableSize;
 	CURRENT_COMMAND.availableSize = 0;
 	if(COM_POS == CURRENT_COMMAND.totalSize){
-		led_blink(3);
 		COM_POS = 0;
 		if(encryption_check_key() == RETURN_SUCCESS){
 			events_happen(EVENT_KEY_ENTERED);

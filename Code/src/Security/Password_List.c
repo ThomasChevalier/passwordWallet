@@ -319,7 +319,7 @@ uint8_t pwd_list_add_pwd (uint8_t* name, uint8_t* data, uint8_t* usrName)
 				chunk_free = 1;
 				pwd_id = i * 8 + j;
 
-				 // Set the bit, this chunk is now used
+				// Set the bit, this chunk is now used
 				// Update the byte that has changed
 				fram_write_byte(OFFSET_MEMORY_MAP+i, memory_byte | (1<<j));
 			}

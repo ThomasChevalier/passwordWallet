@@ -30,9 +30,13 @@ SOURCES += \
     SerialCommand.cpp \
     SerialDevice.cpp \
     SerialInterface.cpp \
-    UtilityFunction.cpp \
     MemoryLayout.cpp \
-    SerialAbstractInterface.cpp
+    SerialAbstractInterface.cpp \
+    AbstractPassword.cpp \
+    AbstractOption.cpp \
+    Version1_0/SerialInterface_1_0.cpp \
+    Version1_0/Password_1_0.cpp \
+    Version1_0/Option_1_0.cpp
 
 HEADERS += \
         MainWindow.h \
@@ -40,9 +44,13 @@ HEADERS += \
     SerialCommand.h \
     SerialDevice.h \
     SerialInterface.h \
-    UtilityFunction.h \
     MemoryLayout.h \
-    SerialAbstractInterface.h
+    SerialAbstractInterface.h \
+    AbstractPassword.h \
+    AbstractOption.h \
+    Version1_0/SerialInterface_1_0.h \
+    Version1_0/Password_1_0.h \
+    Version1_0/Option_1_0.h
 
 FORMS += \
         MainWindow.ui \
