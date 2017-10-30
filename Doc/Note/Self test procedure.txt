@@ -2,6 +2,7 @@
              PASSWORD WALLET             
            SELF TEST PROCEDURE           
 
+Version 1.0 - Last edited on 30/10/17
 By Thomas Chevalier (c) 2017
 All rights reserved.
 =========================================
@@ -9,7 +10,7 @@ All rights reserved.
 Introduction
 ------------
 
-The self test allows the device to test itself.
+The self test allows the device to test itself to ensure reliable operation.
 
 Description
 -----------
