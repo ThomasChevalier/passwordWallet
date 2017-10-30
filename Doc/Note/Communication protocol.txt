@@ -13,31 +13,6 @@ The pc and the device can communicate through a virtual serial port, emulated by
 The pc send all the command, the device only respond to the command.
 Command are shown below.
 
-Command
--------
-
-|-------------------------------|---------|-----------------------------------------------------------------------------------------------------------------
-|          Command              |  Byte   |                                                  Description
-|-------------------------------|---------|-----------------------------------------------------------------------------------------------------------------
-|       Init communication      |  0xA5   | When the device receive this byte and the communication is not inited, it switch to communication state
-|-------------------------------|---------|-----------------------------------------------------------------------------------------------------------------
-|       End communication       |  0x5A   | When the device receive this byte and the communication is inited, it switch to main state and end all transfers
-|-------------------------------|---------|-----------------------------------------------------------------------------------------------------------------
-|           Get Fram            |  0x01   | Request the device to send all the content of the fram
-|-------------------------------|---------|-----------------------------------------------------------------------------------------------------------------
-|           Set Fram            |  0x02   | The pc send an array of byte and the device must write it to the fram, from address 0 to the end
-|-------------------------------|---------|-----------------------------------------------------------------------------------------------------------------
-|            Get Key            |  0x03   | Request the device to send the main KEY
-|-------------------------------|---------|-----------------------------------------------------------------------------------------------------------------
-|            Set Key            |  0x04   | The pc send 16 byte and the device interpret those byte as the main key (and check the key against the hash)
-|-------------------------------|---------|-----------------------------------------------------------------------------------------------------------------
-|        Request parameter      |  0x05   | Request the device to send the fram identifier followed by a byte set to 0 if STORE_SCREEN_BUFFER_IN_FRAM is not defined, or a byte set to anything else than 0 if STORE_SCREEN_BUFFER_IN_FRAM is defined
-|-------------------------------|---------|-----------------------------------------------------------------------------------------------------------------
-
-
-NEW PROTOCOL
-============
-
 Description
 -----------
 
@@ -51,28 +26,51 @@ A command is constructed as the following :
 
 When the pc send a command the device read the id and the size field and then can execute the command before all the data arrived.
 The device always respond to a command by another command. It can be a simple "OK" or a more complex message.
+Except for GET_VERSION command the device does not respond to the computer unless it has received the INIT command.
 
 
 Type of command
 ---------------
 
-|-------------------------------|--------|-----------------------------------------------------------------------------------------------------------------
-|          Command              |   ID   |                                                  Description
-|-------------------------------|--------|-----------------------------------------------------------------------------------------------------------------
-|       Init communication      |  0x01  | When the device receive this byte and the communication is not inited, it switch to communication state
-|-------------------------------|--------|-----------------------------------------------------------------------------------------------------------------
-|       End communication       |  0x02  | When the device receive this byte and the communication is inited, it switch to main state and end all transfers
-|-------------------------------|--------|-----------------------------------------------------------------------------------------------------------------
+See src/Communication/Commands.h
+
+|-------------------------------|--------|-----------------------------------------------------------------------------------------------------------------------------------------------
+|           Command             |   ID   |                                                  Description
+|-------------------------------|--------|-----------------------------------------------------------------------------------------------------------------------------------------------
+|        Acknowledge (OK)       |  0x00  | The device can respond with an OK command to show that the command has been received and processed without error
+|-------------------------------|--------|-----------------------------------------------------------------------------------------------------------------------------------------------
+|    Error : not initialized    |  0x01  | The device returns this error if it receives a command without being in communication state
+|-------------------------------|--------|-----------------------------------------------------------------------------------------------------------------------------------------------
+|       Init communication      |  0x02  | When the device receive this command and the communication is not initialized, it switches to communication state
+|-------------------------------|--------|-----------------------------------------------------------------------------------------------------------------------------------------------
+|       End communication       |  0x03  | When the device receive this command and the communication is initialized, it switch to main state and end all transfers
+|-------------------------------|--------|-----------------------------------------------------------------------------------------------------------------------------------------------
+|       Error : Unavaible       |  0x04  | This error indicates that a asked ressource is not available, for example when the computer ask for the key when the device is locked
+|-------------------------------|--------|-----------------------------------------------------------------------------------------------------------------------------------------------
+|        Error : Bad key        |  0x05  | This error indicates that the computer send the wrong key to unlock the device and therefore the device is still locked
+|-------------------------------|--------|-----------------------------------------------------------------------------------------------------------------------------------------------
+|            Timeout            |  0x06  | The computer can send this command when the device take too long to respond
+|-------------------------------|--------|-----------------------------------------------------------------------------------------------------------------------------------------------
 |           Get Fram            |  0x10  | Request the device to send all the content of the fram
-|-------------------------------|--------|-----------------------------------------------------------------------------------------------------------------
-|           Set Fram            |  0x20  | The pc send an array of byte and the device must write it to the fram, from address 0 to the end
-|-------------------------------|--------|-----------------------------------------------------------------------------------------------------------------
+|-------------------------------|--------|-----------------------------------------------------------------------------------------------------------------------------------------------
+|           Set Fram            |  0x20  | The pc send a fram index and an array of byte and the device must write it to the fram, to address [index]
+|-------------------------------|--------|-----------------------------------------------------------------------------------------------------------------------------------------------
 |            Get Key            |  0x11  | Request the device to send the main KEY
-|-------------------------------|--------|-----------------------------------------------------------------------------------------------------------------
+|-------------------------------|--------|-----------------------------------------------------------------------------------------------------------------------------------------------
 |            Set Key            |  0x21  | The pc send 16 byte and the device interpret those byte as the main key (and check the key against the hash)
-|-------------------------------|--------|-----------------------------------------------------------------------------------------------------------------
-|        Request parameter      |  0x12  | Request the device to send the fram identifier followed by a byte set to 0 if STORE_SCREEN_BUFFER_IN_FRAM is not defined, or a byte set to anything else than 0 if STORE_SCREEN_BUFFER_IN_FRAM is defined
-|-------------------------------|--------|-----------------------------------------------------------------------------------------------------------------
+|-------------------------------|--------|-----------------------------------------------------------------------------------------------------------------------------------------------
+|         Get parameter         |  0x12  | Request the device to send the fram identifier followed by a byte set to 0 if STORE_SCREEN_BUFFER_IN_FRAM is not defined, anything else otherwise
+|-------------------------------|--------|-----------------------------------------------------------------------------------------------------------------------------------------------
+|          Get version          |  0x13  | Request the device to send a byte indicating the internal software version
+|-------------------------------|--------|-----------------------------------------------------------------------------------------------------------------------------------------------
+|            Fram               |  0x30  | The device sends this command along with the content of the fram, as requested with command GET_FRAM
+|-------------------------------|--------|-----------------------------------------------------------------------------------------------------------------------------------------------
+|             Key               |  0x31  | The device sends this command along with the content of the key, as requested with command GET_KEY
+|-------------------------------|--------|-----------------------------------------------------------------------------------------------------------------------------------------------
+|            Param              |  0x32  | The device sends this command along with the parameters, as requested with command GET_PARAM
+|-------------------------------|--------|-----------------------------------------------------------------------------------------------------------------------------------------------
+|           Version             |  0x33  | The device sends this command along with the version of the software, as requested with command GET_VERSION
+|-------------------------------|--------|-----------------------------------------------------------------------------------------------------------------------------------------------
 
 
 
