@@ -110,10 +110,4 @@ void oled_clear_display		(void);
 void oled_active_display(uint8_t active);
 
 
-/**
- * @brief Reverse all the byte of the screen buffer
- * @details The image is the same as before but it is upside down
- */
-void oled_reverse_screen(void);
-
 #endif // OLED_HEADER_THOMAS_CHEVALIER

@@ -83,6 +83,14 @@ uint8_t oled_data[SSD1306_LCDHEIGHT * SSD1306_LCDWIDTH / 8] =
 };
 #endif
 
+static uint8_t reverse(uint8_t b) {
+	b = (b & 0xF0) >> 4 | (b & 0x0F) << 4;
+	b = (b & 0xCC) >> 2 | (b & 0x33) << 2;
+	b = (b & 0xAA) >> 1 | (b & 0x55) << 1;
+	return b;
+}
+
+
 // Hardware
 
 /**
@@ -203,14 +211,8 @@ void oled_init()
 // the most basic function, set a single pixel
 void oled_draw_pixel(uint8_t x, uint8_t y, uint8_t color)
 {
-	if( x & 0x80 || y & 0x40)
+	if(x >= 128 || y >= 64)
 		return;
-	// check rotation, move pixel around if necessary
-	if(OPTIONS_FLAG & (1 << OPTIONS_FLAG_OFFSET_ORIENTATION))
-	{
-		x = 127 - x;
-		y = 63 - y;
-	}
 
 	// x is which column
 	#ifdef STORE_SCREEN_BUFFER_IN_FRAM
@@ -294,15 +296,23 @@ void oled_display(void)
 		oled_select();
 		for(j = 0; j < 64; ++j)
 		{
+			// This does not manage screen orientation
 			spi_send_8(pixBuff[j]);
 		}
 	}
 	#else
 
 	uint16_t i = 0;
+	const uint16_t totalSize = SSD1306_LCDHEIGHT * SSD1306_LCDWIDTH / 8;
 	for (; i < (HEIGHT * WIDTH / 8); ++i)
 	{
-		spi_send_8(oled_data[i]);
+		if(OPTIONS_FLAG & (1 << OPTIONS_FLAG_OFFSET_ORIENTATION))
+		{
+			spi_send_8(reverse(oled_data[totalSize-i-1]));
+		}
+		else{
+			spi_send_8(oled_data[i]);
+		}
 	}
 	#endif
 
@@ -337,34 +347,4 @@ void oled_active_display(uint8_t active)
 	{
 		oled_command(SSD1306_DISPLAYOFF);
 	}
-}
-
-static uint8_t reverse(uint8_t b) {
-   b = (b & 0xF0) >> 4 | (b & 0x0F) << 4;
-   b = (b & 0xCC) >> 2 | (b & 0x33) << 2;
-   b = (b & 0xAA) >> 1 | (b & 0x55) << 1;
-   return b;
-}
-
-void oled_reverse_screen(void)
-{
-	const uint16_t totalSize = SSD1306_LCDHEIGHT * SSD1306_LCDWIDTH / 8;
-
-#ifdef STORE_SCREEN_BUFFER_IN_FRAM
-	uint16_t i = 0;
-	for(; i < totalSize / 2; ++i)
-	{
-		uint8_t temp = fram_read_byte(OFFSET_OLED_BUFFER+i);
-		fram_write_byte(OFFSET_OLED_BUFFER+i, reverse(fram_read_byte(totalSize-i)) );
-		fram_write_byte(OFFSET_OLED_BUFFER+totalSize-i, reverse(temp));
-	}
-#else
-	uint16_t i = 0;
-	for(; i < totalSize / 2; ++i)
-	{
-		uint8_t temp = oled_data[i];
-		oled_data[i] = reverse(oled_data[totalSize-i]);
-		oled_data[totalSize-i] = reverse(temp);
-	}
-#endif // STORE_SCREEN_BUFFER_IN_FRAM
 }

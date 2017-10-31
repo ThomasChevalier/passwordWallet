@@ -44,25 +44,12 @@ static void show_com_logo(void)
 	// The following lines save the column of pixel before update
 	// This works because COM_LOGO_Y % 8 == 0
 	uint8_t i = 0;
-	if(OPTIONS_FLAG & (1<<OPTIONS_FLAG_OFFSET_ORIENTATION)){
-		uint16_t indice = (SSD1306_LCDWIDTH-COM_LOGO_X/*-i*/) + (( (SSD1306_LCDHEIGHT-COM_LOGO_Y) /8)-1)*SSD1306_LCDWIDTH;
-		for(; i < 8; ++i)
-		{
-			save_logo[i] = oled_data[indice];
-			oled_data[indice] = (com_logo[i]);
-
-			--indice;
-		}
-	}
-	else
+	uint16_t indice = (COM_LOGO_X /* +i */) + (COM_LOGO_Y/8)*SSD1306_LCDWIDTH;
+	for(; i < 8; ++i)
 	{
-		uint16_t indice = (COM_LOGO_X /* +i */) + (COM_LOGO_Y/8)*SSD1306_LCDWIDTH;
-		for(; i < 8; ++i)
-		{
-			save_logo[i] = oled_data[indice];
-			oled_data[indice] = com_logo[i];
-			++indice;
-		}
+		save_logo[i] = oled_data[indice];
+		oled_data[indice] = com_logo[i];
+		++indice;
 	}
 	
 	oled_display();
@@ -72,22 +59,11 @@ static void hide_com_logo(void)
 {
 	uint8_t i = 0;
 
-	if(OPTIONS_FLAG & (1<<OPTIONS_FLAG_OFFSET_ORIENTATION)){
-		uint16_t indice = (SSD1306_LCDWIDTH-COM_LOGO_X/*-i*/) + (( (SSD1306_LCDHEIGHT-COM_LOGO_Y) /8)-1)*SSD1306_LCDWIDTH;
-		for(; i < 8; ++i)
-		{
-			oled_data[indice] = save_logo[i];
-			--indice;
-		}
-	}
-	else
+	uint16_t indice = (COM_LOGO_X /* +i */) + (COM_LOGO_Y/8)*SSD1306_LCDWIDTH;
+	for(; i < 8; ++i)
 	{
-		uint16_t indice = (COM_LOGO_X /* +i */) + (COM_LOGO_Y/8)*SSD1306_LCDWIDTH;
-		for(; i < 8; ++i)
-		{
-			oled_data[indice] = save_logo[i];
-			++indice;
-		}
+		oled_data[indice] = save_logo[i];
+		++indice;
 	}
 	
 	oled_display();

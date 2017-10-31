@@ -27,12 +27,7 @@ void program_init(void)
 	// Read the flags and data from fram
 	OPTIONS_FLAG = fram_read_byte(OFFSET_OPTIONS_FLAG);
 	NUM_PWD = fram_read_byte(OFFSET_NUM_PWD);
-
-	if(OPTIONS_FLAG & (1<<OPTIONS_FLAG_OFFSET_ORIENTATION))
-	{
-		oled_reverse_screen();
-	}
-
+	
 	draw_update();
 
 	random_reset();
