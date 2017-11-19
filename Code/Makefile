@@ -29,3 +29,12 @@ include $(LUFA_PATH)/Build/lufa_dfu.mk
 include $(LUFA_PATH)/Build/lufa_hid.mk
 include $(LUFA_PATH)/Build/lufa_avrdude.mk
 include $(LUFA_PATH)/Build/lufa_atprogram.mk
+
+string:
+	echo "Update strings ... "
+	../Utility/string_parser/string_parser --file strings.xml
+	mv String.h src/Graphics/String.h
+pin:
+	echo "Update pins' definition ... "
+	../Utility/pindef_parser/pindef_parser --file pindef.xml
+	mv PinDefinition.h src/Hardware/PinDefinition.h

@@ -25,7 +25,7 @@ static uint8_t sampleCount;
 static volatile uint32_t random_dword;
 
 /**
- * @brief If the variable equal FALSE then nothing has to be written to fram, else if the variable equal TRUE, random_dword should be written to fram
+ * @brief Wheter or not the random value has to be written to fram
  */
 static volatile uint8_t random_transfer;
 
@@ -55,16 +55,13 @@ static void jenkin_one_at_a_time_final(volatile uint32_t* in)
 
 void random_init(void)
 {
-	random_transfer = TRUE;
-	sampleCount = 0;
-	entropy_pool_size = 0;
-	random_dword = 0;
+	random_reset();
 
 	cli();                         // Temporarily turn off interrupts, until WDT configured
 	MCUSR = 0;                     // Use the MCU status register to reset flags for WDR, BOR, EXTR, and POWR
 	_WD_CONTROL_REG |= (1<<_WD_CHANGE_BIT) | (1<<WDE);
 	// WDTCSR |= _BV(WDCE) | _BV(WDE);// WDT control register, This sets the Watchdog Change Enable (WDCE) flag, which is  needed to set the 
-	_WD_CONTROL_REG = _BV(WDIE);            // Watchdog system reset (WDE) enable and the Watchdog interrupt enable (WDIE)
+	_WD_CONTROL_REG = _BV(WDIE);   // Watchdog system reset (WDE) enable and the Watchdog interrupt enable (WDIE)
 	sei();                         // Turn interupts on
 }
 
@@ -152,6 +149,9 @@ uint8_t random_request_printable(void)
 }
 
 void random_reset(void)
-{
+{	
+	random_transfer = FALSE;
+	sampleCount = 0;
 	entropy_pool_size = 0;
+	random_dword = 0;
 }

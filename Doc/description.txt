@@ -1,0 +1,122 @@
+ =========================================
+              PASSWORD WALLET             
+            MEMORY ORGANIZATION           
+ 
+ Version 1.0 - Last edited on 16/11/17
+ By Thomas Chevalier (c) 2017
+ All rights reserved.
+ =========================================
+
+PASSWORD WALLET
+===============
+
+*Périphérique USB autonome pouvant stocker et restituer des identifiants 
+informatiques*
+
+# Présentation
+
+Introduction
+------------
+
+Password Wallet est un périphérique USB pouvant stocker des identifiants (mots 
+de passe et noms d’utilisateur) de manière sécurisé. La manipulation des données 
+stockées ainsi que les différentes actions de restitution sont disponibles 
+directement sur le périphérique ce qui en fait un objet autonome, dans le sens 
+où un logiciel n’est pas nécessaire pour l’utiliser. Le périphérique se veut 
+fiable et robuste, compte tenu de la sensibilité des informations stockées. Ce 
+projet est ce que l’on pourrait appeler un gestionnaire de mots de passe 
+hardware.
+Cet objet se démarque des gestionnaires de mots de passe logiciel par sa 
+portabilité : il est disponible sur n’importe quel système d’exploitation sans 
+installation préalable, ce qui facilite la mise en œuvre sur des ordinateurs 
+dont l’accès est restreint. Là où la plupart des gestionnaires de mots de passes 
+proposent de sauvegarder des données en ligne pour faciliter leur transmission, 
+et par conséquent exposent ces données à des piratages, Password Wallet ne 
+stockent de données que dans sa mémoire interne, les identifiants ne sont donc 
+regroupés que dans un seul endroit, ce qui permet d’assurer leur sécurité. De 
+plus sa petite taille, approximativement celle d’un calepin, permet de le 
+stocker dans sa poche ou dans un sac. Password Wallet combine donc la sécurité 
+par rapport au piratage d’un calepin, et les systèmes de chiffrement des 
+logiciels modernes.
+
+Fonctionnalités
+---------------
+
+	* Chiffrement AES-128 des informations
+	* Déverrouillage grâce à une carte RFID
+	* Récupération et changement de la clef de chiffrement
+	* Générateur de nombre aléatoire basé sur la dérive de l’horloge
+	* Stockage d’un grand nombre de mot de passe
+	* Tri des identifiants possible, alphabétique ou par nombre d’utilisation
+	* Ajouter, modifier, supprimer des identifiants depuis le périphérique
+	* Génération de mots de passe complètements aléatoires
+	* Mémoire à grande durée de vie et robuste
+	* Affichage à fort contraste et orientable
+	* Faible consommation d’énergie
+	* Prise en charge des claviers Qwerty et Azerty
+	* Système de récupération en cas de débranchement
+
+Sommaire
+--------
+
+Organisation mémoire
+Options
+Listes de mot de passe
+Nombres aléatoires
+Carte des sections utilisées
+Système de récupération
+Identifiants
+
+Identification USB
+Communication série
+Clavier
+Navigation parmi les mots de passes
+
+Barre de progression
+Chaînes de caractères
+Police de caractère
+Orientation de l’écran
+Boutons
+Fram
+Led
+Écran
+RFID
+Auto-test
+EEPROM
+Options
+Changer mot de passe
+Changer nom d’utilisateur
+Changer nom identifiant
+Pas de tri
+Tri alphabétique
+Tri par utilisation
+Changer la clef
+Montrer la clef
+Forcer une carte
+Forcer une clef
+Disposition clavier
+Orientation de l’écran
+Auto-test
+Informations système
+Formatage
+Ajout d’un mot de passe
+
+Récupération
+Formatage
+Entrer la clef
+Forcer une carte
+
+Envoi des informations
+Envoi des deux
+Envoi du mot de passe
+Envoi du nom d’utilisateur
+Chiffrement AES
+Stockage de la clef sur la carte
+Validation de la clef
+
+Timer milliseconde
+Mise en veille
+Infos système
+
+Conversion ascii - keycode
+Boucle principale

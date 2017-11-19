@@ -29,8 +29,6 @@ void program_init(void)
 	NUM_PWD = fram_read_byte(OFFSET_NUM_PWD);
 	
 	draw_update();
-
-	random_reset();
 }
 
 void program_update(void)
