@@ -20,7 +20,6 @@ static uint8_t failOccured;
 
 static void test_oled(void)
 {
-	oled_init();
 	// Test pixels
 	for(uint8_t y = 0; y < SSD1306_LCDHEIGHT; ++y)
 	{

@@ -67,7 +67,7 @@ void random_init(void)
 
 
 /**
- * @brief [This interrupt service routine is called every time the WDT interrupt is triggered.
+ * @brief This interrupt service routine is called every time the WDT interrupt is triggered.
  * With the default configuration that is approximately once every 16ms, producing 
  * approximately two 32-bit integer values every second.
  * 

@@ -62,9 +62,65 @@ Sommaire
 Organisation mémoire
 Options
 Listes de mot de passe
-Nombres aléatoires
-Carte des sections utilisées
-Système de récupération
+
+**Nombres aléatoires**
+
+L'appareil propose de générer des nombres complétement aléatoire. En temps 
+normal les ordinateurs ne peuvent générer que des nombres pseudo-aléatoires. En 
+effet nos appareils étant des machines détérministes, la plupart des programmes 
+utilisent des algorithmes au résultat chaotiques pour générer des nombres qui 
+paraissent aléatoire. Cependant une même valeur de départ conduit à une même 
+suite de nombre, et il est théoriquement possible de pouvoir prédire les nombres 
+suivants moyennant un grand échantillon de données. Les nombres produits par 
+Password Wallet sont issus de la dérive entre l'horloge interne du watchdog et 
+l'oscillateur externe. La dérive d'une horloge par rapport à l'autre ne devrait 
+pas se produire dans un monde idéal mais les nombreuses interférences matériel 
+conduisent à un léger décalage d'une horloge par rapport à l'autre. Le watchdog 
+est paramétré pour déclencher une interruption toutes les 16 ms. La valeur de 
+l'octet de poid faible du compteur 1, incrémenté par l'horloge principal, est 
+stocké dans un nombre codé sur 32 bit. Ce dernier est haché avec 32 échantillons 
+consécutif des valeurs enregistrés ("Jenkin's one at a time hash"). Il en 
+résulte la production de deux nombres de 32 bit complétement aléatoire toutes 
+les 1024 ms. La qualité de ces nombres à été testé sur un échantillon d'environ 
+un méga-octet grâce au programme 'ent' fourni par furmilab et grâce à dieharder. 
+Ces deux tests n'ont révélés aucune répétition / corrélation / prédictabilité 
+entre les nombres.
+
+
+**Carte des sections utilisées**
+
+Les mots de passes sont stockés dans une section de *166 octets* (valeur 
+susceptible de changer à tout instant) chacun. Chaque section utilisé est 
+répértorié dans un tableau situé dans les premières zones de la mémoire. Une 
+section utilisée est notée par un 1 dans cette carte, par un 0 sinon. Ainsi le 
+système peut utiliser de façon optimale la mémoire : l'ajout d'un mot de passe 
+ne se fait pas nécessairement à la fin de la mémoire mais dans la première 
+section disponible. La suppression d'un mot de passe ne nécessite donc pas le 
+décalage de tous les autres mots de passes pour créer une zone contigue de 
+section utilisé. Il faut noter que cette technique engendre une petite 
+fragmentation de la mémoire mais que celle ci n'est pas génante dans la mesure 
+les mots de passes forment une liste doublement chaînée entre eux, le temps de 
+parcours est donc constant lorsque le périphérique affiche les mots de passes de 
+façon ordonnée. Le calcul de la taille nécessaire pour la carte des sections 
+utilisé peut s'avérer pénible car la modification de la taille de la carte 
+modifie également l'espace disponible pour stocker les mots de passes (et que 
+j'ai la flemme de mettre ça en équation...).
+
+**Système de récupération**
+
+Le système doit pouvoir résister à toute maladresse de l'utilisateur du fait de
+son extrême importance. Il n'est pas envisageable de compromettre le stockage 
+des mots de passes ou pire de perdre la clef de chiffrement ou de laisser une 
+partie des mots de passes chiffrées avec une clef différente de celle utilisée 
+pour chiffrer les autres mots de passes. Il faut donc un système robuste de 
+sauvegarde et de récupération des données. Ce système est implémenté par les 
+fichiers "Backup.[ch]". L'idée est de sauvegarder le mot de passe avant de le 
+modifier et de marquer qu'il doit être restauré. Si l'opération réussi il suffit 
+de réinitialiser la section de sauvegarde. Si l'opération échoue alors au 
+prochain démarrage le système détectera qu'il y a eu un problème et restaurera 
+le mot de passe. Le même principe s'applique pour le changement de la clef 
+maître.
+
 Identifiants
 
 Identification USB
