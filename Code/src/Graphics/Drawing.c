@@ -168,7 +168,7 @@ void draw_main_menu(void)
 		char data[64];
 
 		// Draw the previous password
-		uint8_t pwd_id = pwd_list_get_prev_pwd_id(CURRENT_PASSWORD_ID);
+		p_addr pwd_id = pwd_list_get_prev_pwd_id(CURRENT_PASSWORD_ID);
 		password_read_name(pwd_id, (uint8_t*)data);
 		draw_text(12, 2 , data, 32);
 

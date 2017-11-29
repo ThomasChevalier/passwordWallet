@@ -2,6 +2,7 @@
 #define BACKUP_HEADER_THOMAS_CHEVALIER
 
 #include <stdint.h>
+#include "../Memory/MemoryLayout.h"
 
 #define BACKUP_STATUS_OK (0)
 #define BACKUP_STATUS_UPDATE (1)
@@ -18,7 +19,7 @@
  * @param pwd_id The id of the password chunk to backup.
  * @param statut The statuts of the current operation.
  */
-void backup_save (uint8_t pwd_id, uint8_t statuts);
+void backup_save (p_addr pwd_id, uint8_t statuts);
 
 /**
  * @brief Restores the password chunk from the backup section.

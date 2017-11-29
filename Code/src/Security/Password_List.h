@@ -3,6 +3,25 @@
 
 #include <stdint.h>
 
+#include "../Memory/MemoryLayout.h"
+
+/**
+ * @brief Write a password id to fram.
+ * @details This function take cares of the size of the p_addr type.
+ * 
+ * @param framAddr The address where to write the id
+ * @param id The id to write
+ */
+void pwd_write_id(uint16_t framAddr, p_addr id);
+
+/**
+ * @brief Read a password id from fram.
+ * @details This function take cares of the size of the p_addr type.
+ * 
+ * @param framAddr The address from where to read the id
+ */
+p_addr pwd_read_id(uint16_t framAddr);
+
 /**
  * @brief Return the current sorting method.
  * @return The sorting method PWD_SORTING_NONE, PWD_SORTING_USE or PWD_SORTING_ALPHA.
@@ -14,25 +33,25 @@ uint8_t pwd_list_get_sorting_method             (void);
  * @brief Get the id of the first password according to the current sorting method.
  * @return The id of the first password.
  */
-uint8_t pwd_list_get_first_pwd_id               (void);
+p_addr pwd_list_get_first_pwd_id               (void);
 
 /**
  * @brief Get the id of the first password in memory, it means the first chunk of memory used to store a password.
  * @return The id of the first password.
  */
-uint8_t pwd_list_get_first_pwd_id_sort_none     (void);
+p_addr pwd_list_get_first_pwd_id_sort_none     (void);
 
 /**
  * @brief Get the id of the first password, sort by number of use.
  * @return The id of the first password.
  */
-uint8_t pwd_list_get_first_pwd_id_sort_use      (void);
+p_addr pwd_list_get_first_pwd_id_sort_use      (void);
 
 /**
  * @brief Get the id of the first password, sort by name.
  * @return The id of the first password.
  */
-uint8_t pwd_list_get_first_pwd_id_sort_alpha    (void);
+p_addr pwd_list_get_first_pwd_id_sort_alpha    (void);
 
 /**
  * @brief Get the previous password id according to the current sorting method.
@@ -40,7 +59,7 @@ uint8_t pwd_list_get_first_pwd_id_sort_alpha    (void);
  * @param pwd_id The id of the next password of the id we want.
  * @return The id of the password before pwd_id.
  */
-uint8_t pwd_list_get_prev_pwd_id                (uint8_t pwd_id);
+p_addr pwd_list_get_prev_pwd_id                (p_addr pwd_id);
 
 /**
  * @brief Get the previous password of pwd_id in memory.
@@ -49,7 +68,7 @@ uint8_t pwd_list_get_prev_pwd_id                (uint8_t pwd_id);
  * @param pwd_id The id of the next password of the id we want.
  * @return The id of the password before pwd_id.
  */
-uint8_t pwd_list_get_prev_pwd_id_sort_none      (uint8_t pwd_id);
+p_addr pwd_list_get_prev_pwd_id_sort_none      (p_addr pwd_id);
 
 /**
  * @brief Get the previous password of pwd_id, sort by number of use.
@@ -58,7 +77,7 @@ uint8_t pwd_list_get_prev_pwd_id_sort_none      (uint8_t pwd_id);
  * @param pwd_id The id of the next password of the id we want.
  * @return The id of the password before pwd_id.
  */
-uint8_t pwd_list_get_prev_pwd_id_sort_use       (uint8_t pwd_id);
+p_addr pwd_list_get_prev_pwd_id_sort_use       (p_addr pwd_id);
 
 /**
  * @brief Get the previous password of pwd_id, sort by name.
@@ -67,7 +86,7 @@ uint8_t pwd_list_get_prev_pwd_id_sort_use       (uint8_t pwd_id);
  * @param pwd_id The id of the next password of the id we want.
  * @return The id of the password before pwd_id.
  */
-uint8_t pwd_list_get_prev_pwd_id_sort_alpha     (uint8_t pwd_id);
+p_addr pwd_list_get_prev_pwd_id_sort_alpha     (p_addr pwd_id);
 
 /**
  * @brief Get the password after pwd_id according to the current sorting method.
@@ -76,7 +95,7 @@ uint8_t pwd_list_get_prev_pwd_id_sort_alpha     (uint8_t pwd_id);
  * @param pwd_id The password before the password we want.
  * @return The id of the password after pwd_id.
  */
-uint8_t pwd_list_get_next_pwd_id                (uint8_t pwd_id);
+p_addr pwd_list_get_next_pwd_id                (p_addr pwd_id);
 
 /**
  * @brief Get the password after pwd_id in memory.
@@ -86,7 +105,7 @@ uint8_t pwd_list_get_next_pwd_id                (uint8_t pwd_id);
  * @param pwd_id The password before the password we want.
  * @return The id of the password after pwd_id.
  */
-uint8_t pwd_list_get_next_pwd_id_sort_none      (uint8_t pwd_id);
+p_addr pwd_list_get_next_pwd_id_sort_none      (p_addr pwd_id);
 
 /**
  * @brief Get the password after pwd_id , sort by use.
@@ -95,7 +114,7 @@ uint8_t pwd_list_get_next_pwd_id_sort_none      (uint8_t pwd_id);
  * @param pwd_id The password before the password we want.
  * @return The id of the password after pwd_id.
  */
-uint8_t pwd_list_get_next_pwd_id_sort_use       (uint8_t pwd_id);
+p_addr pwd_list_get_next_pwd_id_sort_use       (p_addr pwd_id);
 
 /**
  * @brief Get the password after pwd_id , sort by name.
@@ -104,7 +123,7 @@ uint8_t pwd_list_get_next_pwd_id_sort_use       (uint8_t pwd_id);
  * @param pwd_id The password before the password we want.
  * @return The id of the password after pwd_id.
  */
-uint8_t pwd_list_get_next_pwd_id_sort_alpha     (uint8_t pwd_id);
+p_addr pwd_list_get_next_pwd_id_sort_alpha     (p_addr pwd_id);
 
 /**
  * @brief Delete the password pwd_id.
@@ -112,7 +131,7 @@ uint8_t pwd_list_get_next_pwd_id_sort_alpha     (uint8_t pwd_id);
  * 
  * @param pwd_id The id of the password to erase.
  */
-void    pwd_list_delete_pwd                     (uint8_t pwd_id);
+void    pwd_list_delete_pwd                     (p_addr pwd_id);
 
 /**
  * @brief Add a new password.

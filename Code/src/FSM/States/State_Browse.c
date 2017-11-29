@@ -26,8 +26,8 @@ void state_browse_begin (void)
  */
 static void select_pwd_from_letter(void)
 {
-	const uint8_t firstId = pwd_list_get_first_pwd_id_sort_alpha();
-	uint8_t pwdId = firstId;
+	const p_addr firstId = pwd_list_get_first_pwd_id_sort_alpha();
+	p_addr pwdId = firstId;
 
 	uint8_t minDif = 255;
 

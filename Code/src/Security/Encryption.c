@@ -67,7 +67,7 @@ void encryption_update_validation(void)
 }
 
 
-void encryption_update_key(uint8_t *new_key, uint8_t start_from)
+void encryption_update_key(uint8_t *new_key, p_addr start_from)
 {
 	uint8_t buffer[64];
 
@@ -80,7 +80,7 @@ void encryption_update_key(uint8_t *new_key, uint8_t start_from)
 		const uint8_t memory_byte = fram_read_byte(OFFSET_MEMORY_MAP + i);
 		for(; j < 8; ++j)
 		{
-			const uint8_t pwd_id = i*8+j;
+			const p_addr pwd_id = i*8+j;
 
 			if(pwd_id<MAXIMUM_NUMBER_OF_PWD)
 			{

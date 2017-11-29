@@ -2,6 +2,7 @@
 #define ENCRYPTION_HEADER_THOMAS_CHEVALIER
 
 #include <stdint.h>
+#include "../Memory/MemoryLayout.h"
 
 /**
  * @brief Check if KEY is valid.
@@ -25,6 +26,6 @@ void encryption_update_validation(void);
  * @param new_key The new key used to encrypt the passwords.
  * @parem start_from The password id to begin the update. In normal use of this function start_from = 0, but backup system need this arg.
  */
-void encryption_update_key(uint8_t *new_key, uint8_t start_from);
+void encryption_update_key(uint8_t *new_key, p_addr start_from);
 
 #endif // ENCRYPTION_HEADER_THOMAS_CHEVALIER

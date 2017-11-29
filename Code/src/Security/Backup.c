@@ -12,6 +12,7 @@
 
 #include "../Security/Encryption.h"
 #include "../Security/Authentification.h"
+#include "../Security/Password_List.h"
 
 #include "../Program/Program.h"
 #include "../FSM/Events.h"
@@ -20,7 +21,7 @@
 
 // CORE
 
-void backup_save (uint8_t pwd_id, uint8_t status)
+void backup_save (p_addr pwd_id, uint8_t status)
 {
 	// Copy the chunk to the backup
 	uint8_t i = 0;
@@ -29,7 +30,7 @@ void backup_save (uint8_t pwd_id, uint8_t status)
 		const uint8_t byte = fram_read_byte(PWD_ADDR(pwd_id, i));
 		fram_write_byte(OFFSET_BACKUP_DATA + i, byte);
 	}
-	fram_write_byte(OFFSET_BACKUP_ID, pwd_id);
+	pwd_write_id(OFFSET_BACKUP_ID, pwd_id);
 	// At the very last update the back status byte.
 	fram_write_byte(OFFSET_BACKUP_STATUS, status);
 }
@@ -41,7 +42,7 @@ void backup_restore (void)
 	{
 		return;
 	}
-	const uint8_t pwd_id = fram_read_byte(OFFSET_BACKUP_ID);
+	const p_addr pwd_id = pwd_read_id(OFFSET_BACKUP_ID);
 
 	uint8_t i = 0;
 	for(; i < SIZE_OF_PWD_BLOCK; ++i)
@@ -61,7 +62,7 @@ void backup_free (void)
 	// a invalid chunk.
 	fram_write_byte(OFFSET_BACKUP_STATUS, BACKUP_STATUS_OK);
 	fram_set(OFFSET_BACKUP_DATA, 0, SIZE_BACKUP_DATA);
-	fram_write_byte(OFFSET_BACKUP_ID, 0);
+	pwd_write_id(OFFSET_BACKUP_ID, 0);
 }
 
 void backup_set_status(uint8_t status)
@@ -162,7 +163,7 @@ void backup_recover(void)
 		{
 			// Read the id of the first password not updated
 			// It is the one stored in the backup section
-			uint8_t pwd_id = fram_read_byte(OFFSET_BACKUP_ID);
+			p_addr pwd_id = pwd_read_id(OFFSET_BACKUP_ID);
 
 			// Restore the password, if the update has not been completed on it
 			if(backupStatus == BACKUP_STATUS_CHANGE_KEY){

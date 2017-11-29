@@ -7,6 +7,11 @@
 //< should be stored in FRAM
 #undef STORE_SCREEN_BUFFER_IN_FRAM
 
+//< The type of the password id
+
+#define p_addr uint8_t
+#define p_addr_sz (1)
+
 // ///////////// //
 // Fram Section  //
 // ///////////// //
@@ -20,13 +25,13 @@
 #define OPTIONS_FLAG_OFFSET_QWERTY (4)
 
 #define OFFSET_FIRST_PWD_USE (OFFSET_OPTIONS_FLAG + SIZE_OPTION_FLAG) /* 1 */
-#define SIZE_FIRST_PWD_USE (1)
+#define SIZE_FIRST_PWD_USE (p_addr_sz)
 
 #define OFFSET_FIRST_PWD_ALPHA (OFFSET_FIRST_PWD_USE + SIZE_FIRST_PWD_USE) /* 2 */
-#define SIZE_FIRST_PWD_ALPHA (1)
+#define SIZE_FIRST_PWD_ALPHA (p_addr_sz)
 
 #define OFFSET_NUM_PWD (OFFSET_FIRST_PWD_ALPHA + SIZE_FIRST_PWD_ALPHA) /* 3 */
-#define SIZE_NUM_PWD (1)
+#define SIZE_NUM_PWD (p_addr_sz)
 
 #define OFFSET_OLED_BUFFER (OFFSET_NUM_PWD + SIZE_NUM_PWD) /* 3 */
 #ifdef STORE_SCREEN_BUFFER_IN_FRAM
@@ -51,7 +56,7 @@
 #define SIZE_BACKUP_STATUS (1)
 
 #define OFFSET_BACKUP_ID (OFFSET_BACKUP_STATUS + SIZE_BACKUP_STATUS)
-#define SIZE_BACKUP_ID (1)
+#define SIZE_BACKUP_ID (p_addr_sz)
 
 #define OFFSET_BACKUP_DATA (OFFSET_BACKUP_ID + SIZE_BACKUP_ID)
 #define SIZE_BACKUP_DATA SIZE_OF_PWD_BLOCK
@@ -65,16 +70,16 @@
 #define PWD_ADDR(pwdID, pwdField) (OFFSET_FIRST_PWD + SIZE_OF_PWD_BLOCK * pwdID + pwdField)
 
 #define PWD_OFFSET_PREV_PWD_USE (0)
-#define PWD_SIZE_PREV_PWD_USE (1)
+#define PWD_SIZE_PREV_PWD_USE (p_addr_sz)
 
 #define PWD_OFFSET_NEXT_PWD_USE (PWD_OFFSET_PREV_PWD_USE + PWD_SIZE_PREV_PWD_USE) /* 1 */
-#define PWD_SIZE_NEXT_PWD_USE (1)
+#define PWD_SIZE_NEXT_PWD_USE (p_addr_sz)
 
 #define PWD_OFFSET_PREV_PWD_ALPHA (PWD_OFFSET_NEXT_PWD_USE + PWD_SIZE_NEXT_PWD_USE) /* 2 */
-#define PWD_SIZE_PREV_PWD_ALPHA (1)
+#define PWD_SIZE_PREV_PWD_ALPHA (p_addr_sz)
 
 #define PWD_OFFSET_NEXT_PWD_ALPHA (PWD_OFFSET_PREV_PWD_ALPHA + PWD_SIZE_PREV_PWD_ALPHA) /* 3 */
-#define PWD_SIZE_NEXT_PWD_ALPHA (1)
+#define PWD_SIZE_NEXT_PWD_ALPHA (p_addr_sz)
 
 #define PWD_OFFSET_PWD_COUNT (PWD_OFFSET_NEXT_PWD_ALPHA + PWD_SIZE_NEXT_PWD_ALPHA) /* 4 */
 #define PWD_SIZE_PWD_COUNT (2)

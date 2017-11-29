@@ -169,7 +169,7 @@ void opt_callback_change_name(void)
 
 void opt_callback_delete_pwd(void)
 {
-	uint8_t prevPwd = 0;
+	p_addr prevPwd = 0;
 	if(NUM_PWD > 1)
 	{
 		prevPwd = pwd_list_get_prev_pwd_id(CURRENT_PASSWORD_ID);

@@ -3,6 +3,7 @@
 
 #include <QDateTime>
 #include <QDebug>
+#include <QFile>
 
 #include "SerialInterface.h"
 
@@ -93,6 +94,16 @@ void SerialTerminal::on_command(const SerialCommand &command)
             }
             else{
                 stringFromHex[i] = '.';
+            }
+        }
+        if(command.type() == SerialCommand::Fram)
+        {
+            QFile out("fram.hex");
+            if(!out.open(QIODevice::WriteOnly)){
+                qDebug() << "Cant open file";
+            }
+            else{
+                out.write(command.data());
             }
         }
         display(tr("%1 | %2 octets reçus [%3]\n\n").arg(SerialCommand::typeToString(command.type()))
