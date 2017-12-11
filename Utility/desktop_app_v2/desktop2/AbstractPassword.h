@@ -12,8 +12,14 @@ public:
     QString name() const;
     void setName(const QString &name);
 
-    QByteArray data() const;
-    void setData(const QByteArray &data);
+    QByteArray ivPwd() const;
+    void setIvPwd(const QByteArray &ivPwd);
+
+    QByteArray pwd() const;
+    void setPwd(const QByteArray &pwd);
+
+    QByteArray ivUsrName() const;
+    void setIvUsrName(const QByteArray &ivUsrName);
 
     QString userName() const;
     void setUserName(const QString &userName);
@@ -21,14 +27,30 @@ public:
     int counter() const;
     void setCounter(int counter);
 
-    virtual int size() = 0;
+    static int size();
+    virtual bool readFrom(QByteArray& deviceData) = 0;
     virtual QByteArray toByteArray() = 0;
 
+    int prevUse() const;
+
+    int nextUse() const;
+
+    int prevAlpha() const;
+
+    int nextAlpha() const;
+
 protected:
+
     QString m_name;
-    QByteArray m_data;
+    QByteArray m_ivPwd;
+    QByteArray m_pwd;
+    QByteArray m_ivUsrName;
     QString m_userName;
     int m_counter;
+    int m_prevUse;
+    int m_nextUse;
+    int m_prevAlpha;
+    int m_nextAlpha;
 };
 
 #endif // ABSTRACTPASSWORD_H

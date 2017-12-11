@@ -14,18 +14,6 @@ public:
 
 private:
     bool m_valid;
-    enum StateRead
-    {
-        Flags,
-        PwdUse,
-        PwdAlpha,
-        NumPwd,
-        EntropyPool,
-        MemoryMap,
-        BackupSection,
-        Done
-    };
-    StateRead m_state;
 
     quint8 m_optFlags;
     quint8 m_firstPwdUse;

@@ -29,7 +29,7 @@
 /**
  * @brief Setup register for SPI.
  */
-void	spi_init	(void);
+void spi_init (void);
 
 /**
  * @brief Send a byte via the spi port and read one.
@@ -37,7 +37,7 @@ void	spi_init	(void);
  * @param data The byte to send.
  * @return The byte that the slave send.
  */
-uint8_t spi_transfer_8		(uint8_t data);
+uint8_t spi_transfer_8 (uint8_t data);
 
 /**
  * @brief Shift full array to target device without receiving any byte.
@@ -45,14 +45,14 @@ uint8_t spi_transfer_8		(uint8_t data);
  * @param dataout The array of bytes to send.
  * @param len The lenght of the array.
  */
-void	spi_send			(uint8_t * dataout, uint8_t len);
+void spi_send (uint8_t * dataout, uint8_t len);
 
 /**
  * @brief Write one byte on the bus without receiving anything.
  * 
  * @param data The byte to send.
  */
-void	spi_send_8			(uint8_t data);
+void spi_send_8 (uint8_t data);
 
 /**
  * @brief Read an array of byte from spi bus.
@@ -60,14 +60,14 @@ void	spi_send_8			(uint8_t data);
  * @param buffer The array that contains the content read.
  * @param size How many bytes to read.
  */
-void	spi_read			(uint8_t* buffer, uint8_t size);
+void spi_read (uint8_t* buffer, uint8_t size);
 
 /**
  * @brief Read one byte from the bus.
  * @details Send a dummy byte (0x00). Same as spi_transfer_8(0x00).
  * @return The byte that the slave send.
  */
-uint8_t spi_read_8			(void);
+uint8_t spi_read_8 (void);
 
 /**
  * @brief Send several times a byte on the spi bus.
@@ -75,6 +75,6 @@ uint8_t spi_read_8			(void);
  * @param val The byte to send several times.
  * @param num How many times the byte must be sent.
  */
-void	spi_set				(uint8_t val, uint8_t num);
+void spi_set (uint8_t val, uint8_t num);
 
 #endif // SPI_HEADER_THOMAS_CHEVALIER

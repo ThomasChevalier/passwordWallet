@@ -11,6 +11,7 @@
 #include "PasswordTabView.h"
 #include "OptionTabView.h"
 #include "RestoreTabView.h"
+#include "SerialDevice.h"
 
 #include "KeyDialog.h"
 

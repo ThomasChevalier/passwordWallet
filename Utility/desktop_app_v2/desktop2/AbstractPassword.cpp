@@ -15,14 +15,34 @@ void AbstractPassword::setName(const QString &name)
     m_name = name;
 }
 
-QByteArray AbstractPassword::data() const
+QByteArray AbstractPassword::ivPwd() const
 {
-    return m_data;
+    return m_ivPwd;
 }
 
-void AbstractPassword::setData(const QByteArray &data)
+void AbstractPassword::setIvPwd(const QByteArray &ivPwd)
 {
-    m_data = data;
+    m_ivPwd = ivPwd;
+}
+
+QByteArray AbstractPassword::pwd() const
+{
+    return m_pwd;
+}
+
+void AbstractPassword::setPwd(const QByteArray &pwd)
+{
+    m_pwd = pwd;
+}
+
+QByteArray AbstractPassword::ivUsrName() const
+{
+    return m_ivUsrName;
+}
+
+void AbstractPassword::setIvUsrName(const QByteArray &ivUsrName)
+{
+    m_ivUsrName = ivUsrName;
 }
 
 QString AbstractPassword::userName() const
@@ -43,4 +63,24 @@ int AbstractPassword::counter() const
 void AbstractPassword::setCounter(int counter)
 {
     m_counter = counter;
+}
+
+int AbstractPassword::prevUse() const
+{
+    return m_prevUse;
+}
+
+int AbstractPassword::nextUse() const
+{
+    return m_nextUse;
+}
+
+int AbstractPassword::prevAlpha() const
+{
+    return m_prevAlpha;
+}
+
+int AbstractPassword::nextAlpha() const
+{
+    return m_nextAlpha;
 }

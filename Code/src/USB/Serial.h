@@ -19,13 +19,13 @@ void CDC_Task(void);
  * @brief Init the serial communication.
  * @details This function does nothing yet, because there is nothing to do.
  */
-void serial_init	(void);
+void serial_init (void);
 
 /**
  * @brief Update the serial communication.
  * @details Should be called regularly.
  */
-void serial_loop	(void);
+void serial_loop (void);
 
 /**
  * @brief Send an array of bytes to the pc through the serial port.
@@ -34,20 +34,20 @@ void serial_loop	(void);
  * @param buffer The array of bytes to send.
  * @param lenght The lenght of the array.
  */
-void serial_send	(uint8_t* buffer, uint8_t lenght);
+void serial_send (uint8_t* buffer, uint8_t lenght);
 
 
 /** 
  * @brief Event handler for the USB_Connect event.
  * @details This indicates that the device is enumerating and starts the library USB task to begin the enumeration and USB management process.
  */
-void	serial_on_device_connect			(void);
+void serial_on_device_connect (void);
 
 /**
  * @brief Event handler for the USB_Disconnect event.
  * @details This indicates that the device is no longer connected to an host.
  */
-void	serial_on_device_disconnect			(void);
+void serial_on_device_disconnect (void);
 
 /**
  * @brief Event handler for the USB_ConfigurationChanged event.
@@ -56,7 +56,7 @@ void	serial_on_device_disconnect			(void);
  * 
  * @return Return 1 if no error occured, 0 otherwise.
  */
-uint8_t	serial_on_configuration_changed		(void);
+uint8_t serial_on_configuration_changed (void);
 
 /**
  * @brief Event handler for the USB_ControlRequest event.
@@ -64,12 +64,12 @@ uint8_t	serial_on_configuration_changed		(void);
  * the device from the USB host before passing along unhandled control requests to the library for processing
  * internally.
  */
-void	serial_on_control_request			(void);
+void serial_on_control_request (void);
 
 /**
  * @brief Event handler for the USB device Start Of Frame event. 
  */
-void	serial_on_start_of_frame			(void);
+void serial_on_start_of_frame (void);
 
 
 #endif // SERIAL_HEADER_THOMAS_CHEVALIER

@@ -36,7 +36,9 @@ SOURCES += \
     AbstractOption.cpp \
     Version1_0/SerialInterface_1_0.cpp \
     Version1_0/Password_1_0.cpp \
-    Version1_0/Option_1_0.cpp
+    Version1_0/Option_1_0.cpp \
+    AbstractMemory.cpp \
+    Version1_0/Memory_1_0.cpp
 
 HEADERS += \
         MainWindow.h \
@@ -50,7 +52,9 @@ HEADERS += \
     AbstractOption.h \
     Version1_0/SerialInterface_1_0.h \
     Version1_0/Password_1_0.h \
-    Version1_0/Option_1_0.h
+    Version1_0/Option_1_0.h \
+    AbstractMemory.h \
+    Version1_0/Memory_1_0.h
 
 FORMS += \
         MainWindow.ui \
