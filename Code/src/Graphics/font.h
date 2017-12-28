@@ -7,7 +7,7 @@
 
 #define FONT_WIDTH (5)
 #define FONT_HEIGHT (8)
-// Bigger font
+
 static const uint8_t font[] PROGMEM =
 {
 	0x00, 0x00, 0x00, 0x00, 0x00, /*   */

@@ -49,17 +49,11 @@ void program_wait(void)
 {
 	if(first_press)
 	{
-		for(uint8_t i = 0; i < 150; ++i)
-		{
-			_delay_ms(1);
-		}
+		_delay_ms(150);
 	}
 	else
 	{
-		for(uint8_t i = 0; i < 50; ++i)
-		{
-			_delay_ms(1);
-		}
+		_delay_ms(50);
 	}
 }
 

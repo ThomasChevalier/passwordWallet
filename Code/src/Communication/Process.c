@@ -13,15 +13,15 @@
 static uint8_t com_state;
 
 
-static uint8_t pick(uint8_t **buffer, uint8_t* lenght)
+static uint8_t pick(uint8_t **data, uint8_t* lenght)
 {
 	--(*lenght);
-	const uint8_t b = **buffer;
-	++(*buffer);
+	const uint8_t b = **data;
+	++(*data);
 	return b;
 }
 
-void com_process_data(uint8_t* buffer, uint8_t lenght)
+void com_process_data(uint8_t* data, uint8_t lenght)
 {
 	static uint16_t com_bytes_processed;
 
@@ -37,19 +37,19 @@ void com_process_data(uint8_t* buffer, uint8_t lenght)
 		// Initial state read the command ID
 		if(com_state == COM_ID)
 		{
-			CURRENT_COMMAND.id = pick(&buffer, &lenght);
+			CURRENT_COMMAND.id = pick(&data, &lenght);
 			++com_state;
 		}
 		// Read the first byte of the command size.
 		if(com_state == COM_SIZE1 && lenght)
 		{
-			CURRENT_COMMAND.totalSize = pick(&buffer, &lenght);
+			CURRENT_COMMAND.totalSize = pick(&data, &lenght);
 			++com_state;
 		}
 		// Read the second byte of the command size.
 		if(com_state == COM_SIZE2 && lenght)
 		{
-			CURRENT_COMMAND.totalSize |= pick(&buffer, &lenght) << 8;
+			CURRENT_COMMAND.totalSize |= pick(&data, &lenght) << 8;
 			com_bytes_processed = 0;
 			++com_state;
 		}
@@ -57,7 +57,7 @@ void com_process_data(uint8_t* buffer, uint8_t lenght)
 		// Process the data of the command
 		if(com_state == COM_DATA)
 		{
-			CURRENT_COMMAND.data = buffer;
+			CURRENT_COMMAND.data = data;
 
 			// Data available from serial belong completely to the current command :
 			if(lenght < CURRENT_COMMAND.totalSize - com_bytes_processed){

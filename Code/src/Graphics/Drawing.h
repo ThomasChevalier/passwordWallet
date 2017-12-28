@@ -8,7 +8,7 @@
 #define INVERSE 2
 
 /**
- * @brief Clear the screen.
+ * @brief Clear the screen buffer.
  */
 void draw_clear(void);
 
@@ -20,6 +20,7 @@ void draw_update(void);
 
 /**
  * @brief Draw a character on the screen using the system font.
+ * The null character must be converted in INVALID_CHARACTER
  * 
  * @param x The x top left corner of the character.
  * @param y The y top left corner of the character.
@@ -36,10 +37,6 @@ void draw_flash_string(uint8_t x, uint8_t y, uint16_t str_index);
 #define draw_flash_str(x, y, str) draw_flash_string(x, y, str##_index)
 
 void draw_num(uint8_t x, uint8_t y, uint16_t num);
-
-//void draw_text_index(uint8_t x, uint8_t y, uint8_t str_index);
-
-//#define draw_text_index(x,y,s) str_to_buffer(s); draw_text(x, y, str_buffer, 0);
 
 /**
  * @brief Draw a string on the screen at a given position.
@@ -87,16 +84,40 @@ void draw_v_line(uint8_t x, uint8_t y, uint8_t h, uint8_t color);
 void draw_main_menu(void);
 void draw_browse_dock(char letter, uint8_t highlight);
 
-// Return 1 if the string has been modified and 0 if nothing changed
+/**
+ * @brief Get a string from user input.
+ * @details This is a blocant function, it returns when the user have finished
+ * to type the string.
+ * 
+ * @param string_typed The initial string to type
+ * @param maxLen The maximum length of the string
+ * 
+ * @return Returns TRUE if the string has been modified, FALSE otherwise.
+ * The string is modified if the user changes one letter, even if he replaces
+ * the letter after. So a modified string may not have changed, but the 
+ * user have pressed buttons.
+ */
 uint8_t type_string(char* string_typed, uint8_t maxLen);
 
+/**
+ * @brief Helper function for the type_string function
+ * 
+ * @param str The string to draw
+ * @param column The current column
+ * @param max The maximum size of the string
+ */
 void draw_typing_screen(char* str, uint8_t column, uint8_t max);
 
-// There is no more than 10 column
-// So lower nibble of column_and_flags is for the column
-// Upper nibble is for flag :
-// bit 4 = 1 ? highlight : no_highlight
-// bit 5 = 1 ? dock_mode : no_dock_mode
+/**
+ * @brief Draw a column of character
+ * @details There is no more than 10 column so the lower
+ * nibble of column_and_flags is for the column number and
+ * the upper nibble is for the flags
+ * bit 4 = 1 ? highlight : no_highlight
+ * bit 5 = 1 ? dock_mode : no_dock_mode
+ * @param column_and_flags The column number and the flags, as described above
+ * @param letter the letter to display
+ */
 void draw_char_column(uint8_t column_and_flags, char letter);
 
 

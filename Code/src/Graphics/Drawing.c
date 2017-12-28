@@ -27,8 +27,6 @@ void draw_update(void)
 	oled_display();
 }
 
-// Le caractère nulle doit être transformé en INVALID_CHARACTER
-// Retourne la longueur non écrite
 uint8_t draw_char(uint8_t x, uint8_t y, uint8_t c)
 {
 	if(x + FONT_WIDTH >= 128 || y + FONT_HEIGHT >= 64)
