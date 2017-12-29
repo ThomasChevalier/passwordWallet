@@ -1,4 +1,4 @@
- =========================================
+﻿ =========================================
               PASSWORD WALLET             
             MEMORY ORGANIZATION           
  
@@ -18,26 +18,8 @@ informatiques*
 Introduction
 ------------
 
-Password Wallet est un périphérique USB pouvant stocker des identifiants (mots 
-de passe et noms d’utilisateur) de manière sécurisé. La manipulation des données 
-stockées ainsi que les différentes actions de restitution sont disponibles 
-directement sur le périphérique ce qui en fait un objet autonome, dans le sens 
-où un logiciel n’est pas nécessaire pour l’utiliser. Le périphérique se veut 
-fiable et robuste, compte tenu de la sensibilité des informations stockées. Ce 
-projet est ce que l’on pourrait appeler un gestionnaire de mots de passe 
-hardware.
-Cet objet se démarque des gestionnaires de mots de passe logiciel par sa 
-portabilité : il est disponible sur n’importe quel système d’exploitation sans 
-installation préalable, ce qui facilite la mise en œuvre sur des ordinateurs 
-dont l’accès est restreint. Là où la plupart des gestionnaires de mots de passes 
-proposent de sauvegarder des données en ligne pour faciliter leur transmission, 
-et par conséquent exposent ces données à des piratages, Password Wallet ne 
-stockent de données que dans sa mémoire interne, les identifiants ne sont donc 
-regroupés que dans un seul endroit, ce qui permet d’assurer leur sécurité. De 
-plus sa petite taille, approximativement celle d’un calepin, permet de le 
-stocker dans sa poche ou dans un sac. Password Wallet combine donc la sécurité 
-par rapport au piratage d’un calepin, et les systèmes de chiffrement des 
-logiciels modernes.
+Password Wallet est un périphérique USB pouvant stocker des identifiants (mots de passe et noms d’utilisateur) de manière sécurisé. La manipulation des données stockées ainsi que les différentes actions de restitution sont disponibles directement sur le périphérique ce qui en fait un objet autonome, dans le sens où un logiciel n’est pas nécessaire pour l’utiliser. Le périphérique se veut fiable et robuste, compte tenu de la sensibilité des informations stockées. Ce projet est ce que l’on pourrait appeler un gestionnaire de mots de passe hardware.
+Cet objet se démarque des gestionnaires de mots de passe logiciel par sa portabilité : il est disponible sur n’importe quel système d’exploitation sans installation préalable, ce qui facilite la mise en œuvre sur des ordinateurs dont l’accès est restreint. Là où la plupart des gestionnaires de mots de passes proposent de sauvegarder des données en ligne pour faciliter leur transmission, et par conséquent exposent ces données à des piratages, Password Wallet ne stockent de données que dans sa mémoire interne, les identifiants ne sont donc regroupés que dans un seul endroit, ce qui permet d’assurer leur sécurité. De plus sa petite taille, approximativement celle d’un calepin, permet de le stocker dans sa poche ou dans un sac. Password Wallet combine donc la sécurité par rapport au piratage d’un calepin, et les systèmes de chiffrement des logiciels modernes.
 
 Fonctionnalités
 ---------------
@@ -65,63 +47,24 @@ Listes de mot de passe
 
 **Nombres aléatoires**
 
-L'appareil propose de générer des nombres complétement aléatoire. En temps 
-normal les ordinateurs ne peuvent générer que des nombres pseudo-aléatoires. En 
-effet nos appareils étant des machines détérministes, la plupart des programmes 
-utilisent des algorithmes au résultat chaotiques pour générer des nombres qui 
-paraissent aléatoire. Cependant une même valeur de départ conduit à une même 
-suite de nombre, et il est théoriquement possible de pouvoir prédire les nombres 
-suivants moyennant un grand échantillon de données. Les nombres produits par 
-Password Wallet sont issus de la dérive entre l'horloge interne du watchdog et 
-l'oscillateur externe. La dérive d'une horloge par rapport à l'autre ne devrait 
-pas se produire dans un monde idéal mais les nombreuses interférences matériel 
-conduisent à un léger décalage d'une horloge par rapport à l'autre. Le watchdog 
-est paramétré pour déclencher une interruption toutes les 16 ms. La valeur de 
-l'octet de poid faible du compteur 1, incrémenté par l'horloge principal, est 
-stocké dans un nombre codé sur 32 bit. Ce dernier est haché avec 32 échantillons 
-consécutif des valeurs enregistrés ("Jenkin's one at a time hash"). Il en 
-résulte la production de deux nombres de 32 bit complétement aléatoire toutes 
-les 1024 ms. La qualité de ces nombres à été testé sur un échantillon d'environ 
-un méga-octet grâce au programme 'ent' fourni par furmilab et grâce à dieharder. 
-Ces deux tests n'ont révélés aucune répétition / corrélation / prédictabilité 
-entre les nombres.
+L'appareil propose de générer des nombres complètement aléatoire. En temps normal les ordinateurs ne peuvent générer que des nombres pseudo-aléatoires. En effet nos appareils étant des machines déterministes, la plupart des programmes utilisent des algorithmes au résultat chaotiques pour générer des nombres qui paraissent aléatoire. Cependant une même valeur de départ conduit à une même suite de nombre, et il est théoriquement possible de pouvoir prédire les nombres suivants moyennant un grand échantillon de données. Les nombres produits par Password Wallet sont issus de la dérive entre l'horloge interne du watchdog et l'oscillateur externe. La dérive d'une horloge par rapport à l'autre ne devrait pas se produire dans un monde idéal mais les nombreuses interférences matériel conduisent à un léger décalage d'une horloge par rapport à l'autre. Le watchdog est paramétré pour déclencher une interruption toutes les 16 ms. La valeur de l'octet de poid faible du compteur 1, incrémenté par l'horloge principal, est stocké dans un nombre codé sur 32 bit. Ce dernier est haché avec 32 échantillons consécutif des valeurs enregistrés ("Jenkin's one at a time hash"). Il en résulte la production de deux nombres de 32 bit complètement aléatoire toutes les 1024 ms. La qualité de ces nombres à été testé sur un échantillon d'environ un méga-octet grâce au programme 'ent' fourni par furmilab et grâce à dieharder. Ces deux tests n'ont révélés aucune répétition / corrélation / prédictibilité entre les nombres.
 
 
 **Carte des sections utilisées**
 
-Les mots de passes sont stockés dans une section de *166 octets* (valeur 
-susceptible de changer à tout instant) chacun. Chaque section utilisé est 
-répértorié dans un tableau situé dans les premières zones de la mémoire. Une 
-section utilisée est notée par un 1 dans cette carte, par un 0 sinon. Ainsi le 
-système peut utiliser de façon optimale la mémoire : l'ajout d'un mot de passe 
-ne se fait pas nécessairement à la fin de la mémoire mais dans la première 
-section disponible. La suppression d'un mot de passe ne nécessite donc pas le 
-décalage de tous les autres mots de passes pour créer une zone contigue de 
-section utilisé. Il faut noter que cette technique engendre une petite 
-fragmentation de la mémoire mais que celle ci n'est pas génante dans la mesure 
-les mots de passes forment une liste doublement chaînée entre eux, le temps de 
-parcours est donc constant lorsque le périphérique affiche les mots de passes de 
-façon ordonnée. Le calcul de la taille nécessaire pour la carte des sections 
-utilisé peut s'avérer pénible car la modification de la taille de la carte 
-modifie également l'espace disponible pour stocker les mots de passes (et que 
-j'ai la flemme de mettre ça en équation...).
+Les mots de passes sont stockés dans une section de *166 octets* (valeur susceptible de changer à tout instant) chacun. Chaque section utilisé est répertorié dans un tableau situé dans les premières zones de la mémoire. Une section utilisée est notée par un 1 dans cette carte, par un 0 sinon. Ainsi le système peut utiliser de façon optimale la mémoire : l'ajout d'un mot de passe ne se fait pas nécessairement à la fin de la mémoire mais dans la première section disponible. La suppression d'un mot de passe ne nécessite donc pas le décalage de tous les autres mots de passes pour créer une zone contiguë de section utilisé. Il faut noter que cette technique engendre une petite fragmentation de la mémoire mais que celle ci n'est pas gênante dans la mesure les mots de passes forment une liste doublement chaînée entre eux, le temps de parcours est donc constant lorsque le périphérique affiche les mots de passes de façon ordonnée. Le calcul de la taille nécessaire pour la carte des sections utilisé peut s'avérer pénible car la modification de la taille de la carte modifie également l'espace disponible pour stocker les mots de passes (et que j'ai la flemme de mettre ça en équation...).
 
 **Système de récupération**
 
-Le système doit pouvoir résister à toute maladresse de l'utilisateur du fait de
-son extrême importance. Il n'est pas envisageable de compromettre le stockage 
-des mots de passes ou pire de perdre la clef de chiffrement ou de laisser une 
-partie des mots de passes chiffrées avec une clef différente de celle utilisée 
-pour chiffrer les autres mots de passes. Il faut donc un système robuste de 
-sauvegarde et de récupération des données. Ce système est implémenté par les 
-fichiers "Backup.[ch]". L'idée est de sauvegarder le mot de passe avant de le 
-modifier et de marquer qu'il doit être restauré. Si l'opération réussi il suffit 
-de réinitialiser la section de sauvegarde. Si l'opération échoue alors au 
-prochain démarrage le système détectera qu'il y a eu un problème et restaurera 
-le mot de passe. Le même principe s'applique pour le changement de la clef 
-maître.
+Le système doit pouvoir résister à toute maladresse de l'utilisateur du fait de son extrême importance. Il n'est pas envisageable de compromettre le stockage des mots de passes ou pire de perdre la clef de chiffrement ou de laisser une partie des mots de passes chiffrées avec une clef différente de celle utilisée pour chiffrer les autres mots de passes. Il faut donc un système robuste de sauvegarde et de récupération des données. Ce système est implémenté par les fichiers "Backup.[ch]". L'idée est de sauvegarder le mot de passe avant de le modifier et de marquer qu'il doit être restauré. Si l'opération réussi il suffit de réinitialiser la section de sauvegarde. Si l'opération échoue alors au prochain démarrage le système détectera qu'il y a eu un problème et restaurera le mot de passe. Le même principe s'applique pour le changement de la clef maître.
 
-Identifiants
+** Veille et gestion de l'énergie **
+
+Le périphérique est prévu pour fonctionner sur ordinateur ou bien sur téléphone, il doit donc avoir la consommation la plus faible possible. Un mode veille se met en marche au bout de 15 secondes d'inactivité (valeur par défaut). Ce mode plonge le microcontrôleur dans le mode de veille le plus efficace (SLEEP_MODE_PWR_DOWN) et éteint l'écran, désactive le lecteur rfid, l'USB, la LED et le watchdog. L'ensemble du système consomme alors environ 0.67 mA. Lorsque le système n'est pas en train d'effectuer des calculs le microcontrôleur se met en mode inactif (SLEEP_MODE_IDLE) et consomme alors environ 10 mA. Dans ce mode, le cpu est réveillé toutes les millisecondes et seréactive si un appui sur un bouton est détecté. La durée totale de veille n'excède pas 150ms, ainsi des communications sur le port série peuvent s'effectuer (mise à jour des events toutes les 150ms max). La consommation maximale mesuré est de 30 mA, lors de la recherche de la carte rfid au lancement de l’appareil.
+
+** Identifiants **
+
+Un identifiant est un couple de trois chaînes de caractères : un nom, un nom d’utilisateur et un mot de passe. Chaque identifiant est stocké dans une section de 166 octets, contenant tout d’abord l’adresse du mot de passe précédent suivant un classement par ordre d’utilisation, celle du mot de passe suivant, de même l’adresse du mot de passe précédent suivant un classement alphabétique puis celle du suivant. Ces adresses peuvent être sur un ou deux octets suivant la taille de la mémoire et le nombre de mots de passe qu’elle est capable de stocker. Ensuite le nombre d’utilisation de l’identifiant est stocké sur 2 octets, son nom sur 32 octets (chaîne de caractères ne se finissant pas forcément par un \0), puis le vecteur d’initialisation nécessaire au chiffrement AES-128 CBC du mot de passe sur 16 octets, le mot de passe crypté sur 32 octets, puis l’IV pour le nom d’utilisateur sur 16 octets et enfin le nom d’utilisateur crypté, sur 64 octets. Ces sections sont stockées les unes à la suite des autres dans la mémoire (voir le document décrivant l’organisation de la mémoire).
 
 Identification USB
 Communication série
@@ -171,7 +114,6 @@ Stockage de la clef sur la carte
 Validation de la clef
 
 Timer milliseconde
-Mise en veille
 Infos système
 
 Conversion ascii - keycode
