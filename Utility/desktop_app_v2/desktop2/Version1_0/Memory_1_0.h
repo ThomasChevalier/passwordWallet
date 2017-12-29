@@ -16,7 +16,7 @@ public:
     bool isValid() const override;
 
     void addPassword(std::unique_ptr<AbstractPassword> pwd) override;
-    QList<AbstractPassword*> allPasswords(int sortingMethod) override;
+    QList<AbstractPassword *> allPasswords(int sortingMethod) override;
     void setPassword(int position, std::unique_ptr<AbstractPassword> pwd) override;
 
     void setOption(std::unique_ptr<AbstractOption> opt) override;

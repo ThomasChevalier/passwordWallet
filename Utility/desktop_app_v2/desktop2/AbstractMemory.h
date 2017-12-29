@@ -27,9 +27,9 @@ public:
     virtual bool readFrom(QByteArray& deviceData) = 0;
     virtual bool isValid() const = 0;
 
-    virtual void addPassword(std::unique_ptr<AbstractPassword> pwd);
-    virtual QList<AbstractPassword*> allPasswords(int sortingMethod);
-    virtual void setPassword(int position, std::unique_ptr<AbstractPassword> pwd);
+    virtual void addPassword(std::unique_ptr<AbstractPassword> pwd) = 0;
+    virtual QList<AbstractPassword*> allPasswords(int sortingMethod) = 0;
+    virtual void setPassword(int position, std::unique_ptr<AbstractPassword> pwd) = 0;
 
     virtual void setOption(std::unique_ptr<AbstractOption> opt) = 0;
     virtual std::unique_ptr<AbstractOption> getOption() const = 0;

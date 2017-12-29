@@ -10,7 +10,7 @@
 #define COM_SIZE2 (COM_SIZE1 + 1) // 2
 #define COM_DATA  (COM_SIZE2 + 1) // 3
 
-static uint8_t com_state;
+static uint8_t com_state = COM_ID;
 
 
 static uint8_t pick(uint8_t **data, uint8_t* lenght)

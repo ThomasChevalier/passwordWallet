@@ -111,6 +111,9 @@ void com_exec(void)
 	case COM_SET_KEY :
 		command_set_key();
 		break;
+	default:
+		com_abort();
+		break;
 	}
 
 	hide_com_logo();
@@ -118,7 +121,7 @@ void com_exec(void)
 
 void com_abort(void)
 {
-	send_command(COM_TIMEOUT, 0, 0);
+	send_command(COM_END, 0, 0);
 	GLOBALS_EVENTS &= ~EVENT_FLAG_COM;
 	COM_POS = 0; 
 	COM_PARAMETER = 0;
