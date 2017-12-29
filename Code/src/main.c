@@ -94,7 +94,12 @@ int main(void)
 			currentState->begin();
 		}
 		
-		program_wait();
+		// The main state is already very slow ...
+		if(currentStateNum != STATE_MAIN){
+			program_wait();
+		}else{
+			program_small_wait();
+		}
 	}
 
 	while(1){}

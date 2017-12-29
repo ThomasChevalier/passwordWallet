@@ -1,6 +1,8 @@
 #ifndef TIMER_HEADER_THOMAS_CHEVALIER
 #define TIMER_HEADER_THOMAS_CHEVALIER
 
+#include <stdint.h>
+
 /**
  * @brief Init the timers registers.
  * @details Init timer 1 to get the random value and timer 0 to get a millisecond interrupt.

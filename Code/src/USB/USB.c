@@ -8,7 +8,7 @@
 #include "../Security/Security.h"
 
 #include "../FSM/Events.h"
-
+#include "../Hardware/Led.h"
 void USB_init (void)
 {
 	#ifdef USB_ENABLE
@@ -58,4 +58,10 @@ void EVENT_USB_Device_StartOfFrame (void)
 {
 	keyboard_on_start_of_frame();
 	serial_on_start_of_frame();
+}
+
+void EVENT_USB_Device_Suspend (void)
+{
+	// Suspend mode => low power state
+	//GLOBALS_EVENTS |= EVENT_SLEEP_SHUTDOWN;
 }

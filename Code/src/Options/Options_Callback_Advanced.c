@@ -31,7 +31,7 @@ void opt_callback_show_key(void)
 	user_display_key();
 
 	DISABLE_SLEEP();
-	while(buttons_pressed());
+	while(buttons_pressed()); // Wait for the user to release the buttons
 	program_pause_until_event(EVENT_ALL_BUTTONS);
 	ENABLE_SLEEP();
 }

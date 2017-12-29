@@ -56,13 +56,7 @@ void sleep_device(void)
 	uint8_t oldPPR1 = PRR1;
 	power_all_disable();
 
-	// Turn on pin change interrupt
-	PCICR = (1<<PCIE0); // Pin change interrupt enable
-	// Set pin mask
-	PCMSK0 = (1 << BUTTON_1_PIN_CHANGE_NUM) |
-	         (1 << BUTTON_2_PIN_CHANGE_NUM) |
-	         (1 << BUTTON_3_PIN_CHANGE_NUM) |
-	         (1 << BUTTON_4_PIN_CHANGE_NUM);
+	// PCINT should be enabled
 
 	set_sleep_mode (SLEEP_MODE_PWR_DOWN);
 
@@ -108,4 +102,21 @@ void sleep_device(void)
 ISR(PCINT0_vect)
 {
 
+}
+
+void sleep_idle(void)
+{
+	uint8_t sreg = SREG;
+	set_sleep_mode (SLEEP_MODE_IDLE);
+
+	sleep_enable();
+
+	// Timed sequence
+	sei();
+	sleep_cpu();
+
+	// ZzZzz ...
+
+	sleep_disable();
+	SREG = sreg;
 }

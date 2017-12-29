@@ -3,6 +3,8 @@
 #include "Ascii2Keycode.h"
 #include "../Hardware/PinDefinition.h"
 
+#include "../Hardware/Led.h"
+
 #ifdef KEYBOARD_ENABLE
 
 /** Indicates what report mode the host has requested, true for normal HID reporting mode, \c false for special boot
@@ -360,7 +362,7 @@ void HID_Task(void)
 	/* Device must be connected and configured for the task to run */
 	if (USB_DeviceState != DEVICE_STATE_Configured)
 	{
-	  return;
+		return; // Be careful : an unplugged wire can be the cause of this return
 	}
 
 	/* Send the next keypress report to the host */

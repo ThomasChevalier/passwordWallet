@@ -11,6 +11,11 @@
  */
 void sleep_device(void);
 
+/**
+ * @brief Sleep device until an interrupt happen
+ */
+void sleep_idle(void);
+
 
 #define DISABLE_SLEEP() (GLOBALS_EVENTS |=  EVENT_NO_SLEEP)
 #define ENABLE_SLEEP()  (GLOBALS_EVENTS &= ~EVENT_NO_SLEEP)

@@ -1,10 +1,12 @@
-#include "Timer.h"
+	#include "Timer.h"
 
 #include <avr/io.h>
 #include <avr/interrupt.h>  // for sei()
 
 #include "../Globals.h"
 #include "../FSM/Events.h"
+
+#include "../Hardware/PinDefinition.h"
 
 void timer_init(void)
 {
@@ -30,12 +32,11 @@ ISR (TIMER0_COMPA_vect)
 		++SERIAL_TIMEOUT_TIMER;
 	}
 	
-
 	if(!(GLOBALS_EVENTS & EVENT_NO_SLEEP) && !(GLOBALS_EVENTS & EVENT_FLAG_COM))
 	{
 		++ACTIVITY_TIMER;
 	}
-	if(ACTIVITY_TIMER == SHUTDOWN_DELAY)
+	if(SHUTDOWN_DELAY == ACTIVITY_TIMER)
 	{
 		GLOBALS_EVENTS |= EVENT_SLEEP_SHUTDOWN;
 	}

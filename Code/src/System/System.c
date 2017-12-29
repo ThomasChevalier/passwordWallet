@@ -12,12 +12,22 @@
 
 #include "Timer.h"
 
+#include "../Hardware/PinDefinition.h"
+
 void system_init(void)
 {
 	// Activate interrupt
 	sei();
 	
 	timer_init();
+
+	// Turn on pin change interrupt
+	PCICR = (1<<PCIE0); // Pin change interrupt enable
+	// Set pin mask
+	PCMSK0 = (1 << BUTTON_1_PIN_CHANGE_NUM) |
+	         (1 << BUTTON_2_PIN_CHANGE_NUM) |
+	         (1 << BUTTON_3_PIN_CHANGE_NUM) |
+	         (1 << BUTTON_4_PIN_CHANGE_NUM);
 }
 
 // Read the reset source and display it

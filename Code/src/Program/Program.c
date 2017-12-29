@@ -16,7 +16,9 @@
 
 #include "../FSM/Events.h"
 
+#include "../System/Timer.h"
 #include "../System/Sleep.h"
+
 
 static uint8_t first_press;
 
@@ -45,15 +47,37 @@ void program_update(void)
 	}
 }
 
+static void idle_delay(uint8_t num)
+{
+	const uint8_t old_button_state = buttons_pressed();
+	uint8_t i = 0;
+	for(; i < num; ++i){
+		sleep_idle();
+		if(old_button_state != buttons_pressed()) // The user has pressed a button
+		{
+			break;
+		}
+	}
+}
+
 void program_wait(void)
 {
-	if(first_press)
+	if(first_press || buttons_pressed() == 0)
 	{
-		_delay_ms(150);
-	}
+		program_small_wait();
+	}	
 	else
 	{
-		_delay_ms(50);
+		// Wait 100 ms
+		idle_delay(100);
+	}
+}
+
+void program_small_wait(void)
+{
+	if(first_press || buttons_pressed() == 0){
+		// Wait 150 ms
+		idle_delay(200);
 	}
 }
 

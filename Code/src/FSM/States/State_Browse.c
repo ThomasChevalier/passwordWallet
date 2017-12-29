@@ -7,10 +7,12 @@
 #include "../../Security/Password.h"
 
 #include "../../Hardware/Oled.h"
+#include "../../Hardware/Buttons.h"
 
 #include "../../Graphics/Drawing.h"
 
 #include "../../Options/Options.h"
+
 
 static char letter = '@';
 
@@ -18,6 +20,9 @@ void state_browse_begin (void)
 {
 	draw_browse_dock(letter,1);
 	draw_update();	
+
+
+	while(buttons_pressed());
 }
 
 /**
