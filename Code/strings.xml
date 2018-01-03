@@ -12,6 +12,9 @@
 
 	<module name="comm">
 		<str name="no_unplug">NE PAS DEBRANCHER</str>
+		<str name="yes">OUI</str>
+		<str name="no">NON</str>
+		<str name="enable_com">Autoriser com.</str>
 	</module>
 
 	<module name="reset">

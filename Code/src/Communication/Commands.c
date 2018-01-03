@@ -9,6 +9,7 @@
 
 #include "../Hardware/Oled.h"
 #include "../Graphics/Drawing.h"
+#include "../Graphics/String.h"
 
 #include "../Security/Encryption.h"
 
@@ -129,8 +130,15 @@ void com_abort(void)
 
 void command_init()
 {
-	events_happen(EVENT_FLAG_COM);
-	send_command(COM_OK, 0, 0);
+	if(!draw_confirmation_screen(str_comm_enable_com_index, str_comm_enable_com_centerX))
+	{
+		send_command(COM_END, 0, 0);
+	}
+	else
+	{
+		events_happen(EVENT_FLAG_COM);
+		send_command(COM_OK, 0, 0);
+	}
 }
 
 void command_end()

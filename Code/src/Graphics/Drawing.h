@@ -120,5 +120,18 @@ void draw_typing_screen(char* str, uint8_t column, uint8_t max);
  */
 void draw_char_column(uint8_t column_and_flags, char letter);
 
+/**
+ * @brief Draw a confirmation screen and return the result
+ * @details Display the string passed in argument and two box (yes and no). The
+ * user choose the box that match his choice for the question.
+ * 
+ * @param str_index The index of the string to display as a question
+ * @param str_center_x The x pos of the beginning of the string, used to center horizontaly
+ * 
+ * @return Returns false if the answer is no, true if the answer is yes
+ */
+
+uint8_t draw_confirmation_screen(uint16_t str_index, uint8_t str_center_x);
+
 
 #endif // DRAWING_HEADER_THOMAS_CHEVALIER

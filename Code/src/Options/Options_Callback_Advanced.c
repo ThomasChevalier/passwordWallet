@@ -48,6 +48,11 @@ void opt_callback_change_keyboard(void)
 
 void opt_callback_full_reset(void)
 {
+	if(!draw_confirmation_screen(str_recovery_full_index, str_recovery_full_centerX))
+	{
+		return;
+	}
+
 	DISABLE_SLEEP();
 
 	// Erase all fram memory

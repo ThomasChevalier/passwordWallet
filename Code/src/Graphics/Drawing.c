@@ -8,6 +8,7 @@
 #include "font.h"
 
 #include "../Hardware/Oled.h"
+#include "../Hardware/Buttons.h"
 
 #include "../Security/Password.h"
 #include "../Security/Password_List.h"
@@ -16,6 +17,8 @@
 // For type string
 #include "../FSM/Events.h"
 #include "../Program/Program.h"
+
+
 
 void draw_clear(void)
 {
@@ -417,4 +420,50 @@ void draw_char_column(uint8_t column_and_flags, char letter)
 			draw_h_line((column_and_flags&0xF)*7, 23+y, 7, INVERSE);
 		}
 	}
+}
+
+
+uint8_t draw_confirmation_screen(uint16_t str_index, uint8_t str_center_x)
+{
+	uint8_t txt_len = str_comm_no_pixLen;
+	uint8_t txt_pos_y = 25;
+	uint8_t txt_pos_x = str_comm_no_centerX;
+	uint8_t choosen = FALSE;
+
+	
+	while(buttons_pressed());
+
+	while(!choosen)
+	{
+		program_update();
+		uint8_t event = events_get();  // Mask of events
+
+		if(event & EVENT_BUTTON_4){
+			return FALSE;
+		}
+
+		if(event & (EVENT_BUTTON_1 | EVENT_BUTTON_3))
+		{
+			txt_pos_y = txt_pos_y == 25 ? 45 : 25;
+			txt_pos_x = (txt_pos_x == str_comm_no_centerX) ? str_comm_yes_centerX : str_comm_no_centerX;
+			txt_len = txt_pos_y == 25 ? str_comm_no_pixLen : str_comm_yes_pixLen;
+		}
+
+		choosen = (event & EVENT_BUTTON_2 )? TRUE : FALSE;
+
+		draw_clear();
+		draw_flash_string(str_center_x, 5, str_index);
+		draw_flash_str_cx(25, str_comm_no);
+		draw_flash_str_cx(45, str_comm_yes);
+
+		for(uint8_t i = 0; i < FONT_HEIGHT+2; ++i)
+		{
+			draw_h_line(txt_pos_x-1, txt_pos_y+i-1, txt_len+2, INVERSE);
+		}
+		draw_update();
+		
+		program_wait();
+	}
+
+	return txt_pos_y != 25; // If != 25, then this is the yes, otherwise this is the no
 }

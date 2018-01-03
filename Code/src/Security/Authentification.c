@@ -98,6 +98,10 @@ void user_update_validation (void)
 
 void user_change_key(void)
 {
+	if(!draw_confirmation_screen(str_option_change_key_index, str_option_change_key_centerX)){
+		return;
+	}
+	
 	DISABLE_SLEEP();
 	// rfid may be power down
 	rfid_init();

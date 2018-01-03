@@ -33,6 +33,7 @@ typedef struct Command_
 } Command;
 
 extern Command CURRENT_COMMAND;
+
 /**
  * @brief Execute the current command
  * @details Use the CURRENT_COMMAND struct to pass info

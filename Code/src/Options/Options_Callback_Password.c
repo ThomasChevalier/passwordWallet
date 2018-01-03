@@ -74,6 +74,11 @@ void opt_callback_add_pwd(void)
 
 void opt_callback_regenerate_pwd(void)
 {
+	if(!draw_confirmation_screen(str_option_regen_index, str_option_regen_centerX))
+	{
+		return;
+	}
+
 	DISABLE_SLEEP();
 
 	draw_clear();
@@ -169,6 +174,11 @@ void opt_callback_change_name(void)
 
 void opt_callback_delete_pwd(void)
 {
+	if(!draw_confirmation_screen(str_option_delete_index, str_option_delete_centerX))
+	{
+		return;
+	}
+
 	p_addr prevPwd = 0;
 	if(NUM_PWD > 1)
 	{
