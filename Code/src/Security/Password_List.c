@@ -19,16 +19,14 @@ void pwd_write_id(uint16_t framAddr, p_addr id)
 #endif
 }
 
+#if p_addr_sz > 1
 p_addr pwd_read_id(uint16_t framAddr)
 {
-#if p_addr_sz == 1
-	return fram_read_byte(framAddr);
-#else
 	p_addr id;
 	fram_read_bytes(framAddr, (uint8_t*)(&id), p_addr_sz);
 	return id;
-#endif
 }
+#endif
 
 uint8_t pwd_list_get_sorting_method(void)
 {
@@ -162,19 +160,6 @@ p_addr pwd_list_get_prev_pwd_id_sort_none (p_addr pwd_id)
 	return found;
 }
 
-// static uint8_t get_id_helper(uint8_t pwd_id, uint8_t(*read_first)(uint8_t), uint8_t(*read_second)(uint8_t))
-// {
-// 	uint8_t id = read_first(pwd_id);
-// 	if(id == MAXIMUM_NUMBER_OF_PWD)
-// 	{
-// 		for(uint8_t i = 0; i < NUM_PWD-1; ++i)
-// 		{
-// 			pwd_id = read_second(pwd_id);
-// 		}
-// 		return pwd_id;
-// 	}
-// 	return id;
-// }
 p_addr pwd_list_get_prev_pwd_id_sort_use (p_addr pwd_id)
 {
 	p_addr id = password_read_prev_pwd_use(pwd_id);

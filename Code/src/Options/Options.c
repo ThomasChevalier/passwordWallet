@@ -102,9 +102,6 @@ void options_display(uint8_t opt)
 	const Option_Node* nodeStack[OPTIONS_LIST_MAX_INTRICATION];
 	uint8_t nodeStackPos = 0;
 
-	// Wait for the user to release the buttons
-	program_wait();
-
 	for(;;)
 	{
 		program_update();

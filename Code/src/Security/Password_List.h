@@ -20,7 +20,12 @@ void pwd_write_id(uint16_t framAddr, p_addr id);
  * 
  * @param framAddr The address from where to read the id
  */
+#if p_addr_sz == 1 // Inline the function
+#define pwd_read_id(addr) fram_read_byte(addr)
+#else
 p_addr pwd_read_id(uint16_t framAddr);
+#endif
+
 
 /**
  * @brief Return the current sorting method.

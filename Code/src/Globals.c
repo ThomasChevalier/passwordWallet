@@ -6,7 +6,7 @@
 #include "Hardware/Fram.h"
 
 uint8_t KEY[KEY_SIZE];
-uint8_t NUM_PWD = 0;
+p_addr NUM_PWD = 0;
 
 p_addr CURRENT_PASSWORD_ID = 0;
 volatile uint16_t ACTIVITY_TIMER = 0;

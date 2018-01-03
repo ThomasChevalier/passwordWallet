@@ -85,7 +85,7 @@ void update_opt_flags(uint8_t opt_flag);
 /**
  * @brief The number of password stored in memory now.
  */
-extern uint8_t NUM_PWD;
+extern p_addr NUM_PWD;
 
 /**
  * @brief The number of milliseconds since an event happen

@@ -7,6 +7,7 @@
 #include "../Graphics/Drawing.h"
 
 #include "../Security/Random.h"
+#include "../Security/Password_List.h"
 
 #include "../Hardware/Fram.h"
 #include "../Hardware/Buttons.h"
@@ -28,7 +29,7 @@ void program_init(void)
 
 	// Read the flags and data from fram
 	OPTIONS_FLAG = fram_read_byte(OFFSET_OPTIONS_FLAG);
-	NUM_PWD = fram_read_byte(OFFSET_NUM_PWD);
+	NUM_PWD = pwd_read_id(OFFSET_NUM_PWD);
 	
 	draw_update();
 }
@@ -76,7 +77,7 @@ void program_wait(void)
 void program_small_wait(void)
 {
 	if(first_press || buttons_pressed() == 0){
-		// Wait 150 ms
+		// Wait 200 ms
 		idle_delay(200);
 	}
 }
