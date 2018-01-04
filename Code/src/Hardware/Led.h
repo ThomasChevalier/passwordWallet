@@ -8,6 +8,7 @@
  * @details Delay duration is managed by LED_BLINK_DELAY global define.
  * 
  * @param times The number of times that the led has to be turned on and turned off.
+ * Be careful : times must not be greater than 127.
  */
 void led_blink(uint8_t times);
 

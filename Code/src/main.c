@@ -101,6 +101,4 @@ int main(void)
 			program_small_wait();
 		}
 	}
-
-	while(1){}
 }

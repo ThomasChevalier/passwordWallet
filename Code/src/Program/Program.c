@@ -63,7 +63,7 @@ static void idle_delay(uint8_t num)
 
 void program_wait(void)
 {
-	if(first_press || buttons_pressed() == 0)
+	if(first_press)
 	{
 		program_small_wait();
 	}	
@@ -76,7 +76,7 @@ void program_wait(void)
 
 void program_small_wait(void)
 {
-	if(first_press || buttons_pressed() == 0){
+	if(first_press ){
 		// Wait 200 ms
 		idle_delay(200);
 	}

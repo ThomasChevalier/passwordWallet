@@ -93,54 +93,37 @@ static uint8_t reverse(uint8_t b) {
 
 // Hardware
 
+// Thoses functions are only one instruction long (inline them)
 /**
  * @brief Pull the data/command pin high.
  */
-static void oled_dc_high(void)
-{
-	OLED_DC_PORT |= (1 << OLED_DC_PIN_NUM);
-}
+#define oled_dc_high() (OLED_DC_PORT |= (1 << OLED_DC_PIN_NUM))
 
 /**
  * @brief Pull the data/command pin low.
  */
-static void oled_dc_low(void)
-{
-	OLED_DC_PORT &= ~(1 << OLED_DC_PIN_NUM);
-}
-
+#define oled_dc_low() (OLED_DC_PORT &= ~(1 << OLED_DC_PIN_NUM))
 
 /**
  * @brief Pull the reset pin high.
  */
-static void oled_reset_high(void)
-{
-	OLED_RES_PORT |= (1 << OLED_RES_PIN_NUM);
-}
+#define oled_reset_high() (OLED_RES_PORT |= (1 << OLED_RES_PIN_NUM))
 
 /**
  * @brief Pull the reset pin low.
  */
-static void oled_reset_low(void)
-{
-	OLED_RES_PORT &= ~(1 << OLED_RES_PIN_NUM);
-}
+#define oled_reset_low() (OLED_RES_PORT &= ~(1 << OLED_RES_PIN_NUM))
 
 /**
  * @brief Pull the CS pin high.
  */
-static void oled_deselect(void)
-{
-	OLED_CS_PORT |= (1 << OLED_CS_PIN_NUM);
-}
+#define oled_deselect() (OLED_CS_PORT |= (1 << OLED_CS_PIN_NUM))
 
 /**
  * @brief Pull the CS pin low.
  */
-static void oled_select(void)
-{
-	OLED_CS_PORT &= ~(1 << OLED_CS_PIN_NUM);
-}
+#define oled_select() (OLED_CS_PORT &= ~(1 << OLED_CS_PIN_NUM))
+
 
 // Software
 

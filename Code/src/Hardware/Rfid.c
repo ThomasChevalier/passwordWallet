@@ -11,23 +11,11 @@
 
 // Hardware
 
-static void rfid_select(void)
-{
-	RFID_CS_PORT &= ~(1<<RFID_CS_PIN_NUM);
-}
-static void rfid_deselect(void)
-{
-	RFID_CS_PORT |= (1<<RFID_CS_PIN_NUM);
-}
-
-static void rfid_reset_high(void)
-{
-	RFID_RES_PORT |= (1<<RFID_RES_PIN_NUM);
-}
-static void rfid_reset_low(void)
-{
-	RFID_RES_PORT &= ~(1<<RFID_RES_PIN_NUM);
-}
+// Thoses functions are only one instruction long 
+#define rfid_select() (RFID_CS_PORT &= ~(1<<RFID_CS_PIN_NUM))
+#define rfid_deselect() (RFID_CS_PORT |= (1<<RFID_CS_PIN_NUM))
+#define rfid_reset_high() (RFID_RES_PORT |= (1<<RFID_RES_PIN_NUM))
+#define rfid_reset_low() (RFID_RES_PORT &= ~(1<<RFID_RES_PIN_NUM))
 
 // *****************************************************************
 //                    Basic interface functions

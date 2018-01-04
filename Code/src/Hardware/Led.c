@@ -8,11 +8,10 @@
 
 void led_blink(uint8_t times)
 {
+	times *= 2;
 	do
 	{
-		LED_PORT |= (1<<LED_PIN_NUM);
-		_delay_ms(LED_BLINK_DELAY);
-		LED_PORT &= ~(1<<LED_PIN_NUM);
+		LED_PIN |= (1<<LED_PIN_NUM);
 		_delay_ms(LED_BLINK_DELAY);
 	}while(--times);
 }
