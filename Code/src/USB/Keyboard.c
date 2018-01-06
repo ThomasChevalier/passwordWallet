@@ -64,7 +64,7 @@ static void wait_for_sent(void)
 	{
 		keyboard_loop();
 		USB_USBTask();
-		_delay_ms(5); // A delay is needed
+		delay_ms_f(5); // A delay is needed
 	}while(needToSend);
 }
 

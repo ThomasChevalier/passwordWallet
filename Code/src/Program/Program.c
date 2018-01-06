@@ -1,7 +1,5 @@
 #include "Program.h"
 
-#include <util/delay.h>
-
 #include "../Globals.h"
 
 #include "../Graphics/Drawing.h"

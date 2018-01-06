@@ -155,7 +155,7 @@ void rfid_init(void)
 	if((RFID_RES_PORT & (1<<RFID_RES_PIN_NUM)) == 0) // yes
 	{
 		rfid_reset_high();
-		_delay_ms(50);
+		delay_ms_f(50);
 	}
 	else
 	{
@@ -192,7 +192,7 @@ void rfid_pcd_reset(void)
 	// The datasheet does not mention how long the SoftRest command takes to complete.
 	// But the MFRC522 might have been in soft power-down mode (triggered by bit 4 of CommandReg)
 	// Section 8.8.2 in the datasheet says the oscillator start-up time is the start up time of the crystal + 37,74�s. Let us be generous: 50ms.
-	_delay_ms(50);
+	delay_ms_f(50);
 	// Wait for the PowerDown bit in CommandReg to be cleared
 	while (rfid_pcd_read_register(CommandReg) & (1<<4))
 	{

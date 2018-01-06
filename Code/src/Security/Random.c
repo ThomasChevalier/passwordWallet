@@ -3,7 +3,6 @@
 #include <avr/interrupt.h>
 #include <avr/wdt.h>
 #include <util/atomic.h>
-#include <util/delay.h>
 
 #include "../Globals.h"
 #include "../Hardware/Fram.h"

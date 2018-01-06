@@ -1,9 +1,8 @@
 #include "Oled.h"
 
-#include <util/delay.h>
+#include "../Globals.h"
 
 #include "PinDefinition.h"
-#include "../Globals.h"
 #include "Spi.h"
 
 #if defined(STORE_SCREEN_BUFFER_IN_FRAM)
@@ -175,12 +174,12 @@ static const __flash uint8_t oled_init_cmd[] =
 void oled_init()
 {
 	oled_reset_high();
-	_delay_ms(1);
+	delay_ms_f(1);
 	// bring reset low
 	oled_reset_low();
 
 	// wait 10ms
-	_delay_ms(10);
+	delay_ms_f(10);
 	// bring out of reset
 	oled_reset_high();
 

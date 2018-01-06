@@ -2,7 +2,6 @@
 
 #include <avr/io.h>
 #include <avr/interrupt.h>  // for sei()
-#include <util/delay.h>
 
 #include "../Graphics/Drawing.h"
 #include "../Graphics/String.h"
@@ -52,13 +51,13 @@ uint16_t system_read_vcc(void)
 	// Enable ADC
 	ADCSRA = (1<<ADEN);
 
-	_delay_ms(2); // Wait for it
+	delay_ms_f(2); // Wait for it
 
 	// Read 1.1V reference against AVcc
 	// set the reference to Vcc and the measurement to the internal 1.1V reference
 	ADMUX = (1<<REFS0) | (1<<MUX4) | (1<<MUX3) | (1<<MUX2) | (1<<MUX1);
 
-	_delay_ms(2); // Wait for Vref to settle
+	delay_ms_f(2); // Wait for Vref to settle
 
 	ADCSRA |= (1<<ADSC); // Start conversion
 	while (ADCSRA & (1<<ADSC)); // measuring

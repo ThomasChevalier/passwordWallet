@@ -1,8 +1,5 @@
 #include "Authentification.h"
 
-#include <avr/eeprom.h>
-#include <util/delay.h>
-
 #include "../Globals.h"
 
 #include "Aes.h"

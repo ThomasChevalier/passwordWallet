@@ -2,6 +2,7 @@
 
 #include <avr/io.h>
 #include <util/delay.h>
+#include "Hardware/Led.h"
 
 #include "Hardware/Fram.h"
 
@@ -24,4 +25,11 @@ uint8_t strlen_bound(char* str, uint8_t max)
 	uint8_t len = 0;
 	while(*str++ && len < max) ++len;
 	return len; 
+}
+
+void delay_ms_f(uint16_t ms)
+{	
+	for(uint16_t i = 0; i < ms; ++i){
+		_delay_ms(1);
+	}
 }

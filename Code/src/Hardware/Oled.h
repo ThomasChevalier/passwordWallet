@@ -2,7 +2,6 @@
 #define OLED_HEADER_THOMAS_CHEVALIER
 
 #include <avr/io.h>
-#include <util/delay.h>
 
 #define BLACK 0
 #define WHITE 1

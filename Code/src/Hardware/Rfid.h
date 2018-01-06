@@ -2,7 +2,6 @@
 #define RFID_HEADER_THOMAS_CHEVALIER
 
 #include <avr/io.h>
-#include <util/delay.h>	 // for _delay_ms()
 #include <avr/pgmspace.h>
 
 #ifndef false

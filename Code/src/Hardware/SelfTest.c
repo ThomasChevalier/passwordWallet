@@ -1,7 +1,5 @@
 #include "SelfTest.h"
 
-#include <util/delay.h>
-
 #include "../Globals.h"
 
 #include "../Graphics/String.h"
@@ -29,7 +27,7 @@ static void test_oled(void)
 		}
 	}
 	oled_display();
-	_delay_ms(2000);
+	delay_ms_f(2000);
 
 	oled_clear_display();
 	oled_display();
@@ -48,7 +46,7 @@ static void test_fram(void)
 	{
 		led_blink(2);
 	}
-	_delay_ms(500);
+	delay_ms_f(500);
 }
 
 static void test_rfid(void)
@@ -71,7 +69,7 @@ static void test_rfid(void)
 	{
 		led_blink(2);
 	}
-	_delay_ms(500);
+	delay_ms_f(500);
 }
 
 static void test_keyboard(void)
@@ -94,7 +92,7 @@ uint8_t self_test_check (void)
 		draw_clear();
 		draw_flash_str(0, 0, str_self_test_fail);
 		draw_update();
-		_delay_ms(3000);
+		delay_ms_f(3000);
 		self_test_execute();
 		return RETURN_ERROR;
 	}

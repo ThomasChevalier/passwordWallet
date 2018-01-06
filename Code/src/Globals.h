@@ -128,5 +128,6 @@ uint8_t strlen_bound(char* str, uint8_t max);
 #define KEYCODE_MODIFIER_SHIFT	(1<<7)
 #define KEYCODE_MODIFIER_ALTGR	(1<<6)
 
+void delay_ms_f(uint16_t ms);
 
 #endif // GLOBALS_HEADER_THOMAS_CHEVALIER

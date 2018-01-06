@@ -1,7 +1,5 @@
 #include "Options_Callback_Password.h"
 
-#include <util/delay.h>
-
 #include "../Globals.h"
 
 #include "../Graphics/Drawing.h"
@@ -24,7 +22,7 @@ void opt_callback_add_pwd(void)
 		draw_clear();
 		draw_flash_str_cx(10, str_error_not_enough_mem);
 		draw_update();
-		_delay_ms(2000);
+		delay_ms_f(2000);
 		return;
 	}
 	char usrName[64] = {0};
@@ -35,19 +33,19 @@ void opt_callback_add_pwd(void)
 	draw_clear();
 	draw_flash_str(0, 10, str_order_type_pwd_name);
 	draw_update();
-	_delay_ms(1000);
+	delay_ms_f(1000);
 	type_string(pwdName,32);
 
 	draw_clear();
 	draw_flash_str(0, 10, str_order_type_pwd_data);
 	draw_update();
-	_delay_ms(1000);
+	delay_ms_f(1000);
 	type_string(pwdData,32);
 
 	draw_clear();
 	draw_flash_str(0, 10, str_order_type_usr_name);
 	draw_update();
-	_delay_ms(1000);
+	delay_ms_f(1000);
 	type_string(usrName,64); // usr name
 
 	DISABLE_SLEEP();
@@ -66,7 +64,7 @@ void opt_callback_add_pwd(void)
 		draw_flash_str_cx(10, str_error_not_enough_mem);
 		draw_flash_str_cx(22, str_error_cannot_add);
 		draw_update();
-		_delay_ms(2000);
+		delay_ms_f(2000);
 	}
 
 	ENABLE_SLEEP();
