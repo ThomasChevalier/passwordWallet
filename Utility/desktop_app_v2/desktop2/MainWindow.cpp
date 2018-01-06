@@ -4,6 +4,8 @@
 #include "SerialTerminal.h"
 #include "MemoryLayout.h"
 
+#include "ResolveConnectionIssuesDialog.h"
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)

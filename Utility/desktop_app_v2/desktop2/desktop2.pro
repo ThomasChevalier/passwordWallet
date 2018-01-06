@@ -38,7 +38,9 @@ SOURCES += \
     Version1_0/Password_1_0.cpp \
     Version1_0/Option_1_0.cpp \
     AbstractMemory.cpp \
-    Version1_0/Memory_1_0.cpp
+    Version1_0/Memory_1_0.cpp \
+    ResolveConnectionIssuesDialog.cpp \
+    AskTextDialog.cpp
 
 HEADERS += \
         MainWindow.h \
@@ -54,8 +56,12 @@ HEADERS += \
     Version1_0/Password_1_0.h \
     Version1_0/Option_1_0.h \
     AbstractMemory.h \
-    Version1_0/Memory_1_0.h
+    Version1_0/Memory_1_0.h \
+    ResolveConnectionIssuesDialog.h \
+    AskTextDialog.h
 
 FORMS += \
         MainWindow.ui \
-    SerialTerminal.ui
+    SerialTerminal.ui \
+    ResolveConnectionIssuesDialog.ui \
+    AskTextDialog.ui

@@ -5,6 +5,7 @@
 #include <avr/io.h>
 
 // This file contain the global variables used in this project
+
 #define SOFTWARE_VERSION (0x01)
 
 #include "Memory/MemoryLayout.h"
