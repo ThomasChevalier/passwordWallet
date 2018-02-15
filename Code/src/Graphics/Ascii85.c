@@ -7,6 +7,13 @@ All rights reserved
 
 #include "Ascii85.h"
 
+#include "../Globals.h"
+
+// A trick that may serve
+// 85 = 0b0101'0101
+// 85 = (2^6)+(2^4)+(2^2)+(2^1)
+// x * 85 = x<<6 + x << 4 + x << 2 + x << 1
+#define mul_85(x) ((x<<6) + (x << 4) + (x << 2) + (x << 0))
 
 static const __flash uint32_t powers[5] = {52200625, 614125, 7225, 85, 1};
 

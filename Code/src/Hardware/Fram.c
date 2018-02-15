@@ -23,18 +23,13 @@ All rights reserved
  * @brief Select the memory for spi operation.
  * @details Pull cs low.
  */
-static void fram_select	(void)
-{
-	FRAM_CS_PORT &= ~(1<<FRAM_CS_PIN_NUM);
-}
+#define fram_select() (FRAM_CS_PORT &= ~(1<<FRAM_CS_PIN_NUM))
+
 /**
  * @brief Deselect the memory.
  * @details Pull cs high.
  */
-static void fram_deselect (void)
-{
-	FRAM_CS_PORT |= (1<<FRAM_CS_PIN_NUM);
-}
+#define fram_deselect() (FRAM_CS_PORT |= (1<<FRAM_CS_PIN_NUM))
 
 /**
  * @brief Read the status register of the memory.

@@ -121,6 +121,7 @@ void opt_callback_force_card(void)
 void opt_callback_force_enter(void)
 {
 	opt_callback_enter_key();
+	// Possible bug here were backup is set but there is no card
 	user_update_validation();
 	backup_free();
 }

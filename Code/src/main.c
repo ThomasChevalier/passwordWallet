@@ -45,7 +45,7 @@ int main(void)
 	security_init();
 
 	// Check the device
-	if(!self_test_check())
+	if(self_test_check() == RETURN_ERROR)
 	{
 		// The device does not behave correctly, freeze it
 		while(1){}

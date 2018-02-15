@@ -27,4 +27,9 @@ uint16_t system_read_vcc(void);
  */
 uint16_t system_free_ram (void);
 
+/**
+ * @brief Reset the avr using the watchdog timer.
+ */
+void system_reset(void);
+
 #endif // SYSTEM_HEADER_THOMAS_CHEVALIER

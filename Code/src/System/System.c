@@ -2,6 +2,7 @@
 
 #include <avr/io.h>
 #include <avr/interrupt.h>  // for sei()
+#include <avr/wdt.h>
 
 #include "../Graphics/Drawing.h"
 #include "../Graphics/String.h"
@@ -90,3 +91,27 @@ uint16_t system_free_ram (void)
 }
 
 #pragma GCC diagnostic pop
+
+// void (*boot)(void)=(void*)0x7000;
+
+// See http://www.fourwalledcubicle.com/files/LUFA/Doc/120730/html/_page__software_bootloader_start.html#Sec_SoftareBootAVR8
+void system_reset(void)
+{
+	// #error Call the bootloader
+	// jump to bootloader section
+	
+	// Disable interrupt
+	cli();
+	// Change watchdog config to reset mode
+
+	MCUSR &= ~(1<<WDRF);
+	WDTCSR |= (1<<WDCE) | (1<<WDE);
+	WDTCSR  = (1<<WDE); // Reset mode and 16 ms timeout
+
+	// Reset
+	while(1);
+	
+    // boot();
+	// asm volatile ("jmp 0x7000"); // don't work
+	// asm volatile ("ijmp" ::"z" (0x3800)); // don't work
+}

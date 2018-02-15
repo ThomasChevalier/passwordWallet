@@ -33,7 +33,7 @@ void opt_callback_change_keyboard(void);
 #define opt_callback_self_test self_test_execute
 
 /**
- * @brief Erase the device.
+ * @brief Reset the device.
  * @details Warning : it cannot be undone.
  */
 void opt_callback_full_reset(void);
@@ -43,9 +43,25 @@ void opt_callback_full_reset(void);
  */
 void opt_callback_enter_key(void);
 
+/**
+ * @brief Read the key of a card and replace the current key.
+ * @details This function does not re-encrypt all the passwords.
+ * In normal use case this function shouldn't be called.
+ */
 void opt_callback_force_card(void);
+
+/**
+ * @brief Tells the user to enter (manually) the key and replace the current key.
+ * @details This function does not re-encrypt all the passwords.
+ */
 void opt_callback_force_enter(void);
 
+/**
+ * @brief Shows a screen with several indicators of the system health
+ * @details Shows how many ram is used, the number of passwords stored in the device,
+ * the device's voltage, the number of random bytes availables and the version of the product.
+ * The screen disappear when a button is pressed.
+ */
 void opt_callback_system_info(void);
 
 #endif // OPTIONS_CALLBACK_ADVANCED_HEADER_THOMAS_CHEVALIER

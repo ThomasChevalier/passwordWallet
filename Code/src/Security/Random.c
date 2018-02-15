@@ -56,12 +56,17 @@ void random_init(void)
 {
 	random_reset();
 
-	cli();                         // Temporarily turn off interrupts, until WDT configured
-	MCUSR = 0;                     // Use the MCU status register to reset flags for WDR, BOR, EXTR, and POWR
-	_WD_CONTROL_REG |= (1<<_WD_CHANGE_BIT) | (1<<WDE);
-	// WDTCSR |= _BV(WDCE) | _BV(WDE);// WDT control register, This sets the Watchdog Change Enable (WDCE) flag, which is  needed to set the 
-	_WD_CONTROL_REG = _BV(WDIE);   // Watchdog system reset (WDE) enable and the Watchdog interrupt enable (WDIE)
-	sei();                         // Turn interupts on
+	// Temporarily turn off interrupts, until WDT configured
+	cli();
+	// Use the MCU status register to reset flags for WDR
+	MCUSR &= ~(1<<WDRF);
+	// Timed code
+	// Necessary before changing wdt config
+	WDTCSR |= (1<<WDCE) | (1<<WDE);
+	// Watchdog interrupt enable (WDIE)
+	WDTCSR = (1<<WDIE);
+	// Turn interupts on
+	sei();
 }
 
 
