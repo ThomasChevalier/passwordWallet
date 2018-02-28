@@ -4,7 +4,7 @@
 
 OPTIMIZATION = 2
 
-CXX =g++ -O$(OPTIMIZATION) -s -flto -std=c++11
+CXX =g++-6 -O$(OPTIMIZATION) -s -flto -std=c++11
 WFLAG = -pedantic -Wall -Wextra -Woverloaded-virtual -Wfloat-equal -Wwrite-strings -Wpointer-arith -Wcast-align -Wshadow -Wredundant-decls -Wdouble-promotion -Winit-self -Wswitch-default -Wswitch-enum -Wundef -Wlogical-op -Winline
 CXXFLAGS = $(WFLAG)
 LDFLAGS =

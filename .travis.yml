@@ -1,6 +1,5 @@
 dist: trusty
-language:
-  - cpp
+
 compiler:
   - gcc
 addons:
@@ -10,17 +9,14 @@ addons:
     packages:
       - gcc-6
       - g++-6
+git:
+  depth: 3
 
 language: c
 before_install:
+  # Update, qq stands for less output
   - sudo apt-get update -qq
 install:
   - sudo apt-get install -qq gcc-avr binutils-avr avr-libc
 script:
-    # Link gcc-6 and g++-6 to their standard commands
-  - ln -s /usr/bin/gcc-6 /usr/local/bin/gcc
-  - ln -s /usr/bin/g++-6 /usr/local/bin/g++
-  # Check versions of gcc, g++ and cmake
-  - gcc -v && g++ -v
-  # Make the stuff
   - make
