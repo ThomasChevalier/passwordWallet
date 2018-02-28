@@ -4,7 +4,13 @@ before_install:
 install:
   - sudo apt-get install -qq gcc-avr binutils-avr avr-libc
 script:
-  - cd Code
+  - cd Utility
+  - echo Building utilities
+  - cd string_parser
+  - make
+  - cd ../pindef_parser
+  - make
+  - cd ../../Code
   - make string
   - make pin
   - make
