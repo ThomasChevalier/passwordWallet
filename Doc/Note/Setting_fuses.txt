@@ -1,0 +1,37 @@
+=========================================
+             PASSWORD WALLET             
+              SETTING FUSES              
+
+Version 1.0 - Last edited on 01/03/18
+By Thomas Chevalier (c) 2018
+All rights reserved.
+=========================================
+
+Introduction
+------------
+
+This note shows how to set up the fuses for the atmega32u4
+
+Procedure
+---------
+
+* execute :
+	avrdude -v {program.verify} -patmega32u4 -cstk500v1 -P/dev/ttyACM0 -b19200 -U lfuse:w:0xff:m -U hfuse:w:0xd0:m -U efuse:w:0xcb:m
+
+Fuses settings
+--------------
+
+Low (0xFF) :
+	No fuse activated (ext Crystal Osc.; Frequency 8.0-MHz; Start-up time : 16K CK + 65 ms)
+
+
+High (0xD0) : 
+	On chip debug						disabled
+	JTAG interface						disabled
+	Serial program downloading (SPI)	enabled
+	Watchdog time always on				disabled
+	Preserve EEPROM through Chip Erase	enabled
+	Boot Flash size						2048 words
+
+Extended (0xCB) :
+	Brown-out detection level at VCC = 2.6V
