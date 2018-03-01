@@ -13,3 +13,11 @@ clean:
 	make -C Utility/pindef_parser clean
 	@echo CLEANING APP
 	make -C Code clean
+
+clean-all:
+	@echo CLEANING STRING_PARSER
+	make -C Utility/string_parser clean-all
+	@echo CLEANING PINDEF_PARSER
+	make -C Utility/pindef_parser clean-all
+	@echo CLEANING APP
+	make -C Code clean
