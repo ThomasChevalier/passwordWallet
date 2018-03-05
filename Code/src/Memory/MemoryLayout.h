@@ -1,6 +1,7 @@
 #ifndef MEMORYLAYOUT_HEADER_THOMAS_CHEVALIER
 #define MEMORYLAYOUT_HEADER_THOMAS_CHEVALIER
 
+// #define FRAM_BYTE_SIZE (131072)  //< Size of the fram in byte
 #define FRAM_BYTE_SIZE (32768)  //< Size of the fram in byte
 
 //< Wether or not the internal buffer of pixel for the oled
@@ -44,12 +45,15 @@
 #define SIZE_ENTROPY_POOL (256)
 
 #define OFFSET_MEMORY_MAP (OFFSET_ENTROPY_POOL + SIZE_ENTROPY_POOL) /* 260 */
+
 #if FRAM_BYTE_SIZE == 8192
-#define SIZE_MEMORY_MAP (6)
+	#define SIZE_MEMORY_MAP (6)
 #elif FRAM_BYTE_SIZE == 32768
-#define SIZE_MEMORY_MAP (25)
+	#define SIZE_MEMORY_MAP (25)
+#elif FRAM_BYTE_SIZE == 131072
+	#define SIZE_MEMORY_MAP (99)
 #else
-#error Not standart size
+	#error Not a standart size
 #endif
 
 #define OFFSET_BACKUP_STATUS (OFFSET_MEMORY_MAP + SIZE_MEMORY_MAP)

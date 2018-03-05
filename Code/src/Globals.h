@@ -40,7 +40,7 @@
 /**
  * @brief This define holds the duration of the delay between the led on and the led off, in milliseconds.
  */
-#define LED_BLINK_DELAY (1000)
+#define LED_BLINK_DELAY (150)
 
 /**
  * @brief How many milliseconds without activity the device is active before shutdown.

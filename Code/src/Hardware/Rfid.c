@@ -174,6 +174,7 @@ void rfid_init(void)
 	rfid_pcd_write_register(TxASKReg, 0x40);		// Default 0x00. Force a 100 % ASK modulation independent of the ModGsPReg register setting
 	rfid_pcd_write_register(ModeReg, 0x3D);		// Default 0x3F. Set the preset value for the CRC coprocessor for the CalcCRC command to 0x6363 (ISO 14443-3 part 6.2.4)
 	rfid_pcd_antenna_on();						// Enable the antenna driver pins TX1 and TX2 (they were disabled by the reset)
+	rfid_pcd_set_antenna_gain(RxGain_max);
 }
 
 void rfid_power_down(void)
@@ -232,7 +233,7 @@ void rfid_pcd_set_antenna_gain(uint8_t mask)
  * Performs a self-test of the MFRC522
  * See 16.1.1 in http://www.nxp.com/documents/data_sheet/MFRC522.pdf
  * 
- * @return Whether or not the test passed. Or false if no firmware reference is available.
+ * @return Whether or not the test passed.
  */
 uint8_t rfid_pcd_perform_self_test(void)
 {

@@ -20,6 +20,7 @@
 
 
 #include "../Hardware/Led.h"
+#include "../Hardware/PinDefinition.h"
 
 #include "../../Options/Options.h"
 
@@ -36,6 +37,11 @@ uint8_t state_wait_card_transition (uint8_t event)
 		return STATE_MAIN;
 	}
 
+	// In some cases the rfid is disabled after a sleep. Strange ...
+	if(rfid_is_power_down()){
+		rfid_init();
+	}
+	
 	// There is a new card to read
 	if(rfid_PICC_IsNewCardPresent() && rfid_PICC_ReadCardSerial())
 	{

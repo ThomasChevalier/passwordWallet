@@ -31,6 +31,19 @@ All rights reserved
  */
 #define fram_deselect() (FRAM_CS_PORT |= (1<<FRAM_CS_PIN_NUM))
 
+#if f_addr_s == 2
+	#define f_send_addr(addr)\
+		spi_send_8(addr >> 8);\
+		spi_send_8(addr & 0xFF)
+#elif f_addr_s == 3
+	#define f_send_addr(addr)\
+		spi_send_8(addr >> 16);\
+		spi_send_8((addr&0xFF00) >> 8);\
+		spi_send_8(addr & 0xFF)
+#endif
+
+	
+
 /**
  * @brief Read the status register of the memory.
  * 
@@ -73,13 +86,14 @@ void fram_setup_hardware()
 	i2c_init();
 	#endif
 }
-uint8_t fram_read_byte(uint16_t addr)
+
+uint8_t fram_read_byte(f_addr_t addr)
 {
 	#if defined(SPI_FRAM)
 	fram_select();
 	spi_send_8(F_READ);
-	spi_send_8(addr >> 8);
-	spi_send_8(addr & 0xFF);
+	f_send_addr(addr);
+
 	uint8_t result = spi_read_8();
 	fram_deselect();
 	return result;
@@ -96,13 +110,12 @@ uint8_t fram_read_byte(uint16_t addr)
 	#endif // SPI_FRAM
 }
 
-void fram_read_bytes(uint16_t addr, uint8_t* buffer, uint8_t size)
+void fram_read_bytes(f_addr_t addr, uint8_t* buffer, uint8_t size)
 {
 	#if defined(SPI_FRAM)
 	fram_select();
 	spi_send_8(F_READ);
-	spi_send_8(addr >> 8);
-	spi_send_8(addr & 0xFF);
+	f_send_addr(addr);
 
 	spi_read(buffer, size);
 
@@ -115,7 +128,7 @@ void fram_read_bytes(uint16_t addr, uint8_t* buffer, uint8_t size)
 	#endif // SPI_FRAM
 }
 
-void fram_write_byte(uint16_t addr, uint8_t byte)
+void fram_write_byte(f_addr_t addr, uint8_t byte)
 {
 	#if defined(SPI_FRAM)
 	fram_select();
@@ -124,8 +137,7 @@ void fram_write_byte(uint16_t addr, uint8_t byte)
 	
 	fram_select();
 	spi_send_8(F_WRITE);
-	spi_send_8(addr >> 8);
-	spi_send_8(addr & 0xFF);
+	f_send_addr(addr);
 	spi_send_8(byte);
 	fram_deselect();
 
@@ -139,7 +151,7 @@ void fram_write_byte(uint16_t addr, uint8_t byte)
 }
 
 
-void fram_write_bytes(uint16_t addr, uint8_t* buffer, uint8_t size)
+void fram_write_bytes(f_addr_t addr, uint8_t* buffer, uint8_t size)
 {
 	#if defined(SPI_FRAM)
 	fram_select();
@@ -148,8 +160,7 @@ void fram_write_bytes(uint16_t addr, uint8_t* buffer, uint8_t size)
 
 	fram_select();
 	spi_send_8(F_WRITE);
-	spi_send_8(addr >> 8);
-	spi_send_8(addr & 0xFF);
+	f_send_addr(addr);
 	spi_send(buffer, size);
 	fram_deselect();
 	#elif defined(I2C_FRAM)
@@ -161,7 +172,7 @@ void fram_write_bytes(uint16_t addr, uint8_t* buffer, uint8_t size)
 	#endif // SPI_FRAM
 }
 
-void fram_set (uint16_t addr, uint8_t val, uint8_t num)
+void fram_set (f_addr_t addr, uint8_t val, uint8_t num)
 {
 	#if defined(SPI_FRAM)
 	fram_select();
@@ -170,8 +181,7 @@ void fram_set (uint16_t addr, uint8_t val, uint8_t num)
 
 	fram_select();
 	spi_send_8(F_WRITE);
-	spi_send_8(addr >> 8);
-	spi_send_8(addr & 0xFF);
+	f_send_addr(addr);
 	spi_set(val, num);
 	fram_deselect();
 	#elif defined(I2C_FRAM)

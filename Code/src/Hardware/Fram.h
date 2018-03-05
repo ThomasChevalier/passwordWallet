@@ -13,8 +13,8 @@ All rights reserved
 
 #include "../Globals.h"
 
-
 // See the fram datasheet : http://edevice.fujitsu.com/fj/DATASHEET/e-ds/MB85RS256B-DS501-00021-4v0-E.pdf
+// This version for the pcb : http://www.fujitsu.com/global/documents/products/devices/semiconductor/fram/lineup/MB85RS1MT-DS501-00022-6v0-E.pdf
 
 /*
 	   FRAM PINOUT
@@ -59,6 +59,14 @@ typedef struct Fram_id_
 	uint8_t product_idH;		// Second byte of product ID : proprietary use only
 } Fram_id;
 
+// #if FRAM_BYTE_SIZE <= 0xFFFF
+// 	#define f_addr_t uint16_t
+// 	#define f_addr_s 2
+// #else
+	#define f_addr_t uint32_t
+	#define f_addr_s 3
+// #endif
+
 #elif defined(I2C_FRAM)
 
 typedef struct Fram_id_
@@ -79,7 +87,7 @@ void	fram_setup_hardware	(void);
  * @param addr The address to read the byte from.
  * @return The byte that has been read.
  */
-uint8_t	fram_read_byte		(uint16_t addr);
+uint8_t	fram_read_byte		(f_addr_t addr);
 
 /**
  * @brief Read an array of bytes from memory.
@@ -88,7 +96,7 @@ uint8_t	fram_read_byte		(uint16_t addr);
  * @param buffer The array of bytes that will contains the bytes read.
  * @param size The size of the array.
  */
-void	fram_read_bytes		(uint16_t addr, uint8_t* buffer, uint8_t size);
+void	fram_read_bytes		(f_addr_t addr, uint8_t* buffer, uint8_t size);
 
 /**
  * @brief Write one byte in memory.
@@ -96,7 +104,7 @@ void	fram_read_bytes		(uint16_t addr, uint8_t* buffer, uint8_t size);
  * @param addr Where to write the byte.
  * @param byte The byte to write.
  */
-void	fram_write_byte		(uint16_t addr, uint8_t byte);
+void	fram_write_byte		(f_addr_t addr, uint8_t byte);
 
 /**
  * @brief Write an array of bytes in memory.
@@ -105,7 +113,7 @@ void	fram_write_byte		(uint16_t addr, uint8_t byte);
  * @param buffer The array of bytes to write.
  * @param size The size of the array.
  */
-void	fram_write_bytes	(uint16_t addr, uint8_t* buffer, uint8_t size);
+void	fram_write_bytes	(f_addr_t addr, uint8_t* buffer, uint8_t size);
 
 /**
  * @brief Write an array of bytes with a fixed value in memory.
@@ -114,7 +122,7 @@ void	fram_write_bytes	(uint16_t addr, uint8_t* buffer, uint8_t size);
  * @param val The value of the bytes that will be written.
  * @param num The number of bytes to write.
  */
-void	fram_set			(uint16_t addr, uint8_t val, uint8_t num);
+void	fram_set			(f_addr_t addr, uint8_t val, uint8_t num);
 
 /**
  * @brief Read the product identifier.
