@@ -24,8 +24,8 @@
 #endif
 
 
-#undef SPI_FRAM    //< Choose the connection type of the FRAM (here this is SPI)
-#define I2C_FRAM   //< Choose the connection type of the FRAM (here this is I²C)
+#define SPI_FRAM    //< Choose the connection type of the FRAM (here this is SPI)
+#undef I2C_FRAM   //< Choose the connection type of the FRAM (here this is I²C)
 
 #if defined(SPI_FRAM) && defined(I2C_FRAM)
 #error Only one type of connection can be used.
@@ -40,7 +40,7 @@
 /**
  * @brief This define holds the duration of the delay between the led on and the led off, in milliseconds.
  */
-#define LED_BLINK_DELAY (150)
+#define LED_BLINK_DELAY (1000)
 
 /**
  * @brief How many milliseconds without activity the device is active before shutdown.

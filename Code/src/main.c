@@ -21,6 +21,8 @@
 
 #include "Options/Options_Callback_Advanced.h"
 
+#include "Graphics/Drawing.h"
+
 /**
  * @brief Freeze the controller in case of a wrong interrupt
  */
@@ -44,15 +46,25 @@ int main(void)
 	USB_init();
 	security_init();
 
+
 	// Check the device
-	if(self_test_check() == RETURN_ERROR)
-	{
-		// The device does not behave correctly, freeze it
-		while(1){}
-	}
+	// if(self_test_check() == RETURN_ERROR)
+	// {
+	// 	// The device does not behave correctly, freeze it
+	// 	while(1){}
+	// }
 
 	// Read variables from fram and draw the screen
 	program_init();
+
+	draw_clear();
+	uint8_t buffer[16];
+	fram_write_byte(0, 0x4D);
+	fram_write_byte(7, 0xCB);
+	fram_read_bytes(0, buffer, 16);
+	draw_hex(0, 0, buffer, 16);
+	draw_update();
+	while(1);
 
 	// Check the reset reason and display it
 	system_read_reset_source(mcusr);

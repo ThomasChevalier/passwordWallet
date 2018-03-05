@@ -26,3 +26,4 @@ Utility/memory_parser/memory_parser
 Utility/font/bitmap_to_font
 Utility/key_helper/key_helper
 Code/main.elf
+Utility/blink_test/main

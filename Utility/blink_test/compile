@@ -1,6 +1,6 @@
 #!/bin/bash
 
-avr-gcc -Os -Wall -DF_CPU=16000000UL -mmcu=atmega32u4 -std=gnu99 -fshort-enums -ffunction-sections -fdata-sections -MMD  -c -o blink.o blink.c 
+avr-gcc -Os -Wall -DF_CPU=8000000UL -mmcu=atmega32u4 -std=gnu99 -fshort-enums -ffunction-sections -fdata-sections -MMD  -c -o blink.o blink.c 
 
 avr-gcc -mmcu=atmega32u4 blink.o -o main
 
