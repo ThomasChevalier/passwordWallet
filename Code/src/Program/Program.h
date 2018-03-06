@@ -16,19 +16,13 @@ void program_update(void);
 
 /**
  * @brief Do a pause in the program, in order to slow down the interface.
- * @details Wait for 150 ms if there is no long press, 50 ms otherwise.
+ * @details Wait for WAIT_DELAY ms.
  * If the user press a button while the device is in idle mode, the device
  * wake up (with the pin change interrupt), and therefore the device wait
- * less than 150 or 50 ms
+ * less WAIT_DELAY ms.
  */
 void program_wait(void);
 
-/**
- * @brief Pause the program
- * @details 150 ms pause if there is no long press, 0 ms otherwise
- * See also program_wait(void)
- */
-void program_small_wait(void);
 
 /**
  * @brief Pause the program until event 'event' occurs

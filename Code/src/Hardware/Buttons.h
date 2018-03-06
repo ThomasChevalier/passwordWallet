@@ -3,11 +3,15 @@
 
 #include <stdint.h>
 
+// Debouncing algorithm parameters
+#define RELEASE_TIME_MS (100)
+#define PRESS_TIME_MS (50)
+#define LONG_PRESS_TIME_MS (500)
+
 /**
- * @brief Update event flag for buttons, should be call regularly.
- * @return Return 1 if this is the first press on the button, 0 otherwise.
+ * @brief Update event flag for buttons, should be call regularly (to detect long press).
  */
-uint8_t	buttons_update_event	(void);
+void	buttons_update_event    (void);
 
 /**
  * @brief Return the buttons pressed.
@@ -15,6 +19,11 @@ uint8_t	buttons_update_event	(void);
  * A bit set to 1 means that the button is pressed, a bit set to 0 means that the button is released.
  * @return Return the status of the buttons.
  */
-uint8_t buttons_pressed			(void);
+uint8_t buttons_pressed         (void);
 
+/**
+ * @brief Routine to debounce the buttons and update the events
+ * @details To call whenever a button change (for example in the pcint)
+ */
+void    buttons_debounce        (void);
 #endif

@@ -48,6 +48,11 @@
  */
 #define SHUTDOWN_DELAY (15000)
 
+/**
+ * @brief Define how long the microcontroller sleeps between two iteration of the main loop.
+ * In milliseconds.
+ */
+#define WAIT_DELAY (80)
 
 #define PWD_SORTING_NONE (0)
 #define PWD_SORTING_USE (1)
@@ -92,6 +97,11 @@ extern p_addr NUM_PWD;
  * @brief The number of milliseconds since an event happen
  */
 extern volatile uint16_t ACTIVITY_TIMER;
+
+/**
+ * @brief The number of milliseconds since the startup of the system
+ */
+extern volatile uint32_t MILLISECOND_TIMER;
 
 extern volatile uint8_t SERIAL_TIMEOUT_TIMER;
 #define SERIAL_TIMEOUT (0xFF) // In milliseconds. Must not exceed 255 ms

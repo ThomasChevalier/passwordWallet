@@ -11,7 +11,7 @@ p_addr NUM_PWD = 0;
 
 p_addr CURRENT_PASSWORD_ID = 0;
 volatile uint16_t ACTIVITY_TIMER = 0;
-
+volatile uint32_t MILLISECOND_TIMER = 0;
 volatile uint8_t SERIAL_TIMEOUT_TIMER = 0;
 
 void update_opt_flags(uint8_t opt_flag)

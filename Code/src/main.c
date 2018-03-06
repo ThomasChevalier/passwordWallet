@@ -50,6 +50,7 @@ int main(void)
 		// The device does not behave correctly, freeze it
 		while(1){}
 	}
+
 	// Read variables from fram and draw the screen
 	program_init();
 
@@ -92,12 +93,7 @@ int main(void)
 			currentStateNum = newState;
 			currentState->begin();
 		}
-		
-		// The main state is already very slow ...
-		if(currentStateNum != STATE_MAIN){
-			program_wait();
-		}else{
-			program_small_wait();
-		}
+
+		program_wait();
 	}
 }

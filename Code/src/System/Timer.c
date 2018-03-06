@@ -1,4 +1,4 @@
-	#include "Timer.h"
+#include "Timer.h"
 
 #include <avr/io.h>
 #include <avr/interrupt.h>  // for sei()
@@ -40,4 +40,6 @@ ISR (TIMER0_COMPA_vect)
 	{
 		GLOBALS_EVENTS |= EVENT_SLEEP_SHUTDOWN;
 	}
+
+	++MILLISECOND_TIMER;
 }

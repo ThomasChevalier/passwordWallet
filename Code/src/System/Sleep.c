@@ -70,9 +70,7 @@ void sleep_device(void)
 
 	sleep_disable();
 
-	// Disable pin change interrupt
-	//PCICR = 0;
-
+	// Restore old power reduction register
 	PRR0 = oldPRR0;
 	PRR1 = oldPPR1;
 
@@ -101,7 +99,7 @@ void sleep_device(void)
 //EMPTY_INTERRUPT(PCINT0_vect);
 ISR(PCINT0_vect)
 {
-
+	buttons_debounce();
 }
 
 void sleep_idle(void)
