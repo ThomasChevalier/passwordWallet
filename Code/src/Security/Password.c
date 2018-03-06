@@ -12,7 +12,7 @@
 
 #include "../Hardware/Fram.h"
 
-static void read_and_decrypt(uint8_t *output, uint16_t addr_iv, uint16_t addr_aes, uint8_t lenght_aes, uint8_t* key)
+static void read_and_decrypt(uint8_t *output, f_addr_t addr_iv, f_addr_t addr_aes, uint8_t lenght_aes, uint8_t* key)
 {
 	uint8_t iv[16];
 	fram_read_bytes(addr_iv, iv, 16);
@@ -31,7 +31,7 @@ static void read_and_decrypt(uint8_t *output, uint16_t addr_iv, uint16_t addr_ae
 }
 
 // Progress complexity = 21
-static void encrypt_and_write(uint8_t *input, uint8_t len, uint16_t addr_iv, uint16_t addr_aes, uint8_t lenght_aes, uint8_t *key)
+static void encrypt_and_write(uint8_t *input, uint8_t len, f_addr_t addr_iv, f_addr_t addr_aes, uint8_t lenght_aes, uint8_t *key)
 {
 	uint8_t iv[16];
 
@@ -51,8 +51,8 @@ static void encrypt_and_write(uint8_t *input, uint8_t len, uint16_t addr_iv, uin
 
 void password_read_data(p_addr pwd_id, uint8_t* dst, uint8_t* key)
 {
-	const uint16_t pwd_iv_begin  = PWD_ADDR(pwd_id, PWD_OFFSET_PWD_IV);
-	const uint16_t pwd_aes_begin = PWD_ADDR(pwd_id, PWD_OFFSET_PWD_DATA);
+	const f_addr_t pwd_iv_begin  = PWD_ADDR(pwd_id, PWD_OFFSET_PWD_IV);
+	const f_addr_t pwd_aes_begin = PWD_ADDR(pwd_id, PWD_OFFSET_PWD_DATA);
 	read_and_decrypt(dst, pwd_iv_begin, pwd_aes_begin, 32, key);
 }
 

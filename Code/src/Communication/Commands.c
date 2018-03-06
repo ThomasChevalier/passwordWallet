@@ -151,11 +151,11 @@ void command_get_fram()
 {
 	uint8_t id = COM_FRAM;
 	serial_send(&id, 1);
-	uint16_t size = FRAM_BYTE_SIZE;
+	f_addr_t size = FRAM_BYTE_SIZE;
 	serial_send((uint8_t*)&size, 2);
 
 	uint8_t buffer[16];
-	for(uint16_t i = 0; i < FRAM_BYTE_SIZE / 16; ++i)
+	for(f_addr_t i = 0; i < FRAM_BYTE_SIZE / 16; ++i)
 	{
 		fram_read_bytes(i*16, buffer, 16);
 		serial_send(buffer, 16);

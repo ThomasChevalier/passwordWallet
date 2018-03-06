@@ -9,8 +9,9 @@
 #include "../Graphics/ProgressBar.h"
 
 #include "../Hardware/Fram.h"
+#include "../Hardware/Led.h"
 
-void pwd_write_id(uint16_t framAddr, p_addr id)
+void pwd_write_id(f_addr_t framAddr, p_addr id)
 {
 #if p_addr_sz == 1
 	fram_write_byte(framAddr, id);
@@ -20,7 +21,7 @@ void pwd_write_id(uint16_t framAddr, p_addr id)
 }
 
 #if p_addr_sz > 1
-p_addr pwd_read_id(uint16_t framAddr)
+p_addr pwd_read_id(f_addr_t framAddr)
 {
 	p_addr id;
 	fram_read_bytes(framAddr, (uint8_t*)(&id), p_addr_sz);
@@ -129,7 +130,7 @@ p_addr pwd_list_get_prev_pwd_id_sort_none (p_addr pwd_id)
 	const p_addr search_from = MAXIMUM_NUMBER_OF_PWD-1;
 	p_addr found = MAXIMUM_NUMBER_OF_PWD; // Intialize it with an impossible value
 
-	for(uint8_t i = (search_from) / 8; i != (p_addr)-1; --i)
+	for(p_addr i = (search_from) / 8; i != (p_addr)-1; --i)
 	{
 		// Read the memory map stored in fram
 		const uint8_t memory_byte = fram_read_byte(OFFSET_MEMORY_MAP+i);

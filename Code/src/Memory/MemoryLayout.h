@@ -1,8 +1,9 @@
 #ifndef MEMORYLAYOUT_HEADER_THOMAS_CHEVALIER
 #define MEMORYLAYOUT_HEADER_THOMAS_CHEVALIER
 
-// #define FRAM_BYTE_SIZE (131072)  //< Size of the fram in byte
-#define FRAM_BYTE_SIZE (32768)  //< Size of the fram in byte
+#define FRAM_BYTE_SIZE (131072)  //< Size of the fram in byte
+//#define FRAM_BYTE_SIZE (32768)  //< Size of the fram in byte
+#define FRAM_SIZE_DIVIDER (1024) //< Divide FRAM_BYTE_SIZE by this number to get a uint8_t
 
 //< Wether or not the internal buffer of pixel for the oled
 //< should be stored in FRAM
@@ -10,8 +11,8 @@
 
 //< The type of the password id
 
-#define p_addr uint8_t
-#define p_addr_sz (1)
+#define p_addr uint16_t
+#define p_addr_sz (2)
 
 // ///////////// //
 // Fram Section  //
