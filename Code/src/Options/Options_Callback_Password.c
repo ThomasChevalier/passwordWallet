@@ -14,6 +14,7 @@
 #include "../Security/Backup.h"
 
 #include "../System/Sleep.h"
+#include "../Program/Program.h"
 
 void opt_callback_add_pwd(void)
 {
@@ -22,7 +23,7 @@ void opt_callback_add_pwd(void)
 		draw_clear();
 		draw_flash_str_cx(10, str_error_not_enough_mem);
 		draw_update();
-		delay_ms_f(2000);
+		program_pause_until_event(EVENT_ALL_BUTTONS);
 		return;
 	}
 	char usrName[64] = {0};
@@ -31,21 +32,21 @@ void opt_callback_add_pwd(void)
 	char pwdData[32] = {0};
 
 	draw_clear();
-	draw_flash_str(0, 10, str_order_type_pwd_name);
+	draw_flash_str_cx(10, str_order_type_pwd_name);
 	draw_update();
-	delay_ms_f(1000);
+	program_pause_until_event(EVENT_ALL_BUTTONS);
 	type_string(pwdName,32);
 
 	draw_clear();
-	draw_flash_str(0, 10, str_order_type_pwd_data);
+	draw_flash_str_cx(10, str_order_type_pwd_data);
 	draw_update();
-	delay_ms_f(1000);
+	program_pause_until_event(EVENT_ALL_BUTTONS);
 	type_string(pwdData,32);
 
 	draw_clear();
-	draw_flash_str(0, 10, str_order_type_usr_name);
+	draw_flash_str_cx(10, str_order_type_usr_name);
 	draw_update();
-	delay_ms_f(1000);
+	program_pause_until_event(EVENT_ALL_BUTTONS);
 	type_string(usrName,64); // usr name
 
 	DISABLE_SLEEP();
@@ -64,7 +65,7 @@ void opt_callback_add_pwd(void)
 		draw_flash_str_cx(10, str_error_not_enough_mem);
 		draw_flash_str_cx(22, str_error_cannot_add);
 		draw_update();
-		delay_ms_f(2000);
+		program_pause_until_event(EVENT_ALL_BUTTONS);
 	}
 
 	ENABLE_SLEEP();

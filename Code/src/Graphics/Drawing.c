@@ -18,6 +18,7 @@
 #include "../FSM/Events.h"
 #include "../Program/Program.h"
 
+#include "../Hardware/Led.h"
 
 
 void draw_clear(void)
@@ -236,8 +237,6 @@ uint8_t type_string(char* string_typed, uint8_t maxLen)
 	string_typed[strlen(string_typed)] = INVALID_CHARACTER;
 	draw_typing_screen(string_typed, pos, maxLen);
 
-	program_wait();
-
 	while(running)
 	{
 		program_update();
@@ -429,9 +428,6 @@ uint8_t draw_confirmation_screen(uint16_t str_index, uint8_t str_center_x)
 	uint8_t txt_pos_y = 25;
 	uint8_t txt_pos_x = str_comm_no_centerX;
 	uint8_t choosen = FALSE;
-
-	
-	while(buttons_pressed());
 
 	while(!choosen)
 	{

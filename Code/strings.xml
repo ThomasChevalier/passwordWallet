@@ -8,6 +8,7 @@
 		<str name="pwd" >Mauvais mot de passe</str>
 		<str name="not_enough_mem">Memoire insuffisante</str>
 		<str name="cannot_add">Ajout impossible</str>
+		<str name="no_password">Pas de mot de passe</str>
 	</module>
 
 	<module name="comm">

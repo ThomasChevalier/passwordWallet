@@ -96,9 +96,6 @@ void options_display(uint8_t opt)
 
 	draw_update();
 
-
-	while(buttons_pressed());
-
 	const Option_Node* nodeStack[OPTIONS_LIST_MAX_INTRICATION];
 	uint8_t nodeStackPos = 0;
 
@@ -117,6 +114,16 @@ void options_display(uint8_t opt)
 		else if(events & EVENT_BUTTON_2)
 		{
 			const Option_Node* nd = node_at(base, current_choice);
+
+			// Special case when there is no password
+			if(nd->child == 1 && NUM_PWD == 0) // Menu password
+			{
+				draw_clear();
+				draw_flash_str_cx(20, str_error_no_password);
+				draw_update();
+				program_pause_until_event(EVENT_ALL_BUTTONS);
+				return;
+			}
 			if(nd->callback != NULL)
 			{
 				nd->callback();

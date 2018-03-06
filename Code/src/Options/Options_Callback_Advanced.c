@@ -25,13 +25,14 @@
 #include "../System/System.h"
 #include "../System/Sleep.h"
 
+#include "../Graphics/font.h" // For font width
+
 void opt_callback_show_key(void)
 {
 	// Display key
 	user_display_key();
 
 	DISABLE_SLEEP();
-	while(buttons_pressed()); // Wait for the user to release the buttons
 	program_pause_until_event(EVENT_ALL_BUTTONS);
 	ENABLE_SLEEP();
 }
@@ -60,15 +61,25 @@ void opt_callback_full_reset(void)
 	draw_flash_str_cx(40, str_recovery_eraseMem);
 	draw_update();
 
-	progress_begin(FRAM_BYTE_SIZE/256);
+	progress_begin(FRAM_BYTE_SIZE/FRAM_SIZE_DIVIDER);
 
 	// Do .. While loop is 6 bytes smaller than for loop in this case
-	uint8_t i = FRAM_BYTE_SIZE/256;
+	uint8_t i = FRAM_BYTE_SIZE/FRAM_SIZE_DIVIDER;
 	do
 	{
 		--i;
-		fram_set(i*256, 0, 128);
-		fram_set(i*256+128, 0, 128);
+		#if FRAM_SIZE_DIVIDER == 256
+		fram_set(i*FRAM_SIZE_DIVIDER, 0, 128);
+		fram_set(i*FRAM_SIZE_DIVIDER+128, 0, 128);
+		#elif FRAM_SIZE_DIVIDER == 1024
+		for(uint8_t j = 0; j < FRAM_SIZE_DIVIDER/128; ++j)
+		{
+			fram_set(i*FRAM_SIZE_DIVIDER+j*128, 0, 128);
+		}
+		#else
+		#error Unsupported fram size
+		#endif
+
 		progress_add(1);
 	}while(i);
 	progress_end();
@@ -172,6 +183,8 @@ void opt_callback_system_info(void)
 
 		draw_flash_str(0, 20, str_system_pwd);
 		draw_num(str_system_pwd_pixLen + 3, 20, NUM_PWD);
+		draw_num(str_system_pwd_pixLen + 4*FONT_WIDTH, 20, NUM_PWD/MAXIMUM_NUMBER_OF_PWD*100);
+		draw_char(str_system_pwd_pixLen + 8*FONT_WIDTH, 20, '%');
 
 		uint16_t volt = system_read_vcc();
 

@@ -20,9 +20,6 @@ void state_browse_begin (void)
 {
 	draw_browse_dock(letter,1);
 	draw_update();	
-
-
-	while(buttons_pressed());
 }
 
 /**

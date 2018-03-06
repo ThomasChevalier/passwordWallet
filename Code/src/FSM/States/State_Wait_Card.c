@@ -18,10 +18,6 @@
 #include "../../Graphics/String.h"
 #include "../../Graphics/Drawing.h"
 
-
-#include "../Hardware/Led.h"
-#include "../Hardware/PinDefinition.h"
-
 #include "../../Options/Options.h"
 
 void state_wait_card_begin(void)
