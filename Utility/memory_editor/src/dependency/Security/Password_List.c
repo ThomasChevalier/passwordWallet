@@ -6,7 +6,7 @@
 
 #include "Password.h"
 
-#include "../Hardware/Fram.h"
+#include "../../Fram.h"
 
 uint8_t pwd_list_get_sorting_method(void)
 {
