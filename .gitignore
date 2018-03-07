@@ -14,7 +14,7 @@
 # Ignore Qt build files
 Utility/desktop_app_v2/build-desktop2-Desktop*
 Utility/desktop_app/build-desktop-Desktop*
-
+Utility/transfer_fram/build-*
 # Ignore executables
 Utility/serial_to_file/main
 Utility/pindef_parser/pindef_parser
@@ -27,3 +27,5 @@ Utility/font/bitmap_to_font
 Utility/key_helper/key_helper
 Code/main.elf
 Utility/blink_test/main
+Utility/transfer_fram/build-transfer_fram-Desktop_Qt_5_9_1_GCC_64bit-Debug/transfer_fram
+Utility/memory_editor/memory_editor
