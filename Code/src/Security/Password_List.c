@@ -9,25 +9,6 @@
 #include "../Graphics/ProgressBar.h"
 
 #include "../Hardware/Fram.h"
-#include "../Hardware/Led.h"
-
-void pwd_write_id(f_addr_t framAddr, p_addr id)
-{
-#if p_addr_sz == 1
-	fram_write_byte(framAddr, id);
-#else
-	fram_write_bytes(framAddr, (uint8_t*)(&id), p_addr_sz);
-#endif
-}
-
-#if p_addr_sz > 1
-p_addr pwd_read_id(f_addr_t framAddr)
-{
-	p_addr id;
-	fram_read_bytes(framAddr, (uint8_t*)(&id), p_addr_sz);
-	return id;
-}
-#endif
 
 uint8_t pwd_list_get_sorting_method(void)
 {
@@ -39,7 +20,7 @@ uint8_t pwd_list_get_sorting_method(void)
 // Return index if there is no entry
 static p_addr get_first_entry_from(const p_addr index)
 {
-	for(uint8_t i = index / 8; i < SIZE_MEMORY_MAP; ++i)
+	for(p_addr i = index / 8; i < SIZE_MEMORY_MAP; ++i)
 	{
 		const uint8_t memory_byte = fram_read_byte(OFFSET_MEMORY_MAP+i);
 		// Begin at index
@@ -93,12 +74,12 @@ p_addr pwd_list_get_first_pwd_id_sort_none (void)
 
 p_addr pwd_list_get_first_pwd_id_sort_use (void)
 {
-	return pwd_read_id(OFFSET_FIRST_PWD_USE);
+	return password_read_id(OFFSET_FIRST_PWD_USE);
 }
 
 p_addr pwd_list_get_first_pwd_id_sort_alpha (void)
 {
-	return pwd_read_id(OFFSET_FIRST_PWD_ALPHA);
+	return password_read_id(OFFSET_FIRST_PWD_ALPHA);
 }
 
 
@@ -256,12 +237,12 @@ void pwd_list_delete_pwd (p_addr pwd_id)
 		// If it is not the last too
 		if(next_use != MAXIMUM_NUMBER_OF_PWD)
 		{
-			pwd_write_id(OFFSET_FIRST_PWD_USE, next_use);
+			password_write_id(OFFSET_FIRST_PWD_USE, next_use);
 		}
 		// It is the last pwd, set offset_first_ to 0
 		else
 		{
-			pwd_write_id(OFFSET_FIRST_PWD_USE, 0);
+			password_write_id(OFFSET_FIRST_PWD_USE, 0);
 		}
 	}
 	else
@@ -279,12 +260,12 @@ void pwd_list_delete_pwd (p_addr pwd_id)
 		// If it is not the last too
 		if(next_alpha != MAXIMUM_NUMBER_OF_PWD)
 		{
-			pwd_write_id(OFFSET_FIRST_PWD_ALPHA, next_alpha);
+			password_write_id(OFFSET_FIRST_PWD_ALPHA, next_alpha);
 		}
 		// It is the last pwd, set offset_first_ to 0
 		else
 		{
-			pwd_write_id(OFFSET_FIRST_PWD_ALPHA, 0);
+			password_write_id(OFFSET_FIRST_PWD_ALPHA, 0);
 		}
 	}
 	else
@@ -300,7 +281,7 @@ void pwd_list_delete_pwd (p_addr pwd_id)
 
 	// There is now one less password
 	--NUM_PWD;
-	pwd_write_id(OFFSET_NUM_PWD, NUM_PWD);
+	password_write_id(OFFSET_NUM_PWD, NUM_PWD);
 
 	// Clear the whole password chunk
 	fram_set(PWD_ADDR(pwd_id, 0), 0, SIZE_OF_PWD_BLOCK);
@@ -311,7 +292,7 @@ uint8_t pwd_list_add_pwd (uint8_t* name, uint8_t* data, uint8_t* usrName)
 	// First check if there is a chunk free
 	uint8_t chunk_free = 0;
 	p_addr pwd_id = 0;
-	for(uint8_t i = 0; i < SIZE_MEMORY_MAP && (!chunk_free); ++i)
+	for(p_addr i = 0; i < SIZE_MEMORY_MAP && (!chunk_free); ++i)
 	{
 		// Loop in all the bit of the bytes
 		const uint8_t memory_byte = fram_read_byte(OFFSET_MEMORY_MAP+i);
@@ -382,7 +363,7 @@ uint8_t pwd_list_add_pwd (uint8_t* name, uint8_t* data, uint8_t* usrName)
 
 	// The password has been added, increment counter
 	++NUM_PWD;
-	pwd_write_id(OFFSET_NUM_PWD, NUM_PWD);
+	password_write_id(OFFSET_NUM_PWD, NUM_PWD);
 
 	// We have inserted the password at the end of each list (alpha and use) but it is not sorted.
 	// We must sort them.
@@ -451,7 +432,7 @@ void pwd_list_sort_use (void)
 			// If we swap with the first pwd, be sure that we update the first pwd id
 			if(prev == first)
 			{
-				pwd_write_id(OFFSET_FIRST_PWD_USE, current);
+				password_write_id(OFFSET_FIRST_PWD_USE, current);
 				first = current;
 			}
 			swap_neighbours_use(prev, current);
@@ -513,7 +494,7 @@ void pwd_list_sort_alpha (void)
 			// If we swap with the first pwd, be sure that we update the first pwd id
 			if(prev == first)
 			{
-				pwd_write_id(OFFSET_FIRST_PWD_ALPHA, current);
+				password_write_id(OFFSET_FIRST_PWD_ALPHA, current);
 				first = current;
 			}
 			swap_neighbours_alpha(prev, current);

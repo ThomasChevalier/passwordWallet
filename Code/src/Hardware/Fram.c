@@ -8,6 +8,8 @@ All rights reserved
 #include "../Globals.h"
 #include "Fram.h"
 
+#include <util/delay.h>
+
 #if defined(SPI_FRAM)
 #include "Spi.h"
 #elif defined(I2C_FRAM)
@@ -238,4 +240,33 @@ uint8_t fram_test (void)
 	}
 	#endif // SPI_FRAM
 	return RETURN_SUCCESS;
+}
+
+void fram_sleep (void)
+{
+	// /!\ Datasheet says 
+	/*
+	The SLEEP command shifts the LSI to a low power mode called “SLEEP mode”.
+	The transition to the SLEEP mode is carried out at the rising edge of CS
+	after operation code in the SLEEP command. However, when at least one SCK
+	clock is inputted before the rising edge of CS after operation code in the
+	SLEEP command, this SLEEP command is canceled.
+	*/
+	fram_select();
+	spi_send_8(F_SLEEP);
+	fram_deselect();
+}
+
+void fram_wakeup (void)
+{
+	/*
+	Returning to an normal operation from the SLEEP mode is carried
+	out after tREC (Max 400 μs) time from the falling edge of CS.
+	It is possible to return CS to H level before tREC time.
+	However, it is prohibited to bring down CS to L level again during
+	tREC period.
+	*/
+	fram_select();
+	_delay_us(400);
+	fram_deselect();
 }

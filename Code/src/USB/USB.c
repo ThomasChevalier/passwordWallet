@@ -8,7 +8,6 @@
 #include "../Security/Security.h"
 
 #include "../FSM/Events.h"
-#include "../Hardware/Led.h"
 void USB_init (void)
 {
 	#ifdef USB_ENABLE

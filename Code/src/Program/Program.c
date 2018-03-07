@@ -5,7 +5,7 @@
 #include "../Graphics/Drawing.h"
 
 #include "../Security/Random.h"
-#include "../Security/Password_List.h"
+#include "../Security/Password.h"
 
 #include "../Hardware/Fram.h"
 #include "../Hardware/Buttons.h"
@@ -22,7 +22,7 @@ void program_init(void)
 {
 	// Read the flags and data from fram
 	OPTIONS_FLAG = fram_read_byte(OFFSET_OPTIONS_FLAG);
-	NUM_PWD = pwd_read_id(OFFSET_NUM_PWD);
+	NUM_PWD = password_read_id(OFFSET_NUM_PWD);
 	
 	draw_update();
 }

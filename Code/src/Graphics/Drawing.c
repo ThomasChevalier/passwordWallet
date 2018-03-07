@@ -18,9 +18,6 @@
 #include "../FSM/Events.h"
 #include "../Program/Program.h"
 
-#include "../Hardware/Led.h"
-
-
 void draw_clear(void)
 {
 	oled_clear_display();

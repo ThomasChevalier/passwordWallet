@@ -47,7 +47,8 @@ typedef enum
 	F_READ = 0x03, // Read memory code
 	F_WRITE = 0x02,// Write memory code
 	F_RDID = 0x9F, // Read device id
-	F_FSTRD = 0x0B // Fast read memory code (not used)
+	F_FSTRD = 0x0B, // Fast read memory code (not used)
+	F_SLEEP = 0xB9 // Sleep op code
 } FRAM_OPCODE;
 
 typedef struct Fram_id_
@@ -137,5 +138,16 @@ Fram_id	fram_read_id		(void);
  * @return Return RETURN_SUCCESS if OK, RETURN_ERROR otherwise.
  */
 uint8_t fram_test			(void);
+
+/**
+ * @brief Put the fram into sleep mode.
+ * @details In this mode the average consumption of the fram decrease from 25µA to a max of 10µA.
+ */
+void	fram_sleep				(void);
+
+/**
+ * @brief Wake up the fram, if the memory was put in sleep mode.
+ */
+void	fram_wakeup			(void);
 
 #endif // FRAM_HEADER_THOMAS_CHEVALIER

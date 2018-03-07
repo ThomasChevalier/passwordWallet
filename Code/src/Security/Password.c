@@ -10,7 +10,23 @@
 
 #include "../Graphics/ProgressBar.h"
 
-#include "../Hardware/Fram.h"
+void password_write_id(f_addr_t framAddr, p_addr id)
+{
+#if p_addr_sz == 1
+	fram_write_byte(framAddr, id);
+#else
+	fram_write_bytes(framAddr, (uint8_t*)(&id), p_addr_sz);
+#endif
+}
+
+#if p_addr_sz > 1
+p_addr password_read_id(f_addr_t framAddr)
+{
+	p_addr id;
+	fram_read_bytes(framAddr, (uint8_t*)(&id), p_addr_sz);
+	return id;
+}
+#endif
 
 static void read_and_decrypt(uint8_t *output, f_addr_t addr_iv, f_addr_t addr_aes, uint8_t lenght_aes, uint8_t* key)
 {
@@ -68,22 +84,22 @@ void password_read_name(p_addr pwd_id, uint8_t* dst)
 
 p_addr password_read_prev_pwd_use(p_addr pwd_id)
 {
-	return fram_read_byte(PWD_ADDR(pwd_id, PWD_OFFSET_PREV_PWD_USE));
+	return password_read_id(PWD_ADDR(pwd_id, PWD_OFFSET_PREV_PWD_USE));
 }
 
 p_addr password_read_next_pwd_use(p_addr pwd_id)
 {
-	return fram_read_byte(PWD_ADDR(pwd_id, PWD_OFFSET_NEXT_PWD_USE));
+	return password_read_id(PWD_ADDR(pwd_id, PWD_OFFSET_NEXT_PWD_USE));
 }
 
 p_addr password_read_prev_pwd_alpha(p_addr pwd_id)
 {
-	return fram_read_byte(PWD_ADDR(pwd_id, PWD_OFFSET_PREV_PWD_ALPHA));
+	return password_read_id(PWD_ADDR(pwd_id, PWD_OFFSET_PREV_PWD_ALPHA));
 }
 
 p_addr password_read_next_pwd_alpha(p_addr pwd_id)
 {
-	return fram_read_byte(PWD_ADDR(pwd_id, PWD_OFFSET_NEXT_PWD_ALPHA));
+	return password_read_id(PWD_ADDR(pwd_id, PWD_OFFSET_NEXT_PWD_ALPHA));
 }
 
 uint16_t password_read_counter(p_addr pwd_id)
@@ -112,22 +128,22 @@ void password_set_name(p_addr pwd_id, uint8_t* name)
 
 void password_set_prev_pwd_use(p_addr pwd_id, p_addr val)
 {
-	fram_write_byte(PWD_ADDR(pwd_id, PWD_OFFSET_PREV_PWD_USE), val);
+	password_write_id(PWD_ADDR(pwd_id, PWD_OFFSET_PREV_PWD_USE), val);
 }
 
 void password_set_next_pwd_use(p_addr pwd_id, p_addr val)
 {
-	fram_write_byte(PWD_ADDR(pwd_id, PWD_OFFSET_NEXT_PWD_USE), val);
+	password_write_id(PWD_ADDR(pwd_id, PWD_OFFSET_NEXT_PWD_USE), val);
 }
 
 void password_set_prev_pwd_alpha(p_addr pwd_id, p_addr val)
 {
-	fram_write_byte(PWD_ADDR(pwd_id, PWD_OFFSET_PREV_PWD_ALPHA), val);
+	password_write_id(PWD_ADDR(pwd_id, PWD_OFFSET_PREV_PWD_ALPHA), val);
 }
 
 void password_set_next_pwd_alpha(p_addr pwd_id, p_addr val)
 {
-	fram_write_byte(PWD_ADDR(pwd_id, PWD_OFFSET_NEXT_PWD_ALPHA), val);
+	password_write_id(PWD_ADDR(pwd_id, PWD_OFFSET_NEXT_PWD_ALPHA), val);
 }
 
 void password_set_counter(p_addr pwd_id, uint16_t val)

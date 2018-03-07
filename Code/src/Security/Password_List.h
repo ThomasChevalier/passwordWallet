@@ -8,28 +8,6 @@
 #include "../Hardware/Fram.h"
 
 /**
- * @brief Write a password id to fram.
- * @details This function take cares of the size of the p_addr type.
- * 
- * @param framAddr The address where to write the id
- * @param id The id to write
- */
-void pwd_write_id(f_addr_t framAddr, p_addr id);
-
-/**
- * @brief Read a password id from fram.
- * @details This function take cares of the size of the p_addr type.
- * 
- * @param framAddr The address from where to read the id
- */
-#if p_addr_sz == 1 // Inline the function
-#define pwd_read_id(addr) fram_read_byte(addr)
-#else
-p_addr pwd_read_id(f_addr_t framAddr);
-#endif
-
-
-/**
  * @brief Return the current sorting method.
  * @return The sorting method PWD_SORTING_NONE, PWD_SORTING_USE or PWD_SORTING_ALPHA.
  * These constants are declared in Globals.h.

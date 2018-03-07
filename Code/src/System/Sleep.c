@@ -11,6 +11,7 @@
 #include "../Hardware/Rfid.h"
 #include "../Hardware/Buttons.h"
 #include "../Hardware/PinDefinition.h"
+#include "../Hardware/Fram.h"
 
 #include "../Security/Random.h"
 
@@ -39,6 +40,9 @@ void sleep_device(void)
 
 	// Disable USB
 	USB_Disable();
+
+	// Disable fram
+	fram_sleep();
 
 	// Turn off Watchdog
 	wdt_reset();
@@ -86,6 +90,7 @@ void sleep_device(void)
 
 	USB_init();
 	random_init();
+	fram_wakeup();
 
 	ACTIVITY_TIMER = 0;
 

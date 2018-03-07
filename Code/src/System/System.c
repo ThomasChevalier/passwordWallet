@@ -3,6 +3,7 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>  // for sei()
 #include <avr/wdt.h>
+#include <avr/power.h>
 
 #include "../Graphics/Drawing.h"
 #include "../Graphics/String.h"
@@ -28,6 +29,14 @@ void system_init(void)
 	         (1 << BUTTON_2_PIN_CHANGE_NUM) |
 	         (1 << BUTTON_3_PIN_CHANGE_NUM) |
 	         (1 << BUTTON_4_PIN_CHANGE_NUM);
+
+	// If the i2c module is not needed
+	#if !defined(I2C_FRAM)
+	PRR0 |= (1<<PRTWI) | (1<<PRADC); // Disable i2c and adc
+	#else
+	PRR0 |= (1<<PRADC); // Make sure the adc is disabled first. Normally the adc is disabled at startup
+	#endif
+	PRR1 |= (1<<PRUSART1); // Disable usart
 }
 
 // Read the reset source and display it
@@ -50,6 +59,7 @@ uint16_t system_read_vcc(void)
 {
 
 	// Enable ADC
+	PRR0 &= ~(1<<PRADC);
 	ADCSRA = (1<<ADEN);
 
 	delay_ms_f(2); // Wait for it
@@ -73,6 +83,7 @@ uint16_t system_read_vcc(void)
 	// Disable ADC
 	ADMUX = 0;
 	ADCSRA = 0;
+	PRR0 |= (1<<PRADC);
 
 	return result; // Vcc in millivolts
 }
