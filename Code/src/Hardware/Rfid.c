@@ -24,6 +24,7 @@
 void rfid_pcd_write_register(uint8_t reg, uint8_t value)
 {
 	rfid_select(); // Select slave
+	// We may need to enter a noise reduction mode here, because the pcd is already very affected by the ground plane
 	spi_send_8(reg & 0x7E);
 	spi_send_8(value);
 	rfid_deselect(); // Release slave
@@ -32,6 +33,7 @@ void rfid_pcd_write_register(uint8_t reg, uint8_t value)
 void rfid_pcd_write_register_multiple(uint8_t reg, uint8_t count, uint8_t* values)
 {
 	rfid_select(); // Select slave
+	// We may need to enter a noise reduction mode here, because the pcd is already very affected by the ground plane
 	spi_send_8(reg & 0x7E);
 	spi_send(values, count);
 	rfid_deselect(); // Release slave
@@ -192,9 +194,10 @@ void rfid_pcd_reset(void)
 	rfid_pcd_write_register(CommandReg, PCD_SoftReset);	// Issue the SoftReset command.
 	// The datasheet does not mention how long the SoftRest command takes to complete.
 	// But the MFRC522 might have been in soft power-down mode (triggered by bit 4 of CommandReg)
-	// Section 8.8.2 in the datasheet says the oscillator start-up time is the start up time of the crystal + 37,74�s. Let us be generous: 50ms.
+	// Section 8.8.2 in the datasheet says the oscillator start-up time is the start up time of the crystal + 37,74µs. Let us be generous: 50ms.
 	delay_ms_f(50);
 	// Wait for the PowerDown bit in CommandReg to be cleared
+	// Be careful : possible infinite loop here but it is extremely unlikely so we dont need to worry about that
 	while (rfid_pcd_read_register(CommandReg) & (1<<4))
 	{
 		// PCD still restarting - unlikely after waiting 50ms, but better safe than sorry.
@@ -347,8 +350,17 @@ StatusCode rfid_pcd_communicate_with_PICC(	uint8_t command,		///< The command to
 
 	// Wait for the command to complete.
 	// In rfid_pcd_init we set the TAuto flag in TModeReg. This means the timer automatically starts when the PCD stops transmitting.
-	// Each iteration of the do-while-loop takes 17.86�s.
+	// Each iteration of the do-while-loop takes 17.86µs
+	// -------------------------------------
+	// On the original Arduino Uno.
+	// But the Uno is running at 16 MHz so the code below take twice as long to run on a 8MHz platform.
+	#if F_CPU == 16000000
 	i = 2000;
+	#elif F_CPU == 8000000
+	i = 4000;
+	#else
+	#error Frequency not supported
+	#endif
 	while (1)
 	{
 		n = rfid_pcd_read_register(ComIrqReg);	// ComIrqReg[7..0] bits are: Set1 TxIRq RxIRq IdleIRq HiAlertIRq LoAlertIRq ErrIRq TimerIRq
