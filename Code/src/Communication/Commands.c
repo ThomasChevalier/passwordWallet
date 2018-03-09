@@ -12,21 +12,38 @@
 
 #include "../Security/Encryption.h"
 
-static uint16_t COM_POS = 0;
-static uint16_t COM_PARAMETER = 0;
+static uint32_t COM_POS = 0;
+static uint32_t COM_PARAMETER = 0;
 
 Command CURRENT_COMMAND;
 
-static void send_command(uint8_t id, uint16_t size, uint8_t *data)
+static void send_header(uint8_t id, uint32_t size)
 {
 	serial_send(&id, 1);
-	serial_send((uint8_t*)(&size), 2);
-	uint16_t i = 0;
-	for(; i < size; i+=255)
+	// Little endian so it should work
+	serial_send((uint8_t*)(&size), 3);
+}
+
+static void send_command(uint8_t id, uint32_t size, uint8_t *data)
+{
+	send_header(id, size);
+
+	while(size>=255)
 	{
-		size -= i;
-		serial_send(data, size % 255);
+		serial_send(data, 255);
+		size -= 255;
+		data += 255;
 	}
+	if(size){
+		serial_send(data, size);
+	}
+
+	// uint32_t i = 0;
+	// for(; i < size; i+=255)
+	// {
+	// 	size -= i;
+	// 	serial_send(data, size % 255);
+	// }
 }
  
 #define COM_LOGO_X (120)
@@ -148,10 +165,7 @@ void command_end()
 
 void command_get_fram()
 {
-	uint8_t id = COM_FRAM;
-	serial_send(&id, 1);
-	f_addr_t size = FRAM_BYTE_SIZE;
-	serial_send((uint8_t*)&size, 2);
+	send_header(COM_FRAM, FRAM_BYTE_SIZE);
 
 	uint8_t buffer[16];
 	for(f_addr_t i = 0; i < FRAM_BYTE_SIZE / 16; ++i)
@@ -173,10 +187,7 @@ void command_get_key()
 
 void command_get_param()
 {
-	uint8_t id = COM_PARAM;
-	serial_send(&id, 1);
-	uint16_t size = 6;
-	serial_send((uint8_t*)&size, 2);
+	send_header(COM_PARAM, 6);
 
 	Fram_id fid = fram_read_id();
 	uint8_t buffer[6];
@@ -200,7 +211,7 @@ void command_get_param()
 
 	buffer[5] = SOFTWARE_VERSION;
 
-	serial_send(buffer, size);
+	serial_send(buffer, 6);
 }
 
 void command_get_version(void)
@@ -211,26 +222,23 @@ void command_get_version(void)
 
 void command_set_fram()
 {
-	if(COM_POS == 0 && CURRENT_COMMAND.availableSize != 0){
-		COM_PARAMETER = CURRENT_COMMAND.data[0];
+	while(COM_POS <= 2 && CURRENT_COMMAND.availableSize != 0)
+	{
+		COM_PARAMETER |= (uint32_t)CURRENT_COMMAND.data[0] << (8*COM_POS);
 		++CURRENT_COMMAND.data;
 		--CURRENT_COMMAND.availableSize;
 		++COM_POS;
 	}
-	if(COM_POS == 1 && CURRENT_COMMAND.availableSize != 0){
-		COM_PARAMETER |= CURRENT_COMMAND.data[0] << 8;
-		++CURRENT_COMMAND.data;
-		--CURRENT_COMMAND.availableSize;
-		++COM_POS;
-	}
-	if(COM_POS > 1){
-		fram_write_bytes(COM_PARAMETER + COM_POS - 2, CURRENT_COMMAND.data, CURRENT_COMMAND.availableSize);
+
+	if(COM_POS > 2){
+		fram_write_bytes(COM_PARAMETER + COM_POS - 3, CURRENT_COMMAND.data, CURRENT_COMMAND.availableSize);
 		COM_POS += CURRENT_COMMAND.availableSize;
 		CURRENT_COMMAND.availableSize = 0;
 	}
 
 	if(COM_POS == CURRENT_COMMAND.totalSize)
 	{
+		COM_PARAMETER = 0;
 		COM_POS = 0;
 		send_command(COM_OK, 0, 0);
 	}

@@ -8,7 +8,8 @@
 #define COM_ID    (0)             // 0
 #define COM_SIZE1 (COM_ID + 1)    // 1
 #define COM_SIZE2 (COM_SIZE1 + 1) // 2
-#define COM_DATA  (COM_SIZE2 + 1) // 3
+#define COM_SIZE3 (COM_SIZE2 + 1) // 3
+#define COM_DATA  (COM_SIZE3 + 1) // 4
 
 static uint8_t com_state = COM_ID;
 
@@ -23,7 +24,7 @@ static uint8_t pick(uint8_t **data, uint8_t* lenght)
 
 void com_process_data(uint8_t* data, uint8_t lenght)
 {
-	static uint16_t com_bytes_processed;
+	static uint32_t com_bytes_processed;
 
 	// If we are waiting for a command we don't want to timeout
 	if(SERIAL_TIMEOUT_TIMER == SERIAL_TIMEOUT && com_state != COM_ID){
@@ -49,7 +50,13 @@ void com_process_data(uint8_t* data, uint8_t lenght)
 		// Read the second byte of the command size.
 		if(com_state == COM_SIZE2 && lenght)
 		{
-			CURRENT_COMMAND.totalSize |= pick(&data, &lenght) << 8;
+			CURRENT_COMMAND.totalSize |= (uint32_t)pick(&data, &lenght) << 8;
+			++com_state;
+		}
+		// Read the third byte of the command size
+		if(com_state == COM_SIZE3 && lenght)
+		{
+			CURRENT_COMMAND.totalSize |= (uint32_t)pick(&data, &lenght) << 16;
 			com_bytes_processed = 0;
 			++com_state;
 		}

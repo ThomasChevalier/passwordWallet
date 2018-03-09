@@ -27,8 +27,8 @@
 typedef struct Command_
 {
 	uint8_t id;
-	uint16_t totalSize;
-	uint16_t availableSize;
+	uint32_t totalSize;
+	uint32_t availableSize;
 	uint8_t *data;
 } Command;
 

@@ -4,11 +4,12 @@
 #include "Command.h"
 
 #include "dependency/Globals.h"
+#include "dependency/Security/Password.h"
 #include "Fram.h"
 
 void intro()
 {
-	std::cout << "pindef_parser by Thomas Chevalier.\n"
+	std::cout << "memory_editor by Thomas Chevalier.\n"
 			 "Copyright 2017 Thomas Chevalier - All rights reserved.\n"
 			 "thomasom.chevalier@gmail.com\n"
 			 "Compiled on " __DATE__ " at " __TIME__ << std::endl;
@@ -68,6 +69,10 @@ int main()
 	}
 	std::cout << "Creating virtual memory ";
 	uint8_t *memory = new uint8_t[size];
+	if(memory == nullptr){
+		std::cout << " FAIL\n";
+		return 1;
+	}
 	std::cout << "OK" << std::endl;
 
 	std::cout << "Reading file ";
@@ -82,8 +87,10 @@ int main()
 	fram_init(memory);
 
 	update_opt_flags((1<<OPTIONS_FLAG_OFFSET_INITIALIZED));
-	std::cout << "Successfuly read " << size << " bytes" << std::endl;
+	OPTIONS_FLAG = fram_read_byte(OFFSET_OPTIONS_FLAG);
+	NUM_PWD = password_read_id(OFFSET_NUM_PWD);
 
+	std::cout << "Successfuly read " << size << " bytes" << std::endl;
 
 	std::string ascii85_key;
 	while(ascii85_key.size() != 20){

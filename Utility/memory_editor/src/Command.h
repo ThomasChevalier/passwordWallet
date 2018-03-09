@@ -38,6 +38,7 @@ public:
 		Change,
 		Show,
 		Exit,
+		Reencrypt,
 
 		None
 	};

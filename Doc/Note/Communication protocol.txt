@@ -23,7 +23,7 @@ A command is constructed as the following :
 |--------|----------|--------------|
 |   ID   |   SIZE   |     DATA     |
 |--------|----------|--------------|
-| 1 Byte |  2 Bytes | [Size] bytes |
+| 1 Byte |  3 Bytes | [Size] bytes |
 
 When the pc send a command the device read the id and the size field and then can execute the command before all the data arrived.
 The device always respond to a command by another command. It can be a simple "OK" or a more complex message.
