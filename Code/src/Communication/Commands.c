@@ -1,10 +1,14 @@
 #include "Commands.h"
 
+// For reset
+#include <LUFA/Drivers/USB/USB.h>
+
 #include "../USB/Serial.h"
 #include "../Globals.h"
 #include "../Hardware/Fram.h"
 
 #include "../System/Sleep.h"
+#include "../System/System.h"
 
 #include "../Hardware/Oled.h"
 #include "../Graphics/Drawing.h"
@@ -37,13 +41,6 @@ static void send_command(uint8_t id, uint32_t size, uint8_t *data)
 	if(size){
 		serial_send(data, size);
 	}
-
-	// uint32_t i = 0;
-	// for(; i < size; i+=255)
-	// {
-	// 	size -= i;
-	// 	serial_send(data, size % 255);
-	// }
 }
  
 #define COM_LOGO_X (120)
@@ -127,6 +124,9 @@ void com_exec(void)
 		break;
 	case COM_SET_KEY :
 		command_set_key();
+		break;
+	case COM_RESET:
+		command_reset();
 		break;
 	default:
 		com_abort();
@@ -261,4 +261,24 @@ void command_set_key()
 			send_command(COM_BAD_KEY, 0, 0);
 		}
 	}
+}
+
+void command_reset(void)
+{
+	send_command(COM_OK, 0, 0);
+
+	// If USB is used, detach from the bus and reset it
+	USB_Disable();
+
+	// Wait two seconds for the USB detachment to register on the host
+	// and draw an animation to give a feedback to the user
+	for(uint8_t i=0; i < 64; ++i){
+		draw_h_line(0, i, 128, i%2);
+		draw_update();
+		delay_ms_f(30);
+	}
+	oled_active_display(false);
+
+
+	system_reset();
 }

@@ -32,6 +32,7 @@ High (0xD0) :
 	Watchdog time always on				disabled
 	Preserve EEPROM through Chip Erase	enabled
 	Boot Flash size						2048 words
+	Boot reset vector					enabled
 
 Extended (0xCB) :
 	Brown-out detection level at VCC = 2.6V

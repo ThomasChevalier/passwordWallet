@@ -103,14 +103,6 @@ void user_change_key(void)
 	// rfid may be power down
 	rfid_init();
 
-	// Waiting for the user to present his card
-	user_wait_card();
-
-	if(user_authenticate_card() != RETURN_SUCCESS)
-	{
-		goto EXIT;
-	}
-
 	// Generate new key
 	uint8_t newKey[16];
 	draw_clear();
@@ -123,6 +115,13 @@ void user_change_key(void)
 	}
 	progress_end();
 
+	// Waiting for the user to present his card
+	user_wait_card();
+	if(user_authenticate_card() != RETURN_SUCCESS)
+	{
+		goto EXIT;
+	}
+	
 	// Write it to the rfid tag ...
 	if(user_write_key_to_card(newKey, MIFARE_BLOCK_TEMP_KEY) != RETURN_SUCCESS)
 	{

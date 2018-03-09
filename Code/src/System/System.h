@@ -28,7 +28,8 @@ uint16_t system_read_vcc(void);
 uint16_t system_free_ram (void);
 
 /**
- * @brief Reset the avr using the watchdog timer.
+ * @brief Reset the avr using the watchdog timer and jump to bootloader.
+ * Disable the usb before calling this function
  */
 void system_reset(void);
 

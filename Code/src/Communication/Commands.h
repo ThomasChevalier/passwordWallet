@@ -23,6 +23,7 @@
 #define COM_KEY (0x31)
 #define COM_PARAM (0x32)
 #define COM_VERSION (0x33)
+#define COM_RESET (0x34)
 
 typedef struct Command_
 {
@@ -53,5 +54,7 @@ void command_get_version(void);
 
 void command_set_fram(void);
 void command_set_key(void);
+
+void command_reset(void);
 
 #endif // COMMANDS_HEADER_THOMAS_CHEVALIER

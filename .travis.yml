@@ -17,6 +17,6 @@ before_install:
   # Update, qq stands for less output
   - sudo apt-get update -qq
 install:
-  - sudo apt-get install -qq gcc-avr binutils-avr avr-libc
+  - sudo apt-get install -qq gcc-avr binutils-avr avr-libc rpl
 script:
   - make
