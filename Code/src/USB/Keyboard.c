@@ -5,6 +5,9 @@
 
 #include "../Hardware/Led.h"
 
+// For memcmp
+#include "../Security/Security.h"
+
 #ifdef KEYBOARD_ENABLE
 
 /** Indicates what report mode the host has requested, true for normal HID reporting mode, \c false for special boot
@@ -312,7 +315,7 @@ void SendNextReport(void)
 	else
 	{
 		/* Check to see if the report data has changed - if so a report MUST be sent */
-		SendReport = (memcmp(&PrevKeyboardReportData, &KeyboardReportData, sizeof(USB_KeyboardReport_Data_t)) != 0);
+		SendReport = (security_memcmp(&PrevKeyboardReportData, &KeyboardReportData, sizeof(USB_KeyboardReport_Data_t)) != RETURN_SUCCESS);
 	}
 
 	/* Select the Keyboard Report Endpoint */

@@ -17,7 +17,9 @@
 #include "../Graphics/ProgressBar.h"
 
 #include "../Memory/eeprom.h"
+#include "../Security/Security.h"
 
+#include "../Graphics/Drawing.h"
 uint8_t encryption_check_key(void)
 {
 	// Read the random sequence from eeprom (address [0;15])
@@ -30,14 +32,10 @@ uint8_t encryption_check_key(void)
 	AES128_CBC_encrypt_buffer(randSeq, sizeof(EEPROM_VARS.rand_seq), KEY, zeroIv);
 
 	// And check if it match with the already encrypted data (address [16;31])
-	for(uint8_t verifCounter = 0; verifCounter < sizeof(EEPROM_VARS.rand_seq); ++verifCounter)
-	{
-		if(randSeq[verifCounter] != eeprom_read_byte( &(EEPROM_VARS.enc_validation[verifCounter]) ) )
-		{
-			return RETURN_ERROR;
-		}
-	}
-	return RETURN_SUCCESS;
+	// The zeroIv buffer is reused to read the encryption validation
+	eeprom_read_block(zeroIv, EEPROM_VARS.enc_validation, sizeof(EEPROM_VARS.enc_validation));
+
+	return security_memcmp(randSeq, zeroIv, sizeof(EEPROM_VARS.enc_validation));
 }
 
 
