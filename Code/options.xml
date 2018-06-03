@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<category str="str_option_pwd" alias="OPTIONS_LIST_NORMAL">
+		<action str="str_option_change_pwd" func="opt_callback_change_pwd"/>
+		<action str="str_option_change_usr" func="opt_callback_change_usr_name"/>
+		<action str="str_option_change_name" func="opt_callback_change_name"/>
+		<action str="str_option_regen" func="opt_callback_regenerate_pwd"/>
+		<action str="str_option_delete" func="opt_callback_delete_pwd"/>
+	</category>
+	
+	<category str="str_option_sort">
+		<action str="str_option_sort_no" func="opt_callback_no_sort"/>
+		<action str="str_option_sort_use" func="opt_callback_sort_use"/>
+		<action str="str_option_sort_alpha" func="opt_callback_sort_alpha"/>
+	</category>
+	
+	<category str="str_option_param">
+		
+		<category str="str_option_key">
+			<action str="str_option_change_key" func="opt_callback_change_key"/>
+			<action str="str_option_show_key" func="opt_callback_show_key"/>
+			<action str="str_option_force_card" func="opt_callback_force_card"/>
+			<action str="str_option_force_enter" func="opt_callback_force_enter"/>
+		</category>
+
+		<action str="str_option_keyboard_layout" func="opt_callback_change_keyboard"/>
+		<action str="str_option_orientation" func="opt_callback_inverse_screen"/>
+		<action str="str_option_self_test" func="opt_callback_self_test"/>
+		<action str="str_system_info" func="opt_callback_system_info"/>
+		<action str="str_option_full_reset" func="opt_callback_full_reset"/>
+
+	</category>
+	
+	<action str="str_option_add" func="opt_callback_add_pwd"/>
+
+	<stop/>
+
+	<action str="str_recovery_title" func="NULL" alias="OPTIONS_LIST_RECOVERY"/>
+	<action str="str_recovery_full" func="opt_callback_full_reset"/>
+	<action str="str_recovery_key" func="opt_callback_enter_key"/>
+
+	<stop/>
+
+	<action str="str_option_send_both" func="opt_callback_send_both" alias="OPTIONS_LIST_SEND"/>
+	<action str="str_option_send_pwd" func="opt_callback_send_pwd"/>
+	<action str="str_option_send_usr" func="opt_callback_send_usr"/>
+
+</root>

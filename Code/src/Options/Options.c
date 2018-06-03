@@ -9,6 +9,8 @@
 
 #include "../Hardware/Buttons.h"
 
+#define node_ptr_t const __flash Option_Node*
+#define ptr_from_list(index) list_options[index]
 /**
  * @brief Draw a maximum of 3 neighbour and return the number of node
  * 
@@ -16,7 +18,7 @@
  * @return The number of nodes
  */
 
-static uint8_t draw_nodes(const Option_Node* node)
+static uint8_t draw_nodes(node_ptr_t node)
 {
 	uint8_t numOpt = 0;
 	draw_clear();
@@ -33,7 +35,7 @@ static uint8_t draw_nodes(const Option_Node* node)
 		{
 			break;
 		}
-		node = &list_options[node->neighbour];
+		node = ptr_from_list(node->neighbour);
 	}
 	return numOpt;
 }
@@ -75,19 +77,19 @@ static void draw_selection(uint8_t current, uint8_t max)
  * 
  * @return The node at the position "pos"
  */
-static const Option_Node* node_at(const Option_Node* base, uint8_t pos)
+static node_ptr_t node_at(node_ptr_t base, uint8_t pos)
 {
 	while(base->neighbour != OPTIONS_LIST_NONE && pos)
 	{
 		--pos;
-		base = &list_options[base->neighbour];
+		base = ptr_from_list(base->neighbour);
 	}
 	return base;
 }
 
 void options_display(uint8_t opt)
 {
-	const Option_Node* base = &list_options[opt];
+	node_ptr_t base = ptr_from_list(opt);
 
 	uint8_t current_choice = 0;
 	uint8_t maxChoice = draw_nodes(base);
@@ -96,7 +98,7 @@ void options_display(uint8_t opt)
 
 	draw_update();
 
-	const Option_Node* nodeStack[OPTIONS_LIST_MAX_INTRICATION];
+	node_ptr_t nodeStack[OPTIONS_LIST_MAX_INTRICATION];
 	uint8_t nodeStackPos = 0;
 
 	for(;;)
@@ -113,7 +115,7 @@ void options_display(uint8_t opt)
 		}
 		else if(events & EVENT_BUTTON_2)
 		{
-			const Option_Node* nd = node_at(base, current_choice);
+			node_ptr_t nd = node_at(base, current_choice);
 
 			// Special case when there is no password
 			if(nd->child == 1 && NUM_PWD == 0) // Menu password
@@ -133,7 +135,7 @@ void options_display(uint8_t opt)
 			{
 				current_choice = 0;
 				nodeStack[nodeStackPos++] = base;
-				base = &list_options[nd->child];
+				base = ptr_from_list(nd->child);
 				maxChoice = draw_nodes(base);
 				draw_selection(current_choice, maxChoice);
 				draw_update();
@@ -160,7 +162,7 @@ void options_display(uint8_t opt)
 		}
 
 		// If an event happen redraw the menu
-		// But if this is button 2, then or the
+		// But if this is button 2, then either the
 		// function has return or a child has been
 		// selected and the menu drawn.
 		if(events && !(events & EVENT_BUTTON_2))

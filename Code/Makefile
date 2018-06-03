@@ -38,3 +38,9 @@ pin:
 	@echo "Update pins' definition ... "
 	../Utility/pindef_parser/pindef_parser --file pindef.xml
 	mv PinDefinition.h src/Hardware/PinDefinition.h
+option:
+	@echo "Update options ... "
+	python3.5 ../Utility/option_parser/parser.py options.xml
+	mv Options_List.h src/Options/Options_List.h
+	mv Options_List.cpp src/Options/Options_List.cpp
+	
