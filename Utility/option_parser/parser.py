@@ -243,6 +243,6 @@ const __flash Option_Node* const __flash list_options [OPTIONS_LIST_NUM_OPTIONS]
 
 """ % (now.year, str(now), '\n'.join(readable(processed, 'DECLARE_NODE')), '\n'.join(format_array(processed)))
 
-sourceFile = open("Options_List.cpp", "w")
+sourceFile = open("Options_List.c", "w")
 sourceFile.write(source)
 sourceFile.close()

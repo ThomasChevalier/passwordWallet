@@ -183,7 +183,7 @@ void opt_callback_system_info(void)
 
 		draw_flash_str(0, 20, str_system_pwd);
 		draw_num(str_system_pwd_pixLen + 3, 20, NUM_PWD);
-		draw_num(str_system_pwd_pixLen + 4*FONT_WIDTH, 20, NUM_PWD/MAXIMUM_NUMBER_OF_PWD*100);
+		draw_num(str_system_pwd_pixLen + 4*FONT_WIDTH, 20, NUM_PWD*100/MAXIMUM_NUMBER_OF_PWD);
 		draw_char(str_system_pwd_pixLen + 8*FONT_WIDTH, 20, '%');
 
 		uint16_t volt = system_read_vcc();
