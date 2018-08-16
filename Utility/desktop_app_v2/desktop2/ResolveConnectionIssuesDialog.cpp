@@ -4,19 +4,26 @@
 #include <QDateTime>
 #include <QProcess>
 #include <QCoreApplication>
+
 #include "AskTextDialog.h"
+#include "SerialDevice.h"
 
 ResolveConnectionIssuesDialog::ResolveConnectionIssuesDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::ResolveConnectionIssuesDialog)
 {
     ui->setupUi(this);
-    launch();
+    //launch();
 }
 
 ResolveConnectionIssuesDialog::~ResolveConnectionIssuesDialog()
 {
     delete ui;
+}
+
+void ResolveConnectionIssuesDialog::setError(QSerialPort::SerialPortError error)
+{
+    msg(tr("L'utilitaire de résolution de problème a été lancé pour l'erreur suivante : %1").arg(error));
 }
 
 void ResolveConnectionIssuesDialog::msg(const QString &text)
@@ -31,6 +38,11 @@ void ResolveConnectionIssuesDialog::launch()
     ui->infoText->append(tr("<span style=\"font-style: italic;\">Bienvenue dans l'assistant de résolution des problèmes de connexion.<br/>"
                             "Cet assistant va lancer des commandes courantes pour vérifier que votre compte est autorisé à accéder "
                             "au port série et qu'aucun autre logiciel ne gêne votre connexion.<br/></span>"));
+    if(SerialDevice::instance()->isConnected()){
+        msg(tr("Déconnexion de l'appareil"));
+        SerialDevice::instance()->disconnectSerial();
+    }
+
     tryConnect();
 }
 

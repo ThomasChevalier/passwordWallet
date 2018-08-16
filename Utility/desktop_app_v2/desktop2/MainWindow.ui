@@ -27,8 +27,9 @@
    </property>
    <widget class="QMenu" name="menuOptions">
     <property name="title">
-     <string>Options</string>
+     <string>Fenêtres</string>
     </property>
+    <addaction name="actionConnection"/>
     <addaction name="actionTerminal"/>
    </widget>
    <addaction name="menuOptions"/>
@@ -45,6 +46,11 @@
   <action name="actionTerminal">
    <property name="text">
     <string>Console</string>
+   </property>
+  </action>
+  <action name="actionConnection">
+   <property name="text">
+    <string>Connexion</string>
    </property>
   </action>
  </widget>

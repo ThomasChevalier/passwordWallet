@@ -17,12 +17,14 @@ public:
     explicit ResolveConnectionIssuesDialog(QWidget *parent = 0);
     ~ResolveConnectionIssuesDialog();
 
+    void setError(QSerialPort::SerialPortError error);
+
+    void launch();
 private:
     Ui::ResolveConnectionIssuesDialog *ui;
 
     void msg(const QString& text);
 
-    void launch();
     void tryConnect();
     void noPeriphericFound();
     void permissionError();

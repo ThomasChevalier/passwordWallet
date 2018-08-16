@@ -23,7 +23,7 @@
 #define COM_KEY (0x31)
 #define COM_PARAM (0x32)
 #define COM_VERSION (0x33)
-#define COM_RESET (0x34)
+#define COM_RESET (0x34) // Bad category (should be 0x2*)
 
 typedef struct Command_
 {

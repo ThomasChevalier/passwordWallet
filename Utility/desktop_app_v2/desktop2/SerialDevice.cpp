@@ -68,6 +68,29 @@ QSerialPortInfo SerialDevice::portInfo() const
     return QSerialPortInfo();
 }
 
+QList<QSerialPortInfo> SerialDevice::availableDevices()
+{
+    QList<QSerialPortInfo> ports = QSerialPortInfo::availablePorts();
+    QList<QSerialPortInfo> valid;
+    for(QSerialPortInfo port : ports)
+    {
+        if(port.vendorIdentifier() == 0x03EB && port.productIdentifier() == 0x2044)
+        {
+            valid << port;
+        }
+    }
+    return valid;
+}
+
+SerialDevice *SerialDevice::instance()
+{
+    static SerialDevice* inst = nullptr;
+    if(inst == nullptr){
+        inst = new SerialDevice;
+    }
+    return inst;
+}
+
 void SerialDevice::on_bytesWritten(qint64 bytes)
 {
     if(!m_outData.isEmpty()){

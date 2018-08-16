@@ -4,6 +4,7 @@
 #include <QDateTime>
 #include <QDebug>
 #include <QFile>
+#include <QFileDialog>
 
 #include "SerialInterface.h"
 
@@ -43,7 +44,7 @@ void SerialTerminal::on_buttonConnect_clicked()
         display(tr("<span style=\"font-weight: bold;\">Connexion impossible.</span>"));
     }else{
         display(tr("<span style=\"font-weight: bold;\">Connexion ...</span>"));
-         ui->portConnectedLabel->setText(portName);
+        ui->portConnectedLabel->setText(portName);
     }
 }
 
@@ -79,6 +80,46 @@ void SerialTerminal::on_buttonSend_clicked()
     }
 }
 
+void SerialTerminal::on_buttonSendFram_clicked()
+{
+    QString fileName = QFileDialog::getOpenFileName(this,
+                                                    tr("Fichier mémoire"));
+    QFile memFile(fileName);
+    if(!memFile.open(QIODevice::ReadOnly)){
+        qDebug() << "Impossible d'ouvrir le fichier.";
+    }
+    QByteArray data = memFile.readAll();
+    QByteArray commandData;
+    // 10'002 == 0x2712
+    commandData.append(SerialCommand::SetFram);
+    commandData.append(0x12);
+    commandData.append(0x27);
+    commandData.append(static_cast<char>(0x00));
+    commandData.append(static_cast<char>(0x00)); // Why ?
+    for(int i(0); i < 10000; ++i){
+        commandData.append(data.at(i));
+    }
+    SerialCommand command;
+    bool result = false;
+    try
+    {
+        result = command.readFrom(commandData);
+    }
+    catch(const std::exception& exept){
+        result = false;
+        display(tr("Commande invalide (%1)").arg(exept.what()));
+        return;
+    }
+
+    if(result){
+        display(tr("Envoie de la mémoire"));
+        SerialInterface::get().pushCommand(command);
+    }
+    else{
+        display("Commande invalide");
+    }
+}
+
 void SerialTerminal::on_command(const SerialCommand &command)
 {
     if(command.data().size() == 0){
@@ -104,11 +145,12 @@ void SerialTerminal::on_command(const SerialCommand &command)
             }
             else{
                 out.write(command.data());
+                qDebug() << "memory saved"; // Tell the user after the actual saving (in case he close the app too early)
             }
         }
         display(tr("%1 | %2 octets reçus [%3]\n\n").arg(SerialCommand::typeToString(command.type()))
-                                              .arg(command.data().size())
-                                              .arg(QString(command.data().toHex())));
+                .arg(command.data().size())
+                .arg(QString(command.data().toHex())));
         ui->textOut->appendPlainText("["+stringFromHex+"]");
     }
 }
@@ -132,9 +174,9 @@ QSerialPortInfo SerialTerminal::getPortByName(const QString &name)
 
 void SerialTerminal::display(QString text)
 {
-     QString msg = tr("<span style=\"font-style: italic;\">%1</span> ").arg(QDateTime::currentDateTime().toString("hh:mm:ss.zzz"));
-     msg.append(text);
-     ui->textOut->appendHtml(msg);
+    QString msg = tr("<span style=\"font-style: italic;\">%1</span> ").arg(QDateTime::currentDateTime().toString("hh:mm:ss.zzz"));
+    msg.append(text);
+    ui->textOut->appendHtml(msg);
 }
 
 QByteArray SerialTerminal::hexStringToByte(const QString &str)

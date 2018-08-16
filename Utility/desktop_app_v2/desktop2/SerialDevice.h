@@ -1,6 +1,7 @@
 #ifndef SERIALDEVICE_H
 #define SERIALDEVICE_H
 
+#include <QList>
 #include <QObject>
 #include <QByteArray>
 #include <QSerialPort>
@@ -23,6 +24,10 @@ public:
 
     QSerialPortInfo portInfo() const;
 
+    static QList<QSerialPortInfo> availableDevices();
+
+    static SerialDevice *instance();
+
 signals:
     void dataSent();
     void dataReceived(QByteArray data);
@@ -33,6 +38,7 @@ private slots:
     void on_readyRead();
 
 private:
+
     QSerialPort m_serial;
     QByteArray m_outData;
 };

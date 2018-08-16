@@ -20,6 +20,7 @@ public:
         GetFram           = 0x10,
         GetKey            = 0x11,
         GetParam          = 0x12,
+        GetVersion        = 0x13,
 
         SetFram           = 0x20,
         SetKey            = 0x21,
@@ -28,6 +29,7 @@ public:
         Key               = 0x31,
         Param             = 0x32,
         Version           = 0x33,
+        Reset             = 0x34,
 
         None
     };
@@ -52,6 +54,7 @@ private:
         WaitId,
         WaitSize1,
         WaitSize2,
+        WaitSize3,
         WaitData
     };
 

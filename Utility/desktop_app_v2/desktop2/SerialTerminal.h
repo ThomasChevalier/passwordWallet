@@ -29,6 +29,8 @@ private slots:
 
     void on_buttonSend_clicked();
 
+    void on_buttonSendFram_clicked();
+
     void on_command(const SerialCommand& command);
     void on_disconnected();
 

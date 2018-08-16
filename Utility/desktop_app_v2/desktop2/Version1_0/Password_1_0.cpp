@@ -2,8 +2,6 @@
 
 #include <QtGlobal>
 
-#define p_addr_sz (2)
-
 Password_1_0::Password_1_0():
     AbstractPassword()
 {

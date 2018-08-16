@@ -17,13 +17,13 @@ SerialCommand::SerialCommand(Type type, const QByteArray& data):
 
 bool SerialCommand::readFrom(QByteArray &deviceData)
 {
-    static quint16 tempSize = 0;
+    static quint32 tempSize = 0;
 
     if(!deviceData.isEmpty() && m_state == WaitId){
         const quint8 rawId = deviceData.at(0);
         deviceData.remove(0, 1);
         if(rawId >= None){
-            throw std::out_of_range("Command id out of range.");
+            throw std::out_of_range(QObject::tr("Command id out of range : %1").arg(static_cast<int>(rawId)).toStdString());
         }
         m_type = static_cast<Type>(rawId);
 
@@ -41,6 +41,14 @@ bool SerialCommand::readFrom(QByteArray &deviceData)
     if(!deviceData.isEmpty() && m_state == WaitSize2)
     {
         tempSize |= deviceData.at(0) << 8;
+        deviceData.remove(0, 1);
+
+        m_state = WaitSize3;
+    }
+
+    if(!deviceData.isEmpty() && m_state == WaitSize3)
+    {
+        tempSize |= deviceData.at(0) << 16;
         deviceData.remove(0, 1);
         m_data.clear();
         m_state = WaitData;
@@ -62,6 +70,9 @@ bool SerialCommand::readFrom(QByteArray &deviceData)
         if(tempSize == 0){
             m_state = WaitId;
             m_valid = true;
+            qDebug() << m_type;
+            qDebug() << m_data.size();
+            qDebug() << m_data;
             return true;
         }
     }
@@ -83,13 +94,15 @@ QByteArray SerialCommand::toByteArray() const
     }
 
     QByteArray converted;
-    converted.resize(1 + 2 + m_data.size());
+    const unsigned header_size = 4;
+    converted.resize(header_size + m_data.size());
     converted[0] = static_cast<quint8>(m_type);
-    converted[1] = static_cast<quint8>(m_data.size() & 0xFF);
-    converted[2] = static_cast<quint8>(m_data.size() >> 8);
+    converted[1] = static_cast<quint8>(  m_data.size() & 0xFF);
+    converted[2] = static_cast<quint8>( (m_data.size() >> 8) & 0xFF);
+    converted[3] = static_cast<quint8>( (m_data.size() >> 16) & 0xFF);
 
     for(int i(0); i < m_data.size(); ++i){
-        converted[3+i] = m_data[i];
+        converted[header_size+i] = m_data[i];
     }
 
     return converted;
