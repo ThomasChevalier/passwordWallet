@@ -55,6 +55,17 @@ void backup_restore (void)
 	backup_free();
 }
 
+void backup_partial_restore(void){
+	const p_addr pwd_id = password_read_id(OFFSET_BACKUP_ID);
+
+	uint8_t i = 0;
+	for(; i < SIZE_OF_PWD_BLOCK; ++i)
+	{
+		const uint8_t byte = fram_read_byte(OFFSET_BACKUP_DATA + i);
+		fram_write_byte(PWD_ADDR(pwd_id, i), byte);
+	}
+}
+
 void backup_free (void)
 {
 	// First write the block as OK, because if a reset occurs
@@ -167,12 +178,13 @@ void backup_recover(void)
 
 			// Restore the password, if the update has not been completed on it
 			if(backupStatus == BACKUP_STATUS_CHANGE_KEY){
-				backup_restore();
+				// Warning : if the device crashes then it will not be recovered because the backup has been freed if we use the function backup_restore().
+				// Hence the need to use the partial backup restore, where the backup status is kept unchanged.
+				backup_partial_restore();
 			}
 
 			// If the update was complete for this password, start to update the next
-			else if(backupStatus == BACKUP_STATUS_CHANGE_KEY_CHUNK_OK)
-			{
+			else{
 				++pwd_id;
 			}
 

@@ -30,6 +30,14 @@ void backup_save (p_addr pwd_id, uint8_t statuts);
 void backup_restore (void);
 
 /**
+ * @brief Restores the password chunk but leaves the backup status unchanged.
+ * @details Use it if you know how the interal backup system actually work.
+ * Moreover, because this function is used in very specific case it will not check 
+ * the validity of the parameters provided in the backup section.
+ */
+void backup_partial_restore(void);
+
+/**
  * @brief Free the backup section.
  * @details Mark operation as completed.
  */
