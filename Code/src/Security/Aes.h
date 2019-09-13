@@ -91,6 +91,13 @@
 #define AES_SHORTSBOXSIZE 16
 
 /*
+#error Test if a longer SBOX can be stored or if it can be stored in eeprom. \
+ Bench the performance of the decryption system to see if this is the main bottleneck \
+ in term of responsiviness of the user interface. A solution might be to decrypt the username \
+ only if the user does not push a navigation button or after a small delay.
+*/
+
+/*
 *	Allow inline assembler.
 *	Only significant in SMALL implementation.
 */
@@ -113,7 +120,8 @@ void AES128_CBC_encrypt_buffer(uint8_t* input, uint8_t length, uint8_t* key, uin
 /**
  * @brief Decrypt a buffer with AES 128 bit in CBC mode.
  * @details String length must be evenly divisible by 16 bytes (str_len % 16 == 0)
- * You must pad the end of the string if this is not the case.
+ * You must pad the end of the string if this is not the case. This function assumes that chipered data
+ * are strings, and it may not attempt to decrypt further data after the first 0 is found.
  *
  * @param input Must be an allocated array of [lenght] bytes. The plain text to be encrypted.
  * After the encryption process [input] contains the result of the decryption.

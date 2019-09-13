@@ -75,8 +75,8 @@ int main(void)
 		{state_browse_transition,           state_browse_begin,           state_browse_end},           // STATE_BROWSE
 	};
 
-	State const * currentState = &states[STATE_WAIT_CARD];
 	uint8_t currentStateNum = STATE_WAIT_CARD;
+	State const * currentState = &states[currentStateNum];
 
 	currentState->begin();
 

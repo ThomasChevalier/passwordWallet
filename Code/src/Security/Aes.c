@@ -850,7 +850,7 @@ void AES128_CBC_decrypt_buffer(uint8_t* input, uint8_t sz, uint8_t* key, uint8_t
 		}
 
 		aesKeyPatch(key);  // Patch the original key
-		aesInvCipher(key, input);  // Decrypt data with a patched key. It return the original key.
+		aesInvCipher(key, input);  // Decrypt data with a patched key. It returns the original key.
 		mem_xor(input, xorWith);
 
 		// If an element of the input contains a zero, and because only strings are encrypted

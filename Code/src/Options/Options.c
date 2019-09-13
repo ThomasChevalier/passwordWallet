@@ -163,7 +163,7 @@ void options_display(uint8_t opt)
 
 		// If an event happen redraw the menu
 		// But if this is button 2, then either the
-		// function has return or a child has been
+		// function has returned or a child has been
 		// selected and the menu drawn.
 		if(events && !(events & EVENT_BUTTON_2))
 		{

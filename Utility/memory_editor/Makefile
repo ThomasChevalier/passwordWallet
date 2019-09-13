@@ -8,7 +8,7 @@
 OPTIMIZATION = 2
 AES_DIR = ../../library/AES
 
-CXX = g++-6 -O$(OPTIMIZATION) -s -std=c++11
+CXX = g++ -O$(OPTIMIZATION) -s -std=c++11
 WFLAG = -pedantic -Wall -Wextra -Wold-style-cast -Woverloaded-virtual -Wfloat-equal -Wwrite-strings -Wpointer-arith -Wcast-qual -Wcast-align -Wshadow -Weffc++ -Wredundant-decls -Wdouble-promotion -Winit-self -Wswitch-default -Wswitch-enum -Wundef -Wlogical-op -Winline
 CXXFLAGS = $(WFLAG) -I$(AES_DIR)
 LDFLAGS = -I$(AES_DIR)

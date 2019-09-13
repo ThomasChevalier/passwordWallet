@@ -84,6 +84,9 @@ void com_process_data(uint8_t* data, uint8_t lenght)
 				com_state = COM_ID; // Look for a new command
 			}
 
+			// This executes the current command even if data are not received entirely.
+			// It will be executed as many times as needed, as if several commands were sent, 
+			// each with partial data.
 			com_exec();
 		}
 	}while(lenght);

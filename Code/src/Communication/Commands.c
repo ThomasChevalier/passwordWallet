@@ -94,6 +94,7 @@ void com_exec(void)
 		return;
 	}
 
+	// If the communication has not started ant this is not a command to initialize it we respond with an error
 	if( (!(GLOBALS_EVENTS & EVENT_FLAG_COM)) && (id != COM_INIT))
 	{
 		send_command(COM_ERR_NOT_INIT, 0, 0);
@@ -146,8 +147,14 @@ void com_abort(void)
 
 void command_init()
 {
+	// If the device is already initialized this command is a violation of the protocol
+	if (GLOBALS_EVENTS & EVENT_FLAG_COM){
+		com_abort();
+	}
+
 	if(!draw_confirmation_screen(str_comm_enable_com_index, str_comm_enable_com_centerX))
 	{
+		// We don't need to call the abort function here because communication is not initialized yet, so none of the parameter are set.
 		send_command(COM_END, 0, 0);
 	}
 	else
