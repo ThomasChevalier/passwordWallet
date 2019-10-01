@@ -72,6 +72,8 @@ void opt_callback_full_reset(void)
 		fram_set(i*FRAM_SIZE_DIVIDER, 0, 128);
 		fram_set(i*FRAM_SIZE_DIVIDER+128, 0, 128);
 		#elif FRAM_SIZE_DIVIDER == 1024
+		// Compiler emit Warning: iteration 64 invokes undefined behavior [-Waggressive-loop-optimizations]
+		// This is safe because the loop does only 8 iterations (1024/128 = 8)
 		for(uint8_t j = 0; j < FRAM_SIZE_DIVIDER/128; ++j)
 		{
 			fram_set(i*FRAM_SIZE_DIVIDER+j*128, 0, 128);

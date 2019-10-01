@@ -55,7 +55,7 @@ uint8_t security_memcmp(const void *data1, const void* data2, uint8_t sz)
 		"ld r20, Z+"					"\n\t"
 		"eor r20, r19"					"\n\t"
 		"or __tmp_reg__, r20"			"\n\t"
-		"dec r18"					"\n\t"
+		"dec r18"						"\n\t"
 		"brne loop%="					"\n\t"
 		"ldi r24, %[error]"				"\n\t"
 		"cp __tmp_reg__, __zero_reg__"	"\n\t"
