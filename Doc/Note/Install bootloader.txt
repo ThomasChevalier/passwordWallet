@@ -27,4 +27,4 @@ Procedure
 * Make the bootloader
 * Connect the device via the isp (Arduino as isp)
 * Upload it with the command : avrdude -v {program.verify} -patmega32u4 -cstk500v1 -P/dev/ttyACM0 -b19200 -Uflash:w:"BootloaderDFU.hex":i
-* Now you can upload code by typing 'make dfu'
+* Now you can upload code by typing 'sudo make dfu'
