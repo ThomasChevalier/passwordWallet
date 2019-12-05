@@ -123,3 +123,44 @@ void sleep_idle(void)
 	sleep_disable();
 	SREG = sreg;
 }
+
+void sleep_noise_reduction(void)
+{
+	uint8_t sreg = SREG;
+	cli();
+
+
+	// Disable fram
+	fram_sleep();
+
+	// Activate watchdog for 32 ms interrupt
+	wdt_reset();
+	MCUSR &= ~(1<<WDRF);
+	WDTCSR |= (1<<WDCE) | (1<<WDE);
+	WDTCSR = (1<<WDIE) | (1<<WDP0);
+
+	// Power reduction register
+	uint8_t oldPRR0 = PRR0;
+	uint8_t oldPPR1 = PRR1;
+	power_all_disable();
+
+	set_sleep_mode (SLEEP_MODE_STANDBY);
+	sleep_enable();
+
+	sei();
+	sleep_cpu();
+
+	sleep_disable();
+
+	// Restore old power reduction register
+	PRR0 = oldPRR0;
+	PRR1 = oldPPR1;
+
+	random_init();
+	fram_wakeup();
+
+	// Don't bother to update ACTIVITY_TIMER and MILLISECOND_TIMER
+	// They are non critical timers
+
+	SREG = sreg;
+}

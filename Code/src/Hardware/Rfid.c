@@ -9,6 +9,8 @@
 
 #include "../Memory/eeprom.h"
 
+#include "../System/Sleep.h"
+
 // Hardware
 
 // Thoses functions are only one instruction long 
@@ -24,7 +26,6 @@
 void rfid_pcd_write_register(uint8_t reg, uint8_t value)
 {
 	rfid_select(); // Select slave
-	// We may need to enter a noise reduction mode here, because the pcd is already very affected by the ground plane
 	spi_send_8(reg & 0x7E);
 	spi_send_8(value);
 	rfid_deselect(); // Release slave
@@ -33,7 +34,6 @@ void rfid_pcd_write_register(uint8_t reg, uint8_t value)
 void rfid_pcd_write_register_multiple(uint8_t reg, uint8_t count, uint8_t* values)
 {
 	rfid_select(); // Select slave
-	// We may need to enter a noise reduction mode here, because the pcd is already very affected by the ground plane
 	spi_send_8(reg & 0x7E);
 	spi_send(values, count);
 	rfid_deselect(); // Release slave
@@ -317,6 +317,8 @@ StatusCode rfid_pcd_transceive_data(	uint8_t *sendData,		///< Pointer to the dat
  * Transfers data to the MFRC522 FIFO, executes a command, waits for completion and transfers data back from the FIFO.
  * CRC validation can only be done if backData and backLen are specified.
  *
+ * PICC stands for Proximity Integrated Circuit Card
+ *
  * @return STATUS_OK on success, STATUS_??? otherwise.
  */
 StatusCode rfid_pcd_communicate_with_PICC(	uint8_t command,		///< The command to execute. One of the PCD_Command enums.
@@ -350,9 +352,9 @@ StatusCode rfid_pcd_communicate_with_PICC(	uint8_t command,		///< The command to
 
 	// Wait for the command to complete.
 	// In rfid_pcd_init we set the TAuto flag in TModeReg. This means the timer automatically starts when the PCD stops transmitting.
-	// Each iteration of the do-while-loop takes 17.86µs
+	// Each iteration of the do-while-loop takes 17.86µs ...s
 	// -------------------------------------
-	// On the original Arduino Uno.
+	// ... On the original Arduino Uno.
 	// But the Uno is running at 16 MHz so the code below take twice as long to run on a 8MHz platform.
 	#if F_CPU == 16000000
 	i = 2000;
@@ -361,22 +363,40 @@ StatusCode rfid_pcd_communicate_with_PICC(	uint8_t command,		///< The command to
 	#else
 	#error Frequency not supported
 	#endif
-	while (1)
+
+	// Waiting for the PICC to finish communication with the reader
+	// In the current configuration, PasswordWallet has difficulties talking with RFID tag.
+	// I think that the problem is the too close proximity between the reader and the main PCB.
+	// Either it is the ground plane acting as a shield, or it is the noise created by the circuit
+	// Putting the cpu into sleep mode while there is a communication between the PICC and the reader
+	// seems like a good way of decreasing the noise. Maybe putting down the FRAM too.
+	// Waiting about 35.7 ms, as the original timeout delay seems reasonable.
+	// The watchdog provides a 32 ms interrupt, close enough of the 35.7 ms, and higher than 25 ms (timer interrupt of the reader)
+
+
+	sleep_noise_reduction();
+	n = rfid_pcd_read_register(ComIrqReg);
+	if (!(n & waitIRq) || (n & 0x01))
 	{
-		n = rfid_pcd_read_register(ComIrqReg);	// ComIrqReg[7..0] bits are: Set1 TxIRq RxIRq IdleIRq HiAlertIRq LoAlertIRq ErrIRq TimerIRq
-		if (n & waitIRq)  					// One of the interrupts that signal success has been set.
-		{
-			break;
-		}
-		if (n & 0x01)  						// Timer interrupt - nothing received in 25ms
-		{
-			return STATUS_TIMEOUT;
-		}
-		if (--i == 0)  						// The emergency break. If all other conditions fail we will eventually terminate on this one after 35.7ms. Communication with the MFRC522 might be down.
-		{
-			return STATUS_TIMEOUT;
-		}
+		return STATUS_TIMEOUT;
 	}
+
+	// while (1)
+	// {
+	// 	n = rfid_pcd_read_register(ComIrqReg);	// ComIrqReg[7..0] bits are: Set1 TxIRq RxIRq IdleIRq HiAlertIRq LoAlertIRq ErrIRq TimerIRq
+	// 	if (n & waitIRq)  					// One of the interrupts that signal success has been set.
+	// 	{
+	// 		break;
+	// 	}
+	// 	if (n & 0x01)  						// Timer interrupt - nothing received in 25ms
+	// 	{
+	// 		return STATUS_TIMEOUT;
+	// 	}
+	// 	if (--i == 0)  						// The emergency break. If all other conditions fail we will eventually terminate on this one after 35.7ms. Communication with the MFRC522 might be down.
+	// 	{
+	// 		return STATUS_TIMEOUT;
+	// 	}
+	// }
 
 	// Stop now if any errors except collisions were detected.
 	uint8_t errorRegValue = rfid_pcd_read_register(ErrorReg); // ErrorReg[7..0] bits are: WrErr TempErr reserved BufferOvfl CollErr CRCErr ParityErr ProtocolErr

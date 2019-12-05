@@ -16,6 +16,12 @@ void sleep_device(void);
  */
 void sleep_idle(void);
 
+/**
+ * @brief Put the device in noise reduction mode, by putting to sleep various component.
+ * This function exists because the RFID reader need a quit environment. Thus I hardcoded the
+ * desired delay of 32ms in this function.
+ */
+void sleep_noise_reduction(void);
 
 #define DISABLE_SLEEP() (GLOBALS_EVENTS |=  EVENT_NO_SLEEP)
 #define ENABLE_SLEEP()  (GLOBALS_EVENTS &= ~EVENT_NO_SLEEP)
